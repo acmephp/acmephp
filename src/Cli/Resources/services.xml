@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <!-- SSL -->
+        <service id="ssl.key_pair_generator" class="AcmePhp\Ssl\Generator\KeyPairGenerator" />
+        <service id="ssl.key_parser" class="AcmePhp\Ssl\Parser\KeyParser" />
+        <service id="ssl.csr_signer" class="AcmePhp\Ssl\Signer\CertificateRequestSigner" />
+        <service id="ssl.data_signer" class="AcmePhp\Ssl\Signer\DataSigner" />
+
+        <!-- Core -->
+        <service id="http.raw_client" class="GuzzleHttp\Client" public="false" />
+        <service id="http.base64_encoder" class="AcmePhp\Core\Http\Base64SafeEncoder" public="false" />
+        <service id="http.server_error_handler" class="AcmePhp\Core\Http\ServerErrorHandler" public="false" />
+
+        <service id="http.client_factory" class="AcmePhp\Core\Http\SecureHttpClientFactory">
+            <argument type="service" id="http.raw_client" />
+            <argument type="service" id="http.base64_encoder" />
+            <argument type="service" id="ssl.key_parser" />
+            <argument type="service" id="ssl.data_signer" />
+            <argument type="service" id="http.server_error_handler" />
+        </service>
+
+        <!-- Serializer -->
+        <service id="serializer.pem_normalizer" class="AcmePhp\Cli\Serializer\PemNormalizer" public="false" />
+        <service id="serializer.get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer" public="false" />
+        <service id="serializer.pem_encoder" class="AcmePhp\Cli\Serializer\PemEncoder" public="false" />
+        <service id="serializer.json_encoder" class="Symfony\Component\Serializer\Encoder\JsonEncoder" public="false" />
+
+        <service id="serializer" class="Symfony\Component\Serializer\Serializer">
+            <argument type="collection">
+                <argument type="service" id="serializer.pem_normalizer" />
+                <argument type="service" id="serializer.get_set_method_normalizer" />
+            </argument>
+            <argument type="collection">
+                <argument type="service" id="serializer.pem_encoder" />
+                <argument type="service" id="serializer.json_encoder" />
+            </argument>
+        </service>
+
+        <!-- Repository -->
+        <service id="repository.master_storage" class="League\Flysystem\Filesystem" public="false">
+            <argument type="service">
+                <service class="League\Flysystem\Adapter\Local">
+                    <argument>%app.storage_directory%</argument>
+                </service>
+            </argument>
+        </service>
+
+        <service id="repository.backup_storage" class="League\Flysystem\Filesystem" public="false">
+            <argument type="service">
+                <service class="League\Flysystem\Adapter\Local">
+                    <argument>%app.backup_directory%</argument>
+                </service>
+            </argument>
+        </service>
+
+        <service id="repository" class="AcmePhp\Cli\Repository\Repository">
+            <argument type="service" id="serializer" />
+            <argument type="service" id="repository.master_storage" />
+            <argument type="service" id="repository.backup_storage" />
+            <argument>%storage.enable_backup%</argument>
+        </service>
+
+    </services>
+</container>

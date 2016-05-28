@@ -23,7 +23,7 @@ able to deeply integrate the management of your certificates directly in your ap
 
 Acme PHP provides several major improvements over the default clients:
 -   Acme PHP comes by nature as a single binary file: a single download and you are ready to start working ;
--   Acme PHP is based on a configuration file (`/etc/acmephp/acmephp.conf`) instead command line arguments.
+-   Acme PHP is based on a configuration file (`~/.acmephp/acmephp.conf`) instead command line arguments.
     Thus, the configuration is much more expressive and the same setup is used at every renewal ;
 -   Acme PHP can monitor your CRONs and can send you alerts in many differents places:
     E-mail, Slack, HipChat, Flowdock, Fleep (thanks to [Monolog](https://github.com/Seldaek/monolog)!)

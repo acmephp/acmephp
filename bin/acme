@@ -11,7 +11,12 @@
  */
 
 if (version_compare('5.5.0', PHP_VERSION, '>')) {
-    echo 'This version of ACME PHP requires PHP 5.5.0.'.PHP_EOL;
+    echo 'This version of Acme PHP requires PHP 5.5.0.'.PHP_EOL;
+    exit;
+}
+
+if (!function_exists('openssl_private_encrypt')) {
+    echo 'This version of Acme PHP requires the OpenSSL extension.'.PHP_EOL;
     exit;
 }
 
@@ -28,5 +33,5 @@ foreach ($autoload as $file) {
     }
 }
 
-$application = new AcmePhp\Cli\Application('Let\'s Encrypt/ACME PHP client');
+$application = new AcmePhp\Cli\Application();
 $application->run();

@@ -11,6 +11,8 @@ prerequisites:
     display-last-changes: ~
 
 pre-release-actions:
+    update-version-class:
+        class: AcmePhp\Cli\Application
     vcs-commit: ~
 
 post-release-actions:

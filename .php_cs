@@ -6,7 +6,7 @@ use SLLH\StyleCIBridge\ConfigBridge;
 use Symfony\CS\Fixer\Contrib\HeaderCommentFixer;
 
 $header = <<<EOF
-This file is part of the ACME PHP Client project.
+This file is part of the Acme PHP Client project.
 
 (c) Titouan Galopin <galopintitouan@gmail.com>
 
