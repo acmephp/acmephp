@@ -1,5 +1,5 @@
-Acme PHP - Let's Encrypt/ACME Command Line client written in PHP
-================================================================
+Acme PHP
+========
 
 [![Build Status](https://img.shields.io/travis/acmephp/acmephp/master.svg?style=flat-square)](https://travis-ci.org/acmephp/acmephp)
 [![Quality Score](https://img.shields.io/scrutinizer/g/acmephp/acmephp.svg?style=flat-square)](https://scrutinizer-ci.com/g/acmephp/acmephp)
