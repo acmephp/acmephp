@@ -10,12 +10,12 @@ template:
 menu:
     sections:
         main:
-            name: CLI client
+            name: Acme PHP
             items:
                 main-introduction:
                     text: Introduction
         core:
-            name: ACME protocol implementation in PHP
+            name: Component Core
             items:
                 core-introduction:
                     text: Introduction
@@ -24,7 +24,7 @@ menu:
                     text: Get started
                     relativeUrl: core/get-started.html
         ssl:
-            name: SSL library
+            name: Component Ssl
             items:
                 ssl-introduction:
                     text: Introduction
