@@ -1,0 +1,46 @@
+{
+    "name": "acmephp/ssl",
+    "description": "PHP wrapper around OpenSSL extension providing SSL encoding, decoding, parsing and signing features",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/acmephp/ssl",
+    "keywords": [
+        "certificate",
+        "https",
+        "acmephp",
+        "ssl",
+        "openssl",
+        "CSR",
+        "x509"
+    ],
+    "authors": [
+        {
+            "name": "Titouan Galopin",
+            "email": "galopintitouan@gmail.com",
+            "homepage": "http://titouangalopin.com"
+        },
+        {
+            "name": "Jérémy Derussé",
+            "homepage": "https://twitter.com/jderusse"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "AcmePhp\\Ssl\\": "."
+        }
+    },
+    "require": {
+        "php": ">=5.5.0",
+        "ext-openssl": "*",
+        "webmozart/assert": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8.22",
+        "sllh/php-cs-fixer-styleci-bridge": "^1.5.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
