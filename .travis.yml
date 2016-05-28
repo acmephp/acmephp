@@ -1,0 +1,40 @@
+language: php
+
+sudo: false
+
+branches:
+    only:
+        - master
+
+cache:
+    directories:
+        - $HOME/.composer/cache/files
+
+matrix:
+    include:
+        - php: 5.5
+          services:
+            - docker
+        - php: 5.6
+          services:
+            - docker
+        - php: 7.0
+          services:
+            - docker
+        - php: 7.0
+          env: COMPOSER_FLAGS='--prefer-lowest'
+          services:
+            - docker
+
+before_install:
+    - docker run -d --name boulder --net host acmephp/testing-ca
+    - phpenv config-rm xdebug.ini
+
+install:
+    - composer update --no-interaction --prefer-dist $COMPOSER_FLAGS
+    - docker run --rm --net host martin/wait -c localhost:4000 -t 120
+
+script: vendor/bin/phpunit
+
+notifications:
+    email: false

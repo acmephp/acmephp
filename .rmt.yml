@@ -1,0 +1,17 @@
+vcs: git
+
+version-generator:
+    name: semantic
+    allow-label: true
+
+version-persister: vcs-tag
+
+prerequisites:
+    working-copy-check: ~
+    display-last-changes: ~
+
+pre-release-actions:
+    vcs-commit: ~
+
+post-release-actions:
+    vcs-publish: ~

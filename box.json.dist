@@ -1,0 +1,28 @@
+{
+    "directories": [
+        "src"
+    ],
+    "files": [
+        "LICENSE"
+    ],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": [
+                "Tester",
+                "Tests",
+                "tests"
+            ],
+            "in": "vendor"
+        }
+    ],
+    "compactors": [
+        "Herrera\\Box\\Compactor\\Php"
+    ],
+    "compression": "GZ",
+    "git-version": "package_version",
+    "main": "bin/acme",
+    "output": "build/acmephp.phar",
+    "chmod": "0755",
+    "stub": true
+}

@@ -1,0 +1,6 @@
+/build/
+/box.json
+composer.lock
+vendor/
+.php_cs.cache
+doc/.couscous

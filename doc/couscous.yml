@@ -1,0 +1,34 @@
+title: Acme PHP
+subTitle: Let's Encrypt client written in PHP
+github:
+    user: acmephp
+    repo: acmephp
+baseUrl: https://acmephp.github.io/acmephp/
+template:
+    url: https://github.com/CouscousPHP/Template-Dark
+    index: index.md
+menu:
+    sections:
+        main:
+            name: CLI client
+            items:
+                main-introduction:
+                    text: Introduction
+        core:
+            name: ACME protocol implementation in PHP
+            items:
+                core-introduction:
+                    text: Introduction
+                    relativeUrl: core/introduction.html
+                core-get-started:
+                    text: Get started
+                    relativeUrl: core/get-started.html
+        ssl:
+            name: SSL library
+            items:
+                ssl-introduction:
+                    text: Introduction
+                    relativeUrl: ssl/introduction.html
+                ssl-get-started:
+                    text: Get started
+                    relativeUrl: ssl/get-started.html

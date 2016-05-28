@@ -1,0 +1,50 @@
+{
+    "name": "acmephp/core",
+    "description": "Raw implementation of the ACME protocol in PHP",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/acmephp/core",
+    "keywords": [
+        "acmephp",
+        "letsencrypt",
+        "https",
+        "encryption",
+        "certificate",
+        "ssl",
+        "openssl",
+        "CSR",
+        "x509"
+    ],
+    "authors": [
+        {
+            "name": "Titouan Galopin",
+            "email": "galopintitouan@gmail.com",
+            "homepage": "http://titouangalopin.com"
+        },
+        {
+            "name": "Jérémy Derussé",
+            "homepage": "https://twitter.com/jderusse"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "ext-openssl": "*",
+        "acmephp/ssl": "^1.0-alpha2",
+        "guzzlehttp/guzzle": "^6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8.22",
+        "sllh/php-cs-fixer-styleci-bridge": "^1.5.0",
+        "symfony/process": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AcmePhp\\Core\\": "."
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

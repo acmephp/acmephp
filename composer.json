@@ -1,0 +1,67 @@
+{
+    "name": "acmephp/acmephp",
+    "description": "Let's Encrypt client written in PHP",
+    "type": "project",
+    "license": "MIT",
+    "homepage": "https://github.com/acmephp/acmephp",
+    "keywords": [
+        "acme",
+        "acmephp",
+        "letsencrypt",
+        "https",
+        "encryption",
+        "certificate",
+        "ssl",
+        "openssl",
+        "CSR",
+        "x509",
+        "cli"
+    ],
+    "authors": [
+        {
+            "name": "Titouan Galopin",
+            "email": "galopintitouan@gmail.com",
+            "homepage": "http://titouangalopin.com"
+        },
+        {
+            "name": "Jérémy Derussé",
+            "homepage": "https://twitter.com/jderusse"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "ext-openssl": "*",
+        "guzzlehttp/guzzle": "^6.0",
+        "symfony/config": "^3.0",
+        "symfony/console": "^3.0",
+        "symfony/yaml": "^3.0",
+        "monolog/monolog": "^1.19",
+        "swiftmailer/swiftmailer": "^5.4",
+        "league/flysystem": "^1.0",
+        "league/flysystem-sftp": "^1.0",
+        "webmozart/assert": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8.22",
+        "sllh/php-cs-fixer-styleci-bridge": "^1.5.0",
+        "symfony/process": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AcmePhp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\AcmePhp\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "bin": [
+        "bin/acme"
+    ]
+}
