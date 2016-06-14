@@ -173,7 +173,7 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
             'Acme',
             'PHP',
             'acmephp@example.org',
-            [ 'sub.example.org', 'sub.example.com' ]
+            ['sub.example.org', 'sub.example.com']
         );
 
         $this->repository->storeDomainDistinguishedName('example.com', $dn);
@@ -190,7 +190,7 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Acme', $data['organizationName']);
         $this->assertEquals('PHP', $data['organizationalUnitName']);
         $this->assertEquals('acmephp@example.org', $data['emailAddress']);
-        $this->assertEquals([ 'sub.example.org', 'sub.example.com' ], $data['subjectAlternativeNames']);
+        $this->assertEquals(['sub.example.org', 'sub.example.com'], $data['subjectAlternativeNames']);
     }
 
     public function testLoadDomainDistinguishedName()
@@ -203,7 +203,7 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
             'Acme',
             'PHP',
             'acmephp@example.org',
-            [ 'sub.example.org', 'sub.example.com' ]
+            ['sub.example.org', 'sub.example.com']
         );
 
         $this->assertFalse($this->repository->hasDomainDistinguishedName('example.com'));

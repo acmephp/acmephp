@@ -11,7 +11,6 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Ssl\KeyPair;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +27,7 @@ class CheckCommand extends AbstractCommand
     {
         $this->setName('check')
             ->setDefinition([
-                new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for')
+                new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for'),
             ])
             ->setDescription('Ask the ACME server to check an authorization token you expose to prove you are the owner of a domain')
             ->setHelp(<<<'EOF'

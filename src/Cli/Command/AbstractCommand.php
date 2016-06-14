@@ -14,12 +14,8 @@ namespace AcmePhp\Cli\Command;
 use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Configuration\AcmeConfiguration;
 use AcmePhp\Cli\Repository\RepositoryInterface;
-use AcmePhp\Cli\Serializer\PemEncoder;
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\Http\SecureHttpClient;
-use AcmePhp\Ssl\KeyPair;
-use AcmePhp\Ssl\PrivateKey;
-use AcmePhp\Ssl\PublicKey;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
@@ -48,12 +44,12 @@ abstract class AbstractCommand extends Command
     protected $output;
 
     /**
-     * @var array
+     * @var null|array
      */
     private $configuration;
 
     /**
-     * @var ContainerBuilder
+     * @var null|ContainerBuilder
      */
     private $container;
 
@@ -97,7 +93,7 @@ abstract class AbstractCommand extends Command
      */
     protected function getContainer()
     {
-        if (!$this->container) {
+        if ($this->container === null) {
             $this->initializeContainer();
         }
 
@@ -109,7 +105,7 @@ abstract class AbstractCommand extends Command
      */
     private function initializeContainer()
     {
-        if (!$this->configuration) {
+        if ($this->configuration === null) {
             $this->initializeConfiguration();
         }
 

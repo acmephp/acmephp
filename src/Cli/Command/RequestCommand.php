@@ -31,7 +31,7 @@ class RequestCommand extends AbstractCommand
     {
         $this->setName('request')
             ->setDefinition([
-                new InputArgument('domain', InputArgument::REQUIRED, 'The domain to get a certificate for')
+                new InputArgument('domain', InputArgument::REQUIRED, 'The domain to get a certificate for'),
             ])
             ->setDescription('Request a SSL certificate for a domain')
             ->setHelp(<<<'EOF'

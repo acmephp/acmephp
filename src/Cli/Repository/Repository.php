@@ -54,7 +54,7 @@ class Repository implements RepositoryInterface
      * @param SerializerInterface $serializer
      * @param FilesystemInterface $master
      * @param FilesystemInterface $backup
-     * @param bool $enableBackup
+     * @param bool                $enableBackup
      */
     public function __construct(SerializerInterface $serializer, FilesystemInterface $master, FilesystemInterface $backup, $enableBackup)
     {
@@ -65,20 +65,20 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function storeCertificateResponse(CertificateResponse $certificateResponse)
     {
         $distinguishedName = $certificateResponse->getCertificateRequest()->getDistinguishedName();
         $domain = $distinguishedName->getCommonName();
-        
+
         $this->storeDomainKeyPair($domain, $certificateResponse->getCertificateRequest()->getKeyPair());
         $this->storeDomainDistinguishedName($domain, $distinguishedName);
         $this->storeDomainCertificate($domain, $certificateResponse->getCertificate());
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function storeAccountKeyPair(KeyPair $keyPair)
     {
@@ -98,7 +98,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasAccountKeyPair()
     {
@@ -106,7 +106,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadAccountKeyPair()
     {
@@ -124,7 +124,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function storeDomainKeyPair($domain, KeyPair $keyPair)
     {
@@ -144,7 +144,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasDomainKeyPair($domain)
     {
@@ -152,7 +152,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadDomainKeyPair($domain)
     {
@@ -170,7 +170,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function storeDomainAuthorizationChallenge($domain, AuthorizationChallenge $authorizationChallenge)
     {
@@ -185,7 +185,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasDomainAuthorizationChallenge($domain)
     {
@@ -193,7 +193,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadDomainAuthorizationChallenge($domain)
     {
@@ -207,7 +207,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function storeDomainDistinguishedName($domain, DistinguishedName $distinguishedName)
     {
@@ -222,7 +222,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasDomainDistinguishedName($domain)
     {
@@ -230,7 +230,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadDomainDistinguishedName($domain)
     {
@@ -244,7 +244,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function storeDomainCertificate($domain, Certificate $certificate)
     {
@@ -277,7 +277,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasDomainCertificate($domain)
     {
@@ -285,7 +285,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadDomainCertificate($domain)
     {
@@ -295,7 +295,9 @@ class Repository implements RepositoryInterface
             throw new AcmeCliException(sprintf('Loading of domain %s certificate failed', $domain), $e);
         }
 
-        $pems = array_map(function($item) { return trim(str_replace('-----END CERTIFICATE-----', '', $item)); }, $pems);
+        $pems = array_map(function ($item) {
+            return trim(str_replace('-----END CERTIFICATE-----', '', $item));
+        }, $pems);
         array_shift($pems);
         $pems = array_reverse($pems);
 
@@ -334,10 +336,14 @@ class Repository implements RepositoryInterface
         } else {
             // File update: backup before writing
             if ($this->enableBackup) {
-                if ($this->backup->has($path)) {
-                    $this->backup->update($path, $this->master->read($path));
-                } else {
-                    $this->backup->write($path, $this->master->read($path));
+                $oldContent = $this->master->read($path);
+
+                if ($oldContent !== false) {
+                    if ($this->backup->has($path)) {
+                        $this->backup->update($path, $oldContent);
+                    } else {
+                        $this->backup->write($path, $oldContent);
+                    }
                 }
             }
 
