@@ -14,6 +14,7 @@ namespace Tests\AcmePhp\Cli\Repository;
 use AcmePhp\Cli\Repository\Repository;
 use AcmePhp\Cli\Serializer\PemEncoder;
 use AcmePhp\Cli\Serializer\PemNormalizer;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\KeyPair;
@@ -112,6 +113,54 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testLoadDomainKeyPairFail()
     {
         $this->repository->loadDomainKeyPair('example.com');
+    }
+
+    public function testStoreDomainAuthorizationChallenge()
+    {
+        $challenge = new AuthorizationChallenge(
+            'example.org',
+            'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY',
+            'https://acme-v01.api.letsencrypt.org/acme/authz/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk'
+        );
+
+        $this->repository->storeDomainAuthorizationChallenge('example.com', $challenge);
+
+        $json = $this->master->read('private/example.com/authorization_challenge.json');
+        $this->assertJson($json);
+
+        $data = json_decode($json, true);
+
+        $this->assertEquals('example.org', $data['domain']);
+        $this->assertEquals('https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837', $data['url']);
+        $this->assertEquals('wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA', $data['token']);
+        $this->assertEquals('wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY', $data['payload']);
+        $this->assertEquals('https://acme-v01.api.letsencrypt.org/acme/authz/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk', $data['location']);
+    }
+
+    public function testLoadDomainAuthorizationChallenge()
+    {
+        $challenge = new AuthorizationChallenge(
+            'example.org',
+            'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY',
+            'https://acme-v01.api.letsencrypt.org/acme/authz/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk'
+        );
+
+        $this->assertFalse($this->repository->hasDomainAuthorizationChallenge('example.com'));
+        $this->repository->storeDomainAuthorizationChallenge('example.com', $challenge);
+        $this->assertTrue($this->repository->hasDomainAuthorizationChallenge('example.com'));
+        $this->assertEquals($challenge, $this->repository->loadDomainAuthorizationChallenge('example.com'));
+    }
+
+    /**
+     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
+     */
+    public function testLoadDomainAuthorizationChallengeFail()
+    {
+        $this->repository->loadDomainAuthorizationChallenge('example.com');
     }
 
     public function testStoreDomainDistinguishedName()

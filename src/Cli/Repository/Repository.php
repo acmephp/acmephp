@@ -13,6 +13,7 @@ namespace AcmePhp\Cli\Repository;
 
 use AcmePhp\Cli\Exception\AcmeCliException;
 use AcmePhp\Cli\Serializer\PemEncoder;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
@@ -165,6 +166,43 @@ class Repository implements RepositoryInterface
             );
         } catch (\Exception $e) {
             throw new AcmeCliException(sprintf('Loading of domain %s key pair failed', $domain), $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function storeDomainAuthorizationChallenge($domain, AuthorizationChallenge $authorizationChallenge)
+    {
+        try {
+            $this->save(
+                'private/'.$domain.'/authorization_challenge.json',
+                $this->serializer->serialize($authorizationChallenge, JsonEncoder::FORMAT)
+            );
+        } catch (\Exception $e) {
+            throw new AcmeCliException(sprintf('Storing of domain %s authorization challenge failed', $domain), $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasDomainAuthorizationChallenge($domain)
+    {
+        return $this->master->has('private/'.$domain.'/authorization_challenge.json');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function loadDomainAuthorizationChallenge($domain)
+    {
+        try {
+            $json = $this->master->read('private/'.$domain.'/authorization_challenge.json');
+
+            return $this->serializer->deserialize($json, AuthorizationChallenge::class, JsonEncoder::FORMAT);
+        } catch (\Exception $e) {
+            throw new AcmeCliException(sprintf('Loading of domain %s authorization challenge failed', $domain), $e);
         }
     }
 

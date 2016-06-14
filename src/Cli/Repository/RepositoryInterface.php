@@ -12,6 +12,7 @@
 namespace AcmePhp\Cli\Repository;
 
 use AcmePhp\Cli\Exception\AcmeCliException;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
@@ -98,6 +99,38 @@ interface RepositoryInterface
      * @return KeyPair
      */
     public function loadDomainKeyPair($domain);
+
+    /**
+     * Store a given authorization challenge as associated to a given domain.
+     *
+     * @param string                 $domain
+     * @param AuthorizationChallenge $authorizationChallenge
+     *
+     * @throws AcmeCliException
+     *
+     * @return void
+     */
+    public function storeDomainAuthorizationChallenge($domain, AuthorizationChallenge $authorizationChallenge);
+
+    /**
+     * Check if there is an authorization challenge associated to the given domain in the repository.
+     *
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public function hasDomainAuthorizationChallenge($domain);
+
+    /**
+     * Load the authorization challenge associated to a given domain.
+     *
+     * @param string $domain
+     *
+     * @throws AcmeCliException
+     *
+     * @return AuthorizationChallenge
+     */
+    public function loadDomainAuthorizationChallenge($domain);
 
     /**
      * Store a given distinguished name as associated to a given domain.

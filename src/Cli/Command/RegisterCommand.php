@@ -11,8 +11,6 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Cli\ApplicationFiles;
-use AcmePhp\Cli\Serializer\PemEncoder;
 use AcmePhp\Ssl\KeyPair;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

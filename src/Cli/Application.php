@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Cli;
 
+use AcmePhp\Cli\Command\AuthorizeCommand;
 use AcmePhp\Cli\Command\RegisterCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\HelpCommand;
@@ -42,6 +43,7 @@ class Application extends BaseApplication
             new HelpCommand(),
             new ListCommand(),
             new RegisterCommand(),
+            new AuthorizeCommand(),
         ];
     }
 
