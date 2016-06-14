@@ -152,6 +152,12 @@ class AcmeClient implements AcmeClientInterface
             'token'            => $challenge->getToken(),
         ];
 
+        if (!$this->directory) {
+            $this->directory = new ResourcesDirectory(
+                $this->httpClient->unsignedRequest('GET', $this->directoryUrl, null, true)
+            );
+        }
+
         $response = $this->httpClient->signedRequest('POST', $challenge->getUrl(), $payload);
 
         // Waiting loop
