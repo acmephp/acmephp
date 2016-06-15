@@ -1,0 +1,99 @@
+#
+# acmephp.conf - Configuration file for Acme PHP client.
+#
+# See https://github.com/acmephp/acmephp for more informations
+#
+
+###################################################################
+# Storage
+#
+# Configure here where and how you want to save your certificates
+# and SSL keys.
+#
+
+storage:
+
+    #
+    # By default, Acme PHP will create a backup of every file
+    # before any modification. You can disable this mechanism here.
+    #
+    enable_backup: true
+
+    #
+    # Actions to execute right after the generation of a file (key, CSR or certificate).
+    # Actions are executed in the order provided in configuration.
+    #
+    # See the documentation to learn how to create your own action.
+    #
+    post_generate:
+
+        #
+        # Mirror your local storage directory on a FTP host
+        #
+        - action: push_ftp
+          root: /acmephp
+          host: ftp.example.com
+          username: username
+          password: password
+          # port: 21
+          # passive: true
+          # ssl: true
+          # timeout: 30
+
+        #
+        # Mirror your local storage directory on a SFTP host
+        #
+        - action: push_sftp
+          root: /acmephp
+          host: sftp.example.com
+          username: username
+          password: password
+          # port: 21
+          # private_key: path/to/or/contents/of/privatekey
+          # timeout: 30
+
+        #
+        # Use the Platform.sh CLI to update the certificate associated to your domain:
+        #       platform domain:add maindomain.com --cert=certfile.crt --key=domainkey.key
+        #
+        # Platform.sh CLI needs to be installed for this action to work.
+        #
+        - action: update_platformsh
+
+        #
+        # Use the Heorku CLI to update the certificate associated to your domain:
+        #       heroku certs:add certfile.crt domainkey.key
+        #
+        # Heroku CLI needs to be installed for this action to work.
+        #
+        - action: update_heroku
+
+        #
+        # Build a file structure suited for nginx-proxy (https://github.com/jwilder/nginx-proxy)
+        #
+        - action: build_nginxproxy
+
+
+###################################################################
+# Monitoring
+#
+# This section let you configure a simple monitoring mechanism that
+# will warn you if an error occurs during a CRON job.
+#
+
+monitoring: ~   # Monitoring is disabled by default
+
+# You can enabled it by configuring at least one alert handler:
+#monitoring:
+#    email:   # Only SMTP(S) support for now
+#        to: galopintitouan@gmail.com
+#        host: smtp.example.com
+#        # port: 25
+#        # username: ~
+#        # password: ~
+#        # encryption: ~
+#
+#    slack:
+#        token: your_token
+#        channel: general
+#        # username: ACMEPHP
