@@ -56,8 +56,6 @@ EOF
         $client = $this->getClient();
         $domain = $input->getArgument('domain');
 
-        $output->write("\n");
-
         /*
          * Generate domain key pair if needed
          */
@@ -73,8 +71,6 @@ EOF
         $this->output->writeln('<info>Loading domain key pair...</info>');
         $domainKeyPair = $repository->loadDomainKeyPair($domain);
 
-        $output->write("\n");
-
         /*
          * Generate domain distinguished name if needed
          */
@@ -84,24 +80,24 @@ EOF
             $helper = $this->getHelper('question');
 
             $countryName = $helper->ask($input, $output, new Question(
-                'What is the two-letters code of your country (field "C" of the distinguished name)? : ',
+                'What is your country two-letters code (field "C" of the distinguished name, for instance: "US")? : ',
                 'FR'
             ));
 
             $stateOrProvinceName = $helper->ask($input, $output, new Question(
-                'What is the full name of your country province (field "ST" of the distinguished name)? : '
+                'What is your country province (field "ST" of the distinguished name, for instance: "California")? : '
             ));
 
             $localityName = $helper->ask($input, $output, new Question(
-                'What is the full name of your locality (field "L" of the distinguished name)? : '
+                'What is your locality (field "L" of the distinguished name, for instance: "Mountain View")? : '
             ));
 
             $organizationName = $helper->ask($input, $output, new Question(
-                'What is the full name of your organization/company (field "O" of the distinguished name)? : '
+                'What is your organization/company (field "O" of the distinguished name, for instance: "Acme PHP")? : '
             ));
 
             $organizationalUnitName = $helper->ask($input, $output, new Question(
-                'What is the full name of your organization/company unit or department (field "OU" of the distinguished name)? : '
+                'What is your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")? : '
             ));
 
             $emailAddress = $helper->ask($input, $output, new Question(
@@ -128,6 +124,17 @@ EOF
          */
         $output->writeln('<info>Creating Certificate Signing Request ...</info>');
         $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
+
+        if ($repository->hasDomainCertificate($domain)) {
+            $output->writeln(sprintf('<info>Renewing certificate for domain %s ...</info>', $domain));
+
+            $response = $client->requestCertificate($domain, $csr);
+            $repository->storeDomainCertificate($domain, $response->getCertificate());
+
+            $output->writeln('<info>Certificate renewed successfully!</info>');
+
+            return;
+        }
 
         $output->writeln(sprintf('<info>Requesting certificate for domain %s ...</info>', $domain));
         $response = $client->requestCertificate($domain, $csr);
@@ -161,7 +168,7 @@ You probably want to configure your webserver right now. Here are some instructi
     
       First, you need to enable mod_ssl for Apache. Run the following command:
       
-        <info>sudo a2enmod ssl</info>
+        sudo a2enmod ssl
         
       Then, in the virtual host configuring the domain %domain%, put the following lines:
         
@@ -171,28 +178,24 @@ You probably want to configure your webserver right now. Here are some instructi
         
       Finally, restart Apache to take your configuration into account:
       
-        <info>sudo service apache2 restart</info>
+        sudo service apache2 restart
 
     * <info>nginx</info>
     
       In the server block configuring the domain %domain%, put the following lines:
         
       server {
-        ...
-        
         server_name %domain%;
 
         listen 443 ssl;
         
         ssl_certificate %fullchain%;
         ssl_certificate_key %private%;
-        
-        ...
       }
         
       Then, reload nginx to take your configuration into account:
       
-        <info>sudo service nginx reload</info>
+        sudo service nginx reload
 
     * <info>haproxy</info>
     
@@ -206,19 +209,19 @@ You probably want to configure your webserver right now. Here are some instructi
     * <info>Others</info>
     
       Other configuration possibilities are described in the documentation (https://acmephp.github.io/acmephp/), such as
-      <info>platformsh</info>, <info>heroku</info>, etc.
+      platformsh, heroku, etc.
       
-<yellow>You also probably want to configure the automatic renewal of the certificate you just got.
-Setting this up is easy and described in the documentation: https://acmephp.github.io/acmephp./</yellow>
+<comment>You also probably want to configure the automatic renewal of the certificate you just got.
+Setting this up is easy and described in the documentation: https://acmephp.github.io/acmephp./</comment>
 
 EOF;
 
         $replacements = [
-            '%private%'   => Path::canonicalize('~/.acmephp/master/private/%s/private.pem'),
-            '%cert%'      => Path::canonicalize('~/.acmephp/master/certs/%s/cert.pem'),
-            '%chain%'     => Path::canonicalize('~/.acmephp/master/certs/%s/chain.pem'),
-            '%fullchain%' => Path::canonicalize('~/.acmephp/master/certs/%s/fullchain.pem'),
-            '%combined%'  => Path::canonicalize('~/.acmephp/master/certs/%s/combined.pem'),
+            '%private%'   => Path::canonicalize('~/.acmephp/master/private/'.$domain.'/private.pem'),
+            '%cert%'      => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/cert.pem'),
+            '%chain%'     => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/chain.pem'),
+            '%fullchain%' => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/fullchain.pem'),
+            '%combined%'  => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/combined.pem'),
         ];
 
         $this->output->writeln(str_replace(array_keys($replacements), array_values($replacements), $help));

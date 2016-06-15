@@ -20,6 +20,11 @@ if (!function_exists('openssl_private_encrypt')) {
     exit;
 }
 
+if (!class_exists('DOMDocument')) {
+    echo 'This version of Acme PHP requires the XML extension.'.PHP_EOL;
+    exit;
+}
+
 $autoload = [
     __DIR__.'/../../autoload.php',
     __DIR__.'/../vendor/autoload.php',

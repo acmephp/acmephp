@@ -1,10 +1,6 @@
 {
-    "directories": [
-        "src"
-    ],
-    "files": [
-        "LICENSE"
-    ],
+    "directories": [ "src", "res" ],
+    "files": [ "LICENSE" ],
     "finder": [
         {
             "name": "*.php",
@@ -14,11 +10,13 @@
                 "tests"
             ],
             "in": "vendor"
+        },
+        {
+            "name": "*.xsd",
+            "in": "vendor"
         }
     ],
-    "compactors": [
-        "Herrera\\Box\\Compactor\\Php"
-    ],
+    "compactors": [ "Herrera\\Box\\Compactor\\Php" ],
     "compression": "GZ",
     "git-version": "package_version",
     "main": "bin/acme",
