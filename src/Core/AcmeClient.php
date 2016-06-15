@@ -78,11 +78,11 @@ class AcmeClient implements AcmeClientInterface
         $payload['resource'] = ResourcesDirectory::NEW_REGISTRATION;
         $payload['agreement'] = $agreement;
 
-        if ($email) {
+        if (is_string($email)) {
             $payload['contact'] = ['mailto:'.$email];
         }
 
-        return $this->requestResource('POST', ResourcesDirectory::NEW_REGISTRATION, $payload);
+        return (array) $this->requestResource('POST', ResourcesDirectory::NEW_REGISTRATION, $payload);
     }
 
     /**
@@ -153,30 +153,28 @@ class AcmeClient implements AcmeClientInterface
         ];
 
         if (!$this->directory) {
-            $this->directory = new ResourcesDirectory(
-                $this->httpClient->unsignedRequest('GET', $this->directoryUrl, null, true)
-            );
+            $this->initializeDirectory();
         }
 
-        $response = $this->httpClient->signedRequest('POST', $challenge->getUrl(), $payload);
+        $response = (array) $this->httpClient->signedRequest('POST', $challenge->getUrl(), $payload);
 
         // Waiting loop
         $endTime = time() + $timeout;
 
         while (time() <= $endTime) {
-            $response = $this->httpClient->signedRequest('GET', $challenge->getLocation());
+            $response = (array) $this->httpClient->signedRequest('GET', $challenge->getLocation());
 
-            if ('pending' !== $response['status']) {
+            if (!isset($response['status']) || 'pending' !== $response['status']) {
                 break;
             }
 
             sleep(1);
         }
 
-        if ('pending' === $response['status']) {
-            throw new HttpChallengeTimedOutException($response);
-        } elseif ('valid' !== $response['status']) {
+        if (!isset($response['status']) || 'valid' !== $response['status']) {
             throw new HttpChallengeFailedException($response);
+        } elseif ('pending' === $response['status']) {
+            throw new HttpChallengeTimedOutException($response);
         }
 
         return $response;
@@ -270,9 +268,7 @@ class AcmeClient implements AcmeClientInterface
     protected function requestResource($method, $resource, array $payload, $returnJson = true)
     {
         if (!$this->directory) {
-            $this->directory = new ResourcesDirectory(
-                $this->httpClient->unsignedRequest('GET', $this->directoryUrl, null, true)
-            );
+            $this->initializeDirectory();
         }
 
         return $this->httpClient->signedRequest(
@@ -280,6 +276,16 @@ class AcmeClient implements AcmeClientInterface
             $this->directory->getResourceUrl($resource),
             $payload,
             $returnJson
+        );
+    }
+
+    /**
+     * Initialize the server resources directory.
+     */
+    private function initializeDirectory()
+    {
+        $this->directory = new ResourcesDirectory(
+            $this->httpClient->unsignedRequest('GET', $this->directoryUrl, null, true)
         );
     }
 }

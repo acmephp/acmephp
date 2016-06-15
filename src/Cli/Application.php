@@ -16,8 +16,6 @@ use AcmePhp\Cli\Command\CheckCommand;
 use AcmePhp\Cli\Command\RegisterCommand;
 use AcmePhp\Cli\Command\RequestCommand;
 use Symfony\Component\Console\Application as BaseApplication;
-use Symfony\Component\Console\Command\HelpCommand;
-use Symfony\Component\Console\Command\ListCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Webmozart\PathUtil\Path;
 
@@ -41,14 +39,12 @@ class Application extends BaseApplication
      */
     protected function getDefaultCommands()
     {
-        return [
-            new HelpCommand(),
-            new ListCommand(),
+        return array_merge(parent::getDefaultCommands(), [
             new RegisterCommand(),
             new AuthorizeCommand(),
             new CheckCommand(),
             new RequestCommand(),
-        ];
+        ]);
     }
 
     /**
