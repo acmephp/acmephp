@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Webmozart\PathUtil\Path;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
@@ -133,13 +134,93 @@ EOF
 
         $repository->storeDomainCertificate($domain, $response->getCertificate());
 
-        $this->output->writeln(sprintf(<<<'EOF'
+        $help = <<<'EOF'
 
 <info>The SSL certificate was fetched successfully!</info>
 
-It has been stored in ~/.acmephp/master/certs. You can use it in your webserver.
+5 files were created in the Acme PHP storage directory:
 
-EOF
-        ));
+    * <info>%private%</info> contains your domain private key (required in many cases). 
+
+    * <info>%cert%</info> contains only your certificate, without the issuer certificate.
+      It may be useful in certains cases but you will probably not need it (use fullchain.pem instead).
+
+    * <info>%chain%</info> contains the issuer certificate chain (its certificate, the
+      certificate of its issuer, the certificate of the issuer of its issuer, etc.). Your certificate is
+      not present in this file.
+
+    * <info>%fullchain%</info> contains your certificate AND the issuer certificate chain.
+      You most likely will use this file in your webserver.
+
+    * <info>%combined%</info> contains the fullchain AND your domain private key (some
+      webservers expect this format, such as haproxy).
+      
+You probably want to configure your webserver right now. Here are some instructions for standard ones:
+
+    * <info>Apache</info>
+    
+      First, you need to enable mod_ssl for Apache. Run the following command:
+      
+        <info>sudo a2enmod ssl</info>
+        
+      Then, in the virtual host configuring the domain %domain%, put the following lines:
+        
+        SSLCertificateFile %cert%
+        SSLCertificateKeyFile %private%
+        SSLCertificateChainFile %chain%
+        
+      Finally, restart Apache to take your configuration into account:
+      
+        <info>sudo service apache2 restart</info>
+
+    * <info>nginx</info>
+    
+      In the server block configuring the domain %domain%, put the following lines:
+        
+      server {
+        ...
+        
+        server_name %domain%;
+
+        listen 443 ssl;
+        
+        ssl_certificate %fullchain%;
+        ssl_certificate_key %private%;
+        
+        ...
+      }
+        
+      Then, reload nginx to take your configuration into account:
+      
+        <info>sudo service nginx reload</info>
+
+    * <info>haproxy</info>
+    
+      In your frontend configuration, add the SSL combined certificate. For instance:
+      
+      frontend www-https
+          bind haproxy_www_public_IP:443 ssl crt %combined%
+          reqadd X-Forwarded-Proto:\ https
+          default_backend www-backend
+
+    * <info>Others</info>
+    
+      Other configuration possibilities are described in the documentation (https://acmephp.github.io/acmephp/), such as
+      <info>platformsh</info>, <info>heroku</info>, etc.
+      
+<yellow>You also probably want to configure the automatic renewal of the certificate you just got.
+Setting this up is easy and described in the documentation: https://acmephp.github.io/acmephp./</yellow>
+
+EOF;
+
+        $replacements = [
+            '%private%'   => Path::canonicalize('~/.acmephp/master/private/%s/private.pem'),
+            '%cert%'      => Path::canonicalize('~/.acmephp/master/certs/%s/cert.pem'),
+            '%chain%'     => Path::canonicalize('~/.acmephp/master/certs/%s/chain.pem'),
+            '%fullchain%' => Path::canonicalize('~/.acmephp/master/certs/%s/fullchain.pem'),
+            '%combined%'  => Path::canonicalize('~/.acmephp/master/certs/%s/combined.pem'),
+        ];
+
+        $this->output->writeln(str_replace(array_keys($replacements), array_values($replacements), $help));
     }
 }
