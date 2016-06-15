@@ -64,7 +64,7 @@ class KeyPairGenerator
 
         $details = openssl_pkey_get_details($key);
 
-        if (!$details) {
+        if (!is_array($details)) {
             throw new KeyPairGenerationException(
                 sprintf(
                     'OpenSSL key parsing failed during generation with error: %s',
