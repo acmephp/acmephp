@@ -11,20 +11,39 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Cli\ActionHandler\ActionHandler;
+use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
+use AcmePhp\Cli\Repository\RepositoryInterface;
+use AcmePhp\Core\AcmeClientInterface;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\DistinguishedName;
-use AcmePhp\Ssl\KeyPair;
+use AcmePhp\Ssl\ParsedCertificate;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Webmozart\PathUtil\Path;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
 class RequestCommand extends AbstractCommand
 {
+    /**
+     * @var RepositoryInterface
+     */
+    private $repository;
+
+    /**
+     * @var AcmeClientInterface
+     */
+    private $client;
+
+    /**
+     * @var ActionHandler
+     */
+    private $actionHandler;
+
     /**
      * {@inheritdoc}
      */
@@ -33,6 +52,13 @@ class RequestCommand extends AbstractCommand
         $this->setName('request')
             ->setDefinition([
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to get a certificate for'),
+                new InputOption('force', 'f', InputOption::VALUE_NONE, 'Whether to force renewal or not (by default, renewal will be done only if the certificate expire in less than a week)'),
+                new InputOption('country', null, InputOption::VALUE_REQUIRED, 'Your country two-letters code (field "C" of the distinguished name, for instance: "US")'),
+                new InputOption('province', null, InputOption::VALUE_REQUIRED, 'Your country province (field "ST" of the distinguished name, for instance: "California")'),
+                new InputOption('locality', null, InputOption::VALUE_REQUIRED, 'Your locality (field "L" of the distinguished name, for instance: "Mountain View")'),
+                new InputOption('organization', null, InputOption::VALUE_REQUIRED, 'Your organization/company (field "O" of the distinguished name, for instance: "Acme PHP")'),
+                new InputOption('unit', null, InputOption::VALUE_REQUIRED, 'Your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")'),
+                new InputOption('email', null, InputOption::VALUE_REQUIRED, 'Your e-mail address (field "E" of the distinguished name)'),
             ])
             ->setDescription('Request a SSL certificate for a domain')
             ->setHelp(<<<'EOF'
@@ -52,98 +78,101 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $repository = $this->getRepository();
-        $client = $this->getClient();
+        $this->repository = $this->getRepository();
+        $this->client = $this->getClient();
+        $this->actionHandler = $this->getActionHandler();
+
         $domain = $input->getArgument('domain');
 
-        /*
-         * Generate domain key pair if needed
-         */
-        if (!$repository->hasDomainKeyPair($domain)) {
-            $output->writeln('<info>No domain key pair was found, generating one...</info>');
-
-            /** @var KeyPair $domainKeyPair */
-            $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
-
-            $repository->storeDomainKeyPair($domain, $domainKeyPair);
+        // Certificate renewal
+        if ($this->repository->hasDomainKeyPair($domain)
+            && $this->repository->hasDomainDistinguishedName($domain)
+            && $this->repository->hasDomainCertificate($domain)) {
+            return $this->executeRenewal($domain);
         }
 
-        $this->output->writeln('<info>Loading domain key pair...</info>');
-        $domainKeyPair = $repository->loadDomainKeyPair($domain);
+        // Certificate first request
+        return $this->executeFirstRequest($domain);
+    }
 
-        /*
-         * Generate domain distinguished name if needed
-         */
-        if (!$repository->hasDomainDistinguishedName($domain)) {
-            $output->writeln("<info>No domain distinguished name was found, creating one...</info>\n");
+    /**
+     * Request a first certificate for the given domain.
+     *
+     * @param string $domain
+     */
+    private function executeFirstRequest($domain)
+    {
+        $introduction = <<<'EOF'
 
-            $helper = $this->getHelper('question');
+There is currently no certificate for domain %s in the Acme PHP storage. As it is the
+first time you request a certificate for this domain, some configuration is required.
+ 
+<info>Generating domain key pair...</info>
+EOF;
 
-            $countryName = $helper->ask($input, $output, new Question(
-                'What is your country two-letters code (field "C" of the distinguished name, for instance: "US")? : ',
-                'FR'
-            ));
+        $this->output->writeln(sprintf($introduction, $domain));
 
-            $stateOrProvinceName = $helper->ask($input, $output, new Question(
-                'What is your country province (field "ST" of the distinguished name, for instance: "California")? : '
-            ));
+        // Generate domain key pair
+        $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
+        $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
 
-            $localityName = $helper->ask($input, $output, new Question(
-                'What is your locality (field "L" of the distinguished name, for instance: "Mountain View")? : '
-            ));
+        // Ask DistinguishedName
+        $distinguishedName = new DistinguishedName(
+            $domain,
+            $this->input->getOption('country'),
+            $this->input->getOption('province'),
+            $this->input->getOption('locality'),
+            $this->input->getOption('organization'),
+            $this->input->getOption('unit'),
+            $this->input->getOption('email')
+        );
 
-            $organizationName = $helper->ask($input, $output, new Question(
-                'What is your organization/company (field "O" of the distinguished name, for instance: "Acme PHP")? : '
-            ));
+        /** @var DistinguishedNameHelper $helper */
+        $helper = $this->getHelper('distinguished_name');
 
-            $organizationalUnitName = $helper->ask($input, $output, new Question(
-                'What is your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")? : '
-            ));
+        $asked = false;
 
-            $emailAddress = $helper->ask($input, $output, new Question(
-                'What is your e-mail address (field "E" of the distinguished name)? : '
-            ));
+        if (!$helper->isReadyForRequest($distinguishedName)) {
+            $asked = true;
 
-            $repository->storeDomainDistinguishedName($domain, new DistinguishedName(
-                $domain,
-                $countryName,
-                $stateOrProvinceName,
-                $localityName,
-                $organizationName,
-                $organizationalUnitName,
-                $emailAddress
-            ));
+            $this->output->writeln("\n\nSome informations about you or your company are required for the certificate:\n");
 
-            $output->writeln('<info>The distinguished name of this domain has been stored locally, it won\'t be asked on renewal.</info>');
+            $distinguishedName = $helper->ask(
+                $this->getHelper('question'),
+                $this->input,
+                $this->output,
+                $distinguishedName
+            );
         }
 
-        $distinguishedName = $repository->loadDomainDistinguishedName($domain);
+        $this->repository->storeDomainDistinguishedName($domain, $distinguishedName);
 
-        /*
-         * Request certificate
-         */
-        $output->writeln('<info>Creating Certificate Signing Request ...</info>');
+        if ($asked) {
+            $this->output->writeln(
+                "<info>Distinguished name informations have been stored locally for this domain (they won't be asked on renewal).</info>"
+            );
+        }
+
+        // Request
+        $this->output->writeln(sprintf('<info>Requesting first certificate for domain %s ...</info>', $domain));
         $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
+        $response = $this->client->requestCertificate($domain, $csr);
 
-        if ($repository->hasDomainCertificate($domain)) {
-            $output->writeln(sprintf('<info>Renewing certificate for domain %s ...</info>', $domain));
+        $this->repository->storeDomainCertificate($domain, $response->getCertificate());
 
-            $response = $client->requestCertificate($domain, $csr);
-            $repository->storeDomainCertificate($domain, $response->getCertificate());
+        // Post-generate actions
+        $this->output->writeln('<info>Running post-generate actions...</info>');
+        $this->actionHandler->handle($response);
 
-            $output->writeln('<info>Certificate renewed successfully!</info>');
+        // Success message
+        /** @var ParsedCertificate $parsedCertificate */
+        $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($response->getCertificate());
 
-            return;
-        }
-
-        $output->writeln(sprintf('<info>Requesting certificate for domain %s ...</info>', $domain));
-        $response = $client->requestCertificate($domain, $csr);
-
-        $repository->storeDomainCertificate($domain, $response->getCertificate());
-
-        $help = <<<'EOF'
+        $success = <<<'EOF'
 
 <info>The SSL certificate was fetched successfully!</info>
+
+This certificate is valid from now to %expiration%.
 
 5 files were created in the Acme PHP storage directory:
 
@@ -160,70 +189,78 @@ EOF
       You most likely will use this file in your webserver.
 
     * <info>%combined%</info> contains the fullchain AND your domain private key (some
-      webservers expect this format, such as haproxy).
+      webservers expect this format such as haproxy).
       
-You probably want to configure your webserver right now. Here are some instructions for standard ones:
+Read the documentation at https://acmephp.github.io/documentation/ to learn more about how to
+configure your web server and set up automatic renewal.
 
-    * <info>Apache</info>
-    
-      First, you need to enable mod_ssl for Apache. Run the following command:
-      
-        sudo a2enmod ssl
-        
-      Then, in the virtual host configuring the domain %domain%, put the following lines:
-        
-        SSLCertificateFile %cert%
-        SSLCertificateKeyFile %private%
-        SSLCertificateChainFile %chain%
-        
-      Finally, restart Apache to take your configuration into account:
-      
-        sudo service apache2 restart
-
-    * <info>nginx</info>
-    
-      In the server block configuring the domain %domain%, put the following lines:
-        
-      server {
-        server_name %domain%;
-
-        listen 443 ssl;
-        
-        ssl_certificate %fullchain%;
-        ssl_certificate_key %private%;
-      }
-        
-      Then, reload nginx to take your configuration into account:
-      
-        sudo service nginx reload
-
-    * <info>haproxy</info>
-    
-      In your frontend configuration, add the SSL combined certificate. For instance:
-      
-      frontend www-https
-          bind haproxy_www_public_IP:443 ssl crt %combined%
-          reqadd X-Forwarded-Proto:\ https
-          default_backend www-backend
-
-    * <info>Others</info>
-    
-      Other configuration possibilities are described in the documentation (https://acmephp.github.io/acmephp/), such as
-      platformsh, heroku, etc.
-      
-<comment>You also probably want to configure the automatic renewal of the certificate you just got.
-Setting this up is easy and described in the documentation: https://acmephp.github.io/acmephp./</comment>
+To renew your certificate manually, simply re-run this command.
 
 EOF;
 
+        $masterPath = $this->getContainer()->getParameter('app.storage_directory');
+
         $replacements = [
-            '%private%'   => Path::canonicalize('~/.acmephp/master/private/'.$domain.'/private.pem'),
-            '%cert%'      => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/cert.pem'),
-            '%chain%'     => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/chain.pem'),
-            '%fullchain%' => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/fullchain.pem'),
-            '%combined%'  => Path::canonicalize('~/.acmephp/master/certs/'.$domain.'/combined.pem'),
+            '%expiration' => $parsedCertificate->getValidTo()->format(\DateTime::ISO8601),
+            '%private%'   => $masterPath.'/private/'.$domain.'/private.pem',
+            '%cert%'      => $masterPath.'/certs/'.$domain.'/cert.pem',
+            '%chain%'     => $masterPath.'/certs/'.$domain.'/chain.pem',
+            '%fullchain%' => $masterPath.'/certs/'.$domain.'/fullchain.pem',
+            '%combined%'  => $masterPath.'/certs/'.$domain.'/combined.pem',
         ];
 
-        $this->output->writeln(str_replace(array_keys($replacements), array_values($replacements), $help));
+        $this->output->writeln(str_replace(array_keys($replacements), array_values($replacements), $success));
+    }
+
+    /**
+     * Renew a given domain certificate.
+     *
+     * @param string $domain
+     */
+    private function executeRenewal($domain)
+    {
+        // Check expiration date to avoid too much renewal
+        $certificate = $this->repository->loadDomainCertificate($domain);
+
+        if (!$this->input->getOption('force')) {
+            /** @var ParsedCertificate $parsedCertificate */
+            $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($certificate);
+
+            if ($parsedCertificate->getValidTo()->format('U') - time() >= 604800) {
+                $this->output->writeln(sprintf(
+                        '<info>Current certificate is valid until %s, renewal is not necessary. Use --force to force renewal.</info>',
+                        $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'))
+                );
+
+                return;
+            }
+
+            $this->output->writeln(sprintf(
+                    '<info>Current certificate will expire in less than a week (%s), renewal is required.</info>',
+                    $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'))
+            );
+        } else {
+            $this->output->writeln('<info>Forced renewal.</info>');
+        }
+
+        // Key pair
+        $this->output->writeln('Loading domain key pair...');
+        $domainKeyPair = $this->repository->loadDomainKeyPair($domain);
+
+        // Distinguished name
+        $this->output->writeln('Loading domain distinguished name...');
+        $distinguishedName = $this->repository->loadDomainDistinguishedName($domain);
+
+        // Renewal
+        $this->output->writeln(sprintf('Renewing certificate for domain %s ...', $domain));
+        $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
+        $response = $this->client->requestCertificate($domain, $csr);
+        $this->repository->storeDomainCertificate($domain, $response->getCertificate());
+
+        // Post-generate actions
+        $this->output->writeln('Running post-generate actions...');
+        $this->actionHandler->handle($response);
+
+        $this->output->writeln('<info>Certificate renewed successfully!</info>');
     }
 }

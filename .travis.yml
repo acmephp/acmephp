@@ -29,6 +29,7 @@ matrix:
 before_install:
     - phpenv config-rm xdebug.ini
     - composer update --no-interaction --prefer-dist $COMPOSER_FLAGS
+    - ./tests/setup.sh
 
 script: ./tests/run.sh
 

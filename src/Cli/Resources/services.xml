@@ -7,6 +7,7 @@
 
         <!-- SSL -->
         <service id="ssl.key_pair_generator" class="AcmePhp\Ssl\Generator\KeyPairGenerator" />
+        <service id="ssl.certificate_parser" class="AcmePhp\Ssl\Parser\CertificateParser" />
         <service id="ssl.key_parser" class="AcmePhp\Ssl\Parser\KeyParser" />
         <service id="ssl.certificate_parser" class="AcmePhp\Ssl\Parser\CertificateParser" />
         <service id="ssl.csr_signer" class="AcmePhp\Ssl\Signer\CertificateRequestSigner" />
@@ -43,7 +44,7 @@
         </service>
 
         <!-- Repository -->
-        <service id="repository.master_storage" class="League\Flysystem\Filesystem">
+        <service id="repository.master_storage" class="League\Flysystem\Filesystem" public="false">
             <argument type="service">
                 <service class="League\Flysystem\Adapter\Local">
                     <argument>%app.storage_directory%</argument>
@@ -51,7 +52,7 @@
             </argument>
         </service>
 
-        <service id="repository.backup_storage" class="League\Flysystem\Filesystem">
+        <service id="repository.backup_storage" class="League\Flysystem\Filesystem" public="false">
             <argument type="service">
                 <service class="League\Flysystem\Adapter\Local">
                     <argument>%app.backup_directory%</argument>
@@ -64,6 +65,25 @@
             <argument type="service" id="repository.master_storage" />
             <argument type="service" id="repository.backup_storage" />
             <argument>%storage.enable_backup%</argument>
+        </service>
+
+        <!-- Actions -->
+        <service id="action.build_nginxproxy" class="AcmePhp\Cli\Action\BuildNginxProxyAction">
+            <argument type="service" id="repository" />
+            <argument type="service" id="serializer" />
+        </service>
+
+        <service id="action.push_ftp" class="AcmePhp\Cli\Action\PushFtpAction">
+            <argument type="service" id="repository.master_storage" />
+        </service>
+
+        <service id="action.push_sftp" class="AcmePhp\Cli\Action\PushSftpAction">
+            <argument type="service" id="repository.master_storage" />
+        </service>
+
+        <service id="action_handler" class="AcmePhp\Cli\ActionHandler\ActionHandler">
+            <argument type="service" id="container" />
+            <argument>%storage.post_generate%</argument>
         </service>
 
     </services>

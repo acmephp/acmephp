@@ -20,7 +20,6 @@ use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\PrivateKey;
 use AcmePhp\Ssl\PublicKey;
-use League\Flysystem\AdapterInterface;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -314,13 +313,9 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * Save a given string into a given path handling backup.
-     *
-     * @param string $path
-     * @param string $content
-     * @param string $visibility The visibilty to use for this file.
+     * {@inheritdoc}
      */
-    private function save($path, $content, $visibility = AdapterInterface::VISIBILITY_PRIVATE)
+    public function save($path, $content, $visibility = self::VISIBILITY_PRIVATE)
     {
         if (!$this->master->has($path)) {
             // File creation: remove from backup if it existed and warm-up both master and backup
