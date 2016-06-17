@@ -8,6 +8,7 @@
         <!-- SSL -->
         <service id="ssl.key_pair_generator" class="AcmePhp\Ssl\Generator\KeyPairGenerator" />
         <service id="ssl.key_parser" class="AcmePhp\Ssl\Parser\KeyParser" />
+        <service id="ssl.certificate_parser" class="AcmePhp\Ssl\Parser\CertificateParser" />
         <service id="ssl.csr_signer" class="AcmePhp\Ssl\Signer\CertificateRequestSigner" />
         <service id="ssl.data_signer" class="AcmePhp\Ssl\Signer\DataSigner" />
 
@@ -42,7 +43,7 @@
         </service>
 
         <!-- Repository -->
-        <service id="repository.master_storage" class="League\Flysystem\Filesystem" public="false">
+        <service id="repository.master_storage" class="League\Flysystem\Filesystem">
             <argument type="service">
                 <service class="League\Flysystem\Adapter\Local">
                     <argument>%app.storage_directory%</argument>
@@ -50,7 +51,7 @@
             </argument>
         </service>
 
-        <service id="repository.backup_storage" class="League\Flysystem\Filesystem" public="false">
+        <service id="repository.backup_storage" class="League\Flysystem\Filesystem">
             <argument type="service">
                 <service class="League\Flysystem\Adapter\Local">
                     <argument>%app.backup_directory%</argument>
