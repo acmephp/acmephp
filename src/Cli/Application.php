@@ -15,6 +15,7 @@ use AcmePhp\Cli\Command\AuthorizeCommand;
 use AcmePhp\Cli\Command\CheckCommand;
 use AcmePhp\Cli\Command\RegisterCommand;
 use AcmePhp\Cli\Command\RequestCommand;
+use AcmePhp\Cli\Command\StatusCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputOption;
 use Webmozart\PathUtil\Path;
@@ -44,6 +45,7 @@ class Application extends BaseApplication
             new AuthorizeCommand(),
             new CheckCommand(),
             new RequestCommand(),
+            new StatusCommand(),
         ]);
     }
 
