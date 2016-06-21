@@ -16,6 +16,7 @@ use AcmePhp\Cli\Command\CheckCommand;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
 use AcmePhp\Cli\Command\RegisterCommand;
 use AcmePhp\Cli\Command\RequestCommand;
+use AcmePhp\Cli\Command\SelfUpdateCommand;
 use AcmePhp\Cli\Command\StatusCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,6 +48,7 @@ class Application extends BaseApplication
             new CheckCommand(),
             new RequestCommand(),
             new StatusCommand(),
+            new SelfUpdateCommand(),
         ]);
     }
 
