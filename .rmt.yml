@@ -1,4 +1,6 @@
-vcs: git
+vcs:
+    name: git
+    sign-tag: true
 
 version-generator:
     name: semantic
