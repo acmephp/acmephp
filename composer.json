@@ -42,7 +42,8 @@
         "league/flysystem": "^1.0.19",
         "league/flysystem-sftp": "^1.0.7",
         "webmozart/assert": "^1.0",
-        "webmozart/path-util": "^2.3"
+        "webmozart/path-util": "^2.3",
+        "padraic/phar-updater": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.22",

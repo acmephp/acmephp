@@ -14,7 +14,7 @@ prerequisites:
 
 pre-release-actions:
     update-version-class:
-        class: AcmePhp\Cli\Application
+        class: src/Cli/Application.php
     vcs-commit: ~
 
 post-release-actions:
