@@ -23,6 +23,9 @@ use AcmePhp\Ssl\KeyPair;
  */
 interface RepositoryInterface
 {
+    const VISIBILITY_PUBLIC = 'public';
+    const VISIBILITY_PRIVATE = 'private';
+
     /**
      * Extract important elements from the given certificate response and store them
      * in the repository.
@@ -195,4 +198,13 @@ interface RepositoryInterface
      * @return Certificate
      */
     public function loadDomainCertificate($domain);
+
+    /**
+     * Save a given string into a given path handling backup.
+     *
+     * @param string $path
+     * @param string $content
+     * @param string $visibility The visibilty to use for this file.
+     */
+    public function save($path, $content, $visibility = self::VISIBILITY_PRIVATE);
 }

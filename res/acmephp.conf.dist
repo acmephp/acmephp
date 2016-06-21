@@ -25,32 +25,37 @@ storage:
     #
     # See the documentation to learn how to create your own action.
     #
-    post_generate:
+    post_generate: ~
+
+        #
+        # Build a file structure suited for nginx-proxy (https://github.com/jwilder/nginx-proxy)
+        #
+        # - action: build_nginxproxy
 
         #
         # Mirror your local storage directory on a FTP host
         #
-        - action: push_ftp
-          root: /acmephp
-          host: ftp.example.com
-          username: username
-          password: password
-          # port: 21
-          # passive: true
-          # ssl: true
-          # timeout: 30
+        # - action: push_ftp
+        #   root: /acmephp
+        #   host: ftp.example.com
+        #   username: username
+        #   password: password
+        #   # port: 21
+        #   # passive: true
+        #   # ssl: true
+        #   # timeout: 30
 
         #
         # Mirror your local storage directory on a SFTP host
         #
-        - action: push_sftp
-          root: /acmephp
-          host: sftp.example.com
-          username: username
-          password: password
-          # port: 21
-          # private_key: path/to/or/contents/of/privatekey
-          # timeout: 30
+        # - action: push_sftp
+        #   root: /acmephp
+        #   host: sftp.example.com
+        #   username: username
+        #   password: password
+        #   # port: 21
+        #   # private_key: path/to/or/contents/of/privatekey
+        #   # timeout: 30
 
         #
         # Use the Platform.sh CLI to update the certificate associated to your domain:
@@ -58,7 +63,7 @@ storage:
         #
         # Platform.sh CLI needs to be installed for this action to work.
         #
-        - action: update_platformsh
+        # - action: update_platformsh
 
         #
         # Use the Heorku CLI to update the certificate associated to your domain:
@@ -66,12 +71,7 @@ storage:
         #
         # Heroku CLI needs to be installed for this action to work.
         #
-        - action: update_heroku
-
-        #
-        # Build a file structure suited for nginx-proxy (https://github.com/jwilder/nginx-proxy)
-        #
-        - action: build_nginxproxy
+        # - action: update_heroku
 
 
 ###################################################################

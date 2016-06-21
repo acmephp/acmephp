@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Cli\ActionRegistry\ActionHander;
 use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Configuration\AcmeConfiguration;
 use AcmePhp\Cli\Repository\RepositoryInterface;
@@ -71,6 +72,14 @@ abstract class AbstractCommand extends Command
     }
 
     /**
+     * @return ActionHander
+     */
+    protected function getActionHandler()
+    {
+        return $this->getContainer()->get('action_handler');
+    }
+
+    /**
      * @return AcmeClient
      */
     protected function getClient()
@@ -113,9 +122,10 @@ abstract class AbstractCommand extends Command
 
         // Application services and parameters
         $this->container->set('app', $this->getApplication());
+        $this->container->set('container', $this->container);
         $this->container->setParameter('app.version', Application::VERSION);
-        $this->container->setParameter('app.storage_directory', Application::getStorageDirectory());
-        $this->container->setParameter('app.backup_directory', Application::getBackupDirectory());
+        $this->container->setParameter('app.storage_directory', $this->getApplication()->getStorageDirectory());
+        $this->container->setParameter('app.backup_directory', $this->getApplication()->getBackupDirectory());
 
         // Load configuration
         $processor = new Processor();
@@ -136,8 +146,8 @@ abstract class AbstractCommand extends Command
      */
     private function initializeConfiguration()
     {
-        $configFile = Application::getConfigFile();
-        $referenceFile = Application::getConfigReferenceFile();
+        $configFile = $this->getApplication()->getConfigFile();
+        $referenceFile = $this->getApplication()->getConfigReferenceFile();
 
         if (!file_exists($configFile)) {
             $filesystem = new Filesystem();

@@ -13,6 +13,7 @@ namespace AcmePhp\Cli;
 
 use AcmePhp\Cli\Command\AuthorizeCommand;
 use AcmePhp\Cli\Command\CheckCommand;
+use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
 use AcmePhp\Cli\Command\RegisterCommand;
 use AcmePhp\Cli\Command\RequestCommand;
 use AcmePhp\Cli\Command\StatusCommand;
@@ -52,6 +53,17 @@ class Application extends BaseApplication
     /**
      * {@inheritdoc}
      */
+    protected function getDefaultHelperSet()
+    {
+        $set = parent::getDefaultHelperSet();
+        $set->set(new DistinguishedNameHelper());
+
+        return $set;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getDefaultInputDefinition()
     {
         $definition = parent::getDefaultInputDefinition();
@@ -70,7 +82,7 @@ class Application extends BaseApplication
     /**
      * @return string
      */
-    public static function getConfigFile()
+    public function getConfigFile()
     {
         return Path::canonicalize('~/.acmephp/acmephp.conf');
     }
@@ -78,7 +90,7 @@ class Application extends BaseApplication
     /**
      * @return string
      */
-    public static function getConfigReferenceFile()
+    public function getConfigReferenceFile()
     {
         return Path::canonicalize(__DIR__.'/../../res/acmephp.conf.dist');
     }
@@ -86,7 +98,7 @@ class Application extends BaseApplication
     /**
      * @return string
      */
-    public static function getStorageDirectory()
+    public function getStorageDirectory()
     {
         return Path::canonicalize('~/.acmephp/master');
     }
@@ -94,7 +106,7 @@ class Application extends BaseApplication
     /**
      * @return string
      */
-    public static function getBackupDirectory()
+    public function getBackupDirectory()
     {
         return Path::canonicalize('~/.acmephp/backup');
     }
