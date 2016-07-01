@@ -33,7 +33,7 @@ Acme PHP provides several major improvements over the default clients:
 
 ## Documentation
 
-Read the official [Acme PHP documentation](https://acmephp.github.io/acmephp/).
+Read the official [Acme PHP documentation](https://acmephp.github.io).
 
 ## Launch the Test suite
 
