@@ -83,7 +83,9 @@ storage:
 
 monitoring: ~   # Monitoring is disabled by default
 
-# You can enabled it by configuring at least one alert handler:
+# You can enabled it by configuring at least one alert handler.
+# You can change the default handler level to decide when to be alerted
+# (only when an error occurs or every time the CRON is started).
 #monitoring:
 #    email:   # Only SMTP(S) support for now
 #        to: galopintitouan@gmail.com
@@ -92,8 +94,11 @@ monitoring: ~   # Monitoring is disabled by default
 #        # username: ~
 #        # password: ~
 #        # encryption: ~
+#        # subject: An error occured during Acme PHP CRON renewal
+#        # level: error     # By default, only on error for email handler
 #
 #    slack:
 #        token: your_token
-#        channel: general
-#        # username: ACMEPHP
+#        channel: #general
+#        # username: Acme PHP
+#        # level: info      # By default, on every CRON for slack handler

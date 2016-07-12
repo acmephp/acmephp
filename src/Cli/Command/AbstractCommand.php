@@ -11,7 +11,7 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Cli\ActionRegistry\ActionHander;
+use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Configuration\AcmeConfiguration;
 use AcmePhp\Cli\Repository\RepositoryInterface;
@@ -72,7 +72,7 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * @return ActionHander
+     * @return ActionHandler
      */
     protected function getActionHandler()
     {
@@ -137,8 +137,6 @@ abstract class AbstractCommand extends Command
         // Load services
         $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources'));
         $loader->load('services.xml');
-
-        $this->container->compile();
     }
 
     /**

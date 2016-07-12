@@ -86,5 +86,14 @@
             <argument>%storage.post_generate%</argument>
         </service>
 
+        <!-- Monitoring -->
+        <service id="monitoring.email" class="AcmePhp\Cli\Monitoring\EmailHandlerBuilder" />
+        <service id="monitoring.slack" class="AcmePhp\Cli\Monitoring\SlackHandlerBuilder" />
+
+        <service id="monitoring_factory" class="AcmePhp\Cli\Monitoring\MonitoringLoggerFactory">
+            <argument type="service" id="container" />
+            <argument>%monitoring.handlers%</argument>
+        </service>
+
     </services>
 </container>
