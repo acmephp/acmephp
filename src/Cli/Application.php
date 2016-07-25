@@ -27,7 +27,7 @@ use Webmozart\PathUtil\Path;
  */
 class Application extends BaseApplication
 {
-    const VERSION = '1.0.0-alpha8';
+    const VERSION = '1.0.0-dev';
 
     /**
      * {@inheritdoc}
