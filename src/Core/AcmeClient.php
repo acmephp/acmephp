@@ -90,7 +90,7 @@ class AcmeClient implements AcmeClientInterface
      */
     public function requestAuthorization($domain)
     {
-        Assert::string($domain, 'requestChallenge::$domain expected a string. Got: %s');
+        Assert::string($domain, 'requestAuthorization::$domain expected a string. Got: %s');
 
         $payload = [
             'resource'   => ResourcesDirectory::NEW_AUTHORIZATION,
@@ -143,7 +143,7 @@ class AcmeClient implements AcmeClientInterface
      */
     public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180)
     {
-        Assert::integer($timeout, 'checkChallenge::$timeout expected an integer. Got: %s');
+        Assert::integer($timeout, 'challengeAuthorization::$timeout expected an integer. Got: %s');
 
         $payload = [
             'resource'         => ResourcesDirectory::CHALLENGE,
