@@ -23,6 +23,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 
 class SecureHttpClientTest extends \PHPUnit_Framework_TestCase
@@ -135,7 +136,7 @@ class SecureHttpClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(RequestInterface::class, $request);
         $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('/acme/new-reg', $request->getUri());
+        $this->assertEquals('/acme/new-reg', ($request->getUri() instanceof Uri) ? $request->getUri()->getPath() : $request->getUri());
 
         $body = \GuzzleHttp\Psr7\copy_to_string($request->getBody());
         $payload = @json_decode($body, true);
