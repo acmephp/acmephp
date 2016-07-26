@@ -38,19 +38,23 @@ Read the official [Acme PHP documentation](https://acmephp.github.io).
 ## Launch the Test suite
 
 The Acme PHP test suite uses the Docker Boulder image to create an ACME server.
-
-In the Acme PHP root directory:
+To launch the test suite, you need to setup the proper Docker environment for the suite.
+Useful scripts are available under the `tests` directory: in the Acme PHP root directory,
+execute the following:
 
 ```
-# Get the dev dependencies
-composer update
-
-# Start the ACME server Docker container
-docker run -d --net host acmephp/testing-ca
+# Create the Docker environment required for the suite
+sudo tests/setup.sh
 
 # Run the tests
-vendor/bin/phpunit
+tests/run.sh
+
+# Clean the docker environment
+tests/teardown.sh
 ```
+
+**Note**: you may have boulder errors sometimes in tests. Simply ignore them and rerun the suite,
+they are due to an issue in the container DNS.
 
 **Warning**: as the acmephp/testing-ca Docker image needs to be mapped to the host network,
 you may have ports conflicts. See [https://github.com/acmephp/testing-ca](https://github.com/acmephp/testing-ca)

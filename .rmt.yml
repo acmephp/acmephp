@@ -1,21 +1,20 @@
 vcs:
-    name: git
-    sign-tag: true
+  name: git
+  sign-tag: true
 
 version-generator:
-    name: semantic
-    allow-label: true
+  name: semantic
+  allow-label: true
 
 version-persister: vcs-tag
 
 prerequisites:
-    working-copy-check: ~
-    display-last-changes: ~
+  working-copy-check: ~
+  display-last-changes: ~
 
 pre-release-actions:
-    update-version-class:
-        class: src/Cli/Application.php
-    vcs-commit: ~
-
-post-release-actions:
-    vcs-publish: ~
+  changelog-update:
+    format: custom
+    file: CHANGELOG.md
+    dump-commits: true
+  vcs-commit: ~
