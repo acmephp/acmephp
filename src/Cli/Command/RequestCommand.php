@@ -18,11 +18,11 @@ use AcmePhp\Core\AcmeClientInterface;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\ParsedCertificate;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
@@ -219,48 +219,69 @@ EOF;
      */
     private function executeRenewal($domain)
     {
-        // Check expiration date to avoid too much renewal
-        $certificate = $this->repository->loadDomainCertificate($domain);
+        /** @var LoggerInterface $monitoringLogger */
+        $monitoringLogger = $this->getContainer()->get('monitoring_factory')->createLogger();
 
-        if (!$this->input->getOption('force')) {
-            /** @var ParsedCertificate $parsedCertificate */
-            $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($certificate);
+        try {
+            // Check expiration date to avoid too much renewal
+            $certificate = $this->repository->loadDomainCertificate($domain);
 
-            if ($parsedCertificate->getValidTo()->format('U') - time() >= 604800) {
-                $this->output->writeln(sprintf(
+            if (!$this->input->getOption('force')) {
+                /** @var ParsedCertificate $parsedCertificate */
+                $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($certificate);
+
+                if ($parsedCertificate->getValidTo()->format('U') - time() >= 604800) {
+                    $monitoringLogger->debug('Certificate does not need renewal', [
+                        'domain'      => $domain,
+                        'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
+                    ]);
+
+                    $this->output->writeln(sprintf(
                         '<info>Current certificate is valid until %s, renewal is not necessary. Use --force to force renewal.</info>',
                         $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'))
-                );
+                    );
 
-                return;
-            }
+                    return;
+                }
 
-            $this->output->writeln(sprintf(
+                $monitoringLogger->debug('Certificate needs renewal', [
+                    'domain'      => $domain,
+                    'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
+                ]);
+
+                $this->output->writeln(sprintf(
                     '<info>Current certificate will expire in less than a week (%s), renewal is required.</info>',
                     $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'))
-            );
-        } else {
-            $this->output->writeln('<info>Forced renewal.</info>');
+                );
+            } else {
+                $this->output->writeln('<info>Forced renewal.</info>');
+            }
+
+            // Key pair
+            $this->output->writeln('Loading domain key pair...');
+            $domainKeyPair = $this->repository->loadDomainKeyPair($domain);
+
+            // Distinguished name
+            $this->output->writeln('Loading domain distinguished name...');
+            $distinguishedName = $this->repository->loadDomainDistinguishedName($domain);
+
+            // Renewal
+            $this->output->writeln(sprintf('Renewing certificate for domain %s ...', $domain));
+            $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
+            $response = $this->client->requestCertificate($domain, $csr);
+            $this->repository->storeDomainCertificate($domain, $response->getCertificate());
+
+            // Post-generate actions
+            $this->output->writeln('Running post-generate actions...');
+            $this->actionHandler->handle($response);
+
+            $this->output->writeln('<info>Certificate renewed successfully!</info>');
+
+            $monitoringLogger->info('Certificate renewed successfully', ['domain' => $domain]);
+        } catch (\Exception $e) {
+            $monitoringLogger->alert('A critical error occured during certificate renewal', ['exception' => $e]);
+        } catch (\Throwable $e) {
+            $monitoringLogger->alert('A critical error occured during certificate renewal', ['exception' => $e]);
         }
-
-        // Key pair
-        $this->output->writeln('Loading domain key pair...');
-        $domainKeyPair = $this->repository->loadDomainKeyPair($domain);
-
-        // Distinguished name
-        $this->output->writeln('Loading domain distinguished name...');
-        $distinguishedName = $this->repository->loadDomainDistinguishedName($domain);
-
-        // Renewal
-        $this->output->writeln(sprintf('Renewing certificate for domain %s ...', $domain));
-        $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
-        $response = $this->client->requestCertificate($domain, $csr);
-        $this->repository->storeDomainCertificate($domain, $response->getCertificate());
-
-        // Post-generate actions
-        $this->output->writeln('Running post-generate actions...');
-        $this->actionHandler->handle($response);
-
-        $this->output->writeln('<info>Certificate renewed successfully!</info>');
     }
 }

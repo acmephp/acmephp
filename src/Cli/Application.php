@@ -14,6 +14,7 @@ namespace AcmePhp\Cli;
 use AcmePhp\Cli\Command\AuthorizeCommand;
 use AcmePhp\Cli\Command\CheckCommand;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
+use AcmePhp\Cli\Command\MonitoringTestCommand;
 use AcmePhp\Cli\Command\RegisterCommand;
 use AcmePhp\Cli\Command\RequestCommand;
 use AcmePhp\Cli\Command\SelfUpdateCommand;
@@ -49,6 +50,7 @@ class Application extends BaseApplication
             new RequestCommand(),
             new StatusCommand(),
             new SelfUpdateCommand(),
+            new MonitoringTestCommand(),
         ]);
     }
 
