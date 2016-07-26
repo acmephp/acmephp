@@ -9,7 +9,6 @@ version-generator:
 version-persister: vcs-tag
 
 prerequisites:
-  working-copy-check: ~
   display-last-changes: ~
 
 pre-release-actions:
@@ -18,3 +17,7 @@ pre-release-actions:
     file: CHANGELOG.md
     dump-commits: true
   vcs-commit: ~
+
+post-release-actions:
+  vcs-publish:
+    ask-confirmation: true
