@@ -57,22 +57,6 @@ storage:
         #   # private_key: path/to/or/contents/of/privatekey
         #   # timeout: 30
 
-        #
-        # Use the Platform.sh CLI to update the certificate associated to your domain:
-        #       platform domain:add maindomain.com --cert=certfile.crt --key=domainkey.key
-        #
-        # Platform.sh CLI needs to be installed for this action to work.
-        #
-        # - action: update_platformsh
-
-        #
-        # Use the Heorku CLI to update the certificate associated to your domain:
-        #       heroku certs:add certfile.crt domainkey.key
-        #
-        # Heroku CLI needs to be installed for this action to work.
-        #
-        # - action: update_heroku
-
 
 ###################################################################
 # Monitoring
