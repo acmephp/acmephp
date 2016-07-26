@@ -16,6 +16,7 @@ use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -33,10 +34,11 @@ class DistinguishedNameHelper extends Helper
 
     /**
      * @param DistinguishedName $distinguishedName
+     * @param bool $disableAlternateDomains
      *
      * @return bool
      */
-    public function isReadyForRequest(DistinguishedName $distinguishedName)
+    public function isReadyForRequest(DistinguishedName $distinguishedName, $disableAlternateDomains)
     {
         return $distinguishedName->getCountryName()
             && $distinguishedName->getStateOrProvinceName()
@@ -44,7 +46,8 @@ class DistinguishedNameHelper extends Helper
             && $distinguishedName->getOrganizationName()
             && $distinguishedName->getOrganizationalUnitName()
             && $distinguishedName->getEmailAddress()
-            && $distinguishedName->getCommonName();
+            && $distinguishedName->getCommonName()
+            && $disableAlternateDomains;
     }
 
     /**
@@ -52,10 +55,11 @@ class DistinguishedNameHelper extends Helper
      * @param InputInterface    $input
      * @param OutputInterface   $output
      * @param DistinguishedName $distinguishedName
+     * @param bool $disableAlternateDomains
      *
      * @return DistinguishedName
      */
-    public function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, DistinguishedName $distinguishedName)
+    public function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, DistinguishedName $distinguishedName, $disableAlternateDomains)
     {
         $countryName = $distinguishedName->getCountryName() ?: $helper->ask($input, $output, new Question(
             'What is your country two-letters code (field "C" of the distinguished name, for instance: "US")? : ',
@@ -82,6 +86,31 @@ class DistinguishedNameHelper extends Helper
             'What is your e-mail address (field "E" of the distinguished name)? : '
         ));
 
+        $alternateDomains = [];
+
+        if (!$disableAlternateDomains) {
+            $output->write("\n");
+            $output->writeln('Do you want to handle multiple domains with this certificate?');
+            $output->writeln('Please be aware that this may reduce your certificate compatibility with very old devices.');
+            $output->writeln('Full compatibility table is available at https://en.wikipedia.org/wiki/Server_Name_Indication#Support');
+            $output->write("\n");
+
+            $sni = $helper->ask($input, $output, new ConfirmationQuestion(
+                'Do you want to handle multiple domains with this certificate? [y/N]: ',
+                false
+            ));
+
+            if ($sni) {
+                $question = new Question('Domain to add to the certificate (leave blank to finish): ');
+
+                do {
+                    if ($alternateDomain = $helper->ask($input, $output, $question)) {
+                        $alternateDomains[] = $alternateDomain;
+                    }
+                } while (!empty($alternateDomain));
+            }
+        }
+
         return new DistinguishedName(
             $distinguishedName->getCommonName(),
             $countryName,
@@ -90,7 +119,7 @@ class DistinguishedNameHelper extends Helper
             $organizationName,
             $organizationalUnitName,
             $emailAddress,
-            $distinguishedName->getSubjectAlternativeNames()
+            array_merge($distinguishedName->getSubjectAlternativeNames(), $alternateDomains)
         );
     }
 }
