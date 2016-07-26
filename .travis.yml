@@ -19,16 +19,20 @@ matrix:
           services:
             - docker
         - php: 7.0
+          env: deps=low
           services:
             - docker
-        - php: 7.0
-          env: COMPOSER_FLAGS='--prefer-lowest'
+        - php: 7.1
+          env: deps=high
           services:
             - docker
 
 before_install:
-    - phpenv config-rm xdebug.ini
-    - composer update --no-interaction --prefer-dist $COMPOSER_FLAGS
+    - stty cols 120
+    - phpenv config-rm xdebug.ini || echo "xdebug not available"
+    - if [[ $deps = high ]]; then composer update --no-interaction --no-progress --ansi; fi
+    - if [[ $deps = low ]]; then composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable; fi
+    - if [[ ! $deps ]]; then composer install --no-interaction --no-progress --ansi; fi
     - ./tests/setup.sh
 
 script: ./tests/run.sh
