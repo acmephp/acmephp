@@ -1,3 +1,8 @@
+* 1.0.0-alpha10 (2016-08-16)
+
+ * 3bfa96c Update RegisterCommand.php (#21)
+ * d3d779f Bump version
+
 * 1.0.0-alpha9 (2016-07-27)
 
  * 3e89b38 Remove unsupported actions from the dist file for the moment
