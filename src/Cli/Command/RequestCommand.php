@@ -51,7 +51,7 @@ class RequestCommand extends AbstractCommand
     {
         $this->setName('request')
             ->setDefinition([
-                new InputArgument('domain', InputArgument::REQUIRED, 'The domain to get a certificate for'),
+                new InputArgument('domain', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'The domains to get a certificate for'),
                 new InputOption('force', 'f', InputOption::VALUE_NONE, 'Whether to force renewal or not (by default, renewal will be done only if the certificate expire in less than a week)'),
                 new InputOption('country', null, InputOption::VALUE_REQUIRED, 'Your country two-letters code (field "C" of the distinguished name, for instance: "US")'),
                 new InputOption('province', null, InputOption::VALUE_REQUIRED, 'Your country province (field "ST" of the distinguished name, for instance: "California")'),
@@ -82,25 +82,28 @@ EOF
         $this->client = $this->getClient();
         $this->actionHandler = $this->getActionHandler();
 
-        $domain = $input->getArgument('domain');
+        $domains = $input->getArgument('domain');
+        $mainDomain = array_shift($domains);
 
         // Certificate renewal
-        if ($this->repository->hasDomainKeyPair($domain)
-            && $this->repository->hasDomainDistinguishedName($domain)
-            && $this->repository->hasDomainCertificate($domain)) {
-            return $this->executeRenewal($domain);
+        if ($this->repository->hasDomainCertificate($mainDomain)
+            && $this->repository->hasDomainKeyPair($mainDomain)
+            && $this->repository->hasDomainDistinguishedName($mainDomain)
+        ) {
+            return $this->executeRenewal($mainDomain, $domains);
         }
 
         // Certificate first request
-        return $this->executeFirstRequest($domain);
+        return $this->executeFirstRequest($mainDomain, $domains);
     }
 
     /**
      * Request a first certificate for the given domain.
      *
-     * @param string $domain
+     * @param string $mainDomain
+     * @param array  $domains
      */
-    private function executeFirstRequest($domain)
+    private function executeFirstRequest($mainDomain, array $domains)
     {
         $introduction = <<<'EOF'
 
@@ -110,21 +113,22 @@ first time you request a certificate for this domain, some configuration is requ
 <info>Generating domain key pair...</info>
 EOF;
 
-        $this->output->writeln(sprintf($introduction, $domain));
+        $this->output->writeln(sprintf($introduction, $mainDomain));
 
         // Generate domain key pair
         $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
-        $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
+        $this->repository->storeDomainKeyPair($mainDomain, $domainKeyPair);
 
         // Ask DistinguishedName
         $distinguishedName = new DistinguishedName(
-            $domain,
+            $mainDomain,
             $this->input->getOption('country'),
             $this->input->getOption('province'),
             $this->input->getOption('locality'),
             $this->input->getOption('organization'),
             $this->input->getOption('unit'),
-            $this->input->getOption('email')
+            $this->input->getOption('email'),
+            $domains
         );
 
         /** @var DistinguishedNameHelper $helper */
@@ -135,7 +139,9 @@ EOF;
         if (!$helper->isReadyForRequest($distinguishedName)) {
             $asked = true;
 
-            $this->output->writeln("\n\nSome informations about you or your company are required for the certificate:\n");
+            $this->output->writeln(
+                "\n\nSome informations about you or your company are required for the certificate:\n"
+            );
 
             $distinguishedName = $helper->ask(
                 $this->getHelper('question'),
@@ -145,7 +151,7 @@ EOF;
             );
         }
 
-        $this->repository->storeDomainDistinguishedName($domain, $distinguishedName);
+        $this->repository->storeDomainDistinguishedName($mainDomain, $distinguishedName);
 
         if ($asked) {
             $this->output->writeln(
@@ -154,11 +160,11 @@ EOF;
         }
 
         // Request
-        $this->output->writeln(sprintf('<info>Requesting first certificate for domain %s ...</info>', $domain));
+        $this->output->writeln(sprintf('<info>Requesting first certificate for domain %s ...</info>', $mainDomain));
         $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
-        $response = $this->client->requestCertificate($domain, $csr);
+        $response = $this->client->requestCertificate($mainDomain, $csr);
 
-        $this->repository->storeDomainCertificate($domain, $response->getCertificate());
+        $this->repository->storeDomainCertificate($mainDomain, $response->getCertificate());
 
         // Post-generate actions
         $this->output->writeln('<info>Running post-generate actions...</info>');
@@ -202,11 +208,11 @@ EOF;
 
         $replacements = [
             '%expiration' => $parsedCertificate->getValidTo()->format(\DateTime::ISO8601),
-            '%private%'   => $masterPath.'/private/'.$domain.'/private.pem',
-            '%cert%'      => $masterPath.'/certs/'.$domain.'/cert.pem',
-            '%chain%'     => $masterPath.'/certs/'.$domain.'/chain.pem',
-            '%fullchain%' => $masterPath.'/certs/'.$domain.'/fullchain.pem',
-            '%combined%'  => $masterPath.'/certs/'.$domain.'/combined.pem',
+            '%private%'   => $masterPath.'/private/'.$mainDomain.'/private.pem',
+            '%cert%'      => $masterPath.'/certs/'.$mainDomain.'/cert.pem',
+            '%chain%'     => $masterPath.'/certs/'.$mainDomain.'/chain.pem',
+            '%fullchain%' => $masterPath.'/certs/'.$mainDomain.'/fullchain.pem',
+            '%combined%'  => $masterPath.'/certs/'.$mainDomain.'/combined.pem',
         ];
 
         $this->output->writeln(str_replace(array_keys($replacements), array_values($replacements), $success));
@@ -215,43 +221,55 @@ EOF;
     /**
      * Renew a given domain certificate.
      *
-     * @param string $domain
+     * @param string $mainDomain
+     * @param array  $domains
      */
-    private function executeRenewal($domain)
+    private function executeRenewal($mainDomain, array $domains)
     {
+
         /** @var LoggerInterface $monitoringLogger */
         $monitoringLogger = $this->getContainer()->get('monitoring_factory')->createLogger();
 
         try {
             // Check expiration date to avoid too much renewal
-            $certificate = $this->repository->loadDomainCertificate($domain);
+            $certificate = $this->repository->loadDomainCertificate($mainDomain);
 
             if (!$this->input->getOption('force')) {
                 /** @var ParsedCertificate $parsedCertificate */
                 $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($certificate);
 
                 if ($parsedCertificate->getValidTo()->format('U') - time() >= 604800) {
-                    $monitoringLogger->debug('Certificate does not need renewal', [
-                        'domain'      => $domain,
-                        'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
-                    ]);
+                    $monitoringLogger->debug(
+                        'Certificate does not need renewal',
+                        [
+                            'domain'      => $mainDomain,
+                            'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
+                        ]
+                    );
 
-                    $this->output->writeln(sprintf(
-                        '<info>Current certificate is valid until %s, renewal is not necessary. Use --force to force renewal.</info>',
-                        $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'))
+                    $this->output->writeln(
+                        sprintf(
+                            '<info>Current certificate is valid until %s, renewal is not necessary. Use --force to force renewal.</info>',
+                            $parsedCertificate->getValidTo()->format('Y-m-d H:i:s')
+                        )
                     );
 
                     return;
                 }
 
-                $monitoringLogger->debug('Certificate needs renewal', [
-                    'domain'      => $domain,
-                    'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
-                ]);
+                $monitoringLogger->debug(
+                    'Certificate needs renewal',
+                    [
+                        'domain'      => $mainDomain,
+                        'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
+                    ]
+                );
 
-                $this->output->writeln(sprintf(
-                    '<info>Current certificate will expire in less than a week (%s), renewal is required.</info>',
-                    $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'))
+                $this->output->writeln(
+                    sprintf(
+                        '<info>Current certificate will expire in less than a week (%s), renewal is required.</info>',
+                        $parsedCertificate->getValidTo()->format('Y-m-d H:i:s')
+                    )
                 );
             } else {
                 $this->output->writeln('<info>Forced renewal.</info>');
@@ -259,17 +277,31 @@ EOF;
 
             // Key pair
             $this->output->writeln('Loading domain key pair...');
-            $domainKeyPair = $this->repository->loadDomainKeyPair($domain);
+            $domainKeyPair = $this->repository->loadDomainKeyPair($mainDomain);
 
             // Distinguished name
             $this->output->writeln('Loading domain distinguished name...');
-            $distinguishedName = $this->repository->loadDomainDistinguishedName($domain);
+            $distinguishedName = $this->repository->loadDomainDistinguishedName($mainDomain);
+            if ($distinguishedName->getSubjectAlternativeNames() != $domains) {
+                $distinguishedName = new DistinguishedName(
+                    $mainDomain,
+                    $distinguishedName->getCountryName(),
+                    $distinguishedName->getStateOrProvinceName(),
+                    $distinguishedName->getLocalityName(),
+                    $distinguishedName->getOrganizationName(),
+                    $distinguishedName->getOrganizationalUnitName(),
+                    $distinguishedName->getEmailAddress(),
+                    $domains
+                );
+
+                $this->repository->storeDomainDistinguishedName($mainDomain, $distinguishedName);
+            }
 
             // Renewal
-            $this->output->writeln(sprintf('Renewing certificate for domain %s ...', $domain));
+            $this->output->writeln(sprintf('Renewing certificate for domain %s ...', $mainDomain));
             $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
-            $response = $this->client->requestCertificate($domain, $csr);
-            $this->repository->storeDomainCertificate($domain, $response->getCertificate());
+            $response = $this->client->requestCertificate($mainDomain, $csr);
+            $this->repository->storeDomainCertificate($mainDomain, $response->getCertificate());
 
             // Post-generate actions
             $this->output->writeln('Running post-generate actions...');
@@ -277,7 +309,7 @@ EOF;
 
             $this->output->writeln('<info>Certificate renewed successfully!</info>');
 
-            $monitoringLogger->info('Certificate renewed successfully', ['domain' => $domain]);
+            $monitoringLogger->info('Certificate renewed successfully', ['domain' => $mainDomain]);
         } catch (\Exception $e) {
             $monitoringLogger->alert('A critical error occured during certificate renewal', ['exception' => $e]);
         } catch (\Throwable $e) {
