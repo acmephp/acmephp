@@ -28,6 +28,11 @@ class AuthorizationChallenge
     /**
      * @var string
      */
+    private $type;
+
+    /**
+     * @var string
+     */
     private $url;
 
     /**
@@ -41,29 +46,25 @@ class AuthorizationChallenge
     private $payload;
 
     /**
-     * @var string
-     */
-    private $location;
-
-    /**
      * @param string $domain
+     * @param string $type
      * @param string $url
      * @param string $token
      * @param string $payload
-     * @param $location
      */
-    public function __construct($domain, $url, $token, $payload, $location)
+    public function __construct($domain, $type, $url, $token, $payload)
     {
         Assert::stringNotEmpty($domain, 'Challenge::$domain expected a non-empty string. Got: %s');
+        Assert::stringNotEmpty($type, 'Challenge::$type expected a non-empty string. Got: %s');
         Assert::stringNotEmpty($url, 'Challenge::$url expected a non-empty string. Got: %s');
         Assert::stringNotEmpty($token, 'Challenge::$token expected a non-empty string. Got: %s');
         Assert::stringNotEmpty($payload, 'Challenge::$payload expected a non-empty string. Got: %s');
 
         $this->domain = $domain;
+        $this->type = $type;
         $this->url = $url;
         $this->token = $token;
         $this->payload = $payload;
-        $this->location = $location;
     }
 
     /**
@@ -73,10 +74,10 @@ class AuthorizationChallenge
     {
         return [
             'domain'   => $this->getDomain(),
+            'type'     => $this->getType(),
             'url'      => $this->getUrl(),
             'token'    => $this->getToken(),
             'payload'  => $this->getPayload(),
-            'location' => $this->getLocation(),
         ];
     }
 
@@ -89,10 +90,10 @@ class AuthorizationChallenge
     {
         return new self(
             $data['domain'],
+            $data['type'],
             $data['url'],
             $data['token'],
-            $data['payload'],
-            $data['location']
+            $data['payload']
         );
     }
 
@@ -102,6 +103,14 @@ class AuthorizationChallenge
     public function getDomain()
     {
         return $this->domain;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
@@ -126,13 +135,5 @@ class AuthorizationChallenge
     public function getPayload()
     {
         return $this->payload;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLocation()
-    {
-        return $this->location;
     }
 }

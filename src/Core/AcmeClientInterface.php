@@ -11,13 +11,14 @@
 
 namespace AcmePhp\Core;
 
+use AcmePhp\Core\Challenger\ChallengerInterface;
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestTimedOutException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeFailedException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeNotSupportedException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeTimedOutException;
+use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
+use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
+use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -50,16 +51,17 @@ interface AcmeClientInterface
      * The Certificate Authority will create this challenge data and you will then have
      * to expose the payload for the verification (see challengeAuthorization).
      *
-     * @param string $domain The domain to challenge.
+     * @param ChallengerInterface $challenger The challenger used in the challenge
+     * @param string              $domain     The domain to challenge.
      *
      * @throws AcmeCoreServerException            When the ACME server returns an error HTTP status code
      *                                            (the exception will be more specific if detail is provided).
      * @throws AcmeCoreClientException            When an error occured during response parsing.
-     * @throws HttpChallengeNotSupportedException When the HTTP challenge is not supported by the server.
+     * @throws ChallengeNotSupportedException When the HTTP challenge is not supported by the server.
      *
      * @return AuthorizationChallenge The data returned by the Certificate Authority.
      */
-    public function requestAuthorization($domain);
+    public function requestAuthorization(ChallengerInterface $challenger, $domain);
 
     /**
      * Ask the Certificate Authority to challenge a given authorization.
@@ -72,18 +74,19 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the challenge and this
      * operation could be long.
      *
-     * @param AuthorizationChallenge $challenge The challenge data to check.
-     * @param int                    $timeout   The timeout period.
+     * @param ChallengerInterface    $challenger The challenger used in the challenge
+     * @param AuthorizationChallenge $challenge  The challenge data to check.
+     * @param int                    $timeout    The timeout period.
      *
      * @throws AcmeCoreServerException        When the ACME server returns an error HTTP status code
      *                                        (the exception will be more specific if detail is provided).
      * @throws AcmeCoreClientException        When an error occured during response parsing.
-     * @throws HttpChallengeTimedOutException When the challenge timed out.
-     * @throws HttpChallengeFailedException   When the challenge failed.
+     * @throws ChallengeTimedOutException When the challenge timed out.
+     * @throws ChallengeFailedException   When the challenge failed.
      *
      * @return array The decoded server response (containing the result of the check).
      */
-    public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180);
+    public function challengeAuthorization(ChallengerInterface $challenger, AuthorizationChallenge $challenge, $timeout = 180);
 
     /**
      * Request a certificate for the given domain.

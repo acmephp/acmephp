@@ -11,8 +11,10 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Core\Challenger\ChallengerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,6 +29,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
+                new InputOption('challenge', 'c', InputOption::VALUE_REQUIRED, 'The challenge to use (http, dns)', 'http'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
@@ -53,38 +56,31 @@ EOF
         $client = $this->getClient();
         $domain = $input->getArgument('domain');
 
+        $challengerName = strtolower($input->getOption('challenge'));
+        if (!$this->getContainer()->has('challenger.'.$challengerName)) {
+            throw new \UnexpectedValueException(sprintf('The challenge "%s" does not exists', $challengerName));
+        }
+        /** @var ChallengerInterface $challenger */
+        $challenger = $this->getContainer()->get('challenger.'.$challengerName);
+
         $output->writeln(sprintf('<info>Requesting an authorization token for domain %s ...</info>', $domain));
-        $authorization = $client->requestAuthorization($domain);
+
+        $authorization = $client->requestAuthorization($challenger, $domain);
 
         $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorization);
 
         $this->output->writeln(sprintf(<<<'EOF'
+                
+<info>When done, finalize the challenge!</info>
 
-<info>The authorization token was successfully fetched!</info>
-
-Now, to prove you own the domain %s and request certificates for this domain, follow these steps:
-
-    1. Create a text file accessible on URL http://%s/.well-known/acme-challenge/%s
-       containing the following content:
+    1. Call the <info>check</info> command to ask the server to check your URL:
        
-       %s
-       
-    2. Check in your browser that the URL http://%s/.well-known/acme-challenge/%s returns
-       the authorization token above.
-       
-    3. Call the <info>check</info> command to ask the server to check your URL:
-       
-       php <info>%s check</info> %s
+       php <info>%s check</info> -c %s %s
 
 EOF
             ,
-            $domain,
-            $domain,
-            $authorization->getToken(),
-            $authorization->getPayload(),
-            $domain,
-            $authorization->getToken(),
             $_SERVER['PHP_SELF'],
+            $challengerName,
             $domain
         ));
     }

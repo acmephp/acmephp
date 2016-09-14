@@ -11,13 +11,14 @@
 
 namespace AcmePhp\Core;
 
+use AcmePhp\Core\Challenger\ChallengerInterface;
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestTimedOutException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeFailedException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeNotSupportedException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeTimedOutException;
+use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
+use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
+use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Protocol\ResourcesDirectory;
@@ -108,7 +109,7 @@ class AcmeClient implements AcmeClientInterface
     /**
      * {@inheritdoc}
      */
-    public function requestAuthorization($domain)
+    public function requestAuthorization(ChallengerInterface $challenger, $domain)
     {
         Assert::string($domain, 'requestAuthorization::$domain expected a string. Got: %s');
 
@@ -123,7 +124,7 @@ class AcmeClient implements AcmeClientInterface
         $response = $this->requestResource('POST', ResourcesDirectory::NEW_AUTHORIZATION, $payload);
 
         if (!isset($response['challenges']) || !$response['challenges']) {
-            throw new HttpChallengeNotSupportedException();
+            throw new ChallengeNotSupportedException();
         }
 
         $base64encoder = $this->httpClient->getBase64Encoder();
@@ -142,32 +143,40 @@ class AcmeClient implements AcmeClientInterface
         $encodedHeader = $base64encoder->encode(hash('sha256', $header, true));
 
         foreach ($response['challenges'] as $challenge) {
-            if ('http-01' !== $challenge['type']) {
+            if (!$challenger->supports($challenge['type'])) {
                 continue;
             }
 
-            return new AuthorizationChallenge(
+            $authorizationChallenge = new AuthorizationChallenge(
                 $domain,
+                $challenge['type'],
                 $challenge['uri'],
                 $challenge['token'],
-                $challenge['token'].'.'.$encodedHeader,
-                $this->httpClient->getLastLocation()
+                $challenge['token'].'.'.$encodedHeader
             );
+
+            $challenger->initialize($authorizationChallenge);
+
+            return $authorizationChallenge;
         }
 
-        throw new HttpChallengeNotSupportedException();
+        throw new ChallengeNotSupportedException();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180)
+    public function challengeAuthorization(ChallengerInterface $challenger, AuthorizationChallenge $challenge, $timeout = 180)
     {
         Assert::integer($timeout, 'challengeAuthorization::$timeout expected an integer. Got: %s');
 
+        if (!$challenger->supports($challenge->getType())) {
+            throw new ChallengeNotSupportedException();
+        }
+
         $payload = [
             'resource'         => ResourcesDirectory::CHALLENGE,
-            'type'             => 'http-01',
+            'type'             => $challenge->getType(),
             'keyAuthorization' => $challenge->getPayload(),
             'token'            => $challenge->getToken(),
         ];
@@ -177,25 +186,22 @@ class AcmeClient implements AcmeClientInterface
         }
 
         $response = (array) $this->httpClient->signedRequest('POST', $challenge->getUrl(), $payload);
-
         // Waiting loop
         $endTime = time() + $timeout;
 
-        while (time() <= $endTime) {
-            $response = (array) $this->httpClient->signedRequest('GET', $challenge->getLocation());
-
-            if (!isset($response['status']) || 'pending' !== $response['status']) {
-                break;
-            }
-
+        while (time() <= $endTime && (!isset($response['status']) || 'pending' === $response['status'])) {
             sleep(1);
+            $response = (array) $this->httpClient->signedRequest('GET', $challenge->getUrl());
         }
 
         if (!isset($response['status']) || 'valid' !== $response['status']) {
-            throw new HttpChallengeFailedException($response);
+            throw new ChallengeFailedException($response);
         } elseif ('pending' === $response['status']) {
-            throw new HttpChallengeTimedOutException($response);
+            throw new ChallengeTimedOutException($response);
         }
+
+
+        $challenger->cleanup($challenge);
 
         return $response;
     }

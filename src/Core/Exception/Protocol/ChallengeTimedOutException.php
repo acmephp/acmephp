@@ -14,14 +14,14 @@ namespace AcmePhp\Core\Exception\Protocol;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class HttpChallengeFailedException extends ProtocolException
+class ChallengeTimedOutException extends ProtocolException
 {
     private $response;
 
     public function __construct($response, \Exception $previous = null)
     {
         parent::__construct(
-            sprintf('Challenge failed (response: %s).', json_encode($response)),
+            sprintf('Challenge timed out (response: %s).', json_encode($response)),
             $previous
         );
 
