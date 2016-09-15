@@ -9,8 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\ChallengeSolver;
+namespace AcmePhp\Core\ChallengeSolver\Http;
 
+use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class HttpSolver implements SolverInterface
+class SimpleHttpSolver implements SolverInterface
 {
     /**
      * @var OutputInterface
@@ -28,11 +29,18 @@ class HttpSolver implements SolverInterface
     private $output;
 
     /**
-     * @param OutputInterface $output
+     * @var HttpDataExtractor
      */
-    public function __construct(OutputInterface $output = null)
+    private $extractor;
+
+    /**
+     * @param HttpDataExtractor $extractor
+     * @param OutputInterface   $output
+     */
+    public function __construct(HttpDataExtractor $extractor = null, OutputInterface $output = null)
     {
         $this->output = null === $output ? new ConsoleOutput() : $output;
+        $this->extractor = null === $extractor ? new HttpDataExtractor() : $extractor;
     }
 
     /**
@@ -43,27 +51,14 @@ class HttpSolver implements SolverInterface
         return 'http-01' === $type;
     }
 
-    protected function getWebPath(AuthorizationChallenge $authorizationChallenge)
-    {
-        return sprintf(
-            'http://%s/.well-known/acme-challenge/%s',
-            $authorizationChallenge->getDomain(),
-            $authorizationChallenge->getToken()
-        );
-    }
-
-    protected function getWebContent(AuthorizationChallenge $authorizationChallenge)
-    {
-        return $authorizationChallenge->getPayload();
-    }
-
     /**
      * {@inheritdoc}
      */
     public function initialize(AuthorizationChallenge $authorizationChallenge)
     {
-        $webPath = $this->getWebPath($authorizationChallenge);
-        $webContent = $this->getWebContent($authorizationChallenge);
+        $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
+        $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
+
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
@@ -81,9 +76,9 @@ Now, to prove you own the domain %s and request certificates for this domain, fo
 EOF
                 ,
                 $authorizationChallenge->getDomain(),
-                $webPath,
-                $webContent,
-                $webPath
+                $checkUrl,
+                $checkContent,
+                $checkUrl
             )
         );
     }

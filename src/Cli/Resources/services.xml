@@ -96,9 +96,17 @@
         </service>
 
         <!-- Challenge Solving -->
-        <service id="solver.http" class="AcmePhp\Core\ChallengeSolver\HttpSolver" />
-        <service id="solver.dns" class="AcmePhp\Core\ChallengeSolver\DnsSolver">
+        <service id="solver.http" class="AcmePhp\Core\ChallengeSolver\Http\SimpleHttpSolver">
+            <argument type="service" id="solver_extractor.http" />
+        </service>
+        <service id="solver.dns" class="AcmePhp\Core\ChallengeSolver\Dns\SimpleDnsSolver">
+            <argument type="service" id="solver_extractor.dns" />
+        </service>
+
+        <service id="solver_extractor.dns" class="AcmePhp\Core\ChallengeSolver\Dns\DnsDataExtractor">
             <argument type="service" id="http.base64_encoder"/>
+        </service>
+        <service id="solver_extractor.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpDataExtractor">
         </service>
     </services>
 </container>

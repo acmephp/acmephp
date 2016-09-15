@@ -29,7 +29,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
-                new InputOption('challenge', 'c', InputOption::VALUE_REQUIRED, 'The challenge to use (http, dns)', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type challenge to use (http, dns)', 'http'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
@@ -56,9 +56,9 @@ EOF
         $client = $this->getClient();
         $domain = $input->getArgument('domain');
 
-        $solverName = strtolower($input->getOption('challenge'));
+        $solverName = strtolower($input->getOption('solver'));
         if (!$this->getContainer()->has('solver.'.$solverName)) {
-            throw new \UnexpectedValueException(sprintf('The challenge "%s" does not exists', $solverName));
+            throw new \UnexpectedValueException(sprintf('The solver "%s" does not exists', $solverName));
         }
         /** @var SolverInterface $solver */
         $solver = $this->getContainer()->get('solver.'.$solverName);

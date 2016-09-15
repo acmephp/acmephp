@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\ChallengeSolver;
+namespace AcmePhp\Core\ChallengeSolver\Dns;
 
-use AcmePhp\Core\Http\Base64SafeEncoder;
+use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,12 +21,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class DnsSolver implements SolverInterface
+class SimpleDnsSolver implements SolverInterface
 {
     /**
-     * @var Base64SafeEncoder
+     * @var DnsDataExtractor
      */
-    private $encoder;
+    private $extractor;
 
     /**
      * @var OutputInterface
@@ -36,10 +36,10 @@ class DnsSolver implements SolverInterface
     /**
      * @param OutputInterface $output
      */
-    public function __construct(Base64SafeEncoder $encoder = null, OutputInterface $output = null)
+    public function __construct(DnsDataExtractor $extractor = null, OutputInterface $output = null)
     {
         $this->output = null === $output ? new ConsoleOutput() : $output;
-        $this->encoder = null === $encoder ? new Base64SafeEncoder() : $encoder;
+        $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
     }
 
     /**
@@ -50,23 +50,13 @@ class DnsSolver implements SolverInterface
         return 'dns-01' === $type;
     }
 
-    protected function getEntryName(AuthorizationChallenge $authorizationChallenge)
-    {
-        return sprintf('_acme-challenge.%s.', $authorizationChallenge->getDomain());
-    }
-
-    protected function getEntryValue(AuthorizationChallenge $authorizationChallenge)
-    {
-        return $this->encoder->encode(hash('sha256', $authorizationChallenge->getPayload(), true));
-    }
-
     /**
      * {@inheritdoc}
      */
     public function initialize(AuthorizationChallenge $authorizationChallenge)
     {
-        $entryName = $this->getEntryName($authorizationChallenge);
-        $entryValue = $this->getEntryValue($authorizationChallenge);
+        $recordName = $this->extractor->getRecordName($authorizationChallenge);
+        $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
 
         $this->output->writeln(
             sprintf(
@@ -86,11 +76,11 @@ Now, to prove you own the domain %s and request certificates for this domain, fo
 EOF
                 ,
                 $authorizationChallenge->getDomain(),
-                $entryName,
-                $entryValue,
-                $entryName,
-                $entryName,
-                $entryValue
+                $recordName,
+                $recordValue,
+                $recordName,
+                $recordName,
+                $recordValue
             )
         );
     }
@@ -100,7 +90,7 @@ EOF
      */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
-        $entryName = $this->getEntryName($authorizationChallenge);
+        $recordName = $this->extractor->getRecordName($authorizationChallenge);
 
         $this->output->writeln(
             sprintf(
@@ -110,7 +100,7 @@ EOF
 You can now cleanup your DNS by removing the domain <comment>_acme-challenge.%s.</comment>
 EOF
                 ,
-                $entryName
+                $recordName
             )
         );
     }
