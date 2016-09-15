@@ -137,6 +137,9 @@ abstract class AbstractCommand extends Command
         // Load services
         $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources'));
         $loader->load('services.xml');
+
+        // Inject output
+        $this->container->set('output', $this->output);
     }
 
     /**

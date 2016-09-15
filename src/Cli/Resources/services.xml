@@ -98,15 +98,24 @@
         <!-- Challenge Solving -->
         <service id="solver.http" class="AcmePhp\Core\ChallengeSolver\Http\SimpleHttpSolver">
             <argument type="service" id="solver_extractor.http" />
+            <argument type="service" id="solver_validator.http" />
+            <argument type="service" id="output" />
         </service>
         <service id="solver.dns" class="AcmePhp\Core\ChallengeSolver\Dns\SimpleDnsSolver">
             <argument type="service" id="solver_extractor.dns" />
+            <argument type="service" id="solver_validator.dns" />
+            <argument type="service" id="output" />
         </service>
 
         <service id="solver_extractor.dns" class="AcmePhp\Core\ChallengeSolver\Dns\DnsDataExtractor">
-            <argument type="service" id="http.base64_encoder"/>
+            <argument type="service" id="http.base64_encoder" />
         </service>
-        <service id="solver_extractor.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpDataExtractor">
-        </service>
+        <service id="solver_extractor.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpDataExtractor" />
+
+        <service id="solver_validator.dns" class="AcmePhp\Core\ChallengeSolver\Dns\DnsValidator" />
+        <service id="solver_validator.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpValidator" />
+
+        <!-- Misc -->
+        <service id="output" class="Symfony\Component\Console\Output\NullOutput" />
     </services>
 </container>

@@ -13,6 +13,7 @@ namespace Tests\AcmePhp\Core;
 
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\AcmeClientInterface;
+use AcmePhp\Core\ChallengeSolver\Http\SimpleHttpSolver;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;
@@ -80,10 +81,11 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('initialIp', $data);
         $this->assertArrayHasKey('createdAt', $data);
 
+        $solver = new SimpleHttpSolver();
         /*
          * Ask for domain challenge
          */
-        $challenge = $this->client->requestAuthorization('acmephp.com');
+        $challenge = $this->client->requestAuthorization($solver, 'acmephp.com');
 
         $this->assertInstanceOf(AuthorizationChallenge::class, $challenge);
         $this->assertEquals('acmephp.com', $challenge->getDomain());
@@ -99,7 +101,7 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($process->isRunning());
 
         try {
-            $check = $this->client->challengeAuthorization($challenge);
+            $check = $this->client->challengeAuthorization($solver, $challenge);
             $this->assertEquals('valid', $check['status']);
         } finally {
             $process->stop();

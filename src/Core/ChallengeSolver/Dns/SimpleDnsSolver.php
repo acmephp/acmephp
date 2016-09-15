@@ -13,7 +13,7 @@ namespace AcmePhp\Core\ChallengeSolver\Dns;
 
 use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -29,17 +29,28 @@ class SimpleDnsSolver implements SolverInterface
     private $extractor;
 
     /**
+     * @var DnsValidator
+     */
+    private $validator;
+
+    /**
      * @var OutputInterface
      */
     protected $output;
 
     /**
-     * @param OutputInterface $output
+     * @param DnsDataExtractor $extractor
+     * @param DnsValidator     $validator
+     * @param OutputInterface  $output
      */
-    public function __construct(DnsDataExtractor $extractor = null, OutputInterface $output = null)
-    {
-        $this->output = null === $output ? new ConsoleOutput() : $output;
+    public function __construct(
+        DnsDataExtractor $extractor = null,
+        DnsValidator $validator = null,
+        OutputInterface $output = null
+    ) {
         $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
+        $this->validator = null === $validator ? new DnsValidator() : $validator;
+        $this->output = null === $output ? new NullOutput() : $output;
     }
 
     /**
@@ -53,7 +64,7 @@ class SimpleDnsSolver implements SolverInterface
     /**
      * {@inheritdoc}
      */
-    public function initialize(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
         $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
@@ -61,28 +72,29 @@ class SimpleDnsSolver implements SolverInterface
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-<info>The authorization token was successfully fetched!</info>
+    Add the following TXT record to your DNS zone
+        Domain: %s
+        TXT value: %s
+        
+     <comment>Wait for the propagation before moving to the next step</comment>
 
-Now, to prove you own the domain %s and request certificates for this domain, follow these steps:
-
-    1. Add the following TXT record do you DNS zone
-         Domain: %s
-         TXT value: %s
-
-    2. Check in your terminal that the following command returns the following response
-       
-         $ host -t TXT %s
-         %s descriptive text "%s"
 EOF
                 ,
-                $authorizationChallenge->getDomain(),
-                $recordName,
-                $recordValue,
-                $recordName,
                 $recordName,
                 $recordValue
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validate(AuthorizationChallenge $authorizationChallenge, $timeout = 60)
+    {
+        $recordName = $this->extractor->getRecordName($authorizationChallenge);
+        $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
+
+        $this->validator->validate($recordName, $recordValue, $timeout);
     }
 
     /**
@@ -95,8 +107,6 @@ EOF
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-<info>The authorization token was successfully checked!</info>
-
 You can now cleanup your DNS by removing the domain <comment>_acme-challenge.%s.</comment>
 EOF
                 ,

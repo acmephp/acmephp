@@ -13,7 +13,6 @@ namespace AcmePhp\Core\ChallengeSolver\Dns;
 
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Extract data needed to solve DNS challenges.

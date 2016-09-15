@@ -147,17 +147,13 @@ class AcmeClient implements AcmeClientInterface
                 continue;
             }
 
-            $authorizationChallenge = new AuthorizationChallenge(
+            return new AuthorizationChallenge(
                 $domain,
                 $challenge['type'],
                 $challenge['uri'],
                 $challenge['token'],
                 $challenge['token'].'.'.$encodedHeader
             );
-
-            $solver->initialize($authorizationChallenge);
-
-            return $authorizationChallenge;
         }
 
         throw new ChallengeNotSupportedException();
@@ -199,9 +195,6 @@ class AcmeClient implements AcmeClientInterface
         } elseif ('pending' === $response['status']) {
             throw new ChallengeTimedOutException($response);
         }
-
-
-        $solver->cleanup($challenge);
 
         return $response;
     }

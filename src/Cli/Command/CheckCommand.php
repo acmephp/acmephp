@@ -30,6 +30,7 @@ class CheckCommand extends AbstractCommand
         $this->setName('check')
             ->setDefinition([
                 new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type challenge to use (http, dns)', 'http'),
+                new InputOption('no-test', 't', InputOption::VALUE_NONE, 'Whether or not internal tests should be disabled'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for'),
             ])
             ->setDescription('Ask the ACME server to check an authorization token you expose to prove you are the owner of a domain')
@@ -61,10 +62,15 @@ EOF
         $solver = $this->getContainer()->get('solver.'.$solverName);
 
         $output->writeln(sprintf('<info>Loading the authorization token for domain %s ...</info>', $domain));
-        $authorization = $repository->loadDomainAuthorizationChallenge($domain);
+        $authorizationChallenge = $repository->loadDomainAuthorizationChallenge($domain);
+
+        if (!$input->getOption('no-test')) {
+            $output->writeln('<info>Testing the challenge...</info>');
+            $solver->validate($authorizationChallenge);
+        }
 
         $output->writeln(sprintf('<info>Requesting authorization check for domain %s ...</info>', $domain));
-        $client->challengeAuthorization($solver, $authorization);
+        $client->challengeAuthorization($solver, $authorizationChallenge);
 
         $this->output->writeln(sprintf(<<<'EOF'
 
@@ -83,5 +89,7 @@ EOF
             $_SERVER['PHP_SELF'],
             $domain
         ));
+
+        $solver->cleanup($authorizationChallenge);
     }
 }

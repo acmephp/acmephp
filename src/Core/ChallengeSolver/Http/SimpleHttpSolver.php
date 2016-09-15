@@ -13,7 +13,7 @@ namespace AcmePhp\Core\ChallengeSolver\Http;
 
 use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -24,23 +24,33 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SimpleHttpSolver implements SolverInterface
 {
     /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
      * @var HttpDataExtractor
      */
     private $extractor;
 
     /**
+     * @var HttpValidator
+     */
+    private $validator;
+
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    /**
      * @param HttpDataExtractor $extractor
+     * @param HttpValidator     $validator
      * @param OutputInterface   $output
      */
-    public function __construct(HttpDataExtractor $extractor = null, OutputInterface $output = null)
-    {
-        $this->output = null === $output ? new ConsoleOutput() : $output;
+    public function __construct(
+        HttpDataExtractor $extractor = null,
+        HttpValidator $validator = null,
+        OutputInterface $output = null
+    ) {
         $this->extractor = null === $extractor ? new HttpDataExtractor() : $extractor;
+        $this->validator = null === $validator ? new HttpValidator() : $validator;
+        $this->output = null === $output ? new NullOutput() : $output;
     }
 
     /**
@@ -54,7 +64,7 @@ class SimpleHttpSolver implements SolverInterface
     /**
      * {@inheritdoc}
      */
-    public function initialize(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
         $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
@@ -62,23 +72,15 @@ class SimpleHttpSolver implements SolverInterface
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-<info>The authorization token was successfully fetched!</info>
+    Create a text file accessible on URL %s
+    containing the following content:
 
-Now, to prove you own the domain %s and request certificates for this domain, follow these steps:
+    %s
 
-    1. Create a text file accessible on URL %s
-       containing the following content:
-       
-       %s
-       
-    2. Check in your browser that the URL %s returns
-       the authorization token above.
 EOF
                 ,
-                $authorizationChallenge->getDomain(),
                 $checkUrl,
-                $checkContent,
-                $checkUrl
+                $checkContent
             )
         );
     }
@@ -86,7 +88,30 @@ EOF
     /**
      * {@inheritdoc}
      */
+    public function validate(AuthorizationChallenge $authorizationChallenge, $timeout = 60)
+    {
+        $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
+        $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
+
+        $this->validator->validate($checkUrl, $checkContent, $timeout);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
+        $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
+
+        $this->output->writeln(
+            sprintf(
+                <<<'EOF'
+                    You can now safety remove the challenge's file at %s
+
+EOF
+                ,
+                $checkUrl
+            )
+        );
     }
 }

@@ -30,11 +30,19 @@ interface SolverInterface
     public function supports($type);
 
     /**
-     * Initializes the environments for the given authorization challenge.
+     * Solve the given authorization challenge.
      *
      * @param AuthorizationChallenge $authorizationChallenge
      */
-    public function initialize(AuthorizationChallenge $authorizationChallenge);
+    public function solve(AuthorizationChallenge $authorizationChallenge);
+
+    /**
+     * Internally validate the challenge by performing the same kind of test than the CA.
+     *
+     * @param AuthorizationChallenge $authorizationChallenge
+     * @param int                    $timeout
+     */
+    public function validate(AuthorizationChallenge $authorizationChallenge, $timeout = 60);
 
     /**
      * Cleanup the environments after a successful challenge.

@@ -65,17 +65,19 @@ EOF
 
         $output->writeln(sprintf('<info>Requesting an authorization token for domain %s ...</info>', $domain));
 
-        $authorization = $client->requestAuthorization($solver, $domain);
+        $authorizationChallenge = $client->requestAuthorization($solver, $domain);
 
-        $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorization);
+        $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorizationChallenge);
 
-        $this->output->writeln(sprintf(<<<'EOF'
-                
-<info>When done, finalize the challenge!</info>
+        $this->output->writeln('<info>The authorization token was successfully fetched!</info>');
+        $solver->solve($authorizationChallenge);
 
-    1. Call the <info>check</info> command to ask the server to check your URL:
-       
-       php <info>%s check</info> -c %s %s
+        $this->output->writeln(sprintf(
+<<<'EOF'
+<info>Then, you can ask to the CA to check the challenge!</info>
+    Call the <info>check</info> command to ask the server to check your URL:
+
+    php <info>%s check</info> -c %s %s
 
 EOF
             ,
