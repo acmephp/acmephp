@@ -90,7 +90,6 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(AuthorizationChallenge::class, $challenge);
         $this->assertEquals('acmephp.com', $challenge->getDomain());
         $this->assertContains('http://127.0.0.1:4000/acme/challenge', $challenge->getUrl());
-        $this->assertContains('http://127.0.0.1:4000/acme/authz', $challenge->getLocation());
 
         /*
          * Challenge check

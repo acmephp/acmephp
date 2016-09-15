@@ -106,9 +106,10 @@ abstract class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             $check = $this->application->find('check');
             $checkTest = new CommandTester($check);
             $checkTest->execute([
-                'command'  => $check->getName(),
-                'domain'   => 'acmephp.com',
-                '--server' => 'http://127.0.0.1:4000/directory',
+                'command'   => $check->getName(),
+                'domain'    => 'acmephp.com',
+                '--server'  => 'http://127.0.0.1:4000/directory',
+                '--no-test' => null,
             ]);
 
             $checkDisplay = $checkTest->getDisplay();
