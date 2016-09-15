@@ -11,7 +11,7 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Core\Challenger\ChallengerInterface;
+use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -56,16 +56,16 @@ EOF
         $client = $this->getClient();
         $domain = $input->getArgument('domain');
 
-        $challengerName = strtolower($input->getOption('challenge'));
-        if (!$this->getContainer()->has('challenger.'.$challengerName)) {
-            throw new \UnexpectedValueException(sprintf('The challenge "%s" does not exists', $challengerName));
+        $solverName = strtolower($input->getOption('challenge'));
+        if (!$this->getContainer()->has('solver.'.$solverName)) {
+            throw new \UnexpectedValueException(sprintf('The challenge "%s" does not exists', $solverName));
         }
-        /** @var ChallengerInterface $challenger */
-        $challenger = $this->getContainer()->get('challenger.'.$challengerName);
+        /** @var SolverInterface $solver */
+        $solver = $this->getContainer()->get('solver.'.$solverName);
 
         $output->writeln(sprintf('<info>Requesting an authorization token for domain %s ...</info>', $domain));
 
-        $authorization = $client->requestAuthorization($challenger, $domain);
+        $authorization = $client->requestAuthorization($solver, $domain);
 
         $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorization);
 
@@ -80,7 +80,7 @@ EOF
 EOF
             ,
             $_SERVER['PHP_SELF'],
-            $challengerName,
+            $solverName,
             $domain
         ));
     }

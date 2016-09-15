@@ -9,19 +9,20 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\Challenger;
+namespace AcmePhp\Core\ChallengeSolver;
 
+use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ACME DNS challenger with manual configuration.
+ * ACME DNS solver with manual intervention.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class DnsChallenger implements ChallengerInterface
+class DnsSolver implements SolverInterface
 {
     /**
      * @var Base64SafeEncoder

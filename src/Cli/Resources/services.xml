@@ -95,9 +95,9 @@
             <argument>%monitoring.handlers%</argument>
         </service>
 
-        <!-- Challenger -->
-        <service id="challenger.http" class="AcmePhp\Core\Challenger\HttpChallenger" />
-        <service id="challenger.dns" class="AcmePhp\Core\Challenger\DnsChallenger">
+        <!-- Challenge Solving -->
+        <service id="solver.http" class="AcmePhp\Core\ChallengeSolver\HttpSolver" />
+        <service id="solver.dns" class="AcmePhp\Core\ChallengeSolver\DnsSolver">
             <argument type="service" id="http.base64_encoder"/>
         </service>
     </services>

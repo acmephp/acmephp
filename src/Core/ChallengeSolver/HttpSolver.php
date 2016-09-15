@@ -1,19 +1,20 @@
 <?php
 
 
-namespace AcmePhp\Core\Challenger;
+namespace AcmePhp\Core\ChallengeSolver;
 
 
+use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ACME HTTP challenger with manual configuration.
+ * ACME HTTP solver with manual intervention.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class HttpChallenger implements ChallengerInterface
+class HttpSolver implements SolverInterface
 {
     /**
      * @var OutputInterface

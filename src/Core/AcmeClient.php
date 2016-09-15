@@ -11,7 +11,7 @@
 
 namespace AcmePhp\Core;
 
-use AcmePhp\Core\Challenger\ChallengerInterface;
+use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
@@ -109,7 +109,7 @@ class AcmeClient implements AcmeClientInterface
     /**
      * {@inheritdoc}
      */
-    public function requestAuthorization(ChallengerInterface $challenger, $domain)
+    public function requestAuthorization(SolverInterface $solver, $domain)
     {
         Assert::string($domain, 'requestAuthorization::$domain expected a string. Got: %s');
 
@@ -143,7 +143,7 @@ class AcmeClient implements AcmeClientInterface
         $encodedHeader = $base64encoder->encode(hash('sha256', $header, true));
 
         foreach ($response['challenges'] as $challenge) {
-            if (!$challenger->supports($challenge['type'])) {
+            if (!$solver->supports($challenge['type'])) {
                 continue;
             }
 
@@ -155,7 +155,7 @@ class AcmeClient implements AcmeClientInterface
                 $challenge['token'].'.'.$encodedHeader
             );
 
-            $challenger->initialize($authorizationChallenge);
+            $solver->initialize($authorizationChallenge);
 
             return $authorizationChallenge;
         }
@@ -166,11 +166,11 @@ class AcmeClient implements AcmeClientInterface
     /**
      * {@inheritdoc}
      */
-    public function challengeAuthorization(ChallengerInterface $challenger, AuthorizationChallenge $challenge, $timeout = 180)
+    public function challengeAuthorization(SolverInterface $solver, AuthorizationChallenge $challenge, $timeout = 180)
     {
         Assert::integer($timeout, 'challengeAuthorization::$timeout expected an integer. Got: %s');
 
-        if (!$challenger->supports($challenge->getType())) {
+        if (!$solver->supports($challenge->getType())) {
             throw new ChallengeNotSupportedException();
         }
 
@@ -201,7 +201,7 @@ class AcmeClient implements AcmeClientInterface
         }
 
 
-        $challenger->cleanup($challenge);
+        $solver->cleanup($challenge);
 
         return $response;
     }

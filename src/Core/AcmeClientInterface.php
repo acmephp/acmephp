@@ -11,7 +11,7 @@
 
 namespace AcmePhp\Core;
 
-use AcmePhp\Core\Challenger\ChallengerInterface;
+use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
@@ -51,8 +51,8 @@ interface AcmeClientInterface
      * The Certificate Authority will create this challenge data and you will then have
      * to expose the payload for the verification (see challengeAuthorization).
      *
-     * @param ChallengerInterface $challenger The challenger used in the challenge
-     * @param string              $domain     The domain to challenge.
+     * @param SolverInterface $solver The Solver used in the challenge
+     * @param string          $domain The domain to challenge.
      *
      * @throws AcmeCoreServerException            When the ACME server returns an error HTTP status code
      *                                            (the exception will be more specific if detail is provided).
@@ -61,7 +61,7 @@ interface AcmeClientInterface
      *
      * @return AuthorizationChallenge The data returned by the Certificate Authority.
      */
-    public function requestAuthorization(ChallengerInterface $challenger, $domain);
+    public function requestAuthorization(SolverInterface $solver, $domain);
 
     /**
      * Ask the Certificate Authority to challenge a given authorization.
@@ -74,7 +74,7 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the challenge and this
      * operation could be long.
      *
-     * @param ChallengerInterface    $challenger The challenger used in the challenge
+     * @param SolverInterface        $solver     The solver used in the challenge
      * @param AuthorizationChallenge $challenge  The challenge data to check.
      * @param int                    $timeout    The timeout period.
      *
@@ -86,7 +86,7 @@ interface AcmeClientInterface
      *
      * @return array The decoded server response (containing the result of the check).
      */
-    public function challengeAuthorization(ChallengerInterface $challenger, AuthorizationChallenge $challenge, $timeout = 180);
+    public function challengeAuthorization(SolverInterface $solver, AuthorizationChallenge $challenge, $timeout = 180);
 
     /**
      * Request a certificate for the given domain.

@@ -9,23 +9,23 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\Challenger;
+namespace AcmePhp\Core\ChallengeSolver;
 
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 
 /**
- * ACME challenger
+ * ACME challenge solver
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-interface ChallengerInterface
+interface SolverInterface
 {
     /**
-     * Determines whether or not the challenger supports a given Challenge
+     * Determines whether or not the solver supports a given Challenge
      *
-     * @param string $type The type of the challenger
+     * @param string $type The type of the solver
      *
-     * @return bool The challenger support the given challenge's type
+     * @return bool The solver supports the given challenge's type
      */
     public function supports($type);
 
