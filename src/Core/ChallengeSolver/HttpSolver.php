@@ -1,10 +1,16 @@
 <?php
 
+/*
+ * This file is part of the ACME PHP library.
+ *
+ * (c) Titouan Galopin <galopintitouan@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace AcmePhp\Core\ChallengeSolver;
 
-
-use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,7 +36,7 @@ class HttpSolver implements SolverInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -52,7 +58,7 @@ class HttpSolver implements SolverInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initialize(AuthorizationChallenge $authorizationChallenge)
     {
@@ -83,7 +89,7 @@ EOF
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {

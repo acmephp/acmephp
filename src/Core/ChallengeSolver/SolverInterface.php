@@ -14,14 +14,14 @@ namespace AcmePhp\Core\ChallengeSolver;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 
 /**
- * ACME challenge solver
+ * ACME challenge solver.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
 interface SolverInterface
 {
     /**
-     * Determines whether or not the solver supports a given Challenge
+     * Determines whether or not the solver supports a given Challenge.
      *
      * @param string $type The type of the solver
      *
@@ -30,14 +30,14 @@ interface SolverInterface
     public function supports($type);
 
     /**
-     * Initializes the environments for the given authorization challenge
+     * Initializes the environments for the given authorization challenge.
      *
      * @param AuthorizationChallenge $authorizationChallenge
      */
     public function initialize(AuthorizationChallenge $authorizationChallenge);
 
     /**
-     * Cleanup the environments after a successful challenge
+     * Cleanup the environments after a successful challenge.
      *
      * @param AuthorizationChallenge $authorizationChallenge
      */

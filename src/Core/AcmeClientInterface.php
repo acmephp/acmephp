@@ -54,9 +54,9 @@ interface AcmeClientInterface
      * @param SolverInterface $solver The Solver used in the challenge
      * @param string          $domain The domain to challenge.
      *
-     * @throws AcmeCoreServerException            When the ACME server returns an error HTTP status code
-     *                                            (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException            When an error occured during response parsing.
+     * @throws AcmeCoreServerException        When the ACME server returns an error HTTP status code
+     *                                        (the exception will be more specific if detail is provided).
+     * @throws AcmeCoreClientException        When an error occured during response parsing.
      * @throws ChallengeNotSupportedException When the HTTP challenge is not supported by the server.
      *
      * @return AuthorizationChallenge The data returned by the Certificate Authority.
@@ -74,13 +74,13 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the challenge and this
      * operation could be long.
      *
-     * @param SolverInterface        $solver     The solver used in the challenge
-     * @param AuthorizationChallenge $challenge  The challenge data to check.
-     * @param int                    $timeout    The timeout period.
+     * @param SolverInterface        $solver    The solver used in the challenge
+     * @param AuthorizationChallenge $challenge The challenge data to check.
+     * @param int                    $timeout   The timeout period.
      *
-     * @throws AcmeCoreServerException        When the ACME server returns an error HTTP status code
-     *                                        (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException        When an error occured during response parsing.
+     * @throws AcmeCoreServerException    When the ACME server returns an error HTTP status code
+     *                                    (the exception will be more specific if detail is provided).
+     * @throws AcmeCoreClientException    When an error occured during response parsing.
      * @throws ChallengeTimedOutException When the challenge timed out.
      * @throws ChallengeFailedException   When the challenge failed.
      *

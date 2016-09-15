@@ -12,7 +12,6 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Core\ChallengeSolver\SolverInterface;
-use Doctrine\Instantiator\Exception\UnexpectedValueException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

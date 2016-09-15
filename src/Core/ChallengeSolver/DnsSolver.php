@@ -11,7 +11,6 @@
 
 namespace AcmePhp\Core\ChallengeSolver;
 
-use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -34,7 +33,6 @@ class DnsSolver implements SolverInterface
      */
     protected $output;
 
-
     /**
      * @param OutputInterface $output
      */
@@ -45,7 +43,7 @@ class DnsSolver implements SolverInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supports($type)
     {
@@ -63,7 +61,7 @@ class DnsSolver implements SolverInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function initialize(AuthorizationChallenge $authorizationChallenge)
     {
@@ -98,7 +96,7 @@ EOF
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
