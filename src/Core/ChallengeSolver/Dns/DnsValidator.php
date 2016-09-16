@@ -11,47 +11,45 @@
 
 namespace AcmePhp\Core\ChallengeSolver\Dns;
 
-use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
+use AcmePhp\Core\ChallengeSolver\ValidatorInterface;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 
 /**
  * Validator for DNS challenges.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class DnsValidator
+class DnsValidator implements ValidatorInterface
 {
     /**
-     * Internally validate the challenge by performing the same kind of test than the CA.
-     *
-     * @param string $recordName
-     * @param string $recordValue
-     * @param int    $timeout
+     * @var DnsDataExtractor
      */
-    public function validate($recordName, $recordValue, $timeout = 60)
+    private $extractor;
+
+    /**
+     * @param DnsDataExtractor $extractor
+     */
+    public function __construct(DnsDataExtractor $extractor)
     {
-        $limitEndTime = microtime(true) + $timeout;
-
-        do {
-            if ($this->isValid($recordName, $recordValue)) {
-                return;
-            }
-
-            sleep(1);
-        } while ($limitEndTime > microtime(true));
-
-        throw new ChallengeTimedOutException('Unable to validate timeout in the given time');
+        $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
     }
 
     /**
-     * Returns whether or not the url return the exepected content.
-     *
-     * @param string $recordName
-     * @param string $recordValue
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isValid($recordName, $recordValue)
+    public function supports(AuthorizationChallenge $authorizationChallenge)
     {
+        return 'dns-01' === $authorizationChallenge->getType();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValid(AuthorizationChallenge $authorizationChallenge)
+    {
+        $recordName = $this->extractor->getRecordName($authorizationChallenge);
+        $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
+
         foreach (dns_get_record($recordName, DNS_TXT) as $record) {
             if (in_array($recordValue, $record['entries'])) {
                 return true;

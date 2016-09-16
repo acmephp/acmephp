@@ -11,7 +11,6 @@
 
 namespace AcmePhp\Core;
 
-use AcmePhp\Core\ChallengeSolver\SolverInterface;
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
@@ -109,7 +108,7 @@ class AcmeClient implements AcmeClientInterface
     /**
      * {@inheritdoc}
      */
-    public function requestAuthorization(SolverInterface $solver, $domain)
+    public function requestAuthorization($domain)
     {
         Assert::string($domain, 'requestAuthorization::$domain expected a string. Got: %s');
 
@@ -142,12 +141,9 @@ class AcmeClient implements AcmeClientInterface
 
         $encodedHeader = $base64encoder->encode(hash('sha256', $header, true));
 
+        $authorizationChallenges = [];
         foreach ($response['challenges'] as $challenge) {
-            if (!$solver->supports($challenge['type'])) {
-                continue;
-            }
-
-            return new AuthorizationChallenge(
+            $authorizationChallenges[] = new AuthorizationChallenge(
                 $domain,
                 $challenge['type'],
                 $challenge['uri'],
@@ -156,19 +152,15 @@ class AcmeClient implements AcmeClientInterface
             );
         }
 
-        throw new ChallengeNotSupportedException();
+        return $authorizationChallenges;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function challengeAuthorization(SolverInterface $solver, AuthorizationChallenge $challenge, $timeout = 180)
+    public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180)
     {
         Assert::integer($timeout, 'challengeAuthorization::$timeout expected an integer. Got: %s');
-
-        if (!$solver->supports($challenge->getType())) {
-            throw new ChallengeNotSupportedException();
-        }
 
         $payload = [
             'resource'         => ResourcesDirectory::CHALLENGE,

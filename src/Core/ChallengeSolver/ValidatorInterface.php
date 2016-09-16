@@ -14,32 +14,27 @@ namespace AcmePhp\Core\ChallengeSolver;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 
 /**
- * ACME challenge solver.
+ * ACME challenge pre validator.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-interface SolverInterface
+interface ValidatorInterface
 {
     /**
-     * Determines whether or not the solver supports a given Challenge.
+     * Determines whether or not the validator supports a given Challenge.
      *
      * @param AuthorizationChallenge $authorizationChallenge
      *
-     * @return bool The solver supports the given challenge's type
+     * @return bool The validator supports the given challenge's type
      */
     public function supports(AuthorizationChallenge $authorizationChallenge);
 
     /**
-     * Solve the given authorization challenge.
+     * Internally validate the challenge by performing the same kind of test than the CA.
      *
      * @param AuthorizationChallenge $authorizationChallenge
-     */
-    public function solve(AuthorizationChallenge $authorizationChallenge);
-
-    /**
-     * Cleanup the environments after a successful challenge.
      *
-     * @param AuthorizationChallenge $authorizationChallenge
+     * @return bool The challenge is valid
      */
-    public function cleanup(AuthorizationChallenge $authorizationChallenge);
+    public function isValid(AuthorizationChallenge $authorizationChallenge);
 }

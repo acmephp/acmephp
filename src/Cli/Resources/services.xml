@@ -28,7 +28,8 @@
 
         <!-- Serializer -->
         <service id="serializer.pem_normalizer" class="AcmePhp\Cli\Serializer\PemNormalizer" public="false" />
-        <service id="serializer.get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer" public="false" />
+        <service id="serializer.get_set_method_normalizer"
+                 class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer" public="false" />
         <service id="serializer.pem_encoder" class="AcmePhp\Cli\Serializer\PemEncoder" public="false" />
         <service id="serializer.json_encoder" class="Symfony\Component\Serializer\Encoder\JsonEncoder" public="false" />
 
@@ -96,24 +97,42 @@
         </service>
 
         <!-- Challenge Solving -->
-        <service id="solver.http" class="AcmePhp\Core\ChallengeSolver\Http\SimpleHttpSolver">
-            <argument type="service" id="solver_extractor.http" />
-            <argument type="service" id="solver_validator.http" />
+        <service id="challenge_solver.http" class="AcmePhp\Core\ChallengeSolver\Http\SimpleHttpSolver">
+            <argument type="service" id="challenge_extractor.http" />
             <argument type="service" id="output" />
         </service>
-        <service id="solver.dns" class="AcmePhp\Core\ChallengeSolver\Dns\SimpleDnsSolver">
-            <argument type="service" id="solver_extractor.dns" />
-            <argument type="service" id="solver_validator.dns" />
+        <service id="challenge_solver.dns" class="AcmePhp\Core\ChallengeSolver\Dns\SimpleDnsSolver">
+            <argument type="service" id="challenge_extractor.dns" />
             <argument type="service" id="output" />
         </service>
 
-        <service id="solver_extractor.dns" class="AcmePhp\Core\ChallengeSolver\Dns\DnsDataExtractor">
+        <service id="challenge_extractor.dns" class="AcmePhp\Core\ChallengeSolver\Dns\DnsDataExtractor">
             <argument type="service" id="http.base64_encoder" />
         </service>
-        <service id="solver_extractor.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpDataExtractor" />
+        <service id="challenge_extractor.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpDataExtractor" />
 
-        <service id="solver_validator.dns" class="AcmePhp\Core\ChallengeSolver\Dns\DnsValidator" />
-        <service id="solver_validator.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpValidator" />
+        <!-- Challenge Validation -->
+        <service id="challenge_validator.dns" class="AcmePhp\Core\ChallengeSolver\WaitingValidator">
+            <argument type="service">
+                <service id="challenge_validator.dns" class="AcmePhp\Core\ChallengeSolver\Dns\DnsValidator">
+                    <argument type="service" id="challenge_extractor.dns" />
+                </service>
+            </argument>
+        </service>
+        <service id="challenge_validator.http" class="AcmePhp\Core\ChallengeSolver\WaitingValidator">
+            <argument type="service">
+                <service id="challenge_validator.http" class="AcmePhp\Core\ChallengeSolver\Http\HttpValidator">
+                    <argument type="service" id="challenge_extractor.http" />
+                    <argument type="service" id="http.raw_client" />
+                </service>
+            </argument>
+        </service>
+        <service id="challenge_validator" class="AcmePhp\Core\ChallengeSolver\ChainValidator">
+            <argument type="collection">
+                <argument type="service" id="challenge_validator.http" />
+                <argument type="service" id="challenge_validator.dns" />
+            </argument>
+        </service>
 
         <!-- Misc -->
         <service id="output" class="Symfony\Component\Console\Output\NullOutput" />

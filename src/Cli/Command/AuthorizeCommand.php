@@ -12,6 +12,7 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Core\ChallengeSolver\SolverInterface;
+use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -57,15 +58,26 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
-        if (!$this->getContainer()->has('solver.'.$solverName)) {
+        if (!$this->getContainer()->has('challenge_solver.'.$solverName)) {
             throw new \UnexpectedValueException(sprintf('The solver "%s" does not exists', $solverName));
         }
         /** @var SolverInterface $solver */
-        $solver = $this->getContainer()->get('solver.'.$solverName);
+        $solver = $this->getContainer()->get('challenge_solver.'.$solverName);
 
         $output->writeln(sprintf('<info>Requesting an authorization token for domain %s ...</info>', $domain));
 
-        $authorizationChallenge = $client->requestAuthorization($solver, $domain);
+        $authorizationChallenges = $client->requestAuthorization($domain);
+        $authorizationChallenge = null;
+        foreach ($authorizationChallenges as $candidate) {
+            if ($solver->supports($candidate)) {
+                $authorizationChallenge = $candidate;
+                break;
+            }
+        }
+
+        if (null === $authorizationChallenge) {
+            throw new ChallengeNotSupportedException();
+        }
 
         $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorizationChallenge);
 

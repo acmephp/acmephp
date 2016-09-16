@@ -85,11 +85,18 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         /*
          * Ask for domain challenge
          */
-        $challenge = $this->client->requestAuthorization($solver, 'acmephp.com');
+        $challenges = $this->client->requestAuthorization('acmephp.com');
+        foreach ($challenges as $challenge) {
+            if ('http-01' === $challenge->getType()) {
+                break;
+            }
+        }
 
         $this->assertInstanceOf(AuthorizationChallenge::class, $challenge);
         $this->assertEquals('acmephp.com', $challenge->getDomain());
         $this->assertContains('http://127.0.0.1:4000/acme/challenge', $challenge->getUrl());
+
+        $solver->solve($challenge);
 
         /*
          * Challenge check
@@ -100,7 +107,7 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($process->isRunning());
 
         try {
-            $check = $this->client->challengeAuthorization($solver, $challenge);
+            $check = $this->client->challengeAuthorization($challenge);
             $this->assertEquals('valid', $check['status']);
         } finally {
             $process->stop();
@@ -109,7 +116,9 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         /*
          * Request certificate
          */
-        $csr = new CertificateRequest(new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair());
+        $csr = new CertificateRequest(
+            new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair()
+        );
         $response = $this->client->requestCertificate('acmephp.com', $csr);
 
         $this->assertInstanceOf(CertificateResponse::class, $response);
@@ -129,7 +138,10 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         $documentRoot = __DIR__.'/Fixtures/challenges';
 
         // Create file
-        file_put_contents($documentRoot.'/.well-known/acme-challenge/'.$challenge->getToken(), $challenge->getPayload());
+        file_put_contents(
+            $documentRoot.'/.well-known/acme-challenge/'.$challenge->getToken(),
+            $challenge->getPayload()
+        );
 
         // Start server
         $finder = new PhpExecutableFinder();
@@ -138,13 +150,19 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
             throw new \RuntimeException('Unable to find PHP binary to start server.');
         }
 
-        $script = implode(' ', array_map(['Symfony\Component\Process\ProcessUtils', 'escapeArgument'], [
-            $binary,
-            '-S',
-            $listen,
-            '-t',
-            $documentRoot,
-        ]));
+        $script = implode(
+            ' ',
+            array_map(
+                ['Symfony\Component\Process\ProcessUtils', 'escapeArgument'],
+                [
+                    $binary,
+                    '-S',
+                    $listen,
+                    '-t',
+                    $documentRoot,
+                ]
+            )
+        );
 
         return new Process('exec '.$script, $documentRoot, null, null, null);
     }

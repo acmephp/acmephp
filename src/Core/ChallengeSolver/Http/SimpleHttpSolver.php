@@ -29,36 +29,26 @@ class SimpleHttpSolver implements SolverInterface
     private $extractor;
 
     /**
-     * @var HttpValidator
-     */
-    private $validator;
-
-    /**
      * @var OutputInterface
      */
     private $output;
 
     /**
      * @param HttpDataExtractor $extractor
-     * @param HttpValidator     $validator
      * @param OutputInterface   $output
      */
-    public function __construct(
-        HttpDataExtractor $extractor = null,
-        HttpValidator $validator = null,
-        OutputInterface $output = null
-    ) {
+    public function __construct(HttpDataExtractor $extractor = null, OutputInterface $output = null)
+    {
         $this->extractor = null === $extractor ? new HttpDataExtractor() : $extractor;
-        $this->validator = null === $validator ? new HttpValidator() : $validator;
         $this->output = null === $output ? new NullOutput() : $output;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($type)
+    public function supports(AuthorizationChallenge $authorizationChallenge)
     {
-        return 'http-01' === $type;
+        return 'http-01' === $authorizationChallenge->getType();
     }
 
     /**
@@ -83,17 +73,6 @@ EOF
                 $checkContent
             )
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validate(AuthorizationChallenge $authorizationChallenge, $timeout = 60)
-    {
-        $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
-        $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
-
-        $this->validator->validate($checkUrl, $checkContent, $timeout);
     }
 
     /**

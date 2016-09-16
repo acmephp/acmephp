@@ -12,6 +12,8 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Core\ChallengeSolver\SolverInterface;
+use AcmePhp\Core\ChallengeSolver\ValidatorInterface;
+use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,22 +57,30 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
-        if (!$this->getContainer()->has('solver.'.$solverName)) {
+        if (!$this->getContainer()->has('challenge_solver.'.$solverName)) {
             throw new \UnexpectedValueException(sprintf('The solver "%s" does not exists', $solverName));
         }
         /** @var SolverInterface $solver */
-        $solver = $this->getContainer()->get('solver.'.$solverName);
+        $solver = $this->getContainer()->get('challenge_solver.'.$solverName);
+        /** @var ValidatorInterface $validator */
+        $validator = $this->getContainer()->get('challenge_validator');
 
         $output->writeln(sprintf('<info>Loading the authorization token for domain %s ...</info>', $domain));
         $authorizationChallenge = $repository->loadDomainAuthorizationChallenge($domain);
 
+        if (!$solver->supports($authorizationChallenge)) {
+            throw new ChallengeNotSupportedException();
+        }
+
         if (!$input->getOption('no-test')) {
             $output->writeln('<info>Testing the challenge...</info>');
-            $solver->validate($authorizationChallenge);
+            if (!$validator->isValid($authorizationChallenge)) {
+                throw new ChallengeNotSupportedException();
+            }
         }
 
         $output->writeln(sprintf('<info>Requesting authorization check for domain %s ...</info>', $domain));
-        $client->challengeAuthorization($solver, $authorizationChallenge);
+        $client->challengeAuthorization($authorizationChallenge);
 
         $this->output->writeln(sprintf(<<<'EOF'
 

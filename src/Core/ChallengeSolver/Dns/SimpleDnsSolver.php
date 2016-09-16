@@ -29,36 +29,26 @@ class SimpleDnsSolver implements SolverInterface
     private $extractor;
 
     /**
-     * @var DnsValidator
-     */
-    private $validator;
-
-    /**
      * @var OutputInterface
      */
     protected $output;
 
     /**
      * @param DnsDataExtractor $extractor
-     * @param DnsValidator     $validator
      * @param OutputInterface  $output
      */
-    public function __construct(
-        DnsDataExtractor $extractor = null,
-        DnsValidator $validator = null,
-        OutputInterface $output = null
-    ) {
+    public function __construct(DnsDataExtractor $extractor = null, OutputInterface $output = null)
+    {
         $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
-        $this->validator = null === $validator ? new DnsValidator() : $validator;
         $this->output = null === $output ? new NullOutput() : $output;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($type)
+    public function supports(AuthorizationChallenge $authorizationChallenge)
     {
-        return 'dns-01' === $type;
+        return 'dns-01' === $authorizationChallenge->getType();
     }
 
     /**
@@ -84,17 +74,6 @@ EOF
                 $recordValue
             )
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validate(AuthorizationChallenge $authorizationChallenge, $timeout = 60)
-    {
-        $recordName = $this->extractor->getRecordName($authorizationChallenge);
-        $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
-
-        $this->validator->validate($recordName, $recordValue, $timeout);
     }
 
     /**

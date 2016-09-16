@@ -11,7 +11,8 @@
 
 namespace AcmePhp\Core\ChallengeSolver\Http;
 
-use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
+use AcmePhp\Core\ChallengeSolver\ValidatorInterface;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
@@ -21,57 +22,45 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class HttpValidator
+class HttpValidator implements ValidatorInterface
 {
     /**
-     * @var ClientInterface|null
+     * @var HttpDataExtractor
+     */
+    private $extractor;
+
+    /**
+     * @var ClientInterface
      */
     private $client;
 
     /**
      * @param ClientInterface|null $client
      */
-    public function __construct(ClientInterface $client = null)
+    public function __construct(HttpDataExtractor $extractor = null, ClientInterface $client = null)
     {
+        $this->extractor = null === $extractor ? new HttpDataExtractor() : $extractor;
         $this->client = null === $client ? new Client() : $client;
     }
 
     /**
-     * Internally validate the challenge by performing the same kind of test than the CA.
-     *
-     * @param string $checkUrl
-     * @param string $checkContent
-     * @param int    $timeout
+     * {@inheritdoc}
      */
-    public function validate($checkUrl, $checkContent, $timeout = 60)
+    public function supports(AuthorizationChallenge $authorizationChallenge)
     {
-        $limitEndTime = microtime(true) + $timeout;
-
-        do {
-            if ($this->isValide($checkUrl, $checkContent)) {
-                return;
-            }
-
-            sleep(1);
-        } while ($limitEndTime > microtime(true));
-
-        throw new ChallengeTimedOutException('Unable to validate timeout in the given time');
+        return 'http-01' === $authorizationChallenge->getType();
     }
 
     /**
-     * Returns whether or not the url return the expected content.
-     *
-     * @param string $checkUrl
-     * @param string $checkContent
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isValide($checkUrl, $checkContent)
+    public function isValid(AuthorizationChallenge $authorizationChallenge)
     {
-        try {
-            $content = $this->client->get($checkUrl)->getBody()->getContents();
+        $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
+        $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
 
-            return $checkContent === $content;
+        try {
+            return $checkContent === trim($this->client->get($checkUrl)->getBody()->getContents());
         } catch (ClientException $e) {
             return false;
         }
