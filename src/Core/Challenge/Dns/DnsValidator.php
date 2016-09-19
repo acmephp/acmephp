@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\ChallengeSolver\Dns;
+namespace AcmePhp\Core\Challenge\Dns;
 
-use AcmePhp\Core\ChallengeSolver\ValidatorInterface;
+use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 
 /**

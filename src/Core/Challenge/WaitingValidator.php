@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\ChallengeSolver;
+namespace AcmePhp\Core\Challenge;
 
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 

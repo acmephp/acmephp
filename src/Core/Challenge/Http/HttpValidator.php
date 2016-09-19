@@ -9,12 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\ChallengeSolver\Http;
+namespace AcmePhp\Core\Challenge\Http;
 
-use AcmePhp\Core\ChallengeSolver\ValidatorInterface;
+use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 
 /**
@@ -30,14 +29,14 @@ class HttpValidator implements ValidatorInterface
     private $extractor;
 
     /**
-     * @var ClientInterface
+     * @var Client
      */
     private $client;
 
     /**
-     * @param ClientInterface|null $client
+     * @param Client|null $client
      */
-    public function __construct(HttpDataExtractor $extractor = null, ClientInterface $client = null)
+    public function __construct(HttpDataExtractor $extractor = null, Client $client = null)
     {
         $this->extractor = null === $extractor ? new HttpDataExtractor() : $extractor;
         $this->client = null === $client ? new Client() : $client;

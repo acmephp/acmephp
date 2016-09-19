@@ -13,7 +13,7 @@ namespace Tests\AcmePhp\Core;
 
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\AcmeClientInterface;
-use AcmePhp\Core\ChallengeSolver\Http\SimpleHttpSolver;
+use AcmePhp\Core\Challenge\Http\SimpleHttpSolver;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;

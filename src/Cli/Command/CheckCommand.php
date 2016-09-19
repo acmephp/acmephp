@@ -11,8 +11,8 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Core\ChallengeSolver\SolverInterface;
-use AcmePhp\Core\ChallengeSolver\ValidatorInterface;
+use AcmePhp\Core\Challenge\SolverInterface;
+use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

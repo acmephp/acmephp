@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\ChallengeSolver\Dns;
+namespace AcmePhp\Core\Challenge\Dns;
 
-use AcmePhp\Core\ChallengeSolver\SolverInterface;
+use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;

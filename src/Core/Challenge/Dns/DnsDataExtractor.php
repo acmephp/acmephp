@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Core\ChallengeSolver\Dns;
+namespace AcmePhp\Core\Challenge\Dns;
 
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
