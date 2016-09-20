@@ -5,7 +5,7 @@ cd $( dirname "${BASH_SOURCE[0]}" )
 cd ..
 
 # SFTP
-docker run -d --name acme_sftp -v `pwd`/tests/Cli/Fixtures/sftp:/home/acmephp/share -p 8022:22 atmoz/sftp acmephp:acmephp:1001
+docker run -d --name acme_sftp -v `pwd`/tests/Cli/Fixtures/sftp:/home/acmephp/share -p 8022:22 atmoz/sftp acmephp:acmephp:`id -u`
 
 # Boulder
 docker run -d --name acme_boulder --net host acmephp/testing-ca
