@@ -82,7 +82,27 @@ class AcmeClient implements AcmeClientInterface
             $payload['contact'] = ['mailto:'.$email];
         }
 
-        return (array) $this->requestResource('POST', ResourcesDirectory::NEW_REGISTRATION, $payload);
+        $response = (array) $this->requestResource('POST', ResourcesDirectory::NEW_REGISTRATION, $payload);
+        $links = $this->httpClient->getLastLinks();
+        foreach ($links as $link) {
+            if ('terms-of-service' === $link['rel']) {
+                $agreement = substr($link[0], 1, -1);
+                $payload = [];
+                $payload['resource'] = ResourcesDirectory::REGISTRATION;
+                $payload['agreement'] = $agreement;
+
+                $this->httpClient->signedRequest(
+                    'POST',
+                    $this->httpClient->getLastLocation(),
+                    $payload,
+                    true
+                );
+
+                break;
+            }
+        }
+
+        return $response;
     }
 
     /**
