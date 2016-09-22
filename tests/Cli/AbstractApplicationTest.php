@@ -133,7 +133,7 @@ abstract class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             '--locality'     => 'Paris',
             '--organization' => 'Acme PHP',
             '--unit'         => 'Sales',
-            '--email'        => 'galopintitouan@gmail.com',
+            '--email'        => 'example@acmephp.github.io',
         ]);
 
         $requestDisplay = $requestTest->getDisplay();
@@ -199,7 +199,7 @@ abstract class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             '--locality'     => 'Paris',
             '--organization' => 'Acme PHP',
             '--unit'         => 'Sales',
-            '--email'        => 'meClientTesgalopintitouan@gmail.com',
+            '--email'        => 'example@acmephp.github.io',
         ]);
     }
 

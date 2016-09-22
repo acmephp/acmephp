@@ -57,7 +57,6 @@ class DnsValidatorTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-
         $mockExtractor = $this->prophesize(DnsDataExtractor::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 
@@ -90,7 +89,6 @@ class DnsValidatorTest extends \PHPUnit_Framework_TestCase
                 ],
             ]
         );
-
 
         $mockExtractor = $this->prophesize(DnsDataExtractor::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);

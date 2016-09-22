@@ -28,8 +28,7 @@
 
         <!-- Serializer -->
         <service id="serializer.pem_normalizer" class="AcmePhp\Cli\Serializer\PemNormalizer" public="false" />
-        <service id="serializer.get_set_method_normalizer"
-                 class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer" public="false" />
+        <service id="serializer.get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer" public="false" />
         <service id="serializer.pem_encoder" class="AcmePhp\Cli\Serializer\PemEncoder" public="false" />
         <service id="serializer.json_encoder" class="Symfony\Component\Serializer\Encoder\JsonEncoder" public="false" />
 
@@ -106,19 +105,12 @@
             <argument type="service" id="output" />
         </service>
 
+        <service id="challenge_extractor.http" class="AcmePhp\Core\Challenge\Http\HttpDataExtractor" />
         <service id="challenge_extractor.dns" class="AcmePhp\Core\Challenge\Dns\DnsDataExtractor">
             <argument type="service" id="http.base64_encoder" />
         </service>
-        <service id="challenge_extractor.http" class="AcmePhp\Core\Challenge\Http\HttpDataExtractor" />
 
         <!-- Challenge Validation -->
-        <service id="challenge_validator.dns" class="AcmePhp\Core\Challenge\WaitingValidator">
-            <argument type="service">
-                <service id="challenge_validator.dns" class="AcmePhp\Core\Challenge\Dns\DnsValidator">
-                    <argument type="service" id="challenge_extractor.dns" />
-                </service>
-            </argument>
-        </service>
         <service id="challenge_validator.http" class="AcmePhp\Core\Challenge\WaitingValidator">
             <argument type="service">
                 <service id="challenge_validator.http" class="AcmePhp\Core\Challenge\Http\HttpValidator">
@@ -127,6 +119,14 @@
                 </service>
             </argument>
         </service>
+        <service id="challenge_validator.dns" class="AcmePhp\Core\Challenge\WaitingValidator">
+            <argument type="service">
+                <service id="challenge_validator.dns" class="AcmePhp\Core\Challenge\Dns\DnsValidator">
+                    <argument type="service" id="challenge_extractor.dns" />
+                </service>
+            </argument>
+        </service>
+
         <service id="challenge_validator" class="AcmePhp\Core\Challenge\ChainValidator">
             <argument type="collection">
                 <argument type="service" id="challenge_validator.http" />
@@ -134,7 +134,7 @@
             </argument>
         </service>
 
-        <!-- Misc -->
+        <!-- Overridden by the commands  -->
         <service id="output" class="Symfony\Component\Console\Output\NullOutput" />
     </services>
 </container>

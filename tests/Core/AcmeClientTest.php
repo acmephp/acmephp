@@ -116,9 +116,7 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         /*
          * Request certificate
          */
-        $csr = new CertificateRequest(
-            new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair()
-        );
+        $csr = new CertificateRequest(new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair());
         $response = $this->client->requestCertificate('acmephp.com', $csr);
 
         $this->assertInstanceOf(CertificateResponse::class, $response);
