@@ -59,6 +59,7 @@ class RequestCommand extends AbstractCommand
                 new InputOption('organization', null, InputOption::VALUE_REQUIRED, 'Your organization/company (field "O" of the distinguished name, for instance: "Acme PHP")'),
                 new InputOption('unit', null, InputOption::VALUE_REQUIRED, 'Your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")'),
                 new InputOption('email', null, InputOption::VALUE_REQUIRED, 'Your e-mail address (field "E" of the distinguished name)'),
+                new InputOption('alternative-name', 'a', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Alternative domains for this certificate'),
             ])
             ->setDescription('Request a SSL certificate for a domain')
             ->setHelp(<<<'EOF'
@@ -83,24 +84,46 @@ EOF
         $this->actionHandler = $this->getActionHandler();
 
         $domain = $input->getArgument('domain');
+        $alternativeNames = array_unique($input->getOption('alternative-name'));
+        sort($alternativeNames);
 
         // Certificate renewal
-        if ($this->repository->hasDomainKeyPair($domain)
-            && $this->repository->hasDomainDistinguishedName($domain)
-            && $this->repository->hasDomainCertificate($domain)) {
-            return $this->executeRenewal($domain);
+        if ($this->hasValidCertificate($domain, $alternativeNames)) {
+            return $this->executeRenewal($domain, $alternativeNames);
         }
 
         // Certificate first request
-        return $this->executeFirstRequest($domain);
+        return $this->executeFirstRequest($domain, $alternativeNames);
+    }
+
+    private function hasValidCertificate($domain, array $alternativeNames)
+    {
+        if (!$this->repository->hasDomainCertificate($domain)) {
+            return false;
+        }
+
+        if (!$this->repository->hasDomainKeyPair($domain)) {
+            return false;
+        }
+
+        if (!$this->repository->hasDomainDistinguishedName($domain)) {
+            return false;
+        }
+
+        if ($this->repository->loadDomainDistinguishedName($domain)->getSubjectAlternativeNames() != $alternativeNames) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Request a first certificate for the given domain.
      *
      * @param string $domain
+     * @param array  $alternativeNames
      */
-    private function executeFirstRequest($domain)
+    private function executeFirstRequest($domain, array $alternativeNames)
     {
         $introduction = <<<'EOF'
 
@@ -116,42 +139,10 @@ EOF;
         $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
         $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
 
-        // Ask DistinguishedName
-        $distinguishedName = new DistinguishedName(
-            $domain,
-            $this->input->getOption('country'),
-            $this->input->getOption('province'),
-            $this->input->getOption('locality'),
-            $this->input->getOption('organization'),
-            $this->input->getOption('unit'),
-            $this->input->getOption('email')
+        $distinguishedName = $this->getOrCreateDistinguishedName($domain, $alternativeNames);
+        $this->output->writeln(
+            "<info>Distinguished name informations have been stored locally for this domain (they won't be asked on renewal).</info>"
         );
-
-        /** @var DistinguishedNameHelper $helper */
-        $helper = $this->getHelper('distinguished_name');
-
-        $asked = false;
-
-        if (!$helper->isReadyForRequest($distinguishedName)) {
-            $asked = true;
-
-            $this->output->writeln("\n\nSome informations about you or your company are required for the certificate:\n");
-
-            $distinguishedName = $helper->ask(
-                $this->getHelper('question'),
-                $this->input,
-                $this->output,
-                $distinguishedName
-            );
-        }
-
-        $this->repository->storeDomainDistinguishedName($domain, $distinguishedName);
-
-        if ($asked) {
-            $this->output->writeln(
-                "<info>Distinguished name informations have been stored locally for this domain (they won't be asked on renewal).</info>"
-            );
-        }
 
         // Request
         $this->output->writeln(sprintf('<info>Requesting first certificate for domain %s ...</info>', $domain));
@@ -216,8 +207,9 @@ EOF;
      * Renew a given domain certificate.
      *
      * @param string $domain
+     * @param array  $alternativeNames
      */
-    private function executeRenewal($domain)
+    private function executeRenewal($domain, array $alternativeNames)
     {
         /** @var LoggerInterface $monitoringLogger */
         $monitoringLogger = $this->getContainer()->get('monitoring_factory')->createLogger();
@@ -263,7 +255,7 @@ EOF;
 
             // Distinguished name
             $this->output->writeln('Loading domain distinguished name...');
-            $distinguishedName = $this->repository->loadDomainDistinguishedName($domain);
+            $distinguishedName = $this->getOrCreateDistinguishedName($domain, $alternativeNames);
 
             // Renewal
             $this->output->writeln(sprintf('Renewing certificate for domain %s ...', $domain));
@@ -283,5 +275,65 @@ EOF;
         } catch (\Throwable $e) {
             $monitoringLogger->alert('A critical error occured during certificate renewal', ['exception' => $e]);
         }
+    }
+
+    /**
+     * Retrieve the stored distinguishedName or create a new one if needed.
+     *
+     * @param string $domain
+     * @param array  $alternativeNames
+     *
+     * @return DistinguishedName
+     */
+    private function getOrCreateDistinguishedName($domain, array $alternativeNames)
+    {
+        if ($this->repository->hasDomainDistinguishedName($domain)) {
+            $original = $this->repository->loadDomainDistinguishedName($domain);
+
+            $distinguishedName = new DistinguishedName(
+                $domain,
+                $this->input->getOption('country') ?: $original->getCountryName(),
+                $this->input->getOption('province') ?: $original->getStateOrProvinceName(),
+                $this->input->getOption('locality') ?: $original->getLocalityName(),
+                $this->input->getOption('organization') ?: $original->getOrganizationName(),
+                $this->input->getOption('unit') ?: $original->getOrganizationalUnitName(),
+                $this->input->getOption('email') ?: $original->getEmailAddress(),
+                $alternativeNames
+            );
+        } else {
+            // Ask DistinguishedName
+            $distinguishedName = new DistinguishedName(
+                $domain,
+                $this->input->getOption('country'),
+                $this->input->getOption('province'),
+                $this->input->getOption('locality'),
+                $this->input->getOption('organization'),
+                $this->input->getOption('unit'),
+                $this->input->getOption('email'),
+                $alternativeNames
+            );
+
+            /** @var DistinguishedNameHelper $helper */
+            $helper = $this->getHelper('distinguished_name');
+
+            if (!$helper->isReadyForRequest($distinguishedName)) {
+                $asked = true;
+
+                $this->output->writeln(
+                    "\n\nSome informations about you or your company are required for the certificate:\n"
+                );
+
+                $distinguishedName = $helper->ask(
+                    $this->getHelper('question'),
+                    $this->input,
+                    $this->output,
+                    $distinguishedName
+                );
+            }
+        }
+
+        $this->repository->storeDomainDistinguishedName($domain, $distinguishedName);
+
+        return $distinguishedName;
     }
 }

@@ -60,11 +60,21 @@ EOF
                 continue;
             }
 
-            $domain = $directory['basename'];
-            $parsedCertificate = $certificateParser->parse($repository->loadDomainCertificate($domain));
+            $parsedCertificate = $certificateParser->parse($repository->loadDomainCertificate($directory['basename']));
+            $domainString = $parsedCertificate->getSubject();
+
+            $alternativeNames = array_diff($parsedCertificate->getSubjectAlternativeNames(), [$parsedCertificate->getSubject()]);
+            if (count($alternativeNames)) {
+                sort($alternativeNames);
+                $last = array_pop($alternativeNames);
+                foreach ($alternativeNames as $alternativeName) {
+                    $domainString .= "\n ├── ".$alternativeName;
+                }
+                $domainString .= "\n └── ".$last;
+            }
 
             $table->addRow([
-                $domain,
+                $domainString,
                 $parsedCertificate->getIssuer(),
                 $parsedCertificate->getValidFrom()->format('Y-m-d H:i:s'),
                 $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
