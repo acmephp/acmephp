@@ -66,10 +66,14 @@ class SimpleHttpSolver implements SolverInterface
     containing the following content:
 
     %s
+    
+    Check in your browser that the URL %s returns
+    the authorization token above.
 
 EOF
                 ,
                 $checkUrl,
+                $checkContent,
                 $checkContent
             )
         );

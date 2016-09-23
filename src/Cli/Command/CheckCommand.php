@@ -31,7 +31,7 @@ class CheckCommand extends AbstractCommand
     {
         $this->setName('check')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type challenge to use (http, dns)', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, sprintf('The type of challenge to use (%s)', implode(', ', self::getAvailableSolvers())), self::getAvailableSolvers()[0]),
                 new InputOption('no-test', 't', InputOption::VALUE_NONE, 'Whether or not internal tests should be disabled'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for'),
             ])
@@ -57,8 +57,12 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
-        if (!$this->getContainer()->has('challenge_solver.'.$solverName)) {
-            throw new \UnexpectedValueException(sprintf('The solver "%s" does not exists', $solverName));
+        if (!in_array($solverName, self::getAvailableSolvers()) || !$this->getContainer()->has('challenge_solver.'.$solverName)) {
+            throw new \UnexpectedValueException(sprintf(
+                'The solver "%s" does not exists. Available solvers are: (%s)',
+                $solverName,
+                implode(', ', self::getAvailableSolvers())
+            ));
         }
         /** @var SolverInterface $solver */
         $solver = $this->getContainer()->get('challenge_solver.'.$solverName);
@@ -101,5 +105,10 @@ EOF
         ));
 
         $solver->cleanup($authorizationChallenge);
+    }
+
+    private static function getAvailableSolvers()
+    {
+        return ['http', 'dns'];
     }
 }

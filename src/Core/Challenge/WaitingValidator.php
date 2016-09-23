@@ -54,14 +54,14 @@ class WaitingValidator implements ValidatorInterface
      */
     public function isValid(AuthorizationChallenge $authorizationChallenge)
     {
-        $limitEndTime = microtime(true) + $this->timeout;
+        $limitEndTime = time() + $this->timeout;
 
         do {
             if ($this->validator->isValid($authorizationChallenge)) {
                 return true;
             }
             sleep(1);
-        } while ($limitEndTime > microtime(true));
+        } while ($limitEndTime > time());
 
         return false;
     }

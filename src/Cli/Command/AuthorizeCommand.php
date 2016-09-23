@@ -30,7 +30,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type challenge to use (http, dns)', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, sprintf('The type of challenge to use (%s)', implode(', ', self::getAvailableSolvers())), self::getAvailableSolvers()[0]),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
@@ -58,8 +58,12 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
-        if (!$this->getContainer()->has('challenge_solver.'.$solverName)) {
-            throw new \UnexpectedValueException(sprintf('The solver "%s" does not exists', $solverName));
+        if (!in_array($solverName, self::getAvailableSolvers()) || !$this->getContainer()->has('challenge_solver.'.$solverName)) {
+            throw new \UnexpectedValueException(sprintf(
+                'The solver "%s" does not exists. Available solvers are: (%s)',
+                $solverName,
+                implode(', ', self::getAvailableSolvers())
+            ));
         }
         /** @var SolverInterface $solver */
         $solver = $this->getContainer()->get('challenge_solver.'.$solverName);
@@ -89,7 +93,7 @@ EOF
 <info>Then, you can ask to the CA to check the challenge!</info>
     Call the <info>check</info> command to ask the server to check your URL:
 
-    php <info>%s check</info> -c %s %s
+    php <info>%s check</info> -s %s %s
 
 EOF
             ,
@@ -97,5 +101,10 @@ EOF
             $solverName,
             $domain
         ));
+    }
+
+    private static function getAvailableSolvers()
+    {
+        return ['http', 'dns'];
     }
 }
