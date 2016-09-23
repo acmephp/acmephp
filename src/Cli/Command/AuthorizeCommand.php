@@ -12,6 +12,7 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Core\Challenge\SolverInterface;
+use AcmePhp\Core\Challenge\SolverLocator;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,7 +31,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, sprintf('The type of challenge to use (%s)', implode(', ', self::getAvailableSolvers())), self::getAvailableSolvers()[0]),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use', 'http'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
@@ -58,15 +59,17 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
-        if (!in_array($solverName, self::getAvailableSolvers()) || !$this->getContainer()->has('challenge_solver.'.$solverName)) {
+        /** @var SolverLocator $solverLocator */
+        $solverLocator = $this->getContainer()->get('challenge_solver.locator');
+        if (!$solverLocator->hasSolver($solverName)) {
             throw new \UnexpectedValueException(sprintf(
                 'The solver "%s" does not exists. Available solvers are: (%s)',
                 $solverName,
-                implode(', ', self::getAvailableSolvers())
+                implode(', ', $solverLocator->getSolversName())
             ));
         }
         /** @var SolverInterface $solver */
-        $solver = $this->getContainer()->get('challenge_solver.'.$solverName);
+        $solver = $solverLocator->getSolver($solverName);
 
         $output->writeln(sprintf('<info>Requesting an authorization token for domain %s ...</info>', $domain));
 
@@ -101,10 +104,5 @@ EOF
             $solverName,
             $domain
         ));
-    }
-
-    private static function getAvailableSolvers()
-    {
-        return ['http', 'dns'];
     }
 }

@@ -12,6 +12,7 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Core\Challenge\SolverInterface;
+use AcmePhp\Core\Challenge\SolverLocator;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,7 +32,7 @@ class CheckCommand extends AbstractCommand
     {
         $this->setName('check')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, sprintf('The type of challenge to use (%s)', implode(', ', self::getAvailableSolvers())), self::getAvailableSolvers()[0]),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use', 'http'),
                 new InputOption('no-test', 't', InputOption::VALUE_NONE, 'Whether or not internal tests should be disabled'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for'),
             ])
@@ -57,15 +58,17 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
-        if (!in_array($solverName, self::getAvailableSolvers()) || !$this->getContainer()->has('challenge_solver.'.$solverName)) {
+        /** @var SolverLocator $solverLocator */
+        $solverLocator = $this->getContainer()->get('challenge_solver.locator');
+        if (!$solverLocator->hasSolver($solverName)) {
             throw new \UnexpectedValueException(sprintf(
                 'The solver "%s" does not exists. Available solvers are: (%s)',
                 $solverName,
-                implode(', ', self::getAvailableSolvers())
+                implode(', ', $solverLocator->getSolversName())
             ));
         }
         /** @var SolverInterface $solver */
-        $solver = $this->getContainer()->get('challenge_solver.'.$solverName);
+        $solver = $solverLocator->getSolver($solverName);
         /** @var ValidatorInterface $validator */
         $validator = $this->getContainer()->get('challenge_validator');
 
@@ -105,10 +108,5 @@ EOF
         ));
 
         $solver->cleanup($authorizationChallenge);
-    }
-
-    private static function getAvailableSolvers()
-    {
-        return ['http', 'dns'];
     }
 }

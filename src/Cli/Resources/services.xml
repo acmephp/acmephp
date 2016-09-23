@@ -99,10 +99,16 @@
         <service id="challenge_solver.http" class="AcmePhp\Core\Challenge\Http\SimpleHttpSolver">
             <argument type="service" id="challenge_extractor.http" />
             <argument type="service" id="output" />
+            <tag name="acmephp.challenge_solver" alias="http" />
         </service>
         <service id="challenge_solver.dns" class="AcmePhp\Core\Challenge\Dns\SimpleDnsSolver">
             <argument type="service" id="challenge_extractor.dns" />
             <argument type="service" id="output" />
+            <tag name="acmephp.challenge_solver" alias="dns" />
+        </service>
+        <service id="challenge_solver.locator" class="AcmePhp\Core\Challenge\SolverLocator">
+            <argument type="service" id="container" />
+            <argument />
         </service>
 
         <service id="challenge_extractor.http" class="AcmePhp\Core\Challenge\Http\HttpDataExtractor" />

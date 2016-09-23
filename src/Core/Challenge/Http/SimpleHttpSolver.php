@@ -89,7 +89,7 @@ EOF
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-                    You can now safety remove the challenge's file at %s
+                    You can now safely remove the challenge's file at %s
 
 EOF
                 ,

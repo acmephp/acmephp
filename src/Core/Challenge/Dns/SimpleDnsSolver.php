@@ -66,12 +66,16 @@ class SimpleDnsSolver implements SolverInterface
         Domain: %s
         TXT value: %s
         
-     <comment>Wait for the propagation before moving to the next step</comment>
+    <comment>Wait for the propagation before moving to the next step</comment>
+    Tips: Use the following command to check the propagation
+
+        host -t TXT %s
 
 EOF
                 ,
                 $recordName,
-                $recordValue
+                $recordValue,
+                $recordName
             )
         );
     }
