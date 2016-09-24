@@ -9,7 +9,8 @@ Acme PHP
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-> **Note:** this project is in active development.
+**Note:** This project is in beta but follow a strict BC policy, even in beta (see
+[the Backward Compatibility policy of Acme PHP](#backward-compatibility-policy) for more informations).
 
 Acme PHP is a simple yet very extensible CLI client for Let's Encrypt that will help
 you get and renew free HTTPS certificates.
@@ -30,10 +31,26 @@ Acme PHP provides several major improvements over the default clients:
 -   Acme PHP is very extensible it to create the certificate files structure you need for your webserver.
     It brings several default formatters to create classical file structures
     (nginx, nginx-proxy, haproxy, etc.) but you can very easily create our own if you need to ;
+-   Acme PHP follows a strict BC policy preventing errors in your scripts or CRON even if you update it (see
+    [the Backward Compatibility policy of Acme PHP](#backward-compatibility-policy) for more informations) ;
 
 ## Documentation
 
 Read the official [Acme PHP documentation](https://acmephp.github.io).
+
+## Backward Compatibility policy
+
+Acme PHP follows a strict BC policy by sticking carefully to [semantic versioning](http://semver.org). This means 
+your scripts, your CRON tasks and your code will keep working properly even when you update Acme PHP (either the CLI
+tool or the library), as long as you keep the same major version (1.X.X, 2.X.X, etc.).
+
+In addition of semantic versioning of stable versions for the CLI and the library, Acme PHP also follows
+certain rules **for the CLI only**:
+-   an alpha release can break BC with previous alpha releases of the same version
+    (1.1.0-alpha2 can break BC with features introduced by 1.1.0-alpha1 but can't break BC with 1.0.0 features).
+-   a beta release cannot break BC with previous beta releases
+    (1.1.0-beta4 have to be BC with 1.1.0-beta3, 1.1.0-beta2, 1.1.0-beta1 and 1.0.0). New features can be added in beta
+    as long as they don't break BC.
 
 ## Launch the Test suite
 

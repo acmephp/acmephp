@@ -1,3 +1,14 @@
+* 1.0.0-beta1 (2016-09-24)
+
+ * f1585a4 Fix type in README
+ * 54d68c3 Merge pull request #24 from jderusse/multi-domains
+ * 8553f5c Split method firstRequest to reduce complexity
+ * bf79270 Improve status's display
+ * 7bd4e79 Separate domain and alternativeNames
+ * 5a44496 Allow multi-domain in cli
+ * f7de82d Automatically agreed with agrement (#26)
+ * 7accf30 Fix tests (#27)
+
 * 1.0.0-alpha10 (2016-08-16)
 
  * 3bfa96c Update RegisterCommand.php (#21)
