@@ -27,7 +27,7 @@ Acme PHP provides several major improvements over the default clients:
     Thus, the configuration is much more expressive and the same setup is used at every renewal ;
 -   Acme PHP can monitor your CRONs and can send you alerts in many differents places:
     E-mail, Slack, HipChat, Flowdock, Fleep (thanks to [Monolog](https://github.com/Seldaek/monolog)!)
--   Acme PHP is very extendible it to create the certificate files structure you need for your webserver.
+-   Acme PHP is very extensible it to create the certificate files structure you need for your webserver.
     It brings several default formatters to create classical file structures
     (nginx, nginx-proxy, haproxy, etc.) but you can very easily create our own if you need to ;
 
