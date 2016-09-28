@@ -67,9 +67,23 @@ class BuildNginxProxyAction implements ActionInterface
             $this->serializer->serialize($privateKey, PemEncoder::FORMAT)
         );
 
-        $this->repository->save(
-            'nginxproxy/'.$domain.'.crt',
-            $this->serializer->serialize($certificate, PemEncoder::FORMAT)
-        );
+        // Simple certificate
+        $certPem = $this->serializer->serialize($certificate, PemEncoder::FORMAT);
+
+        // Issuer chain
+        $issuerChain = [];
+        $issuerCertificate = $certificate->getIssuerCertificate();
+
+        while (null !== $issuerCertificate) {
+            $issuerChain[] = $this->serializer->serialize($issuerCertificate, PemEncoder::FORMAT);
+            $issuerCertificate = $issuerCertificate->getIssuerCertificate();
+        }
+
+        $chainPem = implode("\n", $issuerChain);
+
+        // Full chain
+        $fullChainPem = $certPem.$chainPem;
+
+        $this->repository->save('nginxproxy/'.$domain.'.crt', $fullChainPem);
     }
 }
