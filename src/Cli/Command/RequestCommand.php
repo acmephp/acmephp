@@ -192,12 +192,12 @@ EOF;
         $masterPath = $this->getContainer()->getParameter('app.storage_directory');
 
         $replacements = [
-            '%expiration' => $parsedCertificate->getValidTo()->format(\DateTime::ISO8601),
-            '%private%'   => $masterPath.'/private/'.$domain.'/private.pem',
-            '%cert%'      => $masterPath.'/certs/'.$domain.'/cert.pem',
-            '%chain%'     => $masterPath.'/certs/'.$domain.'/chain.pem',
-            '%fullchain%' => $masterPath.'/certs/'.$domain.'/fullchain.pem',
-            '%combined%'  => $masterPath.'/certs/'.$domain.'/combined.pem',
+            '%expiration%' => $parsedCertificate->getValidTo()->format(\DateTime::ISO8601),
+            '%private%'    => $masterPath.'/private/'.$domain.'/private.pem',
+            '%cert%'       => $masterPath.'/certs/'.$domain.'/cert.pem',
+            '%chain%'      => $masterPath.'/certs/'.$domain.'/chain.pem',
+            '%fullchain%'  => $masterPath.'/certs/'.$domain.'/fullchain.pem',
+            '%combined%'   => $masterPath.'/certs/'.$domain.'/combined.pem',
         ];
 
         $this->output->writeln(str_replace(array_keys($replacements), array_values($replacements), $success));

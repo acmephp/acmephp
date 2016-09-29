@@ -75,29 +75,45 @@ abstract class AbstractFlysystemAction extends AbstractAction
      */
     private function mirror($type, $path, FilesystemInterface $remote, AdapterInterface $remoteAdapter)
     {
-        if ($type === 'dir' && !$remote->has($path)) {
-            if (!$remote->createDir($path)) {
-                throw $this->createRuntimeException('Directory', $path, 'created', $remoteAdapter);
-            }
+        if ($type === 'dir') {
+            $this->mirrorDirectory($path, $remote, $remoteAdapter);
 
             return;
         }
 
+        $this->mirrorFile($path, $remote, $remoteAdapter);
+    }
+
+    /**
+     * @param string              $path
+     * @param FilesystemInterface $remote
+     * @param AdapterInterface    $remoteAdapter
+     */
+    private function mirrorDirectory($path, FilesystemInterface $remote, AdapterInterface $remoteAdapter)
+    {
+        if (!$remote->has($path) && !$remote->createDir($path)) {
+            throw $this->createRuntimeException('Directory', $path, 'created', $remoteAdapter);
+        }
+    }
+
+    /**
+     * @param string              $path
+     * @param FilesystemInterface $remote
+     * @param AdapterInterface    $remoteAdapter
+     */
+    private function mirrorFile($path, FilesystemInterface $remote, AdapterInterface $remoteAdapter)
+    {
         $masterContent = $this->master->read($path);
 
         if (!is_string($masterContent)) {
             throw new \RuntimeException(sprintf('File %s could not be read on master storage', $path));
         }
 
-        if ($remote->has($path)) {
-            if (!$remote->update($path, $masterContent)) {
-                throw $this->createRuntimeException('File', $path, 'updated', $remoteAdapter);
-            }
+        $isOnRemote = $remote->has($path);
 
-            return;
-        }
-
-        if (!$remote->write($path, $masterContent)) {
+        if ($isOnRemote && !$remote->update($path, $masterContent)) {
+            throw $this->createRuntimeException('File', $path, 'updated', $remoteAdapter);
+        } elseif (!$isOnRemote && !$remote->write($path, $masterContent)) {
             throw $this->createRuntimeException('File', $path, 'created', $remoteAdapter);
         }
     }

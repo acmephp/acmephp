@@ -22,13 +22,13 @@ use Monolog\Logger;
 class EmailHandlerBuilder implements HandlerBuilderInterface
 {
     private static $defaults = [
-        'from' => 'monitoring@acmephp.github.io',
-        'subject' => 'An error occured during Acme PHP CRON renewal',
-        'port' => 25,
-        'username' => null,
-        'password' => null,
+        'from'       => 'monitoring@acmephp.github.io',
+        'subject'    => 'An error occured during Acme PHP CRON renewal',
+        'port'       => 25,
+        'username'   => null,
+        'password'   => null,
         'encryption' => null,
-        'level' => Logger::ERROR,
+        'level'      => Logger::ERROR,
     ];
 
     /**

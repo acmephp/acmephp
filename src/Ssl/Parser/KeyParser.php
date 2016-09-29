@@ -40,20 +40,14 @@ class KeyParser
 
         $rawData = openssl_pkey_get_details($resource);
 
-        if (!$rawData) {
+        if (!is_array($rawData)) {
             throw new KeyParsingException(sprintf('Fail to parse key with error: %s', openssl_error_string()));
         }
 
-        if (!isset($rawData['type'])) {
-            throw new KeyParsingException('Missing expected key "type" in OpenSSL key');
-        }
-
-        if (!isset($rawData['key'])) {
-            throw new KeyParsingException('Missing expected key "key" in OpenSSL key');
-        }
-
-        if (!isset($rawData['bits'])) {
-            throw new KeyParsingException('Missing expected key "bits" in OpenSSL key');
+        foreach (['type', 'key', 'bits'] as $requiredKey) {
+            if (!isset($rawData[$requiredKey])) {
+                throw new KeyParsingException(sprintf('Missing expected key "%s" in OpenSSL key', $requiredKey));
+            }
         }
 
         $details = [];
