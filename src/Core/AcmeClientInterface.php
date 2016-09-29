@@ -15,9 +15,9 @@ use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestTimedOutException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeFailedException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeNotSupportedException;
-use AcmePhp\Core\Exception\Protocol\HttpChallengeTimedOutException;
+use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
+use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
+use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -52,12 +52,12 @@ interface AcmeClientInterface
      *
      * @param string $domain The domain to challenge.
      *
-     * @throws AcmeCoreServerException            When the ACME server returns an error HTTP status code
-     *                                            (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException            When an error occured during response parsing.
-     * @throws HttpChallengeNotSupportedException When the HTTP challenge is not supported by the server.
+     * @throws AcmeCoreServerException        When the ACME server returns an error HTTP status code
+     *                                        (the exception will be more specific if detail is provided).
+     * @throws AcmeCoreClientException        When an error occured during response parsing.
+     * @throws ChallengeNotSupportedException When the HTTP challenge is not supported by the server.
      *
-     * @return AuthorizationChallenge The data returned by the Certificate Authority.
+     * @return AuthorizationChallenge[] The list of challenges data returned by the Certificate Authority.
      */
     public function requestAuthorization($domain);
 
@@ -75,11 +75,11 @@ interface AcmeClientInterface
      * @param AuthorizationChallenge $challenge The challenge data to check.
      * @param int                    $timeout   The timeout period.
      *
-     * @throws AcmeCoreServerException        When the ACME server returns an error HTTP status code
-     *                                        (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException        When an error occured during response parsing.
-     * @throws HttpChallengeTimedOutException When the challenge timed out.
-     * @throws HttpChallengeFailedException   When the challenge failed.
+     * @throws AcmeCoreServerException    When the ACME server returns an error HTTP status code
+     *                                    (the exception will be more specific if detail is provided).
+     * @throws AcmeCoreClientException    When an error occured during response parsing.
+     * @throws ChallengeTimedOutException When the challenge timed out.
+     * @throws ChallengeFailedException   When the challenge failed.
      *
      * @return array The decoded server response (containing the result of the check).
      */

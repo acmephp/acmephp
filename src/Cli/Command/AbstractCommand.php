@@ -137,6 +137,22 @@ abstract class AbstractCommand extends Command
         // Load services
         $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources'));
         $loader->load('services.xml');
+
+        // Load solver
+        $solvers = [];
+        foreach ($this->container->findTaggedServiceIds('acmephp.challenge_solver') as $serviceId => $tags) {
+            foreach ($tags as $tag) {
+                if (!isset($tag['alias'])) {
+                    throw new \InvalidArgumentException(sprintf('The tagged service "%s" must define have an alias', $serviceId));
+                }
+
+                $solvers[$tag['alias']] = $serviceId;
+            }
+        }
+        $this->container->findDefinition('challenge_solver.locator')->replaceArgument(1, $solvers);
+
+        // Inject output
+        $this->container->set('output', $this->output);
     }
 
     /**

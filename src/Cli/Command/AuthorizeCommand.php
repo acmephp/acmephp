@@ -11,8 +11,12 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Core\Challenge\SolverInterface;
+use AcmePhp\Core\Challenge\SolverLocator;
+use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,6 +31,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use', 'http'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
@@ -53,38 +58,50 @@ EOF
         $client = $this->getClient();
         $domain = $input->getArgument('domain');
 
+        $solverName = strtolower($input->getOption('solver'));
+        /** @var SolverLocator $solverLocator */
+        $solverLocator = $this->getContainer()->get('challenge_solver.locator');
+        if (!$solverLocator->hasSolver($solverName)) {
+            throw new \UnexpectedValueException(sprintf(
+                'The solver "%s" does not exists. Available solvers are: (%s)',
+                $solverName,
+                implode(', ', $solverLocator->getSolversName())
+            ));
+        }
+        /** @var SolverInterface $solver */
+        $solver = $solverLocator->getSolver($solverName);
+
         $output->writeln(sprintf('<info>Requesting an authorization token for domain %s ...</info>', $domain));
-        $authorization = $client->requestAuthorization($domain);
 
-        $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorization);
+        $authorizationChallenges = $client->requestAuthorization($domain);
+        $authorizationChallenge = null;
+        foreach ($authorizationChallenges as $candidate) {
+            if ($solver->supports($candidate)) {
+                $authorizationChallenge = $candidate;
+                break;
+            }
+        }
 
-        $this->output->writeln(sprintf(<<<'EOF'
+        if (null === $authorizationChallenge) {
+            throw new ChallengeNotSupportedException();
+        }
 
-<info>The authorization token was successfully fetched!</info>
+        $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorizationChallenge);
 
-Now, to prove you own the domain %s and request certificates for this domain, follow these steps:
+        $this->output->writeln('<info>The authorization token was successfully fetched!</info>');
+        $solver->solve($authorizationChallenge);
 
-    1. Create a text file accessible on URL http://%s/.well-known/acme-challenge/%s
-       containing the following content:
-       
-       %s
-       
-    2. Check in your browser that the URL http://%s/.well-known/acme-challenge/%s returns
-       the authorization token above.
-       
-    3. Call the <info>check</info> command to ask the server to check your URL:
-       
-       php <info>%s check</info> %s
+        $this->output->writeln(sprintf(
+<<<'EOF'
+<info>Then, you can ask to the CA to check the challenge!</info>
+    Call the <info>check</info> command to ask the server to check your URL:
+
+    php <info>%s check</info> -s %s %s
 
 EOF
             ,
-            $domain,
-            $domain,
-            $authorization->getToken(),
-            $authorization->getPayload(),
-            $domain,
-            $authorization->getToken(),
             $_SERVER['PHP_SELF'],
+            $solverName,
             $domain
         ));
     }

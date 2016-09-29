@@ -119,10 +119,10 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $challenge = new AuthorizationChallenge(
             'example.org',
+            'http-01',
             'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
             'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
-            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY',
-            'https://acme-v01.api.letsencrypt.org/acme/authz/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk'
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY'
         );
 
         $this->repository->storeDomainAuthorizationChallenge('example.com', $challenge);
@@ -133,20 +133,20 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
         $data = json_decode($json, true);
 
         $this->assertEquals('example.org', $data['domain']);
+        $this->assertEquals('http-01', $data['type']);
         $this->assertEquals('https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837', $data['url']);
         $this->assertEquals('wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA', $data['token']);
         $this->assertEquals('wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY', $data['payload']);
-        $this->assertEquals('https://acme-v01.api.letsencrypt.org/acme/authz/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk', $data['location']);
     }
 
     public function testLoadDomainAuthorizationChallenge()
     {
         $challenge = new AuthorizationChallenge(
             'example.org',
+            'http-01',
             'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
             'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
-            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY',
-            'https://acme-v01.api.letsencrypt.org/acme/authz/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk'
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY'
         );
 
         $this->assertFalse($this->repository->hasDomainAuthorizationChallenge('example.com'));

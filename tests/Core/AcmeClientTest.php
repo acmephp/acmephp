@@ -13,6 +13,7 @@ namespace Tests\AcmePhp\Core;
 
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\AcmeClientInterface;
+use AcmePhp\Core\Challenge\Http\SimpleHttpSolver;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;
@@ -80,15 +81,22 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('initialIp', $data);
         $this->assertArrayHasKey('createdAt', $data);
 
+        $solver = new SimpleHttpSolver();
         /*
          * Ask for domain challenge
          */
-        $challenge = $this->client->requestAuthorization('acmephp.com');
+        $challenges = $this->client->requestAuthorization('acmephp.com');
+        foreach ($challenges as $challenge) {
+            if ('http-01' === $challenge->getType()) {
+                break;
+            }
+        }
 
         $this->assertInstanceOf(AuthorizationChallenge::class, $challenge);
         $this->assertEquals('acmephp.com', $challenge->getDomain());
         $this->assertContains('http://127.0.0.1:4000/acme/challenge', $challenge->getUrl());
-        $this->assertContains('http://127.0.0.1:4000/acme/authz', $challenge->getLocation());
+
+        $solver->solve($challenge);
 
         /*
          * Challenge check
@@ -128,7 +136,10 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
         $documentRoot = __DIR__.'/Fixtures/challenges';
 
         // Create file
-        file_put_contents($documentRoot.'/.well-known/acme-challenge/'.$challenge->getToken(), $challenge->getPayload());
+        file_put_contents(
+            $documentRoot.'/.well-known/acme-challenge/'.$challenge->getToken(),
+            $challenge->getPayload()
+        );
 
         // Start server
         $finder = new PhpExecutableFinder();
@@ -137,13 +148,19 @@ class AcmeClientTest extends \PHPUnit_Framework_TestCase
             throw new \RuntimeException('Unable to find PHP binary to start server.');
         }
 
-        $script = implode(' ', array_map(['Symfony\Component\Process\ProcessUtils', 'escapeArgument'], [
-            $binary,
-            '-S',
-            $listen,
-            '-t',
-            $documentRoot,
-        ]));
+        $script = implode(
+            ' ',
+            array_map(
+                ['Symfony\Component\Process\ProcessUtils', 'escapeArgument'],
+                [
+                    $binary,
+                    '-S',
+                    $listen,
+                    '-t',
+                    $documentRoot,
+                ]
+            )
+        );
 
         return new Process('exec '.$script, $documentRoot, null, null, null);
     }

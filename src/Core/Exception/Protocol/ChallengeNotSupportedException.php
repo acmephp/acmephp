@@ -14,10 +14,10 @@ namespace AcmePhp\Core\Exception\Protocol;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class HttpChallengeNotSupportedException extends ProtocolException
+class ChallengeNotSupportedException extends ProtocolException
 {
     public function __construct(\Exception $previous = null)
     {
-        parent::__construct('This ACME server does not support HTTP challenge.', $previous);
+        parent::__construct('This ACME server does not expose supported challenge.', $previous);
     }
 }
