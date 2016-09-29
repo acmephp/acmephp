@@ -21,6 +21,11 @@ use Monolog\Logger;
  */
 class SlackHandlerBuilder implements HandlerBuilderInterface
 {
+    private static $defaults = [
+        'username' => 'Acme PHP',
+        'level'    => Logger::INFO,
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -34,11 +39,17 @@ class SlackHandlerBuilder implements HandlerBuilderInterface
             throw new AcmeCliException('The Slack channel (key "channel") is required in the slack monitoring alert handler.');
         }
 
-        $username = isset($config['username']) ? $config['username'] : 'Acme PHP';
+        $config = array_merge(self::$defaults, $config);
 
-        $handler = new SlackHandler($config['token'], '#'.ltrim($config['channel'], '#'), $username, true, null, Logger::DEBUG);
+        $handler = new SlackHandler(
+            $config['token'],
+            '#'.ltrim($config['channel'], '#'),
+            $config['username'],
+            true,
+            null,
+            Logger::DEBUG
+        );
 
-        // By default, alert on every time
-        return new FingersCrossedHandler($handler, $config['level'] ?: Logger::INFO);
+        return new FingersCrossedHandler($handler, $config['level']);
     }
 }

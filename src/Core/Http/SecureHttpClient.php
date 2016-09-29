@@ -151,31 +151,12 @@ class SecureHttpClient
      */
     public function unsignedRequest($method, $endpoint, array $data = null, $returnJson = true)
     {
-        $request = new Request($method, $endpoint);
-        $request = $request->withHeader('Accept', 'application/json');
-
-        if ('POST' === $method && is_array($data)) {
-            $request = $request->withHeader('Content-Type', 'application/json');
-            $request = $request->withBody(\GuzzleHttp\Psr7\stream_for(json_encode($data)));
-        }
+        $request = $this->createRequest($method, $endpoint, $data);
 
         try {
             $this->lastResponse = $this->httpClient->send($request);
         } catch (\Exception $exception) {
-            if ($exception instanceof RequestException && $exception->getResponse() instanceof ResponseInterface) {
-                $this->lastResponse = $exception->getResponse();
-
-                throw $this->errorHandler->createAcmeExceptionForResponse($request, $this->lastResponse, $exception);
-            }
-
-            throw new AcmeCoreClientException(
-                sprintf(
-                    'An error occured during request "%s %s"',
-                    $request->getMethod(),
-                    $request->getUri()
-                ),
-                $exception
-            );
+            $this->handleClientException($request, $exception);
         }
 
         $body = \GuzzleHttp\Psr7\copy_to_string($this->lastResponse->getBody());
@@ -252,5 +233,32 @@ class SecureHttpClient
     public function getBase64Encoder()
     {
         return $this->base64Encoder;
+    }
+
+    private function createRequest($method, $endpoint, $data)
+    {
+        $request = new Request($method, $endpoint);
+        $request = $request->withHeader('Accept', 'application/json');
+
+        if ('POST' === $method && is_array($data)) {
+            $request = $request->withHeader('Content-Type', 'application/json');
+            $request = $request->withBody(\GuzzleHttp\Psr7\stream_for(json_encode($data)));
+        }
+
+        return $request;
+    }
+
+    private function handleClientException(Request $request, \Exception $exception)
+    {
+        if ($exception instanceof RequestException && $exception->getResponse() instanceof ResponseInterface) {
+            $this->lastResponse = $exception->getResponse();
+
+            throw $this->errorHandler->createAcmeExceptionForResponse($request, $this->lastResponse, $exception);
+        }
+
+        throw new AcmeCoreClientException(
+            sprintf('An error occured during request "%s %s"', $request->getMethod(), $request->getUri()),
+            $exception
+        );
     }
 }

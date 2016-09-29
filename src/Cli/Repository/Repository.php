@@ -319,30 +319,10 @@ class Repository implements RepositoryInterface
     {
         if (!$this->master->has($path)) {
             // File creation: remove from backup if it existed and warm-up both master and backup
-            if ($this->enableBackup) {
-                if ($this->backup->has($path)) {
-                    $this->backup->delete($path);
-                }
-
-                $this->backup->write($path, $content);
-            }
-
-            $this->master->write($path, $content);
+            $this->createAndBackup($path, $content);
         } else {
             // File update: backup before writing
-            if ($this->enableBackup) {
-                $oldContent = $this->master->read($path);
-
-                if ($oldContent !== false) {
-                    if ($this->backup->has($path)) {
-                        $this->backup->update($path, $oldContent);
-                    } else {
-                        $this->backup->write($path, $oldContent);
-                    }
-                }
-            }
-
-            $this->master->update($path, $content);
+            $this->backupAndUpdate($path, $content);
         }
 
         if ($this->enableBackup) {
@@ -350,5 +330,35 @@ class Repository implements RepositoryInterface
         }
 
         $this->master->setVisibility($path, $visibility);
+    }
+
+    private function createAndBackup($path, $content)
+    {
+        if ($this->enableBackup) {
+            if ($this->backup->has($path)) {
+                $this->backup->delete($path);
+            }
+
+            $this->backup->write($path, $content);
+        }
+
+        $this->master->write($path, $content);
+    }
+
+    private function backupAndUpdate($path, $content)
+    {
+        if ($this->enableBackup) {
+            $oldContent = $this->master->read($path);
+
+            if ($oldContent !== false) {
+                if ($this->backup->has($path)) {
+                    $this->backup->update($path, $oldContent);
+                } else {
+                    $this->backup->write($path, $oldContent);
+                }
+            }
+        }
+
+        $this->master->update($path, $content);
     }
 }

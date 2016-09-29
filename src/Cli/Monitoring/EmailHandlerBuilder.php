@@ -21,6 +21,16 @@ use Monolog\Logger;
  */
 class EmailHandlerBuilder implements HandlerBuilderInterface
 {
+    private static $defaults = [
+        'from'       => 'monitoring@acmephp.github.io',
+        'subject'    => 'An error occured during Acme PHP CRON renewal',
+        'port'       => 25,
+        'username'   => null,
+        'password'   => null,
+        'encryption' => null,
+        'level'      => Logger::ERROR,
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -34,29 +44,23 @@ class EmailHandlerBuilder implements HandlerBuilderInterface
             throw new AcmeCliException('The mail recipient (key "to") is required in the email monitoring alert handler.');
         }
 
-        $from = isset($config['from']) ? $config['from'] : 'monitoring@acmephp.github.io';
-        $subject = isset($config['subject']) ? $config['subject'] : 'An error occured during Acme PHP CRON renewal';
-        $port = isset($config['port']) ? $config['port'] : 25;
-        $username = isset($config['username']) ? $config['username'] : null;
-        $password = isset($config['password']) ? $config['password'] : null;
-        $encryption = isset($config['encryption']) ? $config['encryption'] : null;
+        $config = array_merge(self::$defaults, $config);
 
-        $transport = new \Swift_SmtpTransport($config['host'], $port, $encryption);
+        $transport = new \Swift_SmtpTransport($config['host'], $config['port'], $config['encryption']);
 
-        if ($username) {
-            $transport->setUsername($username);
+        if ($config['username']) {
+            $transport->setUsername($config['username']);
         }
 
-        if ($password) {
-            $transport->setPassword($password);
+        if ($config['password']) {
+            $transport->setPassword($config['password']);
         }
 
-        $message = new \Swift_Message($subject);
-        $message->setFrom($from);
+        $message = new \Swift_Message($config['subject']);
+        $message->setFrom($config['from']);
 
         $handler = new SwiftMailerHandler(new \Swift_Mailer($transport), $message);
 
-        // By default, alert only for errors
-        return new FingersCrossedHandler($handler, $config['level'] ?: Logger::ERROR);
+        return new FingersCrossedHandler($handler, $config['level']);
     }
 }
