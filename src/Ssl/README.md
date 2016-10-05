@@ -1,12 +1,20 @@
-Acme PHP SSL
-============
+Acme PHP SSL library
+====================
 
-> Note : this repository is in alpha stage but only to follow the same versionning as the CLI
-> client. This library's API won't change in the near future (we don't want BC breaks now).
+[![Join the chat at https://gitter.im/acmephp/acmephp](https://badges.gitter.im/acmephp/acmephp.svg)](https://gitter.im/acmephp/acmephp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-> This library is a part of the [Acme PHP initiative](https://github.com/acmephp/acmephp),
-> aiming to intregrate [Let's Encrypt](https://letsencrypt.org)
-> in the PHP world at the application level.
+[![Build Status](https://img.shields.io/travis/acmephp/acmephp/master.svg?style=flat-square)](https://travis-ci.org/acmephp/acmephp)
+[![Quality Score](https://img.shields.io/scrutinizer/g/acmephp/acmephp.svg?style=flat-square)](https://scrutinizer-ci.com/g/acmephp/acmephp)
+[![StyleCI](https://styleci.io/repos/59910490/shield)](https://styleci.io/repos/59910490)
+[![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+
+> **Note:** This project is in beta but follow a strict BC policy, even in beta (see
+> [the Backward Compatibility policy of Acme PHP](https://github.com/acmephp/acmephp#backward-compatibility-policy)
+> for more informations).
+>
+> Moreover, this repository is in beta stage only to follow the same versionning as the global project.
+> This library's API won't change in the near future (we don't want BC breaks now).
 
 Acme PHP SSL is a PHP wrapper around OpenSSL extension providing SSL encoding,
 decoding, parsing and signing features.
@@ -27,3 +35,8 @@ documentation to find out if this library can solve your problem!
 ## Documentation
 
 Read the official [Acme PHP SSL documentation](https://acmephp.github.io/acmephp/ssl/introduction.html).
+
+## Launch the Test suite
+
+The Acme PHP test suite is located in the main repository:
+[https://github.com/acmephp/acmephp#launch-the-test-suite](https://github.com/acmephp/acmephp#launch-the-test-suite).
