@@ -31,7 +31,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns)', 'http'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')

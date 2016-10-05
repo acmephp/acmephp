@@ -30,7 +30,7 @@ class RegisterCommand extends AbstractCommand
         $this->setName('register')
             ->setDefinition([
                 new InputArgument('email', InputArgument::OPTIONAL, 'An e-mail to use when certificates will expire soon'),
-                new InputOption('agreement', null, InputOption::VALUE_REQUIRED, 'The server usage conditions you agree with. Automatically agreed with all licenses'),
+                new InputOption('agreement', null, InputOption::VALUE_REQUIRED, 'The server usage conditions you agree with (automatically agreed with all licenses)'),
             ])
             ->setDescription('Register your account private key in the ACME server')
             ->setHelp(<<<'EOF'

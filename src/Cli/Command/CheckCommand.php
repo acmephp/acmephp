@@ -32,7 +32,7 @@ class CheckCommand extends AbstractCommand
     {
         $this->setName('check')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns)', 'http'),
                 new InputOption('no-test', 't', InputOption::VALUE_NONE, 'Whether or not internal tests should be disabled'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for'),
             ])
