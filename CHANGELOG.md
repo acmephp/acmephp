@@ -1,3 +1,25 @@
+* 1.0.0-beta2 (2016-10-19)
+
+ * ed2cc9e Update main and components README files
+ * 1adff0d Improve some commands descriptions
+ * b727bd3 Merge pull request #29 from acmephp/fix-scrunitizer
+ * a774fa1 Decrease code complexity by splitting complex methods into smaller ones
+ * 5a72637 Improve readability of monitoring handlers
+ * 2c88554 Merge pull request #25 from jderusse/custom-challenger
+ * a4bfd2f Create fullchain certificate in nginx-proxy action
+ * 93be223 Update version to dev
+ * d5f60c6 Use container's tag to easily extends solvers
+ * 914f33b Small fixes
+ * 6d678dd Small fixes
+ * ee753c1 Add tests
+ * 2aa1b9d Separate validators from solvers
+ * 0e46137 Fix tests
+ * 297b724 Add automatic pre-validation
+ * 40311b3 Remove data extractor from solvers
+ * 6305409 Fix CS
+ * 1d1bf00 Rename challenger into SOlver
+ * e1289df Allow custom challenger extension
+
 * 1.0.0-beta1 (2016-09-24)
 
  * f1585a4 Fix type in README
