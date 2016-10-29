@@ -46,7 +46,7 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Loading monitoring configuration...');
+        $this->info('Loading monitoring configuration...');
 
         /** @var LoggerInterface $monitoringLogger */
         $monitoringLogger = $this->getContainer()->get('monitoring_factory')->createLogger();
@@ -57,7 +57,7 @@ EOF
             throw new AcmeCliException('Level '.$level.' is not valid (available levels: info, error)');
         }
 
-        $output->writeln('Triggering monitoring on "'.$level.'" level...');
+        $this->info('Triggering monitoring on "'.$level.'" level...');
 
         if ($level === HandlerBuilderInterface::LEVEL_INFO) {
             $monitoringLogger->info('This is a testing message from Acme PHP monitoring (info level)');
@@ -65,7 +65,7 @@ EOF
             $monitoringLogger->alert('This is a testing message from Acme PHP monitoring (error level)');
         }
 
-        $output->writeln('<info>Triggered successfully</info>');
-        $output->writeln('You should have been alerted');
+        $this->notice('Triggered successfully');
+        $this->info('You should have been alerted');
     }
 }

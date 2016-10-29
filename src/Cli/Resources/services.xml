@@ -5,6 +5,22 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
 
+        <!-- Overridden by the commands  -->
+        <service id="input" class="Symfony\Component\Console\Output\NullOutput" />
+        <service id="output" class="Symfony\Component\Console\Output\NullOutput" />
+
+        <!-- CLI logger (different output according to verbosity) -->
+        <service id="cli_logger.handler" class="AcmePhp\Cli\Monolog\ConsoleHandler">
+            <argument type="service" id="output" />
+        </service>
+
+        <service id="cli_logger" class="Monolog\Logger">
+            <argument>acmephp</argument>
+            <argument type="collection">
+                <argument type="service" id="cli_logger.handler" />
+            </argument>
+        </service>
+
         <!-- SSL -->
         <service id="ssl.key_pair_generator" class="AcmePhp\Ssl\Generator\KeyPairGenerator" />
         <service id="ssl.certificate_parser" class="AcmePhp\Ssl\Parser\CertificateParser" />
@@ -83,6 +99,7 @@
 
         <service id="action_handler" class="AcmePhp\Cli\ActionHandler\ActionHandler">
             <argument type="service" id="container" />
+            <argument type="service" id="cli_logger" />
             <argument>%storage.post_generate%</argument>
         </service>
 
@@ -139,8 +156,5 @@
                 <argument type="service" id="challenge_validator.dns" />
             </argument>
         </service>
-
-        <!-- Overridden by the commands  -->
-        <service id="output" class="Symfony\Component\Console\Output\NullOutput" />
     </services>
 </container>

@@ -59,6 +59,9 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
+
+        $this->debug('Locating solver', ['name' => $solverName]);
+
         /** @var SolverLocator $solverLocator */
         $solverLocator = $this->getContainer()->get('challenge_solver.locator');
         if (!$solverLocator->hasSolver($solverName)) {
@@ -68,30 +71,48 @@ EOF
                 implode(', ', $solverLocator->getSolversName())
             ));
         }
+
         /** @var SolverInterface $solver */
         $solver = $solverLocator->getSolver($solverName);
 
-        $output->writeln(sprintf('<info>Requesting an authorization token for domain %s ...</info>', $domain));
+        $this->debug('Solver found', ['name' => $solverName]);
 
+        $this->notice(sprintf('Requesting an authorization token for domain %s ...', $domain));
         $authorizationChallenges = $client->requestAuthorization($domain);
         $authorizationChallenge = null;
         foreach ($authorizationChallenges as $candidate) {
             if ($solver->supports($candidate)) {
                 $authorizationChallenge = $candidate;
+
+                $this->debug('Authorization challenge supported by solver', [
+                    'solver'    => $solverName,
+                    'challenge' => $candidate->getType(),
+                ]);
+
                 break;
             }
+
+            $this->debug('Authorization challenge not supported by solver', [
+                'solver'    => $solverName,
+                'challenge' => $candidate->getType(),
+            ]);
         }
 
         if (null === $authorizationChallenge) {
             throw new ChallengeNotSupportedException();
         }
 
+        $this->debug('Storing authorization challenge', [
+            'domain'    => $domain,
+            'challenge' => $authorizationChallenge->toArray(),
+        ]);
+
         $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorizationChallenge);
 
-        $this->output->writeln('<info>The authorization token was successfully fetched!</info>');
+        $this->notice('The authorization token was successfully fetched!');
         $solver->solve($authorizationChallenge);
 
-        $this->output->writeln(sprintf(
+        $this->info(sprintf(
 <<<'EOF'
 <info>Then, you can ask to the CA to check the challenge!</info>
     Call the <info>check</info> command to ask the server to check your URL:
