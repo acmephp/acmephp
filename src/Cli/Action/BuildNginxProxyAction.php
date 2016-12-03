@@ -12,9 +12,8 @@
 namespace AcmePhp\Cli\Action;
 
 use AcmePhp\Cli\Repository\RepositoryInterface;
-use AcmePhp\Cli\Serializer\PemEncoder;
+use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Action to create an nginx-proxy compatible directory.
@@ -31,18 +30,11 @@ class BuildNginxProxyAction implements ActionInterface
     private $repository;
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * @param RepositoryInterface $repository
-     * @param SerializerInterface $serializer
      */
-    public function __construct(RepositoryInterface $repository, SerializerInterface $serializer)
+    public function __construct(RepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -62,27 +54,15 @@ class BuildNginxProxyAction implements ActionInterface
         $privateKey = $response->getCertificateRequest()->getKeyPair()->getPrivateKey();
         $certificate = $response->getCertificate();
 
-        $this->repository->save(
-            'nginxproxy/'.$domain.'.key',
-            $this->serializer->serialize($privateKey, PemEncoder::FORMAT)
-        );
-
-        // Simple certificate
-        $certPem = $this->serializer->serialize($certificate, PemEncoder::FORMAT);
+        $this->repository->save('nginxproxy/'.$domain.'.key', $privateKey->getPEM());
 
         // Issuer chain
-        $issuerChain = [];
-        $issuerCertificate = $certificate->getIssuerCertificate();
-
-        while (null !== $issuerCertificate) {
-            $issuerChain[] = $this->serializer->serialize($issuerCertificate, PemEncoder::FORMAT);
-            $issuerCertificate = $issuerCertificate->getIssuerCertificate();
-        }
-
-        $chainPem = implode("\n", $issuerChain);
+        $issuerChain = array_map(function (Certificate $certificate) {
+            return $certificate->getPEM();
+        }, $certificate->getIssuerChain());
 
         // Full chain
-        $fullChainPem = $certPem.$chainPem;
+        $fullChainPem = $certificate->getPEM().implode("\n", $issuerChain);
 
         $this->repository->save('nginxproxy/'.$domain.'.crt', $fullChainPem);
     }

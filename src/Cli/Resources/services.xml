@@ -86,7 +86,6 @@
         <!-- Actions -->
         <service id="action.build_nginxproxy" class="AcmePhp\Cli\Action\BuildNginxProxyAction">
             <argument type="service" id="repository" />
-            <argument type="service" id="serializer" />
         </service>
 
         <service id="action.push_ftp" class="AcmePhp\Cli\Action\PushFtpAction">
@@ -95,6 +94,10 @@
 
         <service id="action.push_sftp" class="AcmePhp\Cli\Action\PushSftpAction">
             <argument type="service" id="repository.master_storage" />
+        </service>
+
+        <service id="action.push_rancher" class="AcmePhp\Cli\Action\PushRancherAction">
+            <argument type="service" id="http.raw_client" />
         </service>
 
         <service id="action_handler" class="AcmePhp\Cli\ActionHandler\ActionHandler">

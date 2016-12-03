@@ -39,6 +39,22 @@ class Certificate
     }
 
     /**
+     * @return Certificate[]
+     */
+    public function getIssuerChain()
+    {
+        $chain = [];
+        $issuerCertificate = $this->getIssuerCertificate();
+
+        while (null !== $issuerCertificate) {
+            $chain[] = $issuerCertificate;
+            $issuerCertificate = $issuerCertificate->getIssuerCertificate();
+        }
+
+        return $chain;
+    }
+
+    /**
      * @return string
      */
     public function getPEM()
