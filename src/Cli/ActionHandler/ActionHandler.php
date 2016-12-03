@@ -14,6 +14,7 @@ namespace AcmePhp\Cli\ActionHandler;
 use AcmePhp\Cli\Exception\AcmeCliActionException;
 use AcmePhp\Cli\Exception\AcmeCliException;
 use AcmePhp\Ssl\CertificateResponse;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,17 +28,24 @@ class ActionHandler
     private $container;
 
     /**
+     * @var LoggerInterface
+     */
+    private $cliLogger;
+
+    /**
      * @var array
      */
     private $postGenerateConfig;
 
     /**
      * @param ContainerInterface $container
+     * @param LoggerInterface    $cliLogger
      * @param array              $postGenerateConfig
      */
-    public function __construct(ContainerInterface $container, array $postGenerateConfig)
+    public function __construct(ContainerInterface $container, LoggerInterface $cliLogger, array $postGenerateConfig)
     {
         $this->container = $container;
+        $this->cliLogger = $cliLogger;
         $this->postGenerateConfig = $postGenerateConfig;
     }
 
@@ -83,6 +91,7 @@ class ActionHandler
         // Handle
         foreach ($actions as $action) {
             try {
+                $this->cliLogger->info(' - Running '.$action['name'].'...');
                 $action['handler']->handle($action['config'], $response);
             } catch (\Exception $exception) {
                 throw new AcmeCliActionException($action['name'], $exception);

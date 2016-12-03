@@ -13,6 +13,7 @@ namespace Tests\AcmePhp\Cli;
 
 use AcmePhp\Cli\Command\AbstractCommand;
 use AcmePhp\Cli\Monitoring\HandlerBuilderInterface;
+use AcmePhp\Core\Exception\AcmeCoreClientException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -68,9 +69,6 @@ class MonitoredApplicationTest extends AbstractApplicationTest
             '--force'        => true,
         ]);
 
-        $requestDisplay = $commandTester->getDisplay();
-
-        $this->assertContains('Certificate renewed successfully!', $requestDisplay);
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/private.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/public.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/cert.pem');
@@ -98,9 +96,6 @@ class MonitoredApplicationTest extends AbstractApplicationTest
             '--force'        => true,
         ]);
 
-        $requestDisplay = $commandTester->getDisplay();
-
-        $this->assertContains('Certificate renewed successfully!', $requestDisplay);
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/private.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/public.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/cert.pem');
@@ -149,21 +144,28 @@ class MonitoredApplicationTest extends AbstractApplicationTest
          * Renewal with issue
          */
         $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command'        => $command->getName(),
-            'domain'         => 'acmephp.com',
-            '--server'       => 'http://127.0.0.1:4000/directory',
-            '--country'      => 'FR',
-            '--province'     => 'Ile de France',
-            '--locality'     => 'Paris',
-            '--organization' => 'Acme PHP',
-            '--unit'         => 'Sales',
-            '--email'        => 'galopintitouan@gmail.com',
-            '--force'        => true,
-        ]);
+        $thrownException = null;
 
-        $requestDisplay = $commandTester->getDisplay();
-        $this->assertNotContains('Certificate renewed successfully!', $requestDisplay);
+        try {
+            $commandTester->execute([
+                'command'        => $command->getName(),
+                'domain'         => 'acmephp.com',
+                '--server'       => 'http://127.0.0.1:4000/directory',
+                '--country'      => 'FR',
+                '--province'     => 'Ile de France',
+                '--locality'     => 'Paris',
+                '--organization' => 'Acme PHP',
+                '--unit'         => 'Sales',
+                '--email'        => 'galopintitouan@gmail.com',
+                '--force'        => true,
+            ]);
+        } catch (AcmeCoreClientException $e) {
+            $thrownException = $e;
+        }
+
+        $this->assertNotNull($thrownException);
+        $this->assertNotNull($thrownException->getPrevious());
+        $this->assertInstanceOf(RequestException::class, $thrownException->getPrevious());
 
         $records = $handler->getRecords();
 

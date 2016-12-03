@@ -58,6 +58,9 @@ EOF
         $domain = $input->getArgument('domain');
 
         $solverName = strtolower($input->getOption('solver'));
+
+        $this->debug('Locating solver', ['name' => $solverName]);
+
         /** @var SolverLocator $solverLocator */
         $solverLocator = $this->getContainer()->get('challenge_solver.locator');
         if (!$solverLocator->hasSolver($solverName)) {
@@ -69,27 +72,32 @@ EOF
         }
         /** @var SolverInterface $solver */
         $solver = $solverLocator->getSolver($solverName);
+
+        $this->debug('Solver found', ['name' => $solverName]);
+
         /** @var ValidatorInterface $validator */
         $validator = $this->getContainer()->get('challenge_validator');
 
-        $output->writeln(sprintf('<info>Loading the authorization token for domain %s ...</info>', $domain));
+        $this->notice(sprintf('Loading the authorization token for domain %s ...', $domain));
         $authorizationChallenge = $repository->loadDomainAuthorizationChallenge($domain);
+
+        $this->debug('Challenge loaded', ['challenge' => $authorizationChallenge->toArray()]);
 
         if (!$solver->supports($authorizationChallenge)) {
             throw new ChallengeNotSupportedException();
         }
 
         if (!$input->getOption('no-test')) {
-            $output->writeln('<info>Testing the challenge...</info>');
+            $this->notice('Testing the challenge...');
             if (!$validator->isValid($authorizationChallenge)) {
                 throw new ChallengeNotSupportedException();
             }
         }
 
-        $output->writeln(sprintf('<info>Requesting authorization check for domain %s ...</info>', $domain));
+        $this->notice(sprintf('Requesting authorization check for domain %s ...', $domain));
         $client->challengeAuthorization($authorizationChallenge);
 
-        $this->output->writeln(sprintf(<<<'EOF'
+        $this->info(sprintf(<<<'EOF'
 
 <info>The authorization check was successful!</info>
 

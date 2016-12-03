@@ -49,7 +49,6 @@ EOF
         /** @var CertificateParser $certificateParser */
         $certificateParser = $this->getContainer()->get('ssl.certificate_parser');
 
-
         $table = new Table($output);
         $table->setHeaders(['Domain', 'Issuer', 'Valid from', 'Valid to', 'Needs renewal?']);
 

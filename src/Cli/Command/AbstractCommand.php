@@ -18,6 +18,7 @@ use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Command\Command;
@@ -32,7 +33,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-abstract class AbstractCommand extends Command
+abstract class AbstractCommand extends Command implements LoggerInterface
 {
     /**
      * @var InputInterface
@@ -68,6 +69,8 @@ abstract class AbstractCommand extends Command
      */
     protected function getRepository()
     {
+        $this->debug('Loading repository');
+
         return $this->getContainer()->get('repository');
     }
 
@@ -76,6 +79,8 @@ abstract class AbstractCommand extends Command
      */
     protected function getActionHandler()
     {
+        $this->debug('Loading action handler');
+
         return $this->getContainer()->get('action_handler');
     }
 
@@ -84,7 +89,8 @@ abstract class AbstractCommand extends Command
      */
     protected function getClient()
     {
-        $this->output->writeln('<info>Loading account key pair...</info>');
+        $this->debug('Creating Acme client');
+        $this->notice('Loading account key pair...');
 
         $accountKeyPair = $this->getRepository()->loadAccountKeyPair();
 
@@ -95,6 +101,14 @@ abstract class AbstractCommand extends Command
         $csrSigner = $this->getContainer()->get('ssl.csr_signer');
 
         return new AcmeClient($httpClient, $this->input->getOption('server'), $csrSigner);
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getCliLogger()
+    {
+        return $this->getContainer()->get('cli_logger');
     }
 
     /**
@@ -151,7 +165,8 @@ abstract class AbstractCommand extends Command
         }
         $this->container->findDefinition('challenge_solver.locator')->replaceArgument(1, $solvers);
 
-        // Inject output
+        // Inject input and output
+        $this->container->set('input', $this->input);
         $this->container->set('output', $this->output);
     }
 
@@ -167,9 +182,7 @@ abstract class AbstractCommand extends Command
             $filesystem = new Filesystem();
             $filesystem->dumpFile($configFile, file_get_contents($referenceFile));
 
-            $this->output->writeln(
-                '<info>Configuration file '.$configFile.' did not exist and has been created.</info>'
-            );
+            $this->notice('Configuration file '.$configFile.' did not exist and has been created.');
         }
 
         if (!is_readable($configFile)) {
@@ -177,5 +190,77 @@ abstract class AbstractCommand extends Command
         }
 
         $this->configuration = ['acmephp' => Yaml::parse(file_get_contents($configFile))];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function emergency($message, array $context = [])
+    {
+        return $this->getCliLogger()->emergency($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function alert($message, array $context = [])
+    {
+        return $this->getCliLogger()->alert($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function critical($message, array $context = [])
+    {
+        return $this->getCliLogger()->critical($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function error($message, array $context = [])
+    {
+        return $this->getCliLogger()->error($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function warning($message, array $context = [])
+    {
+        return $this->getCliLogger()->warning($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notice($message, array $context = [])
+    {
+        return $this->getCliLogger()->notice($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function info($message, array $context = [])
+    {
+        return $this->getCliLogger()->info($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function debug($message, array $context = [])
+    {
+        return $this->getCliLogger()->debug($message, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function log($level, $message, array $context = [])
+    {
+        return $this->getCliLogger()->log($level, $message, $context);
     }
 }

@@ -56,11 +56,13 @@ EOF
          * Generate account key pair if needed
          */
         if (!$repository->hasAccountKeyPair()) {
-            $output->writeln('<info>No account key pair was found, generating one...</info>');
+            $this->notice('No account key pair was found, generating one...');
+            $this->debug('Generating a key pair');
 
             /** @var KeyPair $accountKeyPair */
             $accountKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
 
+            $this->debug('Key pair generated, storing', ['public_key' => $accountKeyPair->getPublicKey()->getPEM()]);
             $repository->storeAccountKeyPair($accountKeyPair);
         }
 
@@ -72,9 +74,11 @@ EOF
         $email = $input->getArgument('email') ?: null;
         $agreement = $input->getOption('agreement') ?: null;
 
-        $output->writeln('<info>Registering on the ACME server...</info>');
+        $this->notice('Registering on the ACME server...');
+        $this->debug('Registering your account on Acme server', ['email' => $email, 'agreement' => $agreement]);
+
         $client->registerAccount($agreement, $email);
 
-        $output->writeln('<info>Account registered successfully!</info>');
+        $this->notice('Account registered successfully!');
     }
 }
