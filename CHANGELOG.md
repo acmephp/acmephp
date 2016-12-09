@@ -1,3 +1,15 @@
+* 1.0.0-beta3 (2016-12-09)
+
+ * daa6d1c Merge pull request #40 from acmephp/fix-39
+ * 0b8629e Remove RECOVER_REGISTRATION obsolete unused resource
+ * de625cb Merge pull request #35 from acmephp/fix-34
+ * a7973dc Fix #34 by removing illogical data validation in resources directory
+ * 3a77a61 Merge pull request #31 from acmephp/rancher
+ * 831f3ca Implement Push to Rancher post-generate action
+ * 09437a7 Merge pull request #30 from acmephp/verbosity
+ * 794f8d5 Introduce CLI logger to handle different verbosities properly
+ * e055695 Bump to dev
+
 * 1.0.0-beta2 (2016-10-19)
 
  * ed2cc9e Update main and components README files
