@@ -1,0 +1,3 @@
+commit_failure_conditions:
+    - "project.severity.critical > 0"
+    - "project.severity.major > 0"
