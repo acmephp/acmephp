@@ -227,10 +227,10 @@ class SelfUpdateCommand extends Command
 
             $newVersion = $updater->getNewVersion();
             $oldVersion = $updater->getOldVersion();
-            if (strlen($newVersion) == 40) {
+            if (strlen($newVersion) === 40) {
                 $newVersion = 'dev-'.$newVersion;
             }
-            if (strlen($oldVersion) == 40) {
+            if (strlen($oldVersion) === 40) {
                 $oldVersion = 'dev-'.$oldVersion;
             }
 
@@ -311,7 +311,7 @@ class SelfUpdateCommand extends Command
         if ($updater->getStrategy() instanceof ShaStrategy) {
             $stability = 'development';
         } elseif ($updater->getStrategy() instanceof GithubStrategy
-            && $updater->getStrategy()->getStability() == GithubStrategy::UNSTABLE) {
+            && $updater->getStrategy()->getStability() === GithubStrategy::UNSTABLE) {
             $stability = 'pre-release';
         }
 
@@ -322,7 +322,7 @@ class SelfUpdateCommand extends Command
                     $stability,
                     $updater->getNewVersion()
                 ));
-            } elseif (false == $updater->getNewVersion()) {
+            } elseif (false === $updater->getNewVersion()) {
                 $this->output->writeln(sprintf('There are no %s builds available.', $stability));
             } else {
                 $this->output->writeln(sprintf('You have the current %s build installed.', $stability));
