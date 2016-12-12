@@ -46,7 +46,7 @@
         "padraic/phar-updater": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8.27",
+        "phpunit/phpunit": "^4.8.31|^5.7.3",
         "sllh/php-cs-fixer-styleci-bridge": "^1.5.0",
         "symfony/finder": "^3.0",
         "symfony/process": "^3.0",
