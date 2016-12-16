@@ -83,6 +83,6 @@ monitoring: ~   # Monitoring is disabled by default
 #
 #    slack:
 #        token: your_token
-#        channel: #general
+#        channel: general   # Channel name without hashtag
 #        # username: Acme PHP
 #        # level: info      # By default, on every CRON for slack handler
