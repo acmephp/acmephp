@@ -31,4 +31,16 @@ class PrivateKey extends Key
 
         return $resource;
     }
+
+    /**
+     * @return PublicKey
+     */
+    public function getPublicKey()
+    {
+        if (!$resource = openssl_pkey_get_private($this->keyPEM)) {
+            throw new KeyFormatException(sprintf('Fail to convert key into resource: %s', openssl_error_string()));
+        }
+
+        return new PublicKey(openssl_pkey_get_details($resource)['key']);
+    }
 }
