@@ -35,18 +35,19 @@ class PublicKey extends Key
 
     /**
      * @param $keyDER
+     *
      * @return PublicKey
      */
     public static function fromDER($keyDER)
     {
-        Assert::stringNotEmpty($keyDER, __CLASS__ . '::$keyDER should not be an empty string. Got %s');
+        Assert::stringNotEmpty($keyDER, __CLASS__.'::$keyDER should not be an empty string. Got %s');
 
         $der = base64_encode($keyDER);
         $lines = str_split($der, 65);
         $body = implode("\n", $lines);
         $title = 'PUBLIC KEY';
         $result = "-----BEGIN {$title}-----\n";
-        $result .= $body . "\n";
+        $result .= $body."\n";
         $result .= "-----END {$title}-----\n";
 
         return new self($result);
@@ -59,6 +60,7 @@ class PublicKey extends Key
     {
         $dgst = hash('sha256', $this->getDER(), true);
         $enc = base64_encode($dgst);
+
         return $enc;
     }
 }
