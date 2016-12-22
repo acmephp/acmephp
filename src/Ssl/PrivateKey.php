@@ -12,6 +12,7 @@
 namespace AcmePhp\Ssl;
 
 use AcmePhp\Ssl\Exception\KeyFormatException;
+use Webmozart\Assert\Assert;
 
 /**
  * Represent a SSL Private key.
@@ -37,10 +38,25 @@ class PrivateKey extends Key
      */
     public function getPublicKey()
     {
-        if (!$resource = openssl_pkey_get_private($this->keyPEM)) {
-            throw new KeyFormatException(sprintf('Fail to convert key into resource: %s', openssl_error_string()));
-        }
+        return new PublicKey(openssl_pkey_get_details($this->getResource())['key']);
+    }
 
-        return new PublicKey(openssl_pkey_get_details($resource)['key']);
+    /**
+     * @param $keyDER
+     * @return string
+     */
+    public static function fromDER($keyDER)
+    {
+        Assert::stringNotEmpty($keyDER, __CLASS__ . '::$keyDER should not be an empty string. Got %s');
+
+        $der = base64_encode($keyDER);
+        $lines = str_split($der, 65);
+        $body = implode("\n", $lines);
+        $title = 'PRIVATE KEY';
+        $result = "-----BEGIN {$title}-----\n";
+        $result .= $body . "\n";
+        $result .= "-----END {$title}-----\n";
+
+        return new self($result);
     }
 }
