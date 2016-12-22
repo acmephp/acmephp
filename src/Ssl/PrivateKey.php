@@ -43,7 +43,7 @@ class PrivateKey extends Key
 
     /**
      * @param $keyDER
-     * @return string
+     * @return PrivateKey
      */
     public static function fromDER($keyDER)
     {

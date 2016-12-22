@@ -12,6 +12,7 @@
 namespace AcmePhp\Ssl;
 
 use AcmePhp\Ssl\Exception\KeyFormatException;
+use Webmozart\Assert\Assert;
 
 /**
  * Represent a SSL Public key.
@@ -30,5 +31,34 @@ class PublicKey extends Key
         }
 
         return $resource;
+    }
+
+    /**
+     * @param $keyDER
+     * @return PublicKey
+     */
+    public static function fromDER($keyDER)
+    {
+        Assert::stringNotEmpty($keyDER, __CLASS__ . '::$keyDER should not be an empty string. Got %s');
+
+        $der = base64_encode($keyDER);
+        $lines = str_split($der, 65);
+        $body = implode("\n", $lines);
+        $title = 'PUBLIC KEY';
+        $result = "-----BEGIN {$title}-----\n";
+        $result .= $body . "\n";
+        $result .= "-----END {$title}-----\n";
+
+        return new self($result);
+    }
+
+    /**
+     * @return string
+     */
+    public function getHPKP()
+    {
+        $dgst = hash('sha256', $this->getDER(), true);
+        $enc = base64_encode($dgst);
+        return $enc;
     }
 }
