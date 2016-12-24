@@ -40,17 +40,15 @@ class PublicKey extends Key
      */
     public static function fromDER($keyDER)
     {
-        Assert::stringNotEmpty($keyDER, __CLASS__.'::$keyDER should not be an empty string. Got %s');
+        Assert::stringNotEmpty($keyDER, __METHOD__.'::$keyDER should not be an empty string. Got %s');
 
         $der = base64_encode($keyDER);
         $lines = str_split($der, 65);
-        $body = implode("\n", $lines);
-        $title = 'PUBLIC KEY';
-        $result = "-----BEGIN {$title}-----\n";
-        $result .= $body."\n";
-        $result .= "-----END {$title}-----\n";
+        array_unshift($lines, '-----BEGIN PUBLIC KEY-----');
+        $lines[] = '-----END PUBLIC KEY-----';
+        $lines[] = '';
 
-        return new self($result);
+        return new self(implode("\n", $lines));
     }
 
     /**
@@ -58,9 +56,6 @@ class PublicKey extends Key
      */
     public function getHPKP()
     {
-        $dgst = hash('sha256', $this->getDER(), true);
-        $enc = base64_encode($dgst);
-
-        return $enc;
+        return base64_encode(hash('sha256', $this->getDER(), true));
     }
 }

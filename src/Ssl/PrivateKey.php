@@ -48,16 +48,14 @@ class PrivateKey extends Key
      */
     public static function fromDER($keyDER)
     {
-        Assert::stringNotEmpty($keyDER, __CLASS__.'::$keyDER should not be an empty string. Got %s');
+        Assert::stringNotEmpty($keyDER, __METHOD__.'::$keyDER should not be an empty string. Got %s');
 
         $der = base64_encode($keyDER);
         $lines = str_split($der, 65);
-        $body = implode("\n", $lines);
-        $title = 'PRIVATE KEY';
-        $result = "-----BEGIN {$title}-----\n";
-        $result .= $body."\n";
-        $result .= "-----END {$title}-----\n";
+        array_unshift($lines, '-----BEGIN PRIVATE KEY-----');
+        $lines[] = '-----END PRIVATE KEY-----';
+        $lines[] = '';
 
-        return new self($result);
+        return new self(implode("\n", $lines));
     }
 }
