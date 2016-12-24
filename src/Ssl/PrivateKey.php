@@ -48,7 +48,7 @@ class PrivateKey extends Key
      */
     public static function fromDER($keyDER)
     {
-        Assert::stringNotEmpty($keyDER, __METHOD__.'::$keyDER should not be an empty string. Got %s');
+        Assert::stringNotEmpty($keyDER, __METHOD__.'::$keyDER should be a non-empty string. Got %s');
 
         $der = base64_encode($keyDER);
         $lines = str_split($der, 65);
