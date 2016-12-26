@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Ssl;
 
+use AcmePhp\Ssl\Exception\CertificateFormatException;
 use Webmozart\Assert\Assert;
 
 /**
@@ -68,5 +69,25 @@ class Certificate
     public function getIssuerCertificate()
     {
         return $this->issuerCertificate;
+    }
+
+    /**
+     * @return resource
+     */
+    public function getResource()
+    {
+        if (!$resource = openssl_pkey_get_public($this->certificatePEM)) {
+            throw new CertificateFormatException(sprintf('Failed to convert certificate into resource: %s', openssl_error_string()));
+        }
+
+        return $resource;
+    }
+
+    /**
+     * @return PublicKey
+     */
+    public function getPublicKey()
+    {
+        return new PublicKey(openssl_pkey_get_details($this->getResource())['key']);
     }
 }
