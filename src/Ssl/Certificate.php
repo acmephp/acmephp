@@ -11,8 +11,8 @@
 
 namespace AcmePhp\Ssl;
 
-use Webmozart\Assert\Assert;
 use AcmePhp\Ssl\Exception\CertificateFormatException;
+use Webmozart\Assert\Assert;
 
 /**
  * Represent a Certificate.
