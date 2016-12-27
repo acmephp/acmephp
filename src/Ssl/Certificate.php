@@ -84,18 +84,6 @@ class Certificate
     }
 
     /**
-     * @return resource
-     */
-    public function getResource()
-    {
-        if (!$resource = openssl_x509_read($this->certificatePEM)) {
-            throw new CertificateFormatException(sprintf('Failed to convert certificate into resource: %s', openssl_error_string()));
-        }
-
-        return $resource;
-    }
-
-    /**
      * @return PublicKey
      */
     public function getPublicKey()
