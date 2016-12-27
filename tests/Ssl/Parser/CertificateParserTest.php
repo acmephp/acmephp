@@ -88,4 +88,51 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertSame('happy hacker fake CA', $result->getIssuer());
         $this->assertFalse($result->isSelfSigned());
     }
+
+    public function test parse without issuer CN returns instance of ParsedCertificate()
+    {
+        $result = $this->service->parse(
+            new Certificate(
+                '
+-----BEGIN CERTIFICATE-----
+MIIEkjCCA3qgAwIBAgIUYOsBJUCnVkjrZKLXhz6uGeE+bfAwDQYJKoZIhvcNAQEL
+BQAwgYsxCzAJBgNVBAYTAlVTMRkwFwYDVQQKExBDbG91ZEZsYXJlLCBJbmMuMTQw
+MgYDVQQLEytDbG91ZEZsYXJlIE9yaWdpbiBTU0wgQ2VydGlmaWNhdGUgQXV0aG9y
+aXR5MRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRMwEQYDVQQIEwpDYWxpZm9ybmlh
+MB4XDTE2MTIxNjA2NDMwMFoXDTMxMTIxMzA2NDMwMFowYjEZMBcGA1UEChMQQ2xv
+dWRGbGFyZSwgSW5jLjEdMBsGA1UECxMUQ2xvdWRGbGFyZSBPcmlnaW4gQ0ExJjAk
+BgNVBAMTHUNsb3VkRmxhcmUgT3JpZ2luIENlcnRpZmljYXRlMIIBIjANBgkqhkiG
+9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6PiWC1ic15fnGgSPbWKgLWyUHw2AAPDQAmNb
+sr+8zYfP5GBeA7p+F0W4n6cy09E4Ofo4X5enaGcPY5xpn17HRrneu0T54jaGKVBK
+17Ip088uee28WVMzirtVMn3AUHwj6LGtLnpYXWpMIXvFE7A0qGMPuoQpgiNh3Ty4
+blR48vbHkbyKP1kWmL8xormueXbxPoppdmM0EhuCHCzcl3YGapTYBxq5IigEUSeM
+svGTIV7xTkHp1Y1lvG913d8MLQhuBrAr+IDmwbfJsZlKrdS/QReizfaOY+aagC5L
+/Ewmin1r3Z5oBtweCEprDhUZQxAjO7ixp2hRDLQxa0TtYuAnyQIDAQABo4IBFDCC
+ARAwDgYDVR0PAQH/BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMAwGA1UdEwEB
+/wQCMAAwHQYDVR0OBBYEFBtvpeo/GwVK4al5C+nC8n72lDaFMB8GA1UdIwQYMBaA
+FCToU1ddfDRAh6nrlNu64RZ4/CmkMEAGCCsGAQUFBwEBBDQwMjAwBggrBgEFBQcw
+AYYkaHR0cDovL29jc3AuY2xvdWRmbGFyZS5jb20vb3JpZ2luX2NhMB8GA1UdEQQY
+MBaCCioubXFjZG4uY3qCCG1xY2RuLmN6MDgGA1UdHwQxMC8wLaAroCmGJ2h0dHA6
+Ly9jcmwuY2xvdWRmbGFyZS5jb20vb3JpZ2luX2NhLmNybDANBgkqhkiG9w0BAQsF
+AAOCAQEAQzFUegjhjwPuc4Hm5sT6u2qjujPRS+b9cMMht2SF29P/h4QMe/6hfKwk
+vmRCTa5sqpzKC+paFtEPiUYcqrsn/zUKhBWpx9tWQpPFicnZLNCFcAkMuGA8xsDe
+zcSWDGK5n8GCdofWVrN3dXJ9Bs6gMSqZEkfjkWaLe6PonEwjR4gT8feMBH9+QlKt
+sVukLJ0Y8NynHAejoTvs2jpZbmzU5ywXCV1CQVBfbqDppZq8kqWakazxWEmYk2TY
+QhYb566EvoLnFHbYvEMAM92tx9CAlPcrVA1fqbxKOJGguNdMw826e1iI7mNp2l0z
+IVpfS/F2WV6y/Oh2mPNGqplqZpGjng==
+-----END CERTIFICATE-----
+'
+            )
+        );
+
+        $this->assertInstanceOf(ParsedCertificate::class, $result);
+        $this->assertInstanceOf(Certificate::class, $result->getSource());
+        $this->assertInstanceOf(\DateTime::class, $result->getValidFrom());
+        $this->assertSame('20161216', $result->getValidFrom()->format('Ymd'));
+        $this->assertInstanceOf(\DateTime::class, $result->getValidTo());
+        $this->assertSame('20311213', $result->getValidTo()->format('Ymd'));
+        $this->assertNotEmpty($result->getSerialNumber());
+        $this->assertNull($result->getIssuer());
+        $this->assertFalse($result->isSelfSigned());
+    }
 }

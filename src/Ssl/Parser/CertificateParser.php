@@ -42,9 +42,6 @@ class CertificateParser
         if (!isset($rawData['subject']['CN'])) {
             throw new CertificateParsingException('Missing expected key "subject.cn" in certificate');
         }
-        if (!isset($rawData['issuer']['CN'])) {
-            throw new CertificateParsingException('Missing expected key "issuer.cn" in certificate');
-        }
         if (!isset($rawData['serialNumber'])) {
             throw new CertificateParsingException('Missing expected key "serialNumber" in certificate');
         }
@@ -77,7 +74,7 @@ class CertificateParser
         return new ParsedCertificate(
             $certificate,
             $rawData['subject']['CN'],
-            $rawData['issuer']['CN'],
+            isset($rawData['issuer']['CN']) ? $rawData['issuer']['CN'] : null,
             $rawData['subject'] === $rawData['issuer'],
             new \DateTime('@'.$rawData['validFrom_time_t']),
             new \DateTime('@'.$rawData['validTo_time_t']),
