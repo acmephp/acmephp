@@ -31,7 +31,7 @@ class CertificateParser
      */
     public function parse(Certificate $certificate)
     {
-        $rawData = openssl_x509_parse($certificate->getPEM());
+        $rawData = openssl_x509_parse($certificate->getResource());
 
         if (!is_array($rawData)) {
             throw new CertificateParsingException(
