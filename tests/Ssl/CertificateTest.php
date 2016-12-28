@@ -60,7 +60,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertEquals('58b94e38ce0088f0ec5a0c38f04bd76c', md5($publicKey->getPEM()));
     }
 
-    public function test getResource returns a resource()
+    public function test getPublicKeyResource returns a resource()
     {
         $certificate = new Certificate(
             '
@@ -99,7 +99,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
 '
         );
 
-        $resource = $certificate->getResource();
+        $resource = $certificate->getPublicKeyResource();
 
         $this->assertInternalType('resource', $resource);
     }

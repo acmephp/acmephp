@@ -74,10 +74,10 @@ class Certificate
     /**
      * @return resource
      */
-    public function getResource()
+    public function getPublicKeyResource()
     {
         if (!$resource = openssl_pkey_get_public($this->certificatePEM)) {
-            throw new CertificateFormatException(sprintf('Failed to convert certificate into resource: %s', openssl_error_string()));
+            throw new CertificateFormatException(sprintf('Failed to convert certificate into public key resource: %s', openssl_error_string()));
         }
 
         return $resource;
@@ -88,6 +88,6 @@ class Certificate
      */
     public function getPublicKey()
     {
-        return new PublicKey(openssl_pkey_get_details($this->getResource())['key']);
+        return new PublicKey(openssl_pkey_get_details($this->getPublicKeyResource())['key']);
     }
 }
