@@ -1,3 +1,21 @@
+* 1.0.0-beta4 (2017-01-29)
+
+ * 0b18a86 Redone nameing of ::getResource with new tests (#61)
+ * 78d0e2d Accept empty issuer CN field (#59)
+ * 9d434e8 Certificate::getPublicKey and ::getResource (#58)
+ * 3f2b652 Added new methods for DER formatted keys and HPKP hash generation (#56)
+ * c6bb3c1 Merge pull request #55 from jankal/master
+ * f0118ff Get public key from private key
+ * ff75825 Merge pull request #49 from Sh1nto/Fix-hashtag-in-default-config-slack-channel-name
+ * 3c072c3 remove the hashtag of slack channel name in the default config
+ * 529d5eb Merge pull request #45 from acmephp/strict-equals
+ * 43f7a45 Add SensioLabsInsight analysis
+ * 16bc374 Merge pull request #44 from acmephp/fix-vendor-bin
+ * ea11bca Merge pull request #43 from acmephp/update-phpunit
+ * 97a8b70 Update PHPUnit and simplify SFTP tests
+ * a7f194a Fix vendor/bin/acme autoload path
+ * 5e4a887 Bump to dev
+
 * 1.0.0-beta3 (2016-12-09)
 
  * daa6d1c Merge pull request #40 from acmephp/fix-39
