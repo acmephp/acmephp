@@ -30,7 +30,7 @@ Acme PHP provides several major improvements over the default clients:
     E-mail, Slack, HipChat, Flowdock, Fleep (thanks to [Monolog](https://github.com/Seldaek/monolog)!)
 -   Acme PHP is very extensible it to create the certificate files structure you need for your webserver.
     It brings several default formatters to create classical file structures
-    (nginx, nginx-proxy, haproxy, etc.) but you can very easily create our own if you need to ;
+    (nginx, nginx-proxy, haproxy, etc.) but you can very easily create your own if you need to ;
 -   Acme PHP follows a strict BC policy preventing errors in your scripts or CRON even if you update it (see
     [the Backward Compatibility policy of Acme PHP](#backward-compatibility-policy) for more informations) ;
 
