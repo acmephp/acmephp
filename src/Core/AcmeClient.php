@@ -75,20 +75,19 @@ class AcmeClient implements AcmeClientInterface
         Assert::nullOrString($email, 'registerAccount::$email expected a string or null. Got: %s');
 
         $payload = [];
-        $payload['resource'] = ResourcesDirectory::NEW_REGISTRATION;
         $payload['agreement'] = $agreement;
 
         if (is_string($email)) {
             $payload['contact'] = ['mailto:'.$email];
         }
 
-        $response = (array) $this->requestResource('POST', ResourcesDirectory::NEW_REGISTRATION, $payload);
+        $response = (array) $this->requestResource('POST', ResourcesDirectory::NEW_ACCOUNT, $payload);
         $links = $this->httpClient->getLastLinks();
         foreach ($links as $link) {
             if ('terms-of-service' === $link['rel']) {
                 $agreement = substr($link[0], 1, -1);
                 $payload = [];
-                $payload['resource'] = ResourcesDirectory::REGISTRATION;
+                $payload['resource'] = ResourcesDirectory::NEW_ACCOUNT;
                 $payload['agreement'] = $agreement;
 
                 $this->httpClient->signedRequest(
@@ -113,7 +112,6 @@ class AcmeClient implements AcmeClientInterface
         Assert::string($domain, 'requestAuthorization::$domain expected a string. Got: %s');
 
         $payload = [
-            'resource'   => ResourcesDirectory::NEW_AUTHORIZATION,
             'identifier' => [
                 'type'  => 'dns',
                 'value' => $domain,
@@ -163,7 +161,6 @@ class AcmeClient implements AcmeClientInterface
         Assert::integer($timeout, 'challengeAuthorization::$timeout expected an integer. Got: %s');
 
         $payload = [
-            'resource'         => ResourcesDirectory::CHALLENGE,
             'type'             => $challenge->getType(),
             'keyAuthorization' => $challenge->getPayload(),
             'token'            => $challenge->getToken(),
@@ -206,7 +203,6 @@ class AcmeClient implements AcmeClientInterface
         $csrContent = trim($this->httpClient->getBase64Encoder()->encode(base64_decode($csrContent)));
 
         $response = $this->requestResource('POST', ResourcesDirectory::NEW_CERTIFICATE, [
-            'resource' => ResourcesDirectory::NEW_CERTIFICATE,
             'csr'      => $csrContent,
         ], false);
 
