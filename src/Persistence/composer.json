@@ -1,0 +1,59 @@
+{
+    "name": "acmephp/persistence",
+    "description": "Tools to persist SSL entities (based on acmephp/ssl) in local filesystem or over the network",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/acmephp/persistence",
+    "keywords": [
+        "acmephp",
+        "letsencrypt",
+        "https",
+        "encryption",
+        "certificate",
+        "persistence",
+        "ssl",
+        "openssl",
+        "CSR",
+        "x509"
+    ],
+    "authors": [
+        {
+            "name": "Titouan Galopin",
+            "email": "galopintitouan@gmail.com",
+            "homepage": "http://titouangalopin.com"
+        },
+        {
+            "name": "Jérémy Derussé",
+            "homepage": "https://twitter.com/jderusse"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "acmephp/ssl": "^1.0-alpha2",
+        "webmozart/assert": "^1.0",
+        "webmozart/path-util": "^1.0|^2.0",
+        "symfony/serializer": "^2.8|^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8.22",
+        "sllh/php-cs-fixer-styleci-bridge": "^1.5.0",
+        "symfony/filesystem": "^2.8|^3.0",
+        "league/flysystem": "^1.0",
+        "knplabs/gaufrette": "^0.2.1"
+    },
+    "suggest": {
+        "symfony/filesystem": "Allows you to use the LocalAdapter",
+        "league/flysystem": "Allows you to use the FlysystemAdapter",
+        "knplabs/gaufrette": "Allows you to use the GaufretteAdapter"
+    },
+    "autoload": {
+        "psr-4": {
+            "AcmePhp\\Persistence\\": "."
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
