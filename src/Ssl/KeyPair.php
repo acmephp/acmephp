@@ -35,6 +35,22 @@ class KeyPair
     }
 
     /**
+     * @param PublicKey $key
+     */
+    public function setPublicKey(PublicKey $key)
+    {
+        $this->publicKey = $key;
+    }
+
+    /**
+     * @param PrivateKey $key
+     */
+    public function setPrivateKey(PrivateKey $key)
+    {
+        $this->privateKey = $key;
+    }
+
+    /**
      * @return PublicKey
      */
     public function getPublicKey()

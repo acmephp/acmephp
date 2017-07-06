@@ -5,6 +5,7 @@ vendor/
 .php_cs.cache
 doc/.couscous
 .subsplit
+.idea
 tests/Cli/Fixtures/local/master/*
 !tests/Cli/Fixtures/local/master/.gitkeep
 tests/Cli/Fixtures/sftp/*
