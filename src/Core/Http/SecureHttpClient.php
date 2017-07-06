@@ -180,6 +180,14 @@ class SecureHttpClient
     }
 
     /**
+     * @param KeyPair $keyPair
+     */
+    public function setAccountKeyPair(KeyPair $keyPair)
+    {
+        $this->accountKeyPair = $keyPair;
+    }
+
+    /**
      * @return int
      */
     public function getLastCode()
