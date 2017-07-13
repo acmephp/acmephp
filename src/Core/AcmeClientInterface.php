@@ -18,8 +18,8 @@ use AcmePhp\Core\Exception\Protocol\CertificateRequestTimedOutException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
-use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Http\SecureHttpClient;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 
@@ -111,7 +111,7 @@ interface AcmeClientInterface
     public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180);
 
     /**
-     * Get the HTTP client
+     * Get the HTTP client.
      *
      * @return SecureHttpClient
      */
