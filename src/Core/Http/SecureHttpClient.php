@@ -14,6 +14,7 @@ namespace AcmePhp\Core\Http;
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\ExpectedJsonException;
+use AcmePhp\Core\Util\JsonDecoder;
 use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
@@ -146,6 +147,7 @@ class SecureHttpClient
      *
      * @throws AcmeCoreServerException When the ACME server returns an error HTTP status code.
      * @throws AcmeCoreClientException When an error occured during response parsing.
+     * @throws ExpectedJsonException   When $returnJson = true and the response is not valid JSON.
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
@@ -161,22 +163,25 @@ class SecureHttpClient
 
         $body = \GuzzleHttp\Psr7\copy_to_string($this->lastResponse->getBody());
 
-        if ($returnJson) {
-            $data = @json_decode($body, true);
+        if (!$returnJson) {
+            return $body;
+        }
 
-            if (!$data) {
-                throw new ExpectedJsonException(sprintf(
+        try {
+            $data = JsonDecoder::decode($body, true);
+        } catch (\InvalidArgumentException $exception) {
+            throw new ExpectedJsonException(
+                sprintf(
                     'ACME client excepted valid JSON as a response to request "%s %s" (given: "%s")',
                     $request->getMethod(),
                     $request->getUri(),
                     ServerErrorHandler::getResponseBodySummary($this->lastResponse)
-                ));
-            }
-
-            return $data;
+                ),
+                $exception
+            );
         }
 
-        return $body;
+        return $data;
     }
 
     /**
