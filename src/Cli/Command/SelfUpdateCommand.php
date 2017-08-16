@@ -222,6 +222,7 @@ class SelfUpdateCommand extends Command
     protected function update(Updater $updater)
     {
         $this->output->writeln('Updating...'.PHP_EOL);
+
         try {
             $result = $updater->update();
 
@@ -261,6 +262,7 @@ class SelfUpdateCommand extends Command
     protected function rollback()
     {
         $updater = new Updater();
+
         try {
             $result = $updater->rollback();
             if ($result) {

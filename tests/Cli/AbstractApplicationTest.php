@@ -14,13 +14,12 @@ namespace Tests\AcmePhp\Cli;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 use Tests\AcmePhp\Cli\Mock\AbstractTestApplication;
 use Tests\AcmePhp\Cli\Mock\SimpleApplication;
+use Tests\AcmePhp\Core\AbstractFunctionnalTest;
 use Webmozart\PathUtil\Path;
 
-abstract class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 {
     /**
      * @var AbstractTestApplication
@@ -201,38 +200,6 @@ abstract class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             '--unit'         => 'Sales',
             '--email'        => 'example@acmephp.github.io',
         ]);
-    }
-
-    /**
-     * @param string $token
-     * @param string $payload
-     *
-     * @return Process
-     */
-    private function createServerProcess($token, $payload)
-    {
-        $listen = '0.0.0.0:5002';
-        $documentRoot = __DIR__.'/Fixtures/challenges';
-
-        // Create file
-        file_put_contents($documentRoot.'/.well-known/acme-challenge/'.$token, $payload);
-
-        // Start server
-        $finder = new PhpExecutableFinder();
-
-        if (false === $binary = $finder->find()) {
-            throw new \RuntimeException('Unable to find PHP binary to start server.');
-        }
-
-        $script = implode(' ', array_map(['Symfony\Component\Process\ProcessUtils', 'escapeArgument'], [
-            $binary,
-            '-S',
-            $listen,
-            '-t',
-            $documentRoot,
-        ]));
-
-        return new Process('exec '.$script, $documentRoot, null, null, null);
     }
 
     /**
