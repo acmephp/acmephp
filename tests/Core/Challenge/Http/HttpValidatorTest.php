@@ -77,9 +77,11 @@ class HttpValidatorTest extends \PHPUnit_Framework_TestCase
         $mockExtractor->getCheckUrl($stubChallenge->reveal())->willReturn($checkUrl);
         $mockExtractor->getCheckContent($stubChallenge->reveal())->willReturn($checkContent);
 
-        $mockHttpClient->get($checkUrl)->willThrow(
-            new ClientException('boom', $this->prophesize(RequestInterface::class)->reveal())
-        );
+        $mockHttpClient->get($checkUrl)->willThrow(new ClientException(
+            'boom',
+            $this->prophesize(RequestInterface::class)->reveal(),
+            $this->prophesize(ResponseInterface::class)->reveal()
+        ));
 
         $this->assertFalse($validator->isValid($stubChallenge->reveal()));
     }
