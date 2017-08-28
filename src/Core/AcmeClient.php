@@ -69,6 +69,14 @@ class AcmeClient implements AcmeClientInterface
     /**
      * {@inheritdoc}
      */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function registerAccount($agreement = null, $email = null)
     {
         Assert::nullOrString($agreement, 'registerAccount::$agreement expected a string or null. Got: %s');
