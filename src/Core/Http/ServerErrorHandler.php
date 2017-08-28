@@ -22,6 +22,7 @@ use AcmePhp\Core\Exception\Server\RateLimitedServerException;
 use AcmePhp\Core\Exception\Server\TlsServerException;
 use AcmePhp\Core\Exception\Server\UnauthorizedServerException;
 use AcmePhp\Core\Exception\Server\UnknownHostServerException;
+use AcmePhp\Core\Util\JsonDecoder;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -82,7 +83,12 @@ class ServerErrorHandler
         \Exception $previous = null
     ) {
         $body = \GuzzleHttp\Psr7\copy_to_string($response->getBody());
-        $data = @json_decode($body, true);
+
+        try {
+            $data = JsonDecoder::decode($body, true);
+        } catch (\InvalidArgumentException $e) {
+            $data = null;
+        }
 
         if (!$data || !isset($data['type'], $data['detail'])) {
             // Not JSON: not an ACME error response
