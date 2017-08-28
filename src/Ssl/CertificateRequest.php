@@ -35,6 +35,22 @@ class CertificateRequest
     }
 
     /**
+     * @param DistinguishedName $distinguishedName
+     */
+    public function setDistinguishedName(DistinguishedName $distinguishedName)
+    {
+        $this->distinguishedName = $distinguishedName;
+    }
+
+    /**
+     * @param KeyPair $keyPair
+     */
+    public function setKeyPair(KeyPair $keyPair)
+    {
+        $this->keyPair = $keyPair;
+    }
+
+    /**
      * @return DistinguishedName
      */
     public function getDistinguishedName()

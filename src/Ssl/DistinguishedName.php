@@ -87,6 +87,42 @@ class DistinguishedName
     }
 
     /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'common_name'               => $this->getCommonName(),
+            'country_name'              => $this->getCountryName(),
+            'state_or_province_name'    => $this->getStateOrProvinceName(),
+            'locality_name'             => $this->getLocalityName(),
+            'organization_name'         => $this->getOrganizationName(),
+            'organizational_unit_name'  => $this->getOrganizationalUnitName(),
+            'email_address'             => $this->getEmailAddress(),
+            'subject_alternative_names' => $this->getSubjectAlternativeNames(),
+        ];
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return DistinguishedName
+     */
+    public static function fromArray(array $data)
+    {
+        return new self(
+            $data['common_name'],
+            $data['country_name'],
+            $data['state_or_province_name'],
+            $data['locality_name'],
+            $data['organization_name'],
+            $data['organizational_unit_name'],
+            $data['email_address'],
+            $data['subject_alternative_names']
+        );
+    }
+
+    /**
      * @return string
      */
     public function getCommonName()
