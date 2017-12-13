@@ -58,6 +58,7 @@ class EmailHandlerBuilder implements HandlerBuilderInterface
 
         $message = new \Swift_Message($config['subject']);
         $message->setFrom($config['from']);
+        $message->setTo($config['to']);
 
         $handler = new SwiftMailerHandler(new \Swift_Mailer($transport), $message);
 
