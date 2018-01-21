@@ -13,7 +13,7 @@ prerequisites:
 
 pre-release-actions:
   changelog-update:
-    format: custom
+    format: simple
     file: CHANGELOG.md
     dump-commits: true
   vcs-commit: ~

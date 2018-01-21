@@ -1,3 +1,10 @@
+21/01/2018 18:23  1.0.0-beta5  Fix deprecations and allow setting KeyPair from Client object
+0a94b15 Fix mailer handler
+8fde026 Allow setting KeyPair from Client object (#72)
+e2ac2bf Fix json_decode error handling in SecureHttpClient and ServerErrorHandler
+4c7d10d Fix deprecations and improve tests
+f559a93 [doc] Fix typo on README
+0b4ea8b Bump to dev
 * 1.0.0-beta4 (2017-01-29)
 
  * 0b18a86 Redone nameing of ::getResource with new tests (#61)
