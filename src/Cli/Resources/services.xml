@@ -126,6 +126,19 @@
             <argument type="service" id="output" />
             <tag name="acmephp.challenge_solver" alias="dns" />
         </service>
+        <service id="challenge_solver.route53" class="AcmePhp\Core\Challenge\Dns\Route53Solver">
+            <argument type="service" id="challenge_extractor.dns" />
+            <argument type="service">
+                <service class="Aws\Route53\Route53Client">
+                    <argument type="collection">
+                        <!-- region parameter is compulsory but the service is global and the value don't matter -->
+                        <argument key="region">eu-west-1</argument>
+                        <argument key="version">2013-04-01</argument>
+                    </argument>
+                </service>
+            </argument>
+            <tag name="acmephp.challenge_solver" alias="route53" />
+        </service>
         <service id="challenge_solver.locator" class="AcmePhp\Core\Challenge\SolverLocator">
             <argument type="service" id="container" />
             <argument />

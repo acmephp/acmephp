@@ -14,6 +14,7 @@ namespace AcmePhp\Cli\Command;
 use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\SolverLocator;
 use AcmePhp\Core\Challenge\ValidatorInterface;
+use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +33,7 @@ class CheckCommand extends AbstractCommand
     {
         $this->setName('check')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns)', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53)', 'http'),
                 new InputOption('no-test', 't', InputOption::VALUE_NONE, 'Whether or not internal tests should be disabled'),
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for'),
             ])
@@ -90,7 +91,7 @@ EOF
         if (!$input->getOption('no-test')) {
             $this->notice('Testing the challenge...');
             if (!$validator->isValid($authorizationChallenge)) {
-                throw new ChallengeNotSupportedException();
+                throw new ChallengeFailedException('The challenge could not be validated');
             }
         }
 

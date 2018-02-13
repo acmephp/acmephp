@@ -43,7 +43,8 @@
         "league/flysystem-sftp": "^1.0.7",
         "webmozart/assert": "^1.0",
         "webmozart/path-util": "^2.3",
-        "padraic/phar-updater": "^1.0"
+        "padraic/phar-updater": "^1.0",
+        "aws/aws-sdk-php": "^3.38"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.31|^5.7.3",
