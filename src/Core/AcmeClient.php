@@ -148,7 +148,6 @@ class AcmeClient implements AcmeClientInterface
         ]);
 
         $encodedHeader = $base64encoder->encode(hash('sha256', $header, true));
-
         $authorizationChallenges = [];
         foreach ($response['challenges'] as $challenge) {
             $authorizationChallenges[] = new AuthorizationChallenge(
