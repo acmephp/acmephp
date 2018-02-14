@@ -16,6 +16,7 @@ use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
 use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClientInterface;
 use AcmePhp\Ssl\CertificateRequest;
+use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\ParsedCertificate;
 use Psr\Log\LoggerInterface;
@@ -252,6 +253,18 @@ EOF;
                         'Current certificate is valid until %s, renewal is not necessary. Use --force to force renewal.',
                         $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'))
                     );
+
+                    // Post-generate actions
+                    $this->info('Running post-generate actions...');
+                    $response = new CertificateResponse(
+                        new CertificateRequest(
+                            $this->repository->loadDomainDistinguishedName($domain),
+                            $this->repository->loadDomainKeyPair($domain)
+                        ),
+                        $certificate
+                    );
+
+                    $this->actionHandler->handle($response);
 
                     return;
                 }

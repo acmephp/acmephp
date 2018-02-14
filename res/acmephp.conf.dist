@@ -57,6 +57,25 @@ storage:
         #   # private_key: path/to/or/contents/of/privatekey
         #   # timeout: 30
 
+        #
+        # Install the certificate in an AWS ELB (Classic Load Balancer)
+        #
+        # - action: install_aws_elb
+        #   region: eu-west-1
+        #   loadbalancer: my_elb
+        #   # certificate_prefix: acmephp_
+        #   # cleanup_old_certificate: true
+        #   # listener: 443
+
+        #
+        # Install the certificate in an AWS ELBv2 (Application Load Balancer)
+        #
+        # - action: install_aws_elbv2
+        #   region: eu-west-1
+        #   loadbalancer: my_elb
+        #   # certificate_prefix: acmephp_
+        #   # cleanup_old_certificate: true
+        #   # listener: 443
 
 ###################################################################
 # Monitoring
