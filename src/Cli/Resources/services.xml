@@ -96,6 +96,14 @@
             <argument type="service" id="repository.master_storage" />
         </service>
 
+        <service id="action.install_aws_elb" class="AcmePhp\Cli\Action\InstallAwsElbAction">
+            <argument type="service" id="aws.client_factory" />
+        </service>
+
+        <service id="action.install_aws_elbv2" class="AcmePhp\Cli\Action\InstallAwsElbv2Action">
+            <argument type="service" id="aws.client_factory" />
+        </service>
+
         <service id="action.push_rancher" class="AcmePhp\Cli\Action\PushRancherAction">
             <argument type="service" id="http.raw_client" />
         </service>
@@ -159,5 +167,8 @@
                 <argument type="service" id="challenge_validator.dns" />
             </argument>
         </service>
+
+        <!-- External services -->
+        <service id="aws.client_factory" class="AcmePhp\Cli\Aws\ClientFactory"/>
     </services>
 </container>
