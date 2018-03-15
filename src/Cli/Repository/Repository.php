@@ -14,6 +14,7 @@ namespace AcmePhp\Cli\Repository;
 use AcmePhp\Cli\Exception\AcmeCliException;
 use AcmePhp\Cli\Serializer\PemEncoder;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\CertificateOrder;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
@@ -27,7 +28,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class Repository implements RepositoryInterface
+class Repository implements RepositoryV2Interface
 {
     /**
      * @var SerializerInterface
@@ -129,12 +130,12 @@ class Repository implements RepositoryInterface
     {
         try {
             $this->save(
-                'private/'.$domain.'/public.pem',
+                'private/'.$this->normalizeDomain($domain).'/public.pem',
                 $this->serializer->serialize($keyPair->getPublicKey(), PemEncoder::FORMAT)
             );
 
             $this->save(
-                'private/'.$domain.'/private.pem',
+                'private/'.$this->normalizeDomain($domain).'/private.pem',
                 $this->serializer->serialize($keyPair->getPrivateKey(), PemEncoder::FORMAT)
             );
         } catch (\Exception $e) {
@@ -147,7 +148,7 @@ class Repository implements RepositoryInterface
      */
     public function hasDomainKeyPair($domain)
     {
-        return $this->master->has('private/'.$domain.'/private.pem');
+        return $this->master->has('private/'.$this->normalizeDomain($domain).'/private.pem');
     }
 
     /**
@@ -156,8 +157,8 @@ class Repository implements RepositoryInterface
     public function loadDomainKeyPair($domain)
     {
         try {
-            $publicKeyPem = $this->master->read('private/'.$domain.'/public.pem');
-            $privateKeyPem = $this->master->read('private/'.$domain.'/private.pem');
+            $publicKeyPem = $this->master->read('private/'.$this->normalizeDomain($domain).'/public.pem');
+            $privateKeyPem = $this->master->read('private/'.$this->normalizeDomain($domain).'/private.pem');
 
             return new KeyPair(
                 $this->serializer->deserialize($publicKeyPem, PublicKey::class, PemEncoder::FORMAT),
@@ -175,7 +176,7 @@ class Repository implements RepositoryInterface
     {
         try {
             $this->save(
-                'private/'.$domain.'/authorization_challenge.json',
+                'private/'.$this->normalizeDomain($domain).'/authorization_challenge.json',
                 $this->serializer->serialize($authorizationChallenge, JsonEncoder::FORMAT)
             );
         } catch (\Exception $e) {
@@ -188,7 +189,7 @@ class Repository implements RepositoryInterface
      */
     public function hasDomainAuthorizationChallenge($domain)
     {
-        return $this->master->has('private/'.$domain.'/authorization_challenge.json');
+        return $this->master->has('private/'.$this->normalizeDomain($domain).'/authorization_challenge.json');
     }
 
     /**
@@ -197,7 +198,7 @@ class Repository implements RepositoryInterface
     public function loadDomainAuthorizationChallenge($domain)
     {
         try {
-            $json = $this->master->read('private/'.$domain.'/authorization_challenge.json');
+            $json = $this->master->read('private/'.$this->normalizeDomain($domain).'/authorization_challenge.json');
 
             return $this->serializer->deserialize($json, AuthorizationChallenge::class, JsonEncoder::FORMAT);
         } catch (\Exception $e) {
@@ -212,7 +213,7 @@ class Repository implements RepositoryInterface
     {
         try {
             $this->save(
-                'private/'.$domain.'/distinguished_name.json',
+                'private/'.$this->normalizeDomain($domain).'/distinguished_name.json',
                 $this->serializer->serialize($distinguishedName, JsonEncoder::FORMAT)
             );
         } catch (\Exception $e) {
@@ -225,7 +226,7 @@ class Repository implements RepositoryInterface
      */
     public function hasDomainDistinguishedName($domain)
     {
-        return $this->master->has('private/'.$domain.'/distinguished_name.json');
+        return $this->master->has('private/'.$this->normalizeDomain($domain).'/distinguished_name.json');
     }
 
     /**
@@ -234,7 +235,7 @@ class Repository implements RepositoryInterface
     public function loadDomainDistinguishedName($domain)
     {
         try {
-            $json = $this->master->read('private/'.$domain.'/distinguished_name.json');
+            $json = $this->master->read('private/'.$this->normalizeDomain($domain).'/distinguished_name.json');
 
             return $this->serializer->deserialize($json, DistinguishedName::class, JsonEncoder::FORMAT);
         } catch (\Exception $e) {
@@ -315,6 +316,43 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
+    public function storeCertificateOrder(array $domains, CertificateOrder $order)
+    {
+        try {
+            $this->save(
+                'private/'.$this->normalizeDomainList($domains).'/order.json',
+                $this->serializer->serialize($order, JsonEncoder::FORMAT)
+            );
+        } catch (\Exception $e) {
+            throw new AcmeCliException(sprintf('Storing of domains %s certificate order failed', implode(', ', $domains)), $e);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasCertificateOrder(array $domains)
+    {
+        return $this->master->has('private/'.$this->normalizeDomainList($domains).'/order.json');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function loadCertificateOrder(array $domains)
+    {
+        try {
+            $json = $this->master->read('private/'.$this->normalizeDomainList($domains).'/order.json');
+
+            return $this->serializer->deserialize($json, CertificateOrder::class, JsonEncoder::FORMAT);
+        } catch (\Exception $e) {
+            throw new AcmeCliException(sprintf('Loading of domains %s certificate order failed', implode(', ', $domains)), $e);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function save($path, $content, $visibility = self::VISIBILITY_PRIVATE)
     {
         if (!$this->master->has($path)) {
@@ -360,5 +398,18 @@ class Repository implements RepositoryInterface
         }
 
         $this->master->update($path, $content);
+    }
+
+    private function normalizeDomain($domain)
+    {
+        return $domain;
+    }
+
+    private function normalizeDomainList(array $domains)
+    {
+        $normalizedDomains = array_unique(array_map([$this, 'normalizeDomain'], $domains));
+        sort($normalizedDomains);
+
+        return (isset($domains[0]) ? $this->normalizeDomain($domains[0]) : '-').'/'.sha1(json_encode($normalizedDomains));
     }
 }

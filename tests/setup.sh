@@ -7,8 +7,8 @@ cd ..
 # SFTP
 docker run -d --name acme_sftp -p 8022:22 atmoz/sftp acmephp:acmephp:::share
 
-# Boulder
-docker run -d --name acme_boulder --net host acmephp/testing-ca
+# testing-ca
+docker run -d --name acme_boulder --net host --add-host acmephp.com:127.0.0.1 acmephp/testing-ca:2.0
 
 # Wait for boot to be completed
-docker run --rm --net host martin/wait -c localhost:4000,localhost:8022 -t 120
+docker run --rm --net host martin/wait -c localhost:14000,localhost:8022 -t 120

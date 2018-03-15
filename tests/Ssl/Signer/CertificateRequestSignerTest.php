@@ -45,7 +45,6 @@ class CertificateRequestSignerTest extends \PHPUnit_Framework_TestCase
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
             [
-                'commonName'             => 'acmephp.com',
                 'countryName'            => 'FR',
                 'stateOrProvinceName'    => 'france',
                 'localityName'           => 'Paris',
@@ -72,10 +71,7 @@ class CertificateRequestSignerTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('-----BEGIN CERTIFICATE REQUEST-----', $result);
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
-            [
-                'commonName' => 'acmephp.com',
-
-            ],
+            [],
             $csrResult
         );
     }
@@ -97,7 +93,6 @@ class CertificateRequestSignerTest extends \PHPUnit_Framework_TestCase
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
             [
-                'commonName'             => 'acmephp.com',
                 'countryName'            => 'FR',
                 'stateOrProvinceName'    => 'france',
                 'localityName'           => 'Paris',

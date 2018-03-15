@@ -59,7 +59,7 @@ class MonitoredApplicationTest extends AbstractApplicationTest
         $commandTester->execute([
             'command'        => $command->getName(),
             'domain'         => 'acmephp.com',
-            '--server'       => 'http://127.0.0.1:4000/directory',
+            '--server'       => 'https://localhost:14000/dir',
             '--country'      => 'FR',
             '--province'     => 'Ile de France',
             '--locality'     => 'Paris',
@@ -86,7 +86,7 @@ class MonitoredApplicationTest extends AbstractApplicationTest
         $commandTester->execute([
             'command'        => $command->getName(),
             'domain'         => 'acmephp.com',
-            '--server'       => 'http://127.0.0.1:4000/directory',
+            '--server'       => 'https://localhost:14000/dir',
             '--country'      => 'FR',
             '--province'     => 'Ile de France',
             '--locality'     => 'Paris',
@@ -121,7 +121,7 @@ class MonitoredApplicationTest extends AbstractApplicationTest
         // Replace handlers builders by mocks
         $handler = new TestHandler();
 
-        $handlerBuilder = $this->getMock(HandlerBuilderInterface::class);
+        $handlerBuilder = $this->getMockBuilder(HandlerBuilderInterface::class)->getMock();
         $handlerBuilder
             ->expects($this->exactly(2))
             ->method('createHandler')
@@ -150,7 +150,7 @@ class MonitoredApplicationTest extends AbstractApplicationTest
             $commandTester->execute([
                 'command'        => $command->getName(),
                 'domain'         => 'acmephp.com',
-                '--server'       => 'http://127.0.0.1:4000/directory',
+                '--server'       => 'https://localhost:14000/dir',
                 '--country'      => 'FR',
                 '--province'     => 'Ile de France',
                 '--locality'     => 'Paris',

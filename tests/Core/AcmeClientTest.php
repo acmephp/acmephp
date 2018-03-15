@@ -12,7 +12,7 @@
 namespace Tests\AcmePhp\Core;
 
 use AcmePhp\Core\AcmeClient;
-use AcmePhp\Core\AcmeClientInterface;
+use AcmePhp\Core\AcmeClientV2Interface;
 use AcmePhp\Core\Challenge\Http\SimpleHttpSolver;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
@@ -30,7 +30,7 @@ use GuzzleHttp\Client;
 class AcmeClientTest extends AbstractFunctionnalTest
 {
     /**
-     * @var AcmeClientInterface
+     * @var AcmeClientV2Interface
      */
     private $client;
 
@@ -45,25 +45,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
             new ServerErrorHandler()
         );
 
-        $this->client = new AcmeClient($secureHttpClient, 'http://127.0.0.1:4000/directory');
-    }
-
-    /**
-     * @expectedException \AcmePhp\Core\Exception\Server\MalformedServerException
-     */
-    public function testDoubleRegisterAccountFail()
-    {
-        $this->client->registerAccount();
-        $this->client->registerAccount();
-    }
-
-    /**
-     * @expectedException \AcmePhp\Core\Exception\Server\MalformedServerException
-     */
-    public function testInvalidAgreement()
-    {
-        $this->client->registerAccount('http://invalid.com');
-        $this->client->requestAuthorization('example.org');
+        $this->client = new AcmeClient($secureHttpClient, 'https://localhost:14000/dir');
     }
 
     public function testFullProcess()
@@ -71,19 +53,17 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Register account
          */
-        $data = $this->client->registerAccount('http://boulder:4000/terms/v1');
+        $data = $this->client->registerAccount();
 
         $this->assertInternalType('array', $data);
-        $this->assertArrayHasKey('id', $data);
         $this->assertArrayHasKey('key', $data);
-        $this->assertArrayHasKey('initialIp', $data);
-        $this->assertArrayHasKey('createdAt', $data);
 
         $solver = new SimpleHttpSolver();
         /*
          * Ask for domain challenge
          */
-        $challenges = $this->client->requestAuthorization('acmephp.com');
+        $order = $this->client->requestOrder(['acmephp.com']);
+        $challenges = $order->getAuthorizationChallenges('acmephp.com');
         foreach ($challenges as $challenge) {
             if ('http-01' === $challenge->getType()) {
                 break;
@@ -92,7 +72,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
 
         $this->assertInstanceOf(AuthorizationChallenge::class, $challenge);
         $this->assertEquals('acmephp.com', $challenge->getDomain());
-        $this->assertContains('http://127.0.0.1:4000/acme/challenge', $challenge->getUrl());
+        $this->assertContains('https://localhost:14000/chalZ/', $challenge->getUrl());
 
         $solver->solve($challenge);
 
@@ -101,7 +81,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
          */
         $process = $this->createServerProcess($challenge->getToken(), $challenge->getPayload());
         $process->start();
-
+        sleep(1);
         $this->assertTrue($process->isRunning());
 
         try {
@@ -115,11 +95,10 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * Request certificate
          */
         $csr = new CertificateRequest(new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair());
-        $response = $this->client->requestCertificate('acmephp.com', $csr);
+        $response = $this->client->finalizeOrder($order, $csr);
 
         $this->assertInstanceOf(CertificateResponse::class, $response);
         $this->assertEquals($csr, $response->getCertificateRequest());
         $this->assertInstanceOf(Certificate::class, $response->getCertificate());
-        $this->assertInstanceOf(Certificate::class, $response->getCertificate()->getIssuerCertificate());
     }
 }

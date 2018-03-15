@@ -111,9 +111,7 @@ EOL;
      */
     private function getCSRPayload(DistinguishedName $distinguishedName)
     {
-        $payload = [
-            'commonName' => $distinguishedName->getCommonName(),
-        ];
+        $payload = [];
         if (null !== $countryName = $distinguishedName->getCountryName()) {
             $payload['countryName'] = $countryName;
         }

@@ -95,7 +95,7 @@ class ServerErrorHandler
             return $this->createDefaultExceptionForResponse($request, $response, $previous);
         }
 
-        $type = preg_replace('/^urn:acme:error:/i', '', $data['type']);
+        $type = preg_replace('/^urn:(ietf:params:)?acme:error:/i', '', $data['type']);
 
         if (!isset(self::$exceptions[$type])) {
             // Unknown type: not an ACME error response

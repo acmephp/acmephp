@@ -58,8 +58,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $registerTester->execute([
             'command'     => $register->getName(),
             'email'       => 'foo@example.com',
-            '--server'    => 'http://127.0.0.1:4000/directory',
-            '--agreement' => 'http://boulder:4000/terms/v1',
+            '--server'    => 'https://localhost:14000/dir',
         ]);
 
         $registerDisplay = $registerTester->getDisplay();
@@ -76,13 +75,13 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $authorizeTest = new CommandTester($authorize);
         $authorizeTest->execute([
             'command'  => $authorize->getName(),
-            'domain'   => 'acmephp.com',
-            '--server' => 'http://127.0.0.1:4000/directory',
+            'domains'  => ['acmephp.com'],
+            '--server' => 'https://localhost:14000/dir',
         ]);
 
         $authorizeDisplay = $authorizeTest->getDisplay();
 
-        $this->assertContains('The authorization token was successfully fetched', $authorizeDisplay);
+        $this->assertContains('The authorization tokens was successfully fetched', $authorizeDisplay);
         $this->assertContains('http://acmephp.com/.well-known/acme-challenge/', $authorizeDisplay);
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/authorization_challenge.json');
 
@@ -106,8 +105,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
             $checkTest = new CommandTester($check);
             $checkTest->execute([
                 'command'   => $check->getName(),
-                'domain'    => 'acmephp.com',
-                '--server'  => 'http://127.0.0.1:4000/directory',
+                'domains'   => ['acmephp.com'],
+                '--server'  => 'https://localhost:14000/dir',
                 '--no-test' => null,
             ]);
 
@@ -126,7 +125,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $requestTest->execute([
             'command'        => $request->getName(),
             'domain'         => 'acmephp.com',
-            '--server'       => 'http://127.0.0.1:4000/directory',
+            '--server'       => 'https://localhost:14000/dir',
             '--country'      => 'FR',
             '--province'     => 'Ile de France',
             '--locality'     => 'Paris',
@@ -159,8 +158,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'domain'   => 'example.com',
-            '--server' => 'http://127.0.0.1:4000/directory',
+            'domains'  => 'example.com',
+            '--server' => 'https://localhost:14000/dir',
         ]);
     }
 
@@ -175,8 +174,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'domain'   => 'example.com',
-            '--server' => 'http://127.0.0.1:4000/directory',
+            'domains'  => ['example.com'],
+            '--server' => 'https://localhost:14000/dir',
         ]);
     }
 
@@ -192,7 +191,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $commandTester->execute([
             'command'        => $command->getName(),
             'domain'         => 'acmephp.com',
-            '--server'       => 'http://127.0.0.1:4000/directory',
+            '--server'       => 'https://localhost:14000/dir',
             '--country'      => 'FR',
             '--province'     => 'Ile de France',
             '--locality'     => 'Paris',

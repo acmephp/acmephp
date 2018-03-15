@@ -14,7 +14,6 @@ namespace AcmePhp\Cli\Command;
 use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\SolverLocator;
 use AcmePhp\Core\Challenge\ValidatorInterface;
-use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,14 +34,14 @@ class CheckCommand extends AbstractCommand
             ->setDefinition([
                 new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53)', 'http'),
                 new InputOption('no-test', 't', InputOption::VALUE_NONE, 'Whether or not internal tests should be disabled'),
-                new InputArgument('domain', InputArgument::REQUIRED, 'The domain to check the authorization for'),
+                new InputArgument('domains', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'The list of domains to check the authorization for'),
             ])
-            ->setDescription('Ask the ACME server to check an authorization token you expose to prove you are the owner of a domain')
+            ->setDescription('Ask the ACME server to check an authorization token you expose to prove you are the owner of a list of domains')
             ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command asks the ACME server to check an authorization token
-you exposed to prove you own a given domain.
+you exposed to prove you own a given list of domains.
 
-Once you are the proved owner of a domain, you can request SSL certificates for this domain.
+Once you are the proved owner of the domains, you can request SSL certificates for those domains.
 
 Use the <info>authorize</info> command before this one.
 EOF
@@ -56,7 +55,7 @@ EOF
     {
         $repository = $this->getRepository();
         $client = $this->getClient();
-        $domain = $input->getArgument('domain');
+        $domains = $input->getArgument('domains');
 
         $solverName = strtolower($input->getOption('solver'));
 
@@ -79,41 +78,61 @@ EOF
         /** @var ValidatorInterface $validator */
         $validator = $this->getContainer()->get('challenge_validator');
 
-        $this->notice(sprintf('Loading the authorization token for domain %s ...', $domain));
-        $authorizationChallenge = $repository->loadDomainAuthorizationChallenge($domain);
-
-        $this->debug('Challenge loaded', ['challenge' => $authorizationChallenge->toArray()]);
-
-        if (!$solver->supports($authorizationChallenge)) {
-            throw new ChallengeNotSupportedException();
+        $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
+        $order = null;
+        if ($this->getRepository()->hasCertificateOrder($domains)) {
+            $order = $this->getRepository()->loadCertificateOrder($domains);
         }
 
-        if (!$input->getOption('no-test')) {
-            $this->notice('Testing the challenge...');
-            if (!$validator->isValid($authorizationChallenge)) {
-                throw new ChallengeFailedException('The challenge could not be validated');
+        $this->notice(sprintf('Loading the authorization token for domains %s ...', implode(', ', $domains)));
+        foreach ($domains as $domain) {
+            if ($order) {
+                $authorizationChallenge = null;
+                $authorizationChallenges = $order->getAuthorizationChallenges($domain);
+                foreach ($authorizationChallenges as $challenge) {
+                    if ($solver->supports($challenge)) {
+                        $authorizationChallenge = $challenge;
+                        break;
+                    }
+                }
+                if (null === $authorizationChallenge) {
+                    throw new ChallengeNotSupportedException();
+                }
+            } else {
+                $authorizationChallenge = $repository->loadDomainAuthorizationChallenge($domain);
+                if (!$solver->supports($authorizationChallenge)) {
+                    throw new ChallengeNotSupportedException();
+                }
             }
-        }
+            $this->debug('Challenge loaded', ['challenge' => $authorizationChallenge->toArray()]);
 
-        $this->notice(sprintf('Requesting authorization check for domain %s ...', $domain));
-        $client->challengeAuthorization($authorizationChallenge);
+            if (!$input->getOption('no-test')) {
+                $this->notice('Testing the challenge...');
+                if (!$validator->isValid($authorizationChallenge)) {
+                    $this->output->writeln(sprintf('<info>Can not valid challenge for domain %s ...</info>', $domain));
+                }
+            }
+
+            $this->notice(sprintf('Requesting authorization check for domain %s ...', $domain));
+            $client->challengeAuthorization($authorizationChallenge);
+        }
 
         $this->info(sprintf(<<<'EOF'
 
 <info>The authorization check was successful!</info>
 
-You are now the proved owner of the domain %s.
+You are now the proved owner of those domains %s.
 <info>Please note that you won't need to prove it anymore as long as you keep the same account key pair.</info>
 
-You can now request a certificate for your domain:
+You can now request a certificate for your domains:
 
    php <info>%s request</info> %s
 
 EOF
             ,
-            $domain,
+            implode(', ', $domains),
             $_SERVER['PHP_SELF'],
-            $domain
+            implode(' -a ', $domains)
         ));
 
         $solver->cleanup($authorizationChallenge);

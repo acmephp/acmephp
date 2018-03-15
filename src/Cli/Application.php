@@ -77,7 +77,7 @@ class Application extends BaseApplication
             null,
             InputOption::VALUE_REQUIRED,
             'Set the ACME server directory to use',
-            'https://acme-v01.api.letsencrypt.org/directory'
+            'https://acme-v02.api.letsencrypt.org/directory'
         ));
 
         return $definition;
