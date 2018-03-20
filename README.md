@@ -76,3 +76,12 @@ they are due to an issue in the container DNS.
 **Warning**: as the acmephp/testing-ca Docker image needs to be mapped to the host network,
 you may have ports conflicts. See [https://github.com/acmephp/testing-ca](https://github.com/acmephp/testing-ca)
 for more informations.
+
+## Using docker
+
+You can also use the docker image to generate certificates.
+Certificates and keys are stored into the volume `/root/.acmephp`
+
+```
+docker run --rm -ti -v /root/.acmephp:/root/.acmephp acmephp/acmephp:latest 
+```
