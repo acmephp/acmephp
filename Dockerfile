@@ -31,7 +31,8 @@ RUN apk add --no-cache \
         php7-dom \
         php7-tokenizer
 
-RUN composer install --no-dev --no-scripts --no-suggest --optimize-autoloader
+RUN composer install --no-dev --no-scripts --no-suggest --optimize-autoloader \
+ && composer require "daverandom/libdns:^2.0" --no-scripts --no-suggest --optimize-autoloader
 
 COPY ./src /srv/src
 COPY ./res /srv/res

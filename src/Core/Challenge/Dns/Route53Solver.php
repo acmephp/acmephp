@@ -34,6 +34,11 @@ class Route53Solver implements SolverInterface
     private $client;
 
     /**
+     * @var array
+     */
+    private $pendingChanges = [];
+
+    /**
      * @param DnsDataExtractor $extractor
      * @param Route53Client    $client
      */
@@ -63,7 +68,8 @@ class Route53Solver implements SolverInterface
 
         $zone = $this->getZone($authorizationChallenge->getDomain());
 
-        $this->client->changeResourceRecordSets(
+        $this->changeResourceRecordSets(
+            $recordName,
             [
                 'ChangeBatch' => [
                     'Changes' => [
@@ -93,7 +99,6 @@ class Route53Solver implements SolverInterface
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
-
         $zone = $this->getZone($authorizationChallenge->getDomain());
         $recordSets = $this->client->listResourceRecordSets(
             [
@@ -114,7 +119,8 @@ class Route53Solver implements SolverInterface
             return;
         }
 
-        $this->client->changeResourceRecordSets(
+        $this->changeResourceRecordSets(
+            $recordName,
             [
                 'ChangeBatch' => [
                     'Changes' => array_map(
@@ -130,6 +136,22 @@ class Route53Solver implements SolverInterface
                 'HostedZoneId' => $zone['Id'],
             ]
         );
+    }
+
+    public function wait($recordName)
+    {
+        if (isset($this->pendingChanges[$recordName])) {
+            $this->client->waitUntil('ResourceRecordSetsChanged', ['Id' =>$this->pendingChanges[$recordName]]);
+            unset($this->pendingChanges[$recordName]);
+        }
+    }
+
+    private function changeResourceRecordSets($recordName, array $payload)
+    {
+        $this->wait($recordName);
+
+        $record = $this->client->changeResourceRecordSets($payload);
+        $this->pendingChanges[$recordName] = $record['ChangeInfo']['Id'];
     }
 
     private function getZone($domain)

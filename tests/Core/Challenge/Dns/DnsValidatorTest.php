@@ -12,9 +12,9 @@
 namespace Tests\AcmePhp\Core\Challenge\Dns;
 
 use AcmePhp\Core\Challenge\Dns\DnsDataExtractor;
+use AcmePhp\Core\Challenge\Dns\DnsResolverInterface;
 use AcmePhp\Core\Challenge\Dns\DnsValidator;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
-use Symfony\Bridge\PhpUnit\DnsMock;
 
 class DnsValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,28 +39,13 @@ class DnsValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $recordName = '_acme-challenge.bar.com.';
         $recordValue = 'record_value';
-        DnsMock::register(DnsValidator::class);
-        DnsMock::withMockedHosts(
-            [
-                $recordName => [
-                    [
-                        'type' => 'A',
-                        'ip'   => '1.2.3.4',
-                    ],
-                    [
-                        'type'    => 'TXT',
-                        'entries' => [
-                            $recordValue,
-                        ],
-                    ],
-                ],
-            ]
-        );
 
+        $mockResolver = $this->prophesize(DnsResolverInterface::class);
+        $mockResolver->getTxtEntries($recordName)->willReturn([$recordValue]);
         $mockExtractor = $this->prophesize(DnsDataExtractor::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 
-        $validator = new DnsValidator($mockExtractor->reveal());
+        $validator = new DnsValidator($mockExtractor->reveal(), $mockResolver->reveal());
 
         $mockExtractor->getRecordName($stubChallenge->reveal())->willReturn($recordName);
         $mockExtractor->getRecordValue($stubChallenge->reveal())->willReturn($recordValue);
@@ -72,28 +57,13 @@ class DnsValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $recordName = '_acme-challenge.bar.com.';
         $recordValue = 'record_value';
-        DnsMock::register(DnsValidator::class);
-        DnsMock::withMockedHosts(
-            [
-                $recordName => [
-                    [
-                        'type' => 'A',
-                        'ip'   => '1.2.3.4',
-                    ],
-                    [
-                        'type'    => 'TXT',
-                        'entries' => [
-                            'somethingElse',
-                        ],
-                    ],
-                ],
-            ]
-        );
 
+        $mockResolver = $this->prophesize(DnsResolverInterface::class);
+        $mockResolver->getTxtEntries($recordName)->willReturn(['somethingElse']);
         $mockExtractor = $this->prophesize(DnsDataExtractor::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 
-        $validator = new DnsValidator($mockExtractor->reveal());
+        $validator = new DnsValidator($mockExtractor->reveal(), $mockResolver->reveal());
 
         $mockExtractor->getRecordName($stubChallenge->reveal())->willReturn($recordName);
         $mockExtractor->getRecordValue($stubChallenge->reveal())->willReturn($recordValue);

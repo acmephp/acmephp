@@ -77,11 +77,49 @@ they are due to an issue in the container DNS.
 you may have ports conflicts. See [https://github.com/acmephp/testing-ca](https://github.com/acmephp/testing-ca)
 for more informations.
 
+## Run command
+
+The run command is an all in one command who works with a `domain` 
+config file like 
+
+```yaml
+contact_email: contact@company
+
+defaults:
+  distinguished_name:
+      country: FR
+      locality: Paris
+      organization_name: MyCompany
+  solver: http
+
+certificates:
+  - domain: example.com
+    distinguished_name:
+      organization_name: MyCompany Internal
+    solver: dns
+    subject_alternative_names:
+      - '*.example.com'
+      - www.subdomain.example.com
+    install:
+      - action: push_ftp
+        root: /acmephp
+        host: ftp.example.com
+        username: username
+        password: password
+```
+
+usage
+
+```bash
+$ acmephp run path-to-config.yml
+```
+
 ## Using docker
 
 You can also use the docker image to generate certificates.
 Certificates and keys are stored into the volume `/root/.acmephp`
 
 ```
-docker run --rm -ti -v /root/.acmephp:/root/.acmephp acmephp/acmephp:latest 
+docker run --rm -ti -v /cache/.acmephp:/root/.acmephp -v $PWD/.config.yml:/etc/acmephp.yml:ro acmephp/acmephp:latest run /etc/acmephp.yml
 ```
+
