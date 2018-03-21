@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Core\Challenge\Dns;
 
+use AcmePhp\Cli\Exception\AcmeDnsResolutionException;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 
@@ -27,11 +28,18 @@ class DnsValidator implements ValidatorInterface
     private $extractor;
 
     /**
-     * @param DnsDataExtractor $extractor
+     * @var DnsResolverInterface
      */
-    public function __construct(DnsDataExtractor $extractor)
+    private $dnsResolver;
+
+    /**
+     * @param DnsDataExtractor     $extractor
+     * @param DnsResolverInterface $dnsResolver
+     */
+    public function __construct(DnsDataExtractor $extractor = null, DnsResolverInterface $dnsResolver = null)
     {
         $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
+        $this->dnsResolver = null === $dnsResolver ? (LibDnsResolver::isSupported() ? new LibDnsResolver() : new SimpleDnsResolver()) : $dnsResolver;
     }
 
     /**
@@ -50,12 +58,10 @@ class DnsValidator implements ValidatorInterface
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
         $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
 
-        foreach (dns_get_record($recordName, DNS_TXT) as $record) {
-            if (in_array($recordValue, $record['entries'])) {
-                return true;
-            }
+        try {
+            return in_array($recordValue, $this->dnsResolver->getTxtEntries($recordName));
+        } catch (AcmeDnsResolutionException $e) {
+            return false;
         }
-
-        return false;
     }
 }

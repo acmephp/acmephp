@@ -17,6 +17,7 @@ use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
 use AcmePhp\Cli\Command\MonitoringTestCommand;
 use AcmePhp\Cli\Command\RegisterCommand;
 use AcmePhp\Cli\Command\RequestCommand;
+use AcmePhp\Cli\Command\RunCommand;
 use AcmePhp\Cli\Command\SelfUpdateCommand;
 use AcmePhp\Cli\Command\StatusCommand;
 use Symfony\Component\Console\Application as BaseApplication;
@@ -44,6 +45,7 @@ class Application extends BaseApplication
     protected function getDefaultCommands()
     {
         return array_merge(parent::getDefaultCommands(), [
+            new RunCommand(),
             new RegisterCommand(),
             new AuthorizeCommand(),
             new CheckCommand(),

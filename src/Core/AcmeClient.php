@@ -152,12 +152,13 @@ class AcmeClient implements AcmeClientV2Interface
 
         $orderEndpoint = $this->getHttpClient()->getLastLocation();
         $base64encoder = $this->getHttpClient()->getBase64Encoder();
-        foreach ($response['authorizations'] as $index => $authorizationEndpoint) {
+        foreach ($response['authorizations'] as $authorizationEndpoint) {
             $authorizationsResponse = $this->getHttpClient()->unsignedRequest('GET', $authorizationEndpoint, null, true);
-
+            $domain = (empty($authorizationsResponse['wildcard']) ? '' : '*.').$authorizationsResponse['identifier']['value'];
             foreach ($authorizationsResponse['challenges'] as $challenge) {
-                $authorizationsChallenges[$response['identifiers'][$index]['value']][] = new AuthorizationChallenge(
+                $authorizationsChallenges[$domain][] = new AuthorizationChallenge(
                     $authorizationsResponse['identifier']['value'],
+                    $challenge['status'],
                     $challenge['type'],
                     $challenge['url'],
                     $challenge['token'],

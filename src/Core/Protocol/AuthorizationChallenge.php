@@ -28,6 +28,11 @@ class AuthorizationChallenge
     /**
      * @var string
      */
+    private $status;
+
+    /**
+     * @var string
+     */
     private $type;
 
     /**
@@ -47,20 +52,23 @@ class AuthorizationChallenge
 
     /**
      * @param string $domain
+     * @param string $status
      * @param string $type
      * @param string $url
      * @param string $token
      * @param string $payload
      */
-    public function __construct($domain, $type, $url, $token, $payload)
+    public function __construct($domain, $status, $type, $url, $token, $payload)
     {
         Assert::stringNotEmpty($domain, 'Challenge::$domain expected a non-empty string. Got: %s');
+        Assert::stringNotEmpty($status, 'Challenge::$status expected a non-empty string. Got: %s');
         Assert::stringNotEmpty($type, 'Challenge::$type expected a non-empty string. Got: %s');
         Assert::stringNotEmpty($url, 'Challenge::$url expected a non-empty string. Got: %s');
         Assert::stringNotEmpty($token, 'Challenge::$token expected a non-empty string. Got: %s');
         Assert::stringNotEmpty($payload, 'Challenge::$payload expected a non-empty string. Got: %s');
 
         $this->domain = $domain;
+        $this->status = $status;
         $this->type = $type;
         $this->url = $url;
         $this->token = $token;
@@ -74,6 +82,7 @@ class AuthorizationChallenge
     {
         return [
             'domain'   => $this->getDomain(),
+            'status'   => $this->getStatus(),
             'type'     => $this->getType(),
             'url'      => $this->getUrl(),
             'token'    => $this->getToken(),
@@ -90,6 +99,7 @@ class AuthorizationChallenge
     {
         return new self(
             $data['domain'],
+            $data['status'],
             $data['type'],
             $data['url'],
             $data['token'],
@@ -103,6 +113,30 @@ class AuthorizationChallenge
     public function getDomain()
     {
         return $this->domain;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return string
+     */
+    public function isValid()
+    {
+        return $this->status === 'valid';
+    }
+
+    /**
+     * @return string
+     */
+    public function isPending()
+    {
+        return $this->status === 'pending';
     }
 
     /**

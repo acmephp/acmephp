@@ -119,6 +119,7 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $challenge = new AuthorizationChallenge(
             'example.org',
+            'valid',
             'http-01',
             'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
             'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
@@ -143,6 +144,7 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $challenge = new AuthorizationChallenge(
             'example.org',
+            'valid',
             'http-01',
             'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
             'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
