@@ -39,6 +39,7 @@ class AcmeConfiguration implements ConfigurationInterface
     protected function createRootNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode
+            ->addDefaultsIfNotSet()
             ->children()
                 ->arrayNode('storage')
                     ->info('Configure here where and how you want to save your certificates and SSL keys.')
