@@ -94,7 +94,6 @@ class LibDnsResolver implements DnsResolverInterface
         foreach ($nameServers as $nameServer) {
             $ip = gethostbyname($nameServer);
             $serverEntries = $this->request($domain, ResourceTypes::TXT, $ip);
-            echo $nameServer.': '.json_encode($serverEntries).PHP_EOL;
             if (null === $entries) {
                 $entries = $serverEntries;
             } elseif ($entries != $serverEntries) {
