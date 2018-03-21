@@ -20,14 +20,9 @@ use Webmozart\Assert\Assert;
  */
 class ResourcesDirectory
 {
-    const NEW_REGISTRATION = 'new-reg';
-    const NEW_AUTHORIZATION = 'new-authz';
-    const NEW_CERTIFICATE = 'new-cert';
-    const REVOKE_CERTIFICATE = 'revoke-cert';
-    const REGISTRATION = 'reg';
-    const AUTHORIZATION = 'authz';
-    const CHALLENGE = 'challenge';
-    const CERTIFICATE = 'cert';
+    const NEW_ACCOUNT = 'newAccount';
+    const NEW_ORDER = 'newOrder';
+    const NEW_NONCE = 'newNonce';
 
     /**
      * @var array
@@ -48,14 +43,9 @@ class ResourcesDirectory
     public static function getResourcesNames()
     {
         return [
-            self::NEW_REGISTRATION,
-            self::NEW_AUTHORIZATION,
-            self::NEW_CERTIFICATE,
-            self::REVOKE_CERTIFICATE,
-            self::REGISTRATION,
-            self::AUTHORIZATION,
-            self::CHALLENGE,
-            self::CERTIFICATE,
+            self::NEW_ACCOUNT,
+            self::NEW_ORDER,
+            self::NEW_NONCE,
         ];
     }
 

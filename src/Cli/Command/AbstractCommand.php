@@ -14,7 +14,7 @@ namespace AcmePhp\Cli\Command;
 use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Configuration\AcmeConfiguration;
-use AcmePhp\Cli\Repository\RepositoryInterface;
+use AcmePhp\Cli\Repository\RepositoryV2Interface;
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
@@ -65,7 +65,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
     }
 
     /**
-     * @return RepositoryInterface
+     * @return RepositoryV2Interface
      */
     protected function getRepository()
     {

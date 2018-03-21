@@ -32,7 +32,7 @@ class AuthorizeCommand extends AbstractCommand
         $this->setName('authorize')
             ->setDefinition([
                 new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53)', 'http'),
-                new InputArgument('domain', InputArgument::REQUIRED, 'The domain to ask an authorization for'),
+                new InputArgument('domains', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'List of domains to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
             ->setHelp(<<<'EOF'
@@ -42,7 +42,7 @@ the server to check you are the own of the domain by checking this URL.
 
 Ask the server for an authorization token:
 
-  <info>php %command.full_name% example.com</info>
+  <info>php %command.full_name% example.com www.exemple.org *.example.io</info>
   
 Follow the instructions to expose your token on the specific URL, and then run the <info>check</info>
 command to tell the server to check your token.
@@ -56,7 +56,7 @@ EOF
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $client = $this->getClient();
-        $domain = $input->getArgument('domain');
+        $domains = $input->getArgument('domains');
 
         $solverName = strtolower($input->getOption('solver'));
 
@@ -74,43 +74,43 @@ EOF
 
         /** @var SolverInterface $solver */
         $solver = $solverLocator->getSolver($solverName);
-
         $this->debug('Solver found', ['name' => $solverName]);
 
-        $this->notice(sprintf('Requesting an authorization token for domain %s ...', $domain));
-        $authorizationChallenges = $client->requestAuthorization($domain);
-        $authorizationChallenge = null;
-        foreach ($authorizationChallenges as $candidate) {
-            if ($solver->supports($candidate)) {
-                $authorizationChallenge = $candidate;
+        $this->notice(sprintf('Requesting an authorization token for domains %s ...', implode(', ', $domains)));
+        $order = $client->requestOrder($domains);
+        $this->notice('The authorization tokens was successfully fetched!');
+        foreach ($order->getAuthorizationsChallenges() as $domainKey => $authorizationChallenges) {
+            $authorizationChallenge = null;
+            foreach ($authorizationChallenges as $candidate) {
+                if ($solver->supports($candidate)) {
+                    $authorizationChallenge = $candidate;
 
-                $this->debug('Authorization challenge supported by solver', [
+                    $this->debug('Authorization challenge supported by solver', [
+                        'solver'    => $solverName,
+                        'challenge' => $candidate->getType(),
+                    ]);
+
+                    break;
+                }
+
+                $this->debug('Authorization challenge not supported by solver', [
                     'solver'    => $solverName,
                     'challenge' => $candidate->getType(),
                 ]);
-
-                break;
             }
-
-            $this->debug('Authorization challenge not supported by solver', [
-                'solver'    => $solverName,
-                'challenge' => $candidate->getType(),
+            if (null === $authorizationChallenge) {
+                throw new ChallengeNotSupportedException();
+            }
+            $this->debug('Storing authorization challenge', [
+                'domain'    => $domainKey,
+                'challenge' => $authorizationChallenge->toArray(),
             ]);
+
+            $this->getRepository()->storeDomainAuthorizationChallenge($domainKey, $authorizationChallenge);
+            $solver->solve($authorizationChallenge);
         }
 
-        if (null === $authorizationChallenge) {
-            throw new ChallengeNotSupportedException();
-        }
-
-        $this->debug('Storing authorization challenge', [
-            'domain'    => $domain,
-            'challenge' => $authorizationChallenge->toArray(),
-        ]);
-
-        $this->getRepository()->storeDomainAuthorizationChallenge($domain, $authorizationChallenge);
-
-        $this->notice('The authorization token was successfully fetched!');
-        $solver->solve($authorizationChallenge);
+        $this->getRepository()->storeCertificateOrder($domains, $order);
 
         $this->info(sprintf(
 <<<'EOF'
@@ -123,7 +123,7 @@ EOF
             ,
             $_SERVER['PHP_SELF'],
             $solverName,
-            $domain
+            implode(' ', array_keys($order->getAuthorizationsChallenges()))
         ));
     }
 }

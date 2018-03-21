@@ -14,7 +14,7 @@ namespace AcmePhp\Cli\Command;
 use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
 use AcmePhp\Cli\Repository\RepositoryInterface;
-use AcmePhp\Core\AcmeClientInterface;
+use AcmePhp\Core\AcmeClientV2Interface;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
@@ -36,7 +36,7 @@ class RequestCommand extends AbstractCommand
     private $repository;
 
     /**
-     * @var AcmeClientInterface
+     * @var AcmeClientV2Interface
      */
     private $client;
 
@@ -158,10 +158,15 @@ EOF;
         $distinguishedName = $this->getOrCreateDistinguishedName($domain, $alternativeNames);
         $this->notice('Distinguished name informations have been stored locally for this domain (they won\'t be asked on renewal).');
 
+        // Order
+        $domains = array_merge([$domain], $alternativeNames);
+        $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
+        $order = $this->getRepository()->loadCertificateOrder($domains);
+
         // Request
         $this->notice(sprintf('Requesting first certificate for domain %s ...', $domain));
         $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
-        $response = $this->client->requestCertificate($domain, $csr);
+        $response = $this->client->finalizeOrder($order, $csr);
         $this->debug('Certificate received', ['certificate' => $response->getCertificate()->getPEM()]);
 
         // Store
@@ -290,10 +295,15 @@ EOF;
             $this->info('Loading domain distinguished name...');
             $distinguishedName = $this->getOrCreateDistinguishedName($domain, $alternativeNames);
 
+            // Order
+            $domains = array_merge([$domain], $alternativeNames);
+            $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
+            $order = $this->getRepository()->loadCertificateOrder($domains);
+
             // Renewal
             $this->info(sprintf('Renewing certificate for domain %s ...', $domain));
             $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
-            $response = $this->client->requestCertificate($domain, $csr);
+            $response = $this->client->finalizeOrder($order, $csr);
             $this->debug('Certificate received', ['certificate' => $response->getCertificate()->getPEM()]);
 
             $this->repository->storeDomainCertificate($domain, $response->getCertificate());

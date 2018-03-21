@@ -82,7 +82,7 @@ interface AcmeClientInterface
      * @throws ChallengeTimedOutException When the challenge timed out.
      * @throws ChallengeFailedException   When the challenge failed.
      *
-     * @return array The decoded server response (containing the result of the check).
+     * @return array The validate challenge response.
      */
     public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180);
 
