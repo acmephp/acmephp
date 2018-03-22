@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -18,6 +18,6 @@ class AcmeDnsResolutionException extends AcmeCliException
 {
     public function __construct($message, \Exception $previous = null)
     {
-        parent::__construct($message === null ? 'An exception was thrown during resolution of DNS' : $message, $previous);
+        parent::__construct(null === $message ? 'An exception was thrown during resolution of DNS' : $message, $previous);
     }
 }

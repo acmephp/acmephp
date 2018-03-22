@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -86,7 +86,7 @@ EOL;
                 $resource,
                 [
                     'digest_alg' => 'sha256',
-                    'config'     => $sslConfigFile,
+                    'config' => $sslConfigFile,
                 ]
             );
 

@@ -59,7 +59,7 @@ EOF
 
         $this->info('Triggering monitoring on "'.$level.'" level...');
 
-        if ($level === HandlerBuilderInterface::LEVEL_INFO) {
+        if (HandlerBuilderInterface::LEVEL_INFO === $level) {
             $monitoringLogger->info('This is a testing message from Acme PHP monitoring (info level)');
         } else {
             $monitoringLogger->alert('This is a testing message from Acme PHP monitoring (error level)');

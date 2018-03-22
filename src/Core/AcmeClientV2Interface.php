@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -34,14 +34,14 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      * The Certificate Authority will create this challenge data and you will then have
      * to expose the payload for the verification (see challengeAuthorization).
      *
-     * @param string[] $domains The domains to challenge.
+     * @param string[] $domains the domains to challenge
      *
-     * @throws AcmeCoreServerException        When the ACME server returns an error HTTP status code
-     *                                        (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException        When an error occured during response parsing.
-     * @throws ChallengeNotSupportedException When the HTTP challenge is not supported by the server.
+     * @throws AcmeCoreServerException        when the ACME server returns an error HTTP status code
+     *                                        (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException        when an error occured during response parsing
+     * @throws ChallengeNotSupportedException when the HTTP challenge is not supported by the server
      *
-     * @return CertificateOrder The Order returned by the Certificate Authority.
+     * @return CertificateOrder the Order returned by the Certificate Authority
      */
     public function requestOrder(array $domains);
 
@@ -55,17 +55,17 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      * wait for the Certificate Authority to validate the certificate and
      * this operation could be long.
      *
-     * @param CertificateOrder   $order   The Order returned by the Certificate Authority.
-     * @param CertificateRequest $csr     The Certificate Signing Request (informations for the certificate).
-     * @param int                $timeout The timeout period.
+     * @param CertificateOrder   $order   the Order returned by the Certificate Authority
+     * @param CertificateRequest $csr     the Certificate Signing Request (informations for the certificate)
+     * @param int                $timeout the timeout period
      *
-     * @throws AcmeCoreServerException             When the ACME server returns an error HTTP status code
-     *                                             (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException             When an error occured during response parsing.
-     * @throws CertificateRequestFailedException   When the certificate request failed.
-     * @throws CertificateRequestTimedOutException When the certificate request timed out.
+     * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
+     *                                             (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException             when an error occured during response parsing
+     * @throws CertificateRequestFailedException   when the certificate request failed
+     * @throws CertificateRequestTimedOutException when the certificate request timed out
      *
-     * @return CertificateResponse The certificate data to save it somewhere you want.
+     * @return CertificateResponse the certificate data to save it somewhere you want
      */
     public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180);
 }

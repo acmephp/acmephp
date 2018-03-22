@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -100,7 +100,7 @@ class AcmeClient implements AcmeClientV2Interface
 
         $payload = [
             'termsOfServiceAgreed' => true,
-            'contact'              => [],
+            'contact' => [],
         ];
 
         if (is_string($email)) {
@@ -137,7 +137,7 @@ class AcmeClient implements AcmeClientV2Interface
             'identifiers' => array_map(
                 function ($domain) {
                     return [
-                        'type'  => 'dns',
+                        'type' => 'dns',
                         'value' => $domain,
                     ];
                 },
@@ -239,7 +239,7 @@ class AcmeClient implements AcmeClientV2Interface
             $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
         }
 
-        if ($response['status'] !== 'valid') {
+        if ('valid' !== $response['status']) {
             throw new CertificateRequestFailedException('The order has not been validated');
         }
 
@@ -260,8 +260,8 @@ class AcmeClient implements AcmeClientV2Interface
      * @param array  $payload
      * @param bool   $returnJson
      *
-     * @throws AcmeCoreServerException When the ACME server returns an error HTTP status code.
-     * @throws AcmeCoreClientException When an error occured during response parsing.
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
+     * @throws AcmeCoreClientException when an error occured during response parsing
      *
      * @return array|string
      */

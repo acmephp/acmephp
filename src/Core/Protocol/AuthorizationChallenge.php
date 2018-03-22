@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -81,12 +81,12 @@ class AuthorizationChallenge
     public function toArray()
     {
         return [
-            'domain'   => $this->getDomain(),
-            'status'   => $this->getStatus(),
-            'type'     => $this->getType(),
-            'url'      => $this->getUrl(),
-            'token'    => $this->getToken(),
-            'payload'  => $this->getPayload(),
+            'domain' => $this->getDomain(),
+            'status' => $this->getStatus(),
+            'type' => $this->getType(),
+            'url' => $this->getUrl(),
+            'token' => $this->getToken(),
+            'payload' => $this->getPayload(),
         ];
     }
 
@@ -128,7 +128,7 @@ class AuthorizationChallenge
      */
     public function isValid()
     {
-        return $this->status === 'valid';
+        return 'valid' === $this->status;
     }
 
     /**
@@ -136,7 +136,7 @@ class AuthorizationChallenge
      */
     public function isPending()
     {
-        return $this->status === 'pending';
+        return 'pending' === $this->status;
     }
 
     /**

@@ -388,7 +388,7 @@ class Repository implements RepositoryV2Interface
         if ($this->enableBackup) {
             $oldContent = $this->master->read($path);
 
-            if ($oldContent !== false) {
+            if (false !== $oldContent) {
                 if ($this->backup->has($path)) {
                     $this->backup->update($path, $oldContent);
                 } else {

@@ -72,9 +72,9 @@ abstract class AbstractAwsAction extends AbstractAction
         $response = $iamClient->uploadServerCertificate(
             [
                 'ServerCertificateName' => $certificateName,
-                'CertificateBody'       => $response->getCertificate()->getPEM(),
-                'PrivateKey'            => $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM(),
-                'CertificateChain'      => $chainPem,
+                'CertificateBody' => $response->getCertificate()->getPEM(),
+                'PrivateKey' => $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM(),
+                'CertificateChain' => $chainPem,
             ]
         );
 
@@ -101,7 +101,7 @@ abstract class AbstractAwsAction extends AbstractAction
                         5
                     );
                 } catch (IamException $e) {
-                    if ($e->getAwsErrorCode() !== 'DeleteConflict') {
+                    if ('DeleteConflict' !== $e->getAwsErrorCode()) {
                         throw $e;
                     }
                 }
@@ -114,7 +114,7 @@ abstract class AbstractAwsAction extends AbstractAction
     protected function retryCall($callback, $retryCount = 10, $retrySleep = 1)
     {
         $lastException = null;
-        for ($i = 0; $i < $retryCount; $i++) {
+        for ($i = 0; $i < $retryCount; ++$i) {
             try {
                 $callback();
 

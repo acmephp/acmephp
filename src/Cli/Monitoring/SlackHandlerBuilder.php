@@ -23,7 +23,7 @@ class SlackHandlerBuilder implements HandlerBuilderInterface
 {
     private static $defaults = [
         'username' => 'Acme PHP',
-        'level'    => Logger::INFO,
+        'level' => Logger::INFO,
     ];
 
     /**

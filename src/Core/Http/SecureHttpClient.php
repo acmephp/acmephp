@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -103,8 +103,8 @@ class SecureHttpClient
      * @param array  $payload
      * @param bool   $returnJson
      *
-     * @throws AcmeCoreServerException When the ACME server returns an error HTTP status code.
-     * @throws AcmeCoreClientException When an error occured during response parsing.
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
+     * @throws AcmeCoreClientException when an error occured during response parsing
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
@@ -113,10 +113,10 @@ class SecureHttpClient
         $privateKey = $this->accountKeyPair->getPrivateKey();
 
         $protected = [
-            'alg'   => 'RS256',
-            'jwk'   => $this->getJWK(),
+            'alg' => 'RS256',
+            'jwk' => $this->getJWK(),
             'nonce' => $this->getNonce($endpoint),
-            'url'   => $endpoint,
+            'url' => $endpoint,
         ];
 
         $protected = $this->base64Encoder->encode(json_encode($protected));
@@ -125,7 +125,7 @@ class SecureHttpClient
 
         $payload = [
             'protected' => $protected,
-            'payload'   => $payload,
+            'payload' => $payload,
             'signature' => $signature,
         ];
 
@@ -143,9 +143,9 @@ class SecureHttpClient
 
         return [
             // this order matter
-            'e'   => $this->base64Encoder->encode($parsedKey->getDetail('e')),
+            'e' => $this->base64Encoder->encode($parsedKey->getDetail('e')),
             'kty' => 'RSA',
-            'n'   => $this->base64Encoder->encode($parsedKey->getDetail('n')),
+            'n' => $this->base64Encoder->encode($parsedKey->getDetail('n')),
         ];
     }
 
@@ -163,8 +163,8 @@ class SecureHttpClient
      * @param array  $payload
      * @param bool   $returnJson
      *
-     * @throws AcmeCoreServerException When the ACME server returns an error HTTP status code.
-     * @throws AcmeCoreClientException When an error occured during response parsing.
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
+     * @throws AcmeCoreClientException when an error occured during response parsing
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
@@ -173,10 +173,10 @@ class SecureHttpClient
         $privateKey = $this->accountKeyPair->getPrivateKey();
 
         $protected = [
-            'alg'   => 'RS256',
-            'kid'   => $account,
+            'alg' => 'RS256',
+            'kid' => $account,
             'nonce' => $this->getNonce(),
-            'url'   => $endpoint,
+            'url' => $endpoint,
         ];
 
         $protected = $this->base64Encoder->encode(json_encode($protected));
@@ -189,7 +189,7 @@ class SecureHttpClient
 
         $payload = [
             'protected' => $protected,
-            'payload'   => $payload,
+            'payload' => $payload,
             'signature' => $signature,
         ];
 
@@ -208,9 +208,9 @@ class SecureHttpClient
      * @param array  $data
      * @param bool   $returnJson
      *
-     * @throws AcmeCoreServerException When the ACME server returns an error HTTP status code.
-     * @throws AcmeCoreClientException When an error occured during response parsing.
-     * @throws ExpectedJsonException   When $returnJson = true and the response is not valid JSON.
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
+     * @throws AcmeCoreClientException when an error occured during response parsing
+     * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
@@ -231,7 +231,7 @@ class SecureHttpClient
         }
 
         try {
-            if ($body === '') {
+            if ('' === $body) {
                 return;
             }
 

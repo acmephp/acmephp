@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -74,15 +74,15 @@ class Route53Solver implements SolverInterface
                 'ChangeBatch' => [
                     'Changes' => [
                         [
-                            'Action'            => 'UPSERT',
+                            'Action' => 'UPSERT',
                             'ResourceRecordSet' => [
-                                'Name'            => $recordName,
+                                'Name' => $recordName,
                                 'ResourceRecords' => [
                                     [
                                         'Value' => sprintf('"%s"', $recordValue),
                                     ],
                                 ],
-                                'TTL'  => 5,
+                                'TTL' => 5,
                                 'Type' => 'TXT',
                             ],
                         ],
@@ -102,7 +102,7 @@ class Route53Solver implements SolverInterface
         $zone = $this->getZone($authorizationChallenge->getDomain());
         $recordSets = $this->client->listResourceRecordSets(
             [
-                'HostedZoneId'    => $zone['Id'],
+                'HostedZoneId' => $zone['Id'],
                 'StartRecordName' => $recordName,
                 'StartRecordType' => 'TXT',
             ]
@@ -111,7 +111,7 @@ class Route53Solver implements SolverInterface
         $recordSets = array_filter(
             $recordSets['ResourceRecordSets'],
             function ($recordSet) use ($recordName) {
-                return $recordSet['Name'] === $recordName && $recordSet['Type'] === 'TXT';
+                return $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type'];
             }
         );
 
@@ -126,7 +126,7 @@ class Route53Solver implements SolverInterface
                     'Changes' => array_map(
                         function ($recordSet) {
                             return [
-                                'Action'            => 'DELETE',
+                                'Action' => 'DELETE',
                                 'ResourceRecordSet' => $recordSet,
                             ];
                         },
@@ -141,7 +141,7 @@ class Route53Solver implements SolverInterface
     public function wait($recordName)
     {
         if (isset($this->pendingChanges[$recordName])) {
-            $this->client->waitUntil('ResourceRecordSetsChanged', ['Id' =>$this->pendingChanges[$recordName]]);
+            $this->client->waitUntil('ResourceRecordSetsChanged', ['Id' => $this->pendingChanges[$recordName]]);
             unset($this->pendingChanges[$recordName]);
         }
     }

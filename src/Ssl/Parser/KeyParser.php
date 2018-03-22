@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -52,11 +52,11 @@ class KeyParser
 
         $details = [];
 
-        if ($rawData['type'] === OPENSSL_KEYTYPE_RSA) {
+        if (OPENSSL_KEYTYPE_RSA === $rawData['type']) {
             $details = $rawData['rsa'];
-        } elseif ($rawData['type'] === OPENSSL_KEYTYPE_DSA) {
+        } elseif (OPENSSL_KEYTYPE_DSA === $rawData['type']) {
             $details = $rawData['dsa'];
-        } elseif ($rawData['type'] === OPENSSL_KEYTYPE_DH) {
+        } elseif (OPENSSL_KEYTYPE_DH === $rawData['type']) {
             $details = $rawData['dh'];
         }
 

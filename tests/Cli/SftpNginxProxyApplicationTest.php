@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -42,11 +42,11 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
     public function testFullProcess()
     {
         $sftpFilesystem = new Filesystem(new SftpAdapter([
-            'host'     => 'localhost',
-            'port'     => 8022,
+            'host' => 'localhost',
+            'port' => 8022,
             'username' => 'acmephp',
             'password' => 'acmephp',
-            'root'     => '/share',
+            'root' => '/share',
         ]));
 
         // Remove any old version of the files

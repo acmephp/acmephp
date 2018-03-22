@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -33,14 +33,14 @@ interface AcmeClientInterface
     /**
      * Register the local account KeyPair in the Certificate Authority.
      *
-     * @param string|null $agreement An optionnal URI referring to a subscriber agreement or terms of service.
-     * @param string|null $email     An optionnal e-mail to associate with the account.
+     * @param string|null $agreement an optionnal URI referring to a subscriber agreement or terms of service
+     * @param string|null $email     an optionnal e-mail to associate with the account
      *
-     * @throws AcmeCoreServerException When the ACME server returns an error HTTP status code
-     *                                 (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException When an error occured during response parsing.
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
+     *                                 (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException when an error occured during response parsing
      *
-     * @return array The Certificate Authority response decoded from JSON into an array.
+     * @return array the Certificate Authority response decoded from JSON into an array
      */
     public function registerAccount($agreement = null, $email = null);
 
@@ -51,14 +51,14 @@ interface AcmeClientInterface
      * The Certificate Authority will create this challenge data and you will then have
      * to expose the payload for the verification (see challengeAuthorization).
      *
-     * @param string $domain The domain to challenge.
+     * @param string $domain the domain to challenge
      *
-     * @throws AcmeCoreServerException        When the ACME server returns an error HTTP status code
-     *                                        (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException        When an error occured during response parsing.
-     * @throws ChallengeNotSupportedException When the HTTP challenge is not supported by the server.
+     * @throws AcmeCoreServerException        when the ACME server returns an error HTTP status code
+     *                                        (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException        when an error occured during response parsing
+     * @throws ChallengeNotSupportedException when the HTTP challenge is not supported by the server
      *
-     * @return AuthorizationChallenge[] The list of challenges data returned by the Certificate Authority.
+     * @return AuthorizationChallenge[] the list of challenges data returned by the Certificate Authority
      */
     public function requestAuthorization($domain);
 
@@ -73,16 +73,16 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the challenge and this
      * operation could be long.
      *
-     * @param AuthorizationChallenge $challenge The challenge data to check.
-     * @param int                    $timeout   The timeout period.
+     * @param AuthorizationChallenge $challenge the challenge data to check
+     * @param int                    $timeout   the timeout period
      *
-     * @throws AcmeCoreServerException    When the ACME server returns an error HTTP status code
-     *                                    (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException    When an error occured during response parsing.
-     * @throws ChallengeTimedOutException When the challenge timed out.
-     * @throws ChallengeFailedException   When the challenge failed.
+     * @throws AcmeCoreServerException    when the ACME server returns an error HTTP status code
+     *                                    (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException    when an error occured during response parsing
+     * @throws ChallengeTimedOutException when the challenge timed out
+     * @throws ChallengeFailedException   when the challenge failed
      *
-     * @return array The validate challenge response.
+     * @return array the validate challenge response
      */
     public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180);
 
@@ -96,17 +96,17 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the certificate and
      * this operation could be long.
      *
-     * @param string             $domain  The domain to request a certificate for.
-     * @param CertificateRequest $csr     The Certificate Signing Request (informations for the certificate).
-     * @param int                $timeout The timeout period.
+     * @param string             $domain  the domain to request a certificate for
+     * @param CertificateRequest $csr     the Certificate Signing Request (informations for the certificate)
+     * @param int                $timeout the timeout period
      *
-     * @throws AcmeCoreServerException             When the ACME server returns an error HTTP status code
-     *                                             (the exception will be more specific if detail is provided).
-     * @throws AcmeCoreClientException             When an error occured during response parsing.
-     * @throws CertificateRequestFailedException   When the certificate request failed.
-     * @throws CertificateRequestTimedOutException When the certificate request timed out.
+     * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
+     *                                             (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException             when an error occured during response parsing
+     * @throws CertificateRequestFailedException   when the certificate request failed
+     * @throws CertificateRequestTimedOutException when the certificate request timed out
      *
-     * @return CertificateResponse The certificate data to save it somewhere you want.
+     * @return CertificateResponse the certificate data to save it somewhere you want
      */
     public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180);
 

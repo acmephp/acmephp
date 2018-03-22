@@ -26,8 +26,6 @@ interface RepositoryV2Interface extends RepositoryInterface
      * @param CertificateOrder $order
      *
      * @throws AcmeCliException
-     *
-     * @return void
      */
     public function storeCertificateOrder(array $domains, CertificateOrder $order);
 

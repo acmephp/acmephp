@@ -25,7 +25,7 @@ class MonitoringLoggerFactory
     private $monitoringConfig;
 
     private static $levels = [
-        'info'  => Logger::INFO,
+        'info' => Logger::INFO,
         'error' => Logger::ERROR,
     ];
 

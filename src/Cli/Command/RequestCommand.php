@@ -91,7 +91,7 @@ EOF
         // Certificate renewal
         if ($this->hasValidCertificate($domain, $alternativeNames)) {
             $this->debug('Certificate found, executing renewal', [
-                'domain'            => $domain,
+                'domain' => $domain,
                 'alternative_names' => $alternativeNames,
             ]);
 
@@ -99,7 +99,7 @@ EOF
         }
 
         $this->debug('No certificate found, executing first request', [
-            'domain'            => $domain,
+            'domain' => $domain,
             'alternative_names' => $alternativeNames,
         ]);
 
@@ -121,7 +121,7 @@ EOF
             return false;
         }
 
-        if ($this->repository->loadDomainDistinguishedName($domain)->getSubjectAlternativeNames() != $alternativeNames) {
+        if ($this->repository->loadDomainDistinguishedName($domain)->getSubjectAlternativeNames() !== $alternativeNames) {
             return false;
         }
 
@@ -151,7 +151,7 @@ EOF;
         $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
 
         $this->debug('Domain key pair generated and stored', [
-            'domain'     => $domain,
+            'domain' => $domain,
             'public_key' => $domainKeyPair->getPublicKey()->getPEM(),
         ]);
 
@@ -215,11 +215,11 @@ EOF;
 
         $replacements = [
             '%expiration%' => $parsedCertificate->getValidTo()->format(\DateTime::ISO8601),
-            '%private%'    => $masterPath.'/private/'.$domain.'/private.pem',
-            '%cert%'       => $masterPath.'/certs/'.$domain.'/cert.pem',
-            '%chain%'      => $masterPath.'/certs/'.$domain.'/chain.pem',
-            '%fullchain%'  => $masterPath.'/certs/'.$domain.'/fullchain.pem',
-            '%combined%'   => $masterPath.'/certs/'.$domain.'/combined.pem',
+            '%private%' => $masterPath.'/private/'.$domain.'/private.pem',
+            '%cert%' => $masterPath.'/certs/'.$domain.'/cert.pem',
+            '%chain%' => $masterPath.'/certs/'.$domain.'/chain.pem',
+            '%fullchain%' => $masterPath.'/certs/'.$domain.'/fullchain.pem',
+            '%combined%' => $masterPath.'/certs/'.$domain.'/combined.pem',
         ];
 
         $this->info(str_replace(array_keys($replacements), array_values($replacements), $success));
@@ -250,7 +250,7 @@ EOF;
 
                 if ($parsedCertificate->getValidTo()->format('U') - time() >= 604800) {
                     $monitoringLogger->debug('Certificate does not need renewal', [
-                        'domain'      => $domain,
+                        'domain' => $domain,
                         'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
                     ]);
 
@@ -275,7 +275,7 @@ EOF;
                 }
 
                 $monitoringLogger->debug('Certificate needs renewal', [
-                    'domain'      => $domain,
+                    'domain' => $domain,
                     'valid_until' => $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
                 ]);
 
