@@ -65,8 +65,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
         $this->assertContains('No account key pair was found, generating one', $registerDisplay);
         $this->assertContains('Account registered successfully', $registerDisplay);
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/_account/private.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/_account/public.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/account/key.private.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/account/key.public.pem');
 
         /*
          * Authorize
@@ -83,7 +83,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
         $this->assertContains('The authorization tokens was successfully fetched', $authorizeDisplay);
         $this->assertContains('http://acmephp.com/.well-known/acme-challenge/', $authorizeDisplay);
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/authorization_challenge.json');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/var/acmephp.com/authorization_challenge.json');
 
         /*
          * Check
@@ -91,7 +91,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
         // Find challenge and expose token
         $challenge = json_decode(
-            file_get_contents(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/authorization_challenge.json'),
+            file_get_contents(__DIR__.'/../Cli/Fixtures/local/master/var/acmephp.com/authorization_challenge.json'),
             true
         );
 
@@ -138,12 +138,12 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
         $this->assertContains('The SSL certificate was fetched successfully', $requestDisplay);
         $this->assertContains(Path::canonicalize(__DIR__.'/Fixtures/local/master'), $requestDisplay);
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/private.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/public.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/cert.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/combined.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/chain.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/fullchain.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.private.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.public.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/cert.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/combined.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/chain.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/fullchain.pem');
     }
 
     /**

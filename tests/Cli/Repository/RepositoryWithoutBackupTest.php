@@ -24,32 +24,32 @@ class RepositoryWithoutBackupTest extends AbstractRepositoryTest
     {
         parent::testStoreAccountKeyPair();
 
-        $this->assertFalse($this->backup->has('private/_account/public.pem'));
-        $this->assertFalse($this->backup->has('private/_account/private.pem'));
+        $this->assertFalse($this->backup->has('account/key.public.pem'));
+        $this->assertFalse($this->backup->has('account/key.private.pem'));
     }
 
     public function testStoreDomainKeyPair()
     {
         parent::testStoreDomainKeyPair();
 
-        $this->assertFalse($this->backup->has('private/example.com/public.pem'));
-        $this->assertFalse($this->backup->has('private/example.com/private.pem'));
+        $this->assertFalse($this->backup->has('certs/acmephp.com/private/key.public.pem'));
+        $this->assertFalse($this->backup->has('certs/acmephp.com/private/key.private.pem'));
     }
 
     public function testStoreDomainDistinguishedName()
     {
         parent::testStoreDomainDistinguishedName();
 
-        $this->assertFalse($this->backup->has('private/example.com/distinguished_name.json'));
+        $this->assertFalse($this->backup->has('var/example.com/distinguished_name.json'));
     }
 
     public function testStoreDomainCertificate()
     {
         parent::testStoreDomainCertificate();
 
-        $this->assertFalse($this->backup->has('certs/example.com/cert.pem'));
-        $this->assertFalse($this->backup->has('certs/example.com/chain.pem'));
-        $this->assertFalse($this->backup->has('certs/example.com/fullchain.pem'));
-        $this->assertFalse($this->backup->has('private/example.com/combined.pem'));
+        $this->assertFalse($this->backup->has('certs/example.com/private/combined.pem'));
+        $this->assertFalse($this->backup->has('certs/example.com/public/cert.pem'));
+        $this->assertFalse($this->backup->has('certs/example.com/public/chain.pem'));
+        $this->assertFalse($this->backup->has('certs/example.com/public/fullchain.pem'));
     }
 }
