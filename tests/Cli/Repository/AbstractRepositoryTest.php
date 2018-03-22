@@ -232,7 +232,7 @@ abstract class AbstractRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::$certPem."\n", $this->master->read('certs/example.com/cert.pem'));
         $this->assertEquals(self::$issuerCertPem."\n", $this->master->read('certs/example.com/chain.pem'));
         $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->master->read('certs/example.com/fullchain.pem'));
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->master->read('certs/example.com/combined.pem'));
+        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->master->read('private/example.com/combined.pem'));
     }
 
     public function testLoadDomainCertificate()

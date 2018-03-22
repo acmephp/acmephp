@@ -65,7 +65,7 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/private/acmephp.com/private.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/private/acmephp.com/public.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/cert.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/combined.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/private/acmephp.com/combined.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/chain.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/fullchain.pem');
 
@@ -81,7 +81,7 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
         $this->assertTrue($sftpFilesystem->has('certs/acmephp.com/fullchain.pem'));
         $this->assertTrue($sftpFilesystem->has('certs/acmephp.com/cert.pem'));
         $this->assertTrue($sftpFilesystem->has('certs/acmephp.com/chain.pem'));
-        $this->assertTrue($sftpFilesystem->has('certs/acmephp.com/combined.pem'));
+        $this->assertTrue($sftpFilesystem->has('private/acmephp.com/combined.pem'));
         $this->assertTrue($sftpFilesystem->has('nginxproxy/acmephp.com.crt'));
         $this->assertTrue($sftpFilesystem->has('nginxproxy/acmephp.com.key'));
     }

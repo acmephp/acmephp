@@ -216,10 +216,10 @@ EOF;
         $replacements = [
             '%expiration%' => $parsedCertificate->getValidTo()->format(\DateTime::ISO8601),
             '%private%' => $masterPath.'/private/'.$domain.'/private.pem',
+            '%combined%' => $masterPath.'/private/'.$domain.'/combined.pem',
             '%cert%' => $masterPath.'/certs/'.$domain.'/cert.pem',
             '%chain%' => $masterPath.'/certs/'.$domain.'/chain.pem',
             '%fullchain%' => $masterPath.'/certs/'.$domain.'/fullchain.pem',
-            '%combined%' => $masterPath.'/certs/'.$domain.'/combined.pem',
         ];
 
         $this->info(str_replace(array_keys($replacements), array_values($replacements), $success));
