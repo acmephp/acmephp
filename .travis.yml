@@ -9,23 +9,27 @@ branches:
 cache:
     directories:
         - $HOME/.composer/cache/files
+        - $HOME/.php-cs-fixer
 
 matrix:
     include:
         - php: 5.5
           services:
-            - docker
+              - docker
         - php: 5.6
           services:
-            - docker
+              - docker
         - php: 7.0
           env: deps=low
           services:
-            - docker
+              - docker
         - php: 7.1
-          env: deps=high
           services:
-            - docker
+              - docker
+        - php: 7.2
+          env: deps=high CS=true
+          services:
+              - docker
 
 before_install:
     - stty cols 120
@@ -34,8 +38,11 @@ before_install:
     - if [[ $deps = low ]]; then composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable; fi
     - if [[ ! $deps ]]; then composer install --no-interaction --no-progress --ansi; fi
     - ./tests/setup.sh
+    - mkdir -p "$HOME/.php-cs-fixer"
 
-script: ./tests/run.sh
+script:
+    - ./tests/run.sh
+    - if [[ "$CS" == "true" ]]; then composer require "friendsofphp/php-cs-fixer:^2.11" && vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --diff --dry-run; fi
 
 notifications:
     email: false

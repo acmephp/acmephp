@@ -35,8 +35,7 @@
         "webmozart/assert": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8.22",
-        "sllh/php-cs-fixer-styleci-bridge": "^1.5.0"
+        "phpunit/phpunit": "^4.8.22"
     },
     "extra": {
         "branch-alias": {
