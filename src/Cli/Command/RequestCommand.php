@@ -13,6 +13,7 @@ namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
+use AcmePhp\Cli\Repository\Repository;
 use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClientV2Interface;
 use AcmePhp\Ssl\CertificateRequest;
@@ -215,14 +216,14 @@ EOF;
 
         $replacements = [
             '%expiration%' => $parsedCertificate->getValidTo()->format(\DateTime::ISO8601),
-            '%private%' => $masterPath.'/private/'.$domain.'/private.pem',
-            '%combined%' => $masterPath.'/private/'.$domain.'/combined.pem',
-            '%cert%' => $masterPath.'/certs/'.$domain.'/cert.pem',
-            '%chain%' => $masterPath.'/certs/'.$domain.'/chain.pem',
-            '%fullchain%' => $masterPath.'/certs/'.$domain.'/fullchain.pem',
+            '%private%' => $masterPath.'/'.Repository::PATH_DOMAIN_KEY_PRIVATE,
+            '%combined%' => $masterPath.'/'.Repository::PATH_DOMAIN_CERT_COMBINED,
+            '%cert%' => $masterPath.'/'.Repository::PATH_DOMAIN_CERT_CERT,
+            '%chain%' => $masterPath.'/'.Repository::PATH_DOMAIN_CERT_CHAIN,
+            '%fullchain%' => $masterPath.'/'.Repository::PATH_DOMAIN_CERT_FULLCHAIN,
         ];
 
-        $this->info(str_replace(array_keys($replacements), array_values($replacements), $success));
+        $this->info(strtr(strtr($success, $replacements), ['{domain}' => $domain]));
     }
 
     /**

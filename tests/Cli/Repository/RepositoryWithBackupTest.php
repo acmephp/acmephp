@@ -24,32 +24,32 @@ class RepositoryWithBackupTest extends AbstractRepositoryTest
     {
         parent::testStoreAccountKeyPair();
 
-        $this->assertEquals("public\n", $this->backup->read('private/_account/public.pem'));
-        $this->assertEquals("private\n", $this->backup->read('private/_account/private.pem'));
+        $this->assertEquals("public\n", $this->backup->read('account/key.public.pem'));
+        $this->assertEquals("private\n", $this->backup->read('account/key.private.pem'));
     }
 
     public function testStoreDomainKeyPair()
     {
         parent::testStoreDomainKeyPair();
 
-        $this->assertEquals("public\n", $this->backup->read('private/example.com/public.pem'));
-        $this->assertEquals("private\n", $this->backup->read('private/example.com/private.pem'));
+        $this->assertEquals("public\n", $this->backup->read('certs/example.com/private/key.public.pem'));
+        $this->assertEquals("private\n", $this->backup->read('certs/example.com/private/key.private.pem'));
     }
 
     public function testStoreDomainDistinguishedName()
     {
         parent::testStoreDomainDistinguishedName();
 
-        $this->assertJson($this->backup->read('private/example.com/distinguished_name.json'));
+        $this->assertJson($this->backup->read('var/example.com/distinguished_name.json'));
     }
 
     public function testStoreDomainCertificate()
     {
         parent::testStoreDomainCertificate();
 
-        $this->assertEquals(self::$certPem."\n", $this->backup->read('certs/example.com/cert.pem'));
-        $this->assertEquals(self::$issuerCertPem."\n", $this->backup->read('certs/example.com/chain.pem'));
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->backup->read('certs/example.com/fullchain.pem'));
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->backup->read('private/example.com/combined.pem'));
+        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->backup->read('certs/example.com/private/combined.pem'));
+        $this->assertEquals(self::$certPem."\n", $this->backup->read('certs/example.com/public/cert.pem'));
+        $this->assertEquals(self::$issuerCertPem."\n", $this->backup->read('certs/example.com/public/chain.pem'));
+        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->backup->read('certs/example.com/public/fullchain.pem'));
     }
 }
