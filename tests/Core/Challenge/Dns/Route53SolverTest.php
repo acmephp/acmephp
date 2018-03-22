@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -58,7 +58,7 @@ class Route53SolverTest extends \PHPUnit_Framework_TestCase
                     ['Id' => 1, 'Name' => 'foo.fr.'],
                     ['Id' => 2, 'Name' => 'bar.com.'],
                 ],
-                'NextMarker'  => null,
+                'NextMarker' => null,
                 'IsTruncated' => false,
             ]
         );
@@ -88,7 +88,7 @@ class Route53SolverTest extends \PHPUnit_Framework_TestCase
                     ['Id' => 1, 'Name' => 'foo.fr.'],
                     ['Id' => 2, 'Name' => 'bar.com.'],
                 ],
-                'NextMarker'  => null,
+                'NextMarker' => null,
                 'IsTruncated' => false,
             ]
         );

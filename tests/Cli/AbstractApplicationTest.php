@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -56,9 +56,9 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $register = $this->application->find('register');
         $registerTester = new CommandTester($register);
         $registerTester->execute([
-            'command'     => $register->getName(),
-            'email'       => 'foo@example.com',
-            '--server'    => 'https://localhost:14000/dir',
+            'command' => $register->getName(),
+            'email' => 'foo@example.com',
+            '--server' => 'https://localhost:14000/dir',
         ]);
 
         $registerDisplay = $registerTester->getDisplay();
@@ -74,8 +74,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $authorize = $this->application->find('authorize');
         $authorizeTest = new CommandTester($authorize);
         $authorizeTest->execute([
-            'command'  => $authorize->getName(),
-            'domains'  => ['acmephp.com'],
+            'command' => $authorize->getName(),
+            'domains' => ['acmephp.com'],
             '--server' => 'https://localhost:14000/dir',
         ]);
 
@@ -104,9 +104,9 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
             $check = $this->application->find('check');
             $checkTest = new CommandTester($check);
             $checkTest->execute([
-                'command'   => $check->getName(),
-                'domains'   => ['acmephp.com'],
-                '--server'  => 'https://localhost:14000/dir',
+                'command' => $check->getName(),
+                'domains' => ['acmephp.com'],
+                '--server' => 'https://localhost:14000/dir',
                 '--no-test' => null,
             ]);
 
@@ -123,15 +123,15 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $request = $this->application->find('request');
         $requestTest = new CommandTester($request);
         $requestTest->execute([
-            'command'        => $request->getName(),
-            'domain'         => 'acmephp.com',
-            '--server'       => 'https://localhost:14000/dir',
-            '--country'      => 'FR',
-            '--province'     => 'Ile de France',
-            '--locality'     => 'Paris',
+            'command' => $request->getName(),
+            'domain' => 'acmephp.com',
+            '--server' => 'https://localhost:14000/dir',
+            '--country' => 'FR',
+            '--province' => 'Ile de France',
+            '--locality' => 'Paris',
             '--organization' => 'Acme PHP',
-            '--unit'         => 'Sales',
-            '--email'        => 'example@acmephp.github.io',
+            '--unit' => 'Sales',
+            '--email' => 'example@acmephp.github.io',
         ]);
 
         $requestDisplay = $requestTest->getDisplay();
@@ -157,8 +157,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $command = $this->application->find('authorize');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'command'  => $command->getName(),
-            'domains'  => 'example.com',
+            'command' => $command->getName(),
+            'domains' => 'example.com',
             '--server' => 'https://localhost:14000/dir',
         ]);
     }
@@ -173,8 +173,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $command = $this->application->find('check');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'command'  => $command->getName(),
-            'domains'  => ['example.com'],
+            'command' => $command->getName(),
+            'domains' => ['example.com'],
             '--server' => 'https://localhost:14000/dir',
         ]);
     }
@@ -189,15 +189,15 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $command = $this->application->find('request');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'command'        => $command->getName(),
-            'domain'         => 'acmephp.com',
-            '--server'       => 'https://localhost:14000/dir',
-            '--country'      => 'FR',
-            '--province'     => 'Ile de France',
-            '--locality'     => 'Paris',
+            'command' => $command->getName(),
+            'domain' => 'acmephp.com',
+            '--server' => 'https://localhost:14000/dir',
+            '--country' => 'FR',
+            '--province' => 'Ile de France',
+            '--locality' => 'Paris',
             '--organization' => 'Acme PHP',
-            '--unit'         => 'Sales',
-            '--email'        => 'example@acmephp.github.io',
+            '--unit' => 'Sales',
+            '--email' => 'example@acmephp.github.io',
         ]);
     }
 

@@ -54,8 +54,8 @@ class ActionHandler
      *
      * @param CertificateResponse $response
      *
-     * @throws AcmeCliException       If the configuration is invalid.
-     * @throws AcmeCliActionException If there is a problem during the execution of an action.
+     * @throws AcmeCliException       if the configuration is invalid
+     * @throws AcmeCliActionException if there is a problem during the execution of an action
      */
     public function handle(CertificateResponse $response)
     {
@@ -83,8 +83,8 @@ class ActionHandler
 
             $actions[] = [
                 'handler' => $this->container->get('action.'.$name),
-                'name'    => $name,
-                'config'  => $actionConfig,
+                'name' => $name,
+                'config' => $actionConfig,
             ];
         }
 

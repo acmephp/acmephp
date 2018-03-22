@@ -75,7 +75,7 @@ abstract class AbstractFlysystemAction extends AbstractAction
      */
     private function mirror($type, $path, FilesystemInterface $remote, AdapterInterface $remoteAdapter)
     {
-        if ($type === 'dir') {
+        if ('dir' === $type) {
             $this->mirrorDirectory($path, $remote, $remoteAdapter);
 
             return;
@@ -113,7 +113,8 @@ abstract class AbstractFlysystemAction extends AbstractAction
 
         if ($isOnRemote && !$remote->update($path, $masterContent)) {
             throw $this->createRuntimeException('File', $path, 'updated', $remoteAdapter);
-        } elseif (!$isOnRemote && !$remote->write($path, $masterContent)) {
+        }
+        if (!$isOnRemote && !$remote->write($path, $masterContent)) {
             throw $this->createRuntimeException('File', $path, 'created', $remoteAdapter);
         }
     }

@@ -38,8 +38,6 @@ interface RepositoryInterface
      * @param CertificateResponse $certificateResponse
      *
      * @throws AcmeCliException
-     *
-     * @return void
      */
     public function storeCertificateResponse(CertificateResponse $certificateResponse);
 
@@ -50,8 +48,6 @@ interface RepositoryInterface
      * @param KeyPair $keyPair
      *
      * @throws AcmeCliException
-     *
-     * @return void
      */
     public function storeAccountKeyPair(KeyPair $keyPair);
 
@@ -78,8 +74,6 @@ interface RepositoryInterface
      * @param KeyPair $keyPair
      *
      * @throws AcmeCliException
-     *
-     * @return void
      */
     public function storeDomainKeyPair($domain, KeyPair $keyPair);
 
@@ -110,8 +104,6 @@ interface RepositoryInterface
      * @param AuthorizationChallenge $authorizationChallenge
      *
      * @throws AcmeCliException
-     *
-     * @return void
      */
     public function storeDomainAuthorizationChallenge($domain, AuthorizationChallenge $authorizationChallenge);
 
@@ -142,8 +134,6 @@ interface RepositoryInterface
      * @param DistinguishedName $distinguishedName
      *
      * @throws AcmeCliException
-     *
-     * @return void
      */
     public function storeDomainDistinguishedName($domain, DistinguishedName $distinguishedName);
 
@@ -174,8 +164,6 @@ interface RepositoryInterface
      * @param Certificate $certificate
      *
      * @throws AcmeCliException
-     *
-     * @return void
      */
     public function storeDomainCertificate($domain, Certificate $certificate);
 
@@ -204,7 +192,7 @@ interface RepositoryInterface
      *
      * @param string $path
      * @param string $content
-     * @param string $visibility The visibilty to use for this file.
+     * @param string $visibility the visibilty to use for this file
      */
     public function save($path, $content, $visibility = self::VISIBILITY_PRIVATE);
 }

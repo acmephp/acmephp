@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -57,16 +57,16 @@ class MonitoredApplicationTest extends AbstractApplicationTest
         $command = $this->application->find('request');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'command'        => $command->getName(),
-            'domain'         => 'acmephp.com',
-            '--server'       => 'https://localhost:14000/dir',
-            '--country'      => 'FR',
-            '--province'     => 'Ile de France',
-            '--locality'     => 'Paris',
+            'command' => $command->getName(),
+            'domain' => 'acmephp.com',
+            '--server' => 'https://localhost:14000/dir',
+            '--country' => 'FR',
+            '--province' => 'Ile de France',
+            '--locality' => 'Paris',
             '--organization' => 'Acme PHP',
-            '--unit'         => 'Sales',
-            '--email'        => 'galopintitouan@gmail.com',
-            '--force'        => true,
+            '--unit' => 'Sales',
+            '--email' => 'galopintitouan@gmail.com',
+            '--force' => true,
         ]);
 
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/private.pem');
@@ -84,16 +84,16 @@ class MonitoredApplicationTest extends AbstractApplicationTest
         $command = $this->application->find('request');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'command'        => $command->getName(),
-            'domain'         => 'acmephp.com',
-            '--server'       => 'https://localhost:14000/dir',
-            '--country'      => 'FR',
-            '--province'     => 'Ile de France',
-            '--locality'     => 'Paris',
+            'command' => $command->getName(),
+            'domain' => 'acmephp.com',
+            '--server' => 'https://localhost:14000/dir',
+            '--country' => 'FR',
+            '--province' => 'Ile de France',
+            '--locality' => 'Paris',
             '--organization' => 'Acme PHP',
-            '--unit'         => 'Sales',
-            '--email'        => 'galopintitouan@gmail.com',
-            '--force'        => true,
+            '--unit' => 'Sales',
+            '--email' => 'galopintitouan@gmail.com',
+            '--force' => true,
         ]);
 
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/private.pem');
@@ -148,16 +148,16 @@ class MonitoredApplicationTest extends AbstractApplicationTest
 
         try {
             $commandTester->execute([
-                'command'        => $command->getName(),
-                'domain'         => 'acmephp.com',
-                '--server'       => 'https://localhost:14000/dir',
-                '--country'      => 'FR',
-                '--province'     => 'Ile de France',
-                '--locality'     => 'Paris',
+                'command' => $command->getName(),
+                'domain' => 'acmephp.com',
+                '--server' => 'https://localhost:14000/dir',
+                '--country' => 'FR',
+                '--province' => 'Ile de France',
+                '--locality' => 'Paris',
                 '--organization' => 'Acme PHP',
-                '--unit'         => 'Sales',
-                '--email'        => 'galopintitouan@gmail.com',
-                '--force'        => true,
+                '--unit' => 'Sales',
+                '--email' => 'galopintitouan@gmail.com',
+                '--force' => true,
             ]);
         } catch (AcmeCoreClientException $e) {
             $thrownException = $e;

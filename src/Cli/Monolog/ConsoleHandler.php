@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * Extracted from Symfony Monolog bridge.
  *
- * @link https://github.com/symfony/monolog-bridge/edit/master/Handler/ConsoleHandler.php
+ * @see https://github.com/symfony/monolog-bridge/edit/master/Handler/ConsoleHandler.php
  *
  * @author Tobias Schultze <http://tobion.de>
  */
@@ -36,11 +36,11 @@ class ConsoleHandler extends AbstractProcessingHandler
      * @var array
      */
     private $verbosityLevelMap = [
-        OutputInterface::VERBOSITY_QUIET        => Logger::ERROR,
-        OutputInterface::VERBOSITY_NORMAL       => Logger::INFO,
-        OutputInterface::VERBOSITY_VERBOSE      => Logger::INFO,
+        OutputInterface::VERBOSITY_QUIET => Logger::ERROR,
+        OutputInterface::VERBOSITY_NORMAL => Logger::INFO,
+        OutputInterface::VERBOSITY_VERBOSE => Logger::INFO,
         OutputInterface::VERBOSITY_VERY_VERBOSE => Logger::INFO,
-        OutputInterface::VERBOSITY_DEBUG        => Logger::DEBUG,
+        OutputInterface::VERBOSITY_DEBUG => Logger::DEBUG,
     ];
 
     /**

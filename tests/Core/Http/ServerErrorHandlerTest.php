@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -52,7 +52,7 @@ class ServerErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $errorHandler = new ServerErrorHandler();
 
         $response = new Response(500, [], json_encode([
-            'type'   => 'urn:acme:error:'.$type,
+            'type' => 'urn:acme:error:'.$type,
             'detail' => $exceptionClass.'Detail',
         ]));
 

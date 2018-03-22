@@ -19,7 +19,7 @@ use Monolog\Logger;
  *
  * Extracted from Symfony Monolog bridge.
  *
- * @link https://github.com/symfony/monolog-bridge/edit/master/Formatter/ConsoleFormatter.php
+ * @see https://github.com/symfony/monolog-bridge/edit/master/Formatter/ConsoleFormatter.php
  *
  * @author Tobias Schultze <http://tobion.de>
  */

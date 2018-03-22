@@ -116,19 +116,16 @@ abstract class AbstractCommand extends Command implements LoggerInterface
      */
     protected function getContainer()
     {
-        if ($this->container === null) {
+        if (null === $this->container) {
             $this->initializeContainer();
         }
 
         return $this->container;
     }
 
-    /**
-     * @return void
-     */
     private function initializeContainer()
     {
-        if ($this->configuration === null) {
+        if (null === $this->configuration) {
             $this->initializeConfiguration();
         }
 
@@ -170,9 +167,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->container->set('output', $this->output);
     }
 
-    /**
-     * @return void
-     */
     private function initializeConfiguration()
     {
         $configFile = $this->getApplication()->getConfigFile();

@@ -55,7 +55,7 @@ EOF
         $directories = $master->listContents('certs');
 
         foreach ($directories as $directory) {
-            if ($directory['type'] !== 'dir') {
+            if ('dir' !== $directory['type']) {
                 continue;
             }
 

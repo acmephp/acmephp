@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -27,9 +27,9 @@ class KeyPairGenerator
     /**
      * Generate KeyPair.
      *
-     * @param int $keySize Size of the key.
+     * @param int $keySize size of the key
      *
-     * @throws KeyPairGenerationException When OpenSSL failed to generate keys.
+     * @throws KeyPairGenerationException when OpenSSL failed to generate keys
      *
      * @return KeyPair
      */

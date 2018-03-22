@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -60,10 +60,10 @@ class LibDnsResolver implements DnsResolverInterface
         Decoder $decoder = null,
         $nameServer = '8.8.8.8'
     ) {
-        $this->questionFactory = $questionFactory === null ? new QuestionFactory() : $questionFactory;
-        $this->messageFactory = $messageFactory === null ? new MessageFactory() : $messageFactory;
-        $this->encoder = $encoder === null ? (new EncoderFactory())->create() : $encoder;
-        $this->decoder = $decoder === null ? (new DecoderFactory())->create() : $decoder;
+        $this->questionFactory = null === $questionFactory ? new QuestionFactory() : $questionFactory;
+        $this->messageFactory = null === $messageFactory ? new MessageFactory() : $messageFactory;
+        $this->encoder = null === $encoder ? (new EncoderFactory())->create() : $encoder;
+        $this->decoder = null === $decoder ? (new DecoderFactory())->create() : $decoder;
         $this->nameServer = $nameServer;
     }
 
@@ -96,7 +96,7 @@ class LibDnsResolver implements DnsResolverInterface
             $serverEntries = $this->request($domain, ResourceTypes::TXT, $ip);
             if (null === $entries) {
                 $entries = $serverEntries;
-            } elseif ($entries != $serverEntries) {
+            } elseif ($entries !== $serverEntries) {
                 throw new AcmeDnsResolutionException(
                     sprintf('Dns not fully propagated into nameserver %s', $nameServer)
                 );
@@ -129,7 +129,7 @@ class LibDnsResolver implements DnsResolverInterface
         // Decode response message
         $response = $this->decoder->decode(fread($socket, 512));
 
-        if ($response->getResponseCode() !== 0) {
+        if (0 !== $response->getResponseCode()) {
             throw new AcmeDnsResolutionException(
                 sprintf('ServerName respond with error code "%d"', $response->getResponseCode())
             );

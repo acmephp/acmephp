@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ACME PHP library.
+ * This file is part of the Acme PHP project.
  *
  * (c) Titouan Galopin <galopintitouan@gmail.com>
  *
@@ -32,8 +32,8 @@ class InstallAwsElbv2ActionTest extends \PHPUnit_Framework_TestCase
         $region = 'eu-west-1';
         $loadBalancer = 'myElb';
         $config = [
-            'region'             => $region,
-            'loadbalancer'       => $loadBalancer,
+            'region' => $region,
+            'loadbalancer' => $loadBalancer,
             'certificate_prefix' => 'foo_',
         ];
         $response = new CertificateResponse(

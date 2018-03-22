@@ -148,7 +148,7 @@ EOF
                 array_merge([$distinguishedName->getCommonName()], $distinguishedName->getSubjectAlternativeNames())
             )
         );
-        if ($wantedCertificates != $requestedCertificates) {
+        if ($wantedCertificates !== $requestedCertificates) {
             return false;
         }
 
