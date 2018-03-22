@@ -50,6 +50,6 @@ class RepositoryWithBackupTest extends AbstractRepositoryTest
         $this->assertEquals(self::$certPem."\n", $this->backup->read('certs/example.com/cert.pem'));
         $this->assertEquals(self::$issuerCertPem."\n", $this->backup->read('certs/example.com/chain.pem'));
         $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->backup->read('certs/example.com/fullchain.pem'));
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->backup->read('certs/example.com/combined.pem'));
+        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->backup->read('private/example.com/combined.pem'));
     }
 }

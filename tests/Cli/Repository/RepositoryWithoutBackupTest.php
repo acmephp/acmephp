@@ -50,6 +50,6 @@ class RepositoryWithoutBackupTest extends AbstractRepositoryTest
         $this->assertFalse($this->backup->has('certs/example.com/cert.pem'));
         $this->assertFalse($this->backup->has('certs/example.com/chain.pem'));
         $this->assertFalse($this->backup->has('certs/example.com/fullchain.pem'));
-        $this->assertFalse($this->backup->has('certs/example.com/combined.pem'));
+        $this->assertFalse($this->backup->has('private/example.com/combined.pem'));
     }
 }

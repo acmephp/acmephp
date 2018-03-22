@@ -273,7 +273,7 @@ class Repository implements RepositoryV2Interface
         $this->save('certs/'.$domain.'/cert.pem', $certPem);
         $this->save('certs/'.$domain.'/chain.pem', $chainPem);
         $this->save('certs/'.$domain.'/fullchain.pem', $fullChainPem);
-        $this->save('certs/'.$domain.'/combined.pem', $combinedPem);
+        $this->save('private/'.$domain.'/combined.pem', $combinedPem);
     }
 
     /**

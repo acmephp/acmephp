@@ -72,7 +72,7 @@ class MonitoredApplicationTest extends AbstractApplicationTest
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/private.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/public.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/cert.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/combined.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/combined.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/chain.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/fullchain.pem');
     }
@@ -99,7 +99,7 @@ class MonitoredApplicationTest extends AbstractApplicationTest
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/private.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/public.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/cert.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/combined.pem');
+        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/private/acmephp.com/combined.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/chain.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/fullchain.pem');
 
