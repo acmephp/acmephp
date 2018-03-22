@@ -132,6 +132,14 @@ class ParsedCertificate
     }
 
     /**
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return $this->validTo < (new \DateTime());
+    }
+
+    /**
      * @return string
      */
     public function getSerialNumber()
