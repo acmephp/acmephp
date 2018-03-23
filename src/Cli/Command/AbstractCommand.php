@@ -83,7 +83,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
     {
         $this->debug('Loading action handler');
 
-        return $this->getContainer()->get('action_handler');
+        return $this->getContainer()->get('acmephp.action_handler');
     }
 
     /**

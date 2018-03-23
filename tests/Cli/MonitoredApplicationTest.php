@@ -129,8 +129,8 @@ class MonitoredApplicationTest extends AbstractApplicationTest
 
         /** @var ContainerInterface $container */
         $container = $containerReflection->getValue($command);
-        $container->set('monitoring.email', $handlerBuilder);
-        $container->set('monitoring.slack', $handlerBuilder);
+        $container->set('acmephp.monitoring.email', $handlerBuilder);
+        $container->set('acmephp.monitoring.slack', $handlerBuilder);
 
         // Introduce HTTP issue
         $container->set('http.raw_client', new Client(['handler' => new MockHandler([

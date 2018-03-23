@@ -45,6 +45,14 @@ class FlysystemAdapter implements FilesystemInterface
         }
     }
 
+    public function createDir($path)
+    {
+        $isOnRemote = $this->filesystem->has($path);
+        if (!$isOnRemote && !$this->filesystem->createDir($path)) {
+            throw $this->createRuntimeException($path, 'created');
+        }
+    }
+
     /**
      * @param string $path
      * @param string $action

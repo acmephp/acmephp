@@ -11,41 +11,37 @@
 
 namespace AcmePhp\Cli\Action;
 
-use League\Flysystem\Adapter\Ftp as FtpAdapter;
-use League\Flysystem\AdapterInterface;
+use AcmePhp\Ssl\CertificateResponse;
 
 /**
  * Action to write files using a Flysystem adapter.
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class PushFtpAction extends AbstractFlysystemAction
+class PushFtpAction implements ActionInterface
 {
+    /**
+     * @var FilesystemAction
+     */
+    private $filesystemAction;
+
+    /**
+     * @param FilesystemAction
+     */
+    public function __construct(FilesystemAction $filesystemAction)
+    {
+        @trigger_error('The "push_ftp" action is deprecated since version 1.0 and will be removed in 2.0. Use "mirror_file" action instead', E_USER_DEPRECATED);
+
+        $this->filesystemAction = $filesystemAction;
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function handle($config, CertificateResponse $response)
     {
-        return 'push_ftp';
-    }
+        $config['adapter'] = 'ftp';
 
-    /**
-     * @param array $config
-     *
-     * @return AdapterInterface
-     */
-    protected function createAdapter($config)
-    {
-        return new FtpAdapter($config);
-    }
-
-    /**
-     * @param FtpAdapter $adapter
-     *
-     * @return string
-     */
-    protected function getLastError(AdapterInterface $adapter)
-    {
-        return error_get_last();
+        return $this->filesystemAction->handle($config, $response);
     }
 }

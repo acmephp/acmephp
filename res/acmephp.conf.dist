@@ -35,7 +35,8 @@ storage:
         #
         # Mirror your local storage directory on a FTP host
         #
-        # - action: push_ftp
+        # - action: mirror_file
+        #   adapter: ftp
         #   root: /acmephp
         #   host: ftp.example.com
         #   username: username
@@ -48,7 +49,8 @@ storage:
         #
         # Mirror your local storage directory on a SFTP host
         #
-        # - action: push_sftp
+        # - action: mirror_file
+        #   adapter: sftp
         #   root: /acmephp
         #   host: sftp.example.com
         #   username: username
@@ -56,6 +58,13 @@ storage:
         #   # port: 22
         #   # private_key: path/to/or/contents/of/privatekey
         #   # timeout: 30
+
+        #
+        # Mirror your local storage directory on a an other location
+        #
+        # - action: mirror_file
+        #   adapter: local
+        #   root: /var/www/html
 
         #
         # Install the certificate in an AWS ELB (Classic Load Balancer)

@@ -27,4 +27,11 @@ interface FilesystemInterface
      * @param string $path
      */
     public function delete($path);
+
+    /**
+     * Delete a directory.
+     *
+     * @param string $path
+     */
+    public function createDir($path);
 }

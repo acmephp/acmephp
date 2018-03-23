@@ -49,7 +49,7 @@ EOF
         $this->info('Loading monitoring configuration...');
 
         /** @var LoggerInterface $monitoringLogger */
-        $monitoringLogger = $this->getContainer()->get('monitoring_factory')->createLogger();
+        $monitoringLogger = $this->getContainer()->get('acmephp.monitoring_factory')->createLogger();
 
         $level = $input->getArgument('level');
 

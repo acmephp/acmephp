@@ -119,7 +119,7 @@ EOF
         );
 
         foreach ($actions as $actionConfig) {
-            $handler = $this->getContainer()->get('action.'.$actionConfig['action']);
+            $handler = $this->getContainer()->get('acmephp.action.locator')->get($actionConfig['action']);
             $handler->handle($actionConfig, $response);
 
             $this->output->writeln(

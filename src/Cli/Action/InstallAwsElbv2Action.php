@@ -18,14 +18,6 @@ namespace AcmePhp\Cli\Action;
  */
 class InstallAwsElbv2Action extends AbstractAwsAction
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'install_aws_elbv2';
-    }
-
     protected function installCertificate($certificateArn, $region, $loadBalancerName, $loadBalancerPort)
     {
         $elbv2Client = $this->clientFactory->getElbv2Client($region);
