@@ -40,7 +40,7 @@ Read the official [Acme PHP documentation](https://acmephp.github.io).
 
 ## Backward Compatibility policy
 
-Acme PHP follows a strict BC policy by sticking carefully to [semantic versioning](http://semver.org). This means 
+Acme PHP follows a strict BC policy by sticking carefully to [semantic versioning](http://semver.org). This means
 your scripts, your CRON tasks and your code will keep working properly even when you update Acme PHP (either the CLI
 tool or the library), as long as you keep the same major version (1.X.X, 2.X.X, etc.).
 
@@ -79,8 +79,8 @@ for more informations.
 
 ## Run command
 
-The run command is an all in one command who works with a `domain` 
-config file like 
+The run command is an all in one command who works with a `domain`
+config file like
 
 ```yaml
 contact_email: contact@company
@@ -96,16 +96,27 @@ certificates:
   - domain: example.com
     distinguished_name:
       organization_name: MyCompany Internal
-    solver: dns
+    solver: route53
     subject_alternative_names:
       - '*.example.com'
       - www.subdomain.example.com
     install:
-      - action: push_ftp
-        root: /acmephp
-        host: ftp.example.com
-        username: username
-        password: password
+      - action: install_aws_elb
+        region: eu-west-1
+        loadbalancer: my_elb
+  - domain: www.example.com
+    solver:
+      name: http-file
+      adapter: ftp                                     # ftp or sftp or local, see https://flysystem.thephpleague.com/
+      root: /var/www/
+      host: ftp.example.com
+      username: username
+      password: password
+      # port: 21
+      # passive: true
+      # ssl: true
+      # timeout: 30
+      # private_key: path/to/or/contents/of/privatekey
 ```
 
 usage

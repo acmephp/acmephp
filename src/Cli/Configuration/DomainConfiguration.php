@@ -66,6 +66,16 @@ class DomainConfiguration implements ConfigurationInterface
         $rootNode
             ->info('Default configurations overridable by each certificate section.')
             ->addDefaultsIfNotSet()
+            ->beforeNormalization()
+                ->ifTrue(function ($conf) {
+                    return isset($conf['solver']) && !is_array($conf['solver']);
+                })
+                ->then(function ($conf) {
+                    $conf['solver'] = ['name' => $conf['solver']];
+
+                    return $conf;
+                })
+            ->end()
             ->append($this->createSolverSection())
             ->append($this->createDistinguishedNameSection());
 
@@ -75,12 +85,18 @@ class DomainConfiguration implements ConfigurationInterface
     private function createSolverSection()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('solver', 'scalar');
+        $rootNode = $treeBuilder->root('solver', 'array');
 
         return $rootNode
-            ->info('Challenge\'s solver name.')
-            ->defaultValue('http')
-            ->cannotBeEmpty();
+            ->info('Challenge\'s solver configuration.')
+            ->prototype('scalar')->end()
+            ->requiresAtLeastOneElement()
+            ->validate()
+                ->ifTrue(function ($item) {
+                    return !isset($item['name']);
+                })
+                ->thenInvalid('The name attribute "%s" is required in install property.')
+            ->end();
     }
 
     private function createDistinguishedNameSection()
@@ -162,10 +178,20 @@ class DomainConfiguration implements ConfigurationInterface
                                 ->ifTrue(function ($item) {
                                     return !isset($item['action']);
                                 })
-                                ->thenInvalid('The action attribute "%s" is not required in install property.')
+                                ->thenInvalid('The action attribute "%s" is required in install property.')
                             ->end()
                         ->end()
                     ->end()
+                ->end()
+                ->beforeNormalization()
+                    ->ifTrue(function ($conf) {
+                        return isset($conf['solver']) && !is_array($conf['solver']);
+                    })
+                    ->then(function ($conf) {
+                        $conf['solver'] = ['name' => $conf['solver']];
+
+                        return $conf;
+                    })
                 ->end()
                 ->append($this->createSolverSection())
                 ->append($this->createDistinguishedNameSection())

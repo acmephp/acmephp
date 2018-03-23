@@ -40,14 +40,6 @@ class BuildNginxProxyAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'build_nginxproxy';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function handle($config, CertificateResponse $response)
     {
         $domain = $response->getCertificateRequest()->getDistinguishedName()->getCommonName();

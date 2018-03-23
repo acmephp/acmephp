@@ -13,15 +13,15 @@ namespace AcmePhp\Cli\Monitoring;
 
 use AcmePhp\Cli\Exception\AcmeCliException;
 use Monolog\Logger;
+use Psr\Container\ContainerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
 class MonitoringLoggerFactory
 {
-    private $container;
+    private $monitoringLocator;
     private $monitoringConfig;
 
     private static $levels = [
@@ -29,9 +29,9 @@ class MonitoringLoggerFactory
         'error' => Logger::ERROR,
     ];
 
-    public function __construct(ContainerInterface $container, array $monitoringConfig)
+    public function __construct(ContainerInterface $monitoringLocator, array $monitoringConfig)
     {
-        $this->container = $container;
+        $this->monitoringLocator = $monitoringLocator;
         $this->monitoringConfig = $monitoringConfig;
     }
 
@@ -44,10 +44,6 @@ class MonitoringLoggerFactory
         $logger = new Logger('acmephp');
 
         foreach ($this->monitoringConfig as $name => $config) {
-            if (!$this->container->has('monitoring.'.$name)) {
-                throw new AcmeCliException(sprintf('Monitoring handler %s does not exists.', $name));
-            }
-
             if (isset($config['level'])) {
                 if (!isset(self::$levels[$config['level']])) {
                     throw new AcmeCliException(sprintf('Monitoring handler level "%s" is not valid.', $config['level']));
@@ -58,7 +54,7 @@ class MonitoringLoggerFactory
                 $config['level'] = null;
             }
 
-            $logger->pushHandler($this->container->get('monitoring.'.$name)->createHandler($config));
+            $logger->pushHandler($this->monitoringLocator->get($name)->createHandler($config));
         }
 
         return $logger;

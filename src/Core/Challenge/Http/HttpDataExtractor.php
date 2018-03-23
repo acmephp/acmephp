@@ -30,8 +30,23 @@ class HttpDataExtractor
     public function getCheckUrl(AuthorizationChallenge $authorizationChallenge)
     {
         return sprintf(
-            'http://%s/.well-known/acme-challenge/%s',
+            'http://%s%s',
             $authorizationChallenge->getDomain(),
+            $this->getCheckPath($authorizationChallenge)
+        );
+    }
+
+    /**
+     * Retrieves the absolute path called by the CA.
+     *
+     * @param AuthorizationChallenge $authorizationChallenge
+     *
+     * @return string
+     */
+    public function getCheckPath(AuthorizationChallenge $authorizationChallenge)
+    {
+        return sprintf(
+            '/.well-known/acme-challenge/%s',
             $authorizationChallenge->getToken()
         );
     }

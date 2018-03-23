@@ -11,46 +11,37 @@
 
 namespace AcmePhp\Cli\Action;
 
-use League\Flysystem\AdapterInterface;
-use League\Flysystem\Sftp\SftpAdapter;
+use AcmePhp\Ssl\CertificateResponse;
 
 /**
  * Action to write files using a Flysystem adapter.
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class PushSftpAction extends AbstractFlysystemAction
+class PushSftpAction implements ActionInterface
 {
+    /**
+     * @var FilesystemAction
+     */
+    private $filesystemAction;
+
+    /**
+     * @param FilesystemAction
+     */
+    public function __construct(FilesystemAction $filesystemAction)
+    {
+        @trigger_error('The "push_sftp" action is deprecated since version 1.0 and will be removed in 2.0. Use "mirror_file" action instead', E_USER_DEPRECATED);
+
+        $this->filesystemAction = $filesystemAction;
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function handle($config, CertificateResponse $response)
     {
-        return 'push_sftp';
-    }
+        $config['adapter'] = 'sftp';
 
-    /**
-     * @param array $config
-     *
-     * @return AdapterInterface
-     */
-    protected function createAdapter($config)
-    {
-        if (isset($config['private_key'])) {
-            $config['privateKey'] = $config['private_key'];
-            unset($config['private_key']);
-        }
-
-        return new SftpAdapter($config);
-    }
-
-    /**
-     * @param SftpAdapter $adapter
-     *
-     * @return string
-     */
-    protected function getLastError(AdapterInterface $adapter)
-    {
-        return $adapter->getConnection()->getLastSFTPError();
+        return $this->filesystemAction->handle($config, $response);
     }
 }

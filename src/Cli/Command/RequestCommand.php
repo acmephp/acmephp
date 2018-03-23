@@ -235,7 +235,7 @@ EOF;
     private function executeRenewal($domain, array $alternativeNames)
     {
         /** @var LoggerInterface $monitoringLogger */
-        $monitoringLogger = $this->getContainer()->get('monitoring_factory')->createLogger();
+        $monitoringLogger = $this->getContainer()->get('acmephp.monitoring_factory')->createLogger();
 
         try {
             // Check expiration date to avoid too much renewal

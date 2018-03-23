@@ -28,7 +28,7 @@ abstract class AbstractAction implements ActionInterface
             Assert::keyExists(
                 $configuration,
                 $key,
-                'Configuration key "%s" is required in action "'.$this->getName().'"'
+                'Configuration key "%s" is required for this action'
             );
         }
     }

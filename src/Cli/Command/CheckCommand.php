@@ -12,7 +12,6 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Core\Challenge\SolverInterface;
-use AcmePhp\Core\Challenge\SolverLocator;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -61,17 +60,9 @@ EOF
 
         $this->debug('Locating solver', ['name' => $solverName]);
 
-        /** @var SolverLocator $solverLocator */
-        $solverLocator = $this->getContainer()->get('challenge_solver.locator');
-        if (!$solverLocator->hasSolver($solverName)) {
-            throw new \UnexpectedValueException(sprintf(
-                'The solver "%s" does not exists. Available solvers are: (%s)',
-                $solverName,
-                implode(', ', $solverLocator->getSolversName())
-            ));
-        }
+        $solverLocator = $this->getContainer()->get('acmephp.challenge_solver.locator');
         /** @var SolverInterface $solver */
-        $solver = $solverLocator->getSolver($solverName);
+        $solver = $solverLocator->get($solverName);
 
         $this->debug('Solver found', ['name' => $solverName]);
 

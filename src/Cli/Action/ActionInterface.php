@@ -19,11 +19,6 @@ use AcmePhp\Ssl\CertificateResponse;
 interface ActionInterface
 {
     /**
-     * Return this action name.
-     */
-    public function getName();
-
-    /**
      * Get a certificate response and execute the action with it.
      * Use the given configuration if needed.
      *
