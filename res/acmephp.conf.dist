@@ -53,7 +53,7 @@ storage:
         #   host: sftp.example.com
         #   username: username
         #   password: password
-        #   # port: 21
+        #   # port: 22
         #   # private_key: path/to/or/contents/of/privatekey
         #   # timeout: 30
 

@@ -24,11 +24,9 @@ class SimpleHttpSolverTest extends \PHPUnit_Framework_TestCase
         $typeDns = 'dns-01';
         $typeHttp = 'http-01';
 
-        $mockExtractor = $this->prophesize(HttpDataExtractor::class);
-        $mockOutput = $this->prophesize(OutputInterface::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 
-        $solver = new SimpleHttpSolver($mockExtractor->reveal(), $mockOutput->reveal());
+        $solver = new SimpleHttpSolver();
 
         $stubChallenge->getType()->willReturn($typeDns);
         $this->assertFalse($solver->supports($stubChallenge->reveal()));

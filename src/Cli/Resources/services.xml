@@ -124,17 +124,22 @@
         </service>
 
         <!-- Challenge Solving -->
-        <service id="challenge_solver.http" class="AcmePhp\Core\Challenge\Http\SimpleHttpSolver">
+        <service id="acmephp.challenge_solver.http" class="AcmePhp\Core\Challenge\Http\SimpleHttpSolver" public="false">
             <argument type="service" id="challenge_extractor.http" />
             <argument type="service" id="output" />
             <tag name="acmephp.challenge_solver" alias="http" />
         </service>
-        <service id="challenge_solver.dns" class="AcmePhp\Core\Challenge\Dns\SimpleDnsSolver">
+        <service id="acmephp.challenge_solver.http-file" class="AcmePhp\Core\Challenge\Http\FilesystemSolver" public="false">
+            <argument type="service" id="acmephp.filesystem_factory.locator" />
+            <argument type="service" id="challenge_extractor.http" />
+            <tag name="acmephp.challenge_solver" alias="http-file" />
+        </service>
+        <service id="acmephp.challenge_solver.dns" class="AcmePhp\Core\Challenge\Dns\SimpleDnsSolver" public="false">
             <argument type="service" id="challenge_extractor.dns" />
             <argument type="service" id="output" />
             <tag name="acmephp.challenge_solver" alias="dns" />
         </service>
-        <service id="challenge_solver.route53" class="AcmePhp\Core\Challenge\Dns\Route53Solver">
+        <service id="acmephp.challenge_solver.route53" class="AcmePhp\Core\Challenge\Dns\Route53Solver" public="false">
             <argument type="service" id="challenge_extractor.dns" />
             <argument type="service">
                 <service class="Aws\Route53\Route53Client">
@@ -147,14 +152,29 @@
             </argument>
             <tag name="acmephp.challenge_solver" alias="route53" />
         </service>
-        <service id="challenge_solver.locator" class="AcmePhp\Core\Challenge\SolverLocator">
-            <argument type="service" id="container" />
-            <argument />
+        <service id="acmephp.challenge_solver.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
+            <argument type="collection"/>
+            <tag name="acmephp.service_locator" tag="acmephp.challenge_solver"/>
         </service>
 
         <service id="challenge_extractor.http" class="AcmePhp\Core\Challenge\Http\HttpDataExtractor" />
         <service id="challenge_extractor.dns" class="AcmePhp\Core\Challenge\Dns\DnsDataExtractor">
             <argument type="service" id="http.base64_encoder" />
+        </service>
+
+        <!-- FileSystem -->
+        <service id="acmephp.filesystem_factory.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
+            <argument type="collection"/>
+            <tag name="acmephp.service_locator" tag="acmephp.filesystem_factory"/>
+        </service>
+        <service id="acmephp.filesystem_factory.ftp" class="AcmePhp\Core\Filesystem\Adapter\FlysystemFtpFactory" public="false">
+            <tag name="acmephp.filesystem_factory" alias="ftp"/>
+        </service>
+        <service id="acmephp.filesystem_factory.sftp" class="AcmePhp\Core\Filesystem\Adapter\FlysystemSftpFactory" public="false">
+            <tag name="acmephp.filesystem_factory" alias="sftp"/>
+        </service>
+        <service id="acmephp.filesystem_factory.local" class="AcmePhp\Core\Filesystem\Adapter\FlysystemLocalFactory" public="false">
+            <tag name="acmephp.filesystem_factory" alias="local"/>
         </service>
 
         <!-- Challenge Validation -->

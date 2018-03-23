@@ -12,8 +12,8 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Cli\Configuration\DomainConfiguration;
+use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
 use AcmePhp\Core\Challenge\SolverInterface;
-use AcmePhp\Core\Challenge\SolverLocator;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Server\MalformedServerException;
@@ -221,22 +221,15 @@ EOF
 
     private function challengeDomains(array $domainConfig)
     {
-        $solverName = $domainConfig['solver'];
+        $solverConfig = $domainConfig['solver'];
         $domain = $domainConfig['domain'];
 
-        /** @var SolverLocator $solverLocator */
-        $solverLocator = $this->getContainer()->get('challenge_solver.locator');
-        if (!$solverLocator->hasSolver($solverName)) {
-            throw new \UnexpectedValueException(
-                sprintf(
-                    'The solver "%s" does not exists. Available solvers are: (%s)',
-                    $solverName,
-                    implode(', ', $solverLocator->getSolversName())
-                )
-            );
-        }
+        $solverLocator = $this->getContainer()->get('acmephp.challenge_solver.locator');
         /** @var SolverInterface $solver */
-        $solver = $solverLocator->getSolver($solverName);
+        $solver = $solverLocator->get($solverConfig['name']);
+        if ($solver instanceof ConfigurableServiceInterface) {
+            $solver->configure($solverConfig);
+        }
 
         /** @var ValidatorInterface $validator */
         $validator = $this->getContainer()->get('challenge_validator');
