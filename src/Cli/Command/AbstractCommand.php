@@ -16,6 +16,7 @@ use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Configuration\AcmeConfiguration;
 use AcmePhp\Cli\Repository\RepositoryV2Interface;
 use AcmePhp\Core\AcmeClient;
+use AcmePhp\Core\Challenge\Dns\LibDnsResolver;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
 use Psr\Log\LoggerInterface;
@@ -172,6 +173,8 @@ abstract class AbstractCommand extends Command implements LoggerInterface
             }
             $this->container->findDefinition($locatorId)->replaceArgument(0, $factories);
         }
+
+        $this->container->setAlias('challenge_validator.dns.resolver', 'challenge_validator.dns.resolver.'.(LibDnsResolver::isSupported() ? 'libdns' : 'simple'));
 
         // Inject input and output
         $this->container->set('input', $this->input);

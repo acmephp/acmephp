@@ -20,6 +20,8 @@ use LibDNS\Messages\MessageFactory;
 use LibDNS\Messages\MessageTypes;
 use LibDNS\Records\QuestionFactory;
 use LibDNS\Records\ResourceTypes;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Resolves DNS with LibDNS (pass over internal DNS cache and check several nameservers).
@@ -28,6 +30,8 @@ use LibDNS\Records\ResourceTypes;
  */
 class LibDnsResolver implements DnsResolverInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var QuestionFactory
      */
@@ -65,6 +69,8 @@ class LibDnsResolver implements DnsResolverInterface
         $this->encoder = null === $encoder ? (new EncoderFactory())->create() : $encoder;
         $this->decoder = null === $decoder ? (new DecoderFactory())->create() : $decoder;
         $this->nameServer = $nameServer;
+
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -80,30 +86,31 @@ class LibDnsResolver implements DnsResolverInterface
      */
     public function getTxtEntries($domain)
     {
+        $nsDomain = implode('.', array_slice(explode('.', rtrim($domain, '.')), -2));
         $nameServers = $this->request(
-            implode('.', array_slice(explode('.', rtrim($domain, '.')), -2)),
+            $nsDomain,
             ResourceTypes::NS,
             $this->nameServer
         );
+
+        $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $nsDomain, 'servers' => $nameServers]);
         if (empty($nameServers)) {
-            throw new AcmeDnsResolutionException(
-                sprintf('Unable to find domain %s on nameserver %s', $domain, $this->nameServer)
-            );
+            throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $this->nameServer));
         }
-        $entries = null;
+
+        $identicalEntries = [];
         foreach ($nameServers as $nameServer) {
             $ip = gethostbyname($nameServer);
             $serverEntries = $this->request($domain, ResourceTypes::TXT, $ip);
-            if (null === $entries) {
-                $entries = $serverEntries;
-            } elseif ($entries !== $serverEntries) {
-                throw new AcmeDnsResolutionException(
-                    sprintf('Dns not fully propagated into nameserver %s', $nameServer)
-                );
-            }
+            $identicalEntries[json_encode($serverEntries)][] = $nameServer;
         }
 
-        return $entries;
+        $this->logger->info('DNS records fetched', ['mapping' => $identicalEntries]);
+        if (1 !== count($identicalEntries)) {
+            throw new AcmeDnsResolutionException('Dns not fully propagated');
+        }
+
+        return json_decode(key($identicalEntries));
     }
 
     private function request($domain, $type, $nameServer)

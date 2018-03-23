@@ -11,9 +11,12 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
+use AcmePhp\Core\Exception\Protocol\ProtocolException;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -76,6 +79,7 @@ EOF
         }
 
         $this->notice(sprintf('Loading the authorization token for domains %s ...', implode(', ', $domains)));
+        $authorizationChallengeToCleanup = [];
         foreach ($domains as $domain) {
             if ($order) {
                 $authorizationChallenge = null;
@@ -90,6 +94,9 @@ EOF
                     throw new ChallengeNotSupportedException();
                 }
             } else {
+                if (!$repository->hasDomainAuthorizationChallenge($domain)) {
+                    throw new ProtocolException('You have to ask a challenge first with the command "authorize"');
+                }
                 $authorizationChallenge = $repository->loadDomainAuthorizationChallenge($domain);
                 if (!$solver->supports($authorizationChallenge)) {
                     throw new ChallengeNotSupportedException();
@@ -97,15 +104,21 @@ EOF
             }
             $this->debug('Challenge loaded', ['challenge' => $authorizationChallenge->toArray()]);
 
-            if (!$input->getOption('no-test')) {
-                $this->notice('Testing the challenge...');
-                if (!$validator->isValid($authorizationChallenge)) {
-                    $this->output->writeln(sprintf('<info>Can not valid challenge for domain %s ...</info>', $domain));
+            $authorizationChallenge = $client->reloadAuthorization($authorizationChallenge);
+            if ($authorizationChallenge->isValid()) {
+                $this->notice(sprintf('The challenge is alread validated for domain %s ...', $domain));
+            } else {
+                if (!$input->getOption('no-test')) {
+                    $this->notice(sprintf('Testing the challenge for domain %s...', $domain));
+                    if (!$validator->isValid($authorizationChallenge)) {
+                        $this->output->writeln(sprintf('<info>Can not valid challenge for domain %s ...</info>', $domain));
+                    }
                 }
-            }
 
-            $this->notice(sprintf('Requesting authorization check for domain %s ...', $domain));
-            $client->challengeAuthorization($authorizationChallenge);
+                $this->notice(sprintf('Requesting authorization check for domain %s ...', $domain));
+                $client->challengeAuthorization($authorizationChallenge);
+                $authorizationChallengeToCleanup[] = $authorizationChallenge;
+            }
         }
 
         $this->info(sprintf(<<<'EOF'
@@ -126,6 +139,13 @@ EOF
             implode(' -a ', $domains)
         ));
 
-        $solver->cleanup($authorizationChallenge);
+        if ($solver instanceof MultipleChallengesSolverInterface) {
+            $solver->cleanupAll($authorizationChallengeToCleanup);
+        } else {
+            /** @var AuthorizationChallenge $authorizationChallenge */
+            foreach ($authorizationChallengeToCleanup as $authorizationChallenge) {
+                $solver->cleanup($authorizationChallenge);
+            }
+        }
     }
 }

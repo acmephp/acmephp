@@ -63,6 +63,7 @@ class Route53SolverTest extends \PHPUnit_Framework_TestCase
             ]
         );
         $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled();
+        $mockClient->waitUntil('ResourceRecordSetsChanged', Argument::any())->shouldBeCalled();
 
         $solver->solve($stubChallenge->reveal());
     }
@@ -100,6 +101,7 @@ class Route53SolverTest extends \PHPUnit_Framework_TestCase
             ]
         );
         $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled();
+        $mockClient->waitUntil('ResourceRecordSetsChanged', Argument::any())->shouldBeCalled();
 
         $solver->cleanup($stubChallenge->reveal());
     }
