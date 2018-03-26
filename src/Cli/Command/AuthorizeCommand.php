@@ -11,8 +11,10 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -69,6 +71,7 @@ EOF
         $this->notice(sprintf('Requesting an authorization token for domains %s ...', implode(', ', $domains)));
         $order = $client->requestOrder($domains);
         $this->notice('The authorization tokens was successfully fetched!');
+        $authorizationChallengesToSolve = [];
         foreach ($order->getAuthorizationsChallenges() as $domainKey => $authorizationChallenges) {
             $authorizationChallenge = null;
             foreach ($authorizationChallenges as $candidate) {
@@ -97,7 +100,19 @@ EOF
             ]);
 
             $this->getRepository()->storeDomainAuthorizationChallenge($domainKey, $authorizationChallenge);
-            $solver->solve($authorizationChallenge);
+            $authorizationChallengesToSolve[] = $authorizationChallenge;
+        }
+        if ($solver instanceof MultipleChallengesSolverInterface) {
+            $solver->solveAll($authorizationChallengesToSolve);
+        } else {
+            /** @var AuthorizationChallenge $authorizationChallenge */
+            foreach ($authorizationChallengesToSolve as $authorizationChallenge) {
+                $this->info('Solving authorization challenge for domain', [
+                    'domain' => $authorizationChallenge->getDomain(),
+                    'challenge' => $authorizationChallenge->toArray(),
+                ]);
+                $solver->solve($authorizationChallenge);
+            }
         }
 
         $this->getRepository()->storeCertificateOrder($domains, $order);

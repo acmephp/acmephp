@@ -16,6 +16,7 @@ use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestTimedOutException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
+use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Protocol\CertificateOrder;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -68,4 +69,13 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
     public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180);
+
+    /**
+     * Request the current status of an authorization challenge.
+     *
+     * @param AuthorizationChallenge $challenge The challenge to request
+     *
+     * @return AuthorizationChallenge A new instance of the challenge
+     */
+    public function reloadAuthorization(AuthorizationChallenge $challenge);
 }

@@ -60,7 +60,7 @@ class WaitingValidator implements ValidatorInterface
             if ($this->validator->isValid($authorizationChallenge)) {
                 return true;
             }
-            sleep(1);
+            sleep(3);
         } while ($limitEndTime > time());
 
         return false;

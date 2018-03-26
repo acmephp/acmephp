@@ -210,8 +210,13 @@
             <argument type="service">
                 <service id="challenge_validator.dns" class="AcmePhp\Core\Challenge\Dns\DnsValidator">
                     <argument type="service" id="challenge_extractor.dns" />
+                    <argument type="service" id="challenge_validator.dns.resolver" />
                 </service>
             </argument>
+        </service>
+        <service id="challenge_validator.dns.resolver.simple" class="AcmePhp\Core\Challenge\Dns\SimpleDnsResolver"/>
+        <service id="challenge_validator.dns.resolver.libdns" class="AcmePhp\Core\Challenge\Dns\LibDnsResolver">
+            <call method="setLogger"><argument type="service" id="cli_logger"/></call>
         </service>
 
         <service id="challenge_validator" class="AcmePhp\Core\Challenge\ChainValidator">

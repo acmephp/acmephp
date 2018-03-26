@@ -11,17 +11,18 @@
 
 namespace AcmePhp\Core\Challenge\Dns;
 
-use AcmePhp\Core\Challenge\SolverInterface;
+use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Aws\Route53\Route53Client;
+use Webmozart\Assert\Assert;
 
 /**
  * ACME DNS solver with automate configuration of a AWS route53.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class Route53Solver implements SolverInterface
+class Route53Solver implements MultipleChallengesSolverInterface
 {
     /**
      * @var DnsDataExtractor
@@ -32,11 +33,6 @@ class Route53Solver implements SolverInterface
      * @var Route53Client
      */
     private $client;
-
-    /**
-     * @var array
-     */
-    private $pendingChanges = [];
 
     /**
      * @param DnsDataExtractor $extractor
@@ -63,34 +59,51 @@ class Route53Solver implements SolverInterface
      */
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
-        $recordName = $this->extractor->getRecordName($authorizationChallenge);
-        $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
+        return $this->solveAll([$authorizationChallenge]);
+    }
 
-        $zone = $this->getZone($authorizationChallenge->getDomain());
+    /**
+     * {@inheritdoc}
+     */
+    public function solveAll(array $authorizationChallenges)
+    {
+        Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
-        $this->changeResourceRecordSets(
-            $recordName,
-            [
-                'ChangeBatch' => [
-                    'Changes' => [
-                        [
-                            'Action' => 'UPSERT',
-                            'ResourceRecordSet' => [
-                                'Name' => $recordName,
-                                'ResourceRecords' => [
-                                    [
-                                        'Value' => sprintf('"%s"', $recordValue),
-                                    ],
-                                ],
-                                'TTL' => 5,
-                                'Type' => 'TXT',
-                            ],
-                        ],
+        $changesPerZone = [];
+        $authorizationChallengesPerDomain = $this->groupAuthorizationChallengesPerDomain($authorizationChallenges);
+        foreach ($authorizationChallengesPerDomain as $domain => $authorizationChallengesForDomain) {
+            $zone = $this->getZone($authorizationChallengesForDomain[0]->getDomain());
+
+            $authorizationChallengesPerRecordName = $this->groupAuthorizationChallengesPerRecordName($authorizationChallengesForDomain);
+            foreach ($authorizationChallengesPerRecordName as $recordName => $authorizationChallengesForRecordName) {
+                $recordValues = array_unique(array_map([$this->extractor, 'getRecordValue'], $authorizationChallengesForRecordName));
+
+                $changesPerZone[$zone['Id']][] = [
+                    'Action' => 'UPSERT',
+                    'ResourceRecordSet' => [
+                        'Name' => $recordName,
+                        'ResourceRecords' => array_map(function ($recordValue) {
+                            return [
+                                'Value' => sprintf('"%s"', $recordValue),
+                            ];
+                        }, $recordValues),
+                        'TTL' => 5,
+                        'Type' => 'TXT',
                     ],
-                ],
-                'HostedZoneId' => $zone['Id'],
-            ]
-        );
+                ];
+            }
+        }
+
+        foreach ($changesPerZone as $zoneId => $changes) {
+            $this->changeResourceRecordSets(
+                [
+                    'ChangeBatch' => [
+                        'Changes' => $changes,
+                    ],
+                    'HostedZoneId' => $zoneId,
+                ]
+            );
+        }
     }
 
     /**
@@ -98,60 +111,103 @@ class Route53Solver implements SolverInterface
      */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
-        $recordName = $this->extractor->getRecordName($authorizationChallenge);
-        $zone = $this->getZone($authorizationChallenge->getDomain());
-        $recordSets = $this->client->listResourceRecordSets(
-            [
-                'HostedZoneId' => $zone['Id'],
-                'StartRecordName' => $recordName,
-                'StartRecordType' => 'TXT',
-            ]
-        );
+        return $this->cleanupAll([$authorizationChallenge]);
+    }
 
-        $recordSets = array_filter(
-            $recordSets['ResourceRecordSets'],
-            function ($recordSet) use ($recordName) {
-                return $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type'];
+    /**
+     * {@inheritdoc}
+     */
+    public function cleanupAll(array $authorizationChallenges)
+    {
+        Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
+
+        $changesPerZone = [];
+        $authorizationChallengesPerDomain = $this->groupAuthorizationChallengesPerDomain($authorizationChallenges);
+        foreach ($authorizationChallengesPerDomain as $domain => $authorizationChallengesForDomain) {
+            $zone = $this->getZone($authorizationChallengesForDomain[0]->getDomain());
+
+            $authorizationChallengesPerRecordName = $this->groupAuthorizationChallengesPerRecordName($authorizationChallengesForDomain);
+            foreach ($authorizationChallengesPerRecordName as $recordName => $authorizationChallengesForRecordName) {
+                $recordSets = $this->client->listResourceRecordSets(
+                    [
+                        'HostedZoneId' => $zone['Id'],
+                        'StartRecordName' => $recordName,
+                        'StartRecordType' => 'TXT',
+                    ]
+                );
+
+                $recordSets = array_filter(
+                    $recordSets['ResourceRecordSets'],
+                    function ($recordSet) use ($recordName) {
+                        return $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type'];
+                    }
+                );
+
+                if (!$recordSets) {
+                    return;
+                }
+
+                if (!isset($changesPerZone[$zone['Id']])) {
+                    $changesPerZone[$zone['Id']] = [];
+                }
+                $changesPerZone[$zone['Id']] = array_merge($changesPerZone[$zone['Id']], array_map(
+                    function ($recordSet) {
+                        return [
+                            'Action' => 'DELETE',
+                            'ResourceRecordSet' => $recordSet,
+                        ];
+                    },
+                    $recordSets
+                ));
             }
-        );
-
-        if (!$recordSets) {
-            return;
         }
 
-        $this->changeResourceRecordSets(
-            $recordName,
-            [
-                'ChangeBatch' => [
-                    'Changes' => array_map(
-                        function ($recordSet) {
-                            return [
-                                'Action' => 'DELETE',
-                                'ResourceRecordSet' => $recordSet,
-                            ];
-                        },
-                        $recordSets
-                    ),
-                ],
-                'HostedZoneId' => $zone['Id'],
-            ]
-        );
-    }
-
-    public function wait($recordName)
-    {
-        if (isset($this->pendingChanges[$recordName])) {
-            $this->client->waitUntil('ResourceRecordSetsChanged', ['Id' => $this->pendingChanges[$recordName]]);
-            unset($this->pendingChanges[$recordName]);
+        foreach ($changesPerZone as $zoneId => $changes) {
+            $this->changeResourceRecordSets(
+                [
+                    'ChangeBatch' => [
+                        'Changes' => $changes,
+                    ],
+                    'HostedZoneId' => $zoneId,
+                ]
+            );
         }
     }
 
-    private function changeResourceRecordSets($recordName, array $payload)
+    /**
+     * @param AuthorizationChallenge[] $authorizationChallenges
+     *
+     * @return AuthorizationChallenge[][]
+     */
+    private function groupAuthorizationChallengesPerDomain(array $authorizationChallenges)
     {
-        $this->wait($recordName);
+        $groups = [];
+        foreach ($authorizationChallenges as $authorizationChallenge) {
+            $groups[$authorizationChallenge->getDomain()][] = $authorizationChallenge;
+        }
 
+        return $groups;
+    }
+
+    /**
+     * @param AuthorizationChallenge[] $authorizationChallenges
+     *
+     * @return AuthorizationChallenge[][]
+     */
+    private function groupAuthorizationChallengesPerRecordName(array $authorizationChallenges)
+    {
+        $groups = [];
+        foreach ($authorizationChallenges as $authorizationChallenge) {
+            $groups[$this->extractor->getRecordName($authorizationChallenge)][] = $authorizationChallenge;
+        }
+
+        return $groups;
+    }
+
+    private function changeResourceRecordSets(array $payload)
+    {
         $record = $this->client->changeResourceRecordSets($payload);
-        $this->pendingChanges[$recordName] = $record['ChangeInfo']['Id'];
+        $this->client->waitUntil('ResourceRecordSetsChanged', ['Id' => $record['ChangeInfo']['Id']]);
     }
 
     private function getZone($domain)

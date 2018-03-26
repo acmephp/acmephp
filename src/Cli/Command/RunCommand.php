@@ -13,6 +13,7 @@ namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Cli\Configuration\DomainConfiguration;
 use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
+use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
@@ -240,11 +241,11 @@ EOF
         $this->output->writeln('<comment>Requesting certificate order...</comment>');
         $order = $client->requestOrder($domains);
 
-        $challengePerDomain = [];
+        $authorizationChallengesToSolve = [];
         foreach ($order->getAuthorizationsChallenges() as $domain => $authorizationChallenges) {
-            /** @var AuthorizationChallenge $candidate */
-            foreach ($authorizationChallenges as $candidate) {
-                if ($candidate->isValid()) {
+            /* @var AuthorizationChallenge $candidate */
+            foreach ($authorizationChallenges as $authorizationChallenge) {
+                if ($authorizationChallenge->isValid()) {
                     $this->output->writeln(sprintf('<info>Authorization already validated for domain %s...</info>', $domain));
                     continue 2;
                 }
@@ -252,7 +253,7 @@ EOF
 
             foreach ($authorizationChallenges as $authorizationChallenge) {
                 if ($authorizationChallenge->isPending() && $solver->supports($authorizationChallenge)) {
-                    $challengePerDomain[$domain] = $authorizationChallenge;
+                    $authorizationChallengesToSolve[$domain] = $authorizationChallenge;
                     continue 2;
                 }
             }
@@ -260,46 +261,40 @@ EOF
             throw new ChallengeNotSupportedException();
         }
 
-        $performedChallenges = [];
-        while (!empty($challengePerDomain)) {
-            $pendingChallenges = [];
+        if ($solver instanceof MultipleChallengesSolverInterface) {
+            $this->output->writeln('<info>Solving challenge for domains...</info>');
+            $solver->solveAll($authorizationChallengesToSolve);
+        } else {
             /** @var AuthorizationChallenge $authorizationChallenge */
-            foreach ($challengePerDomain as $domain => $authorizationChallenge) {
-                $challengedDomain = $authorizationChallenge->getDomain();
-                if (isset($pendingChallenges[$challengedDomain])) {
-                    continue;
-                }
-
+            foreach ($authorizationChallengesToSolve as $domain => $authorizationChallenge) {
                 $this->output->writeln(sprintf('<info>Solving challenge for domain %s...</info>', $domain));
                 $solver->solve($authorizationChallenge);
-                $pendingChallenges[$challengedDomain] = $domain;
-                $performedChallenges[$domain] = $authorizationChallenge;
-                unset($challengePerDomain[$domain]);
+            }
+        }
+
+        $startTestTime = time();
+        foreach ($authorizationChallengesToSolve as $domain => $authorizationChallenge) {
+            if ($authorizationChallenge->isValid()) {
+                continue;
             }
 
-            $startTestTime = time();
-            foreach ($pendingChallenges as $challengedDomain => $domain) {
-                $authorizationChallenge = $performedChallenges[$domain];
-                if ($authorizationChallenge->isValid()) {
-                    continue;
-                }
+            $this->output->writeln(sprintf('<info>Testing the challenge for domain %s...</info>', $domain));
+            if (time() - $startTestTime > 180 || !$validator->isValid($authorizationChallenge)) {
+                $this->output->writeln(sprintf('<info>Can not self validate challenge for domain %s. Maybe letsencrypt will be able to do it...</info>', $domain));
+            }
 
-                $this->output->writeln(sprintf('<info>Testing the challenge for domain %s...</info>', $domain));
-                if (time() - $startTestTime > 180 || !$validator->isValid($authorizationChallenge)) {
-                    $this->output->writeln(sprintf('<info>Can not self validate challenge for domain %s. Maybe letsencrypt will be able to do it...</info>', $domain));
-                }
+            $this->output->writeln(sprintf('<info>Requesting authorization check for domain %s...</info>', $domain));
+            $client->challengeAuthorization($authorizationChallenge);
+        }
 
-                try {
-                    $this->output->writeln(sprintf('<info>Requesting authorization check for domain %s...</info>', $domain));
-                    $client->challengeAuthorization($authorizationChallenge);
-                } finally {
-                    try {
-                        $this->output->writeln(sprintf('<comment>Cleanup solvers for domain %s...</comment>', $domain));
-                        $solver->cleanup($authorizationChallenge);
-                    } catch (\Throwable $e) {
-                        $this->output->writeln(sprintf('<info>Failed to cleanup the resources created for solving challenge for the domain %s because %s...</info>', $challengedDomain, $e->getMessage()));
-                    }
-                }
+        if ($solver instanceof MultipleChallengesSolverInterface) {
+            $this->output->writeln('<info>Cleaning up challenges for domains...</info>');
+            $solver->cleanupAll($authorizationChallengesToSolve);
+        } else {
+            /** @var AuthorizationChallenge $authorizationChallenge */
+            foreach ($authorizationChallengesToSolve as $domain => $authorizationChallenge) {
+                $this->output->writeln(sprintf('<info>Cleaning up challenge for domain %s...</info>', $domain));
+                $solver->cleanup($authorizationChallenge);
             }
         }
 

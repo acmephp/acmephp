@@ -151,23 +151,25 @@ class AcmeClient implements AcmeClientV2Interface
         }
 
         $orderEndpoint = $this->getHttpClient()->getLastLocation();
-        $base64encoder = $this->getHttpClient()->getBase64Encoder();
         foreach ($response['authorizations'] as $authorizationEndpoint) {
             $authorizationsResponse = $this->getHttpClient()->unsignedRequest('GET', $authorizationEndpoint, null, true);
             $domain = (empty($authorizationsResponse['wildcard']) ? '' : '*.').$authorizationsResponse['identifier']['value'];
             foreach ($authorizationsResponse['challenges'] as $challenge) {
-                $authorizationsChallenges[$domain][] = new AuthorizationChallenge(
-                    $authorizationsResponse['identifier']['value'],
-                    $challenge['status'],
-                    $challenge['type'],
-                    $challenge['url'],
-                    $challenge['token'],
-                    $challenge['token'].'.'.$base64encoder->encode($this->getHttpClient()->getJWKThumbprint())
-                );
+                $authorizationsChallenges[$domain][] = $this->createAuthorizationChallenge($authorizationsResponse['identifier']['value'], $challenge);
             }
         }
 
         return new CertificateOrder($authorizationsChallenges, $orderEndpoint);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reloadAuthorization(AuthorizationChallenge $challenge)
+    {
+        $response = (array) $this->getHttpClient()->unsignedRequest('GET', $challenge->getUrl());
+
+        return $this->createAuthorizationChallenge($challenge->getDomain(), $response);
     }
 
     /**
@@ -253,6 +255,24 @@ class AcmeClient implements AcmeClientV2Interface
     }
 
     /**
+     * Find a resource URL.
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    public function getResourceUrl($resource)
+    {
+        if (!$this->directory) {
+            $this->directory = new ResourcesDirectory(
+                $this->getHttpClient()->unsignedRequest('GET', $this->directoryUrl, null, true)
+            );
+        }
+
+        return $this->directory->getResourceUrl($resource);
+    }
+
+    /**
      * Request a resource (URL is found using ACME server directory).
      *
      * @param string $method
@@ -276,24 +296,6 @@ class AcmeClient implements AcmeClientV2Interface
     }
 
     /**
-     * Find a resource URL.
-     *
-     * @param string $resource
-     *
-     * @return string
-     */
-    public function getResourceUrl($resource)
-    {
-        if (!$this->directory) {
-            $this->directory = new ResourcesDirectory(
-                $this->getHttpClient()->unsignedRequest('GET', $this->directoryUrl, null, true)
-            );
-        }
-
-        return $this->directory->getResourceUrl($resource);
-    }
-
-    /**
      * Retrieve the resource account.
      *
      * @return string
@@ -310,5 +312,19 @@ class AcmeClient implements AcmeClientV2Interface
         }
 
         return $this->account;
+    }
+
+    private function createAuthorizationChallenge($domain, array $response)
+    {
+        $base64encoder = $this->getHttpClient()->getBase64Encoder();
+
+        return new AuthorizationChallenge(
+            $domain,
+            $response['status'],
+            $response['type'],
+            $response['url'],
+            $response['token'],
+            $response['token'].'.'.$base64encoder->encode($this->getHttpClient()->getJWKThumbprint())
+        );
     }
 }
