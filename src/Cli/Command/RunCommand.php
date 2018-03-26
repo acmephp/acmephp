@@ -74,8 +74,27 @@ EOF
 
         $this->register($config['contact_email']);
         foreach ($config['certificates'] as $domainConfig) {
-            $order = $this->challengeDomains($domainConfig);
-            $response = $this->requestCertificate($order, $domainConfig, (int) $input->getOption('delay'));
+            $domain = $domainConfig['domain'];
+
+            if ($this->isUpToDate($domain, $domainConfig, (int) $input->getOption('delay'))) {
+                $repository = $this->getRepository();
+                $certificate = $this->getRepository()->loadDomainCertificate($domain);
+                /** @var ParsedCertificate $parsedCertificate */
+                $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($certificate);
+                $this->output->writeln(sprintf('<info>Current certificate is valid until %s, renewal is not necessary. Change --delay parameter to force renewal.</info>', $parsedCertificate->getValidTo()->format(\DateTime::RSS)));
+
+                $response = new CertificateResponse(
+                    new CertificateRequest(
+                        $repository->loadDomainDistinguishedName($domain),
+                        $repository->loadDomainKeyPair($domain)
+                    ),
+                    $certificate
+                );
+            } else {
+                $order = $this->challengeDomains($domainConfig);
+                $response = $this->requestCertificate($order, $domainConfig, (int) $input->getOption('delay'));
+            }
+
             $this->installCertificate($response, $domainConfig['install']);
         }
     }
@@ -173,22 +192,6 @@ EOF
         $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
 
         $repository = $this->getRepository();
-        if ($this->isUpToDate($domain, $domainConfig, $delay)) {
-            $certificate = $repository->loadDomainCertificate($domain);
-            /** @var ParsedCertificate $parsedCertificate */
-            $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($certificate);
-
-            $this->output->writeln(sprintf('<info>Current certificate is valid until %s, renewal is not necessary. Change --delay parameter to force renewal.</info>', $parsedCertificate->getValidTo()->format(\DateTime::RSS)));
-
-            return new CertificateResponse(
-                new CertificateRequest(
-                    $repository->loadDomainDistinguishedName($domain),
-                    $repository->loadDomainKeyPair($domain)
-                ),
-                $certificate
-            );
-        }
-
         $client = $this->getClient();
         $distinguishedName = new DistinguishedName(
             $domainConfig['domain'],
