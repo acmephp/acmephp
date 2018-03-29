@@ -211,7 +211,7 @@ class AcmeClient implements AcmeClientV2Interface
 
         $order = $this->requestOrder(array_unique(array_merge([$domain], $csr->getDistinguishedName()->getSubjectAlternativeNames())));
 
-        return $this->finalizeOrder($order);
+        return $this->finalizeOrder($order, $csr, $timeout);
     }
 
     /**
