@@ -38,7 +38,7 @@
         "symfony/serializer": "^3.0",
         "symfony/yaml": "^3.0",
         "monolog/monolog": "^1.19",
-        "swiftmailer/swiftmailer": "^5.4",
+        "swiftmailer/swiftmailer": "^6.0",
         "league/flysystem": "^1.0.19",
         "league/flysystem-sftp": "^1.0.7",
         "webmozart/assert": "^1.0",
