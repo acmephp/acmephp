@@ -326,10 +326,10 @@ class SecureHttpClient
     private function createRequest($method, $endpoint, $data)
     {
         $request = new Request($method, $endpoint);
-        $request = $request->withHeader('Accept', 'application/json');
+        $request = $request->withHeader('Accept', 'application/json,application/jose+json,');
 
         if ('POST' === $method && is_array($data)) {
-            $request = $request->withHeader('Content-Type', 'application/json');
+            $request = $request->withHeader('Content-Type', 'application/jose+json');
             $request = $request->withBody(\GuzzleHttp\Psr7\stream_for(json_encode($data)));
         }
 
