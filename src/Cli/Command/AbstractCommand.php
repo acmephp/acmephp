@@ -14,6 +14,7 @@ namespace AcmePhp\Cli\Command;
 use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Configuration\AcmeConfiguration;
+use AcmePhp\Cli\Exception\CommandFlowException;
 use AcmePhp\Cli\Repository\RepositoryV2Interface;
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\Challenge\Dns\LibDnsResolver;
@@ -95,6 +96,9 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->debug('Creating Acme client');
         $this->notice('Loading account key pair...');
 
+        if (!$this->getRepository()->hasAccountKeyPair()) {
+            throw new CommandFlowException('register in ACME servers', 'register');
+        }
         $accountKeyPair = $this->getRepository()->loadAccountKeyPair();
 
         /** @var SecureHttpClient $httpClient */
@@ -155,7 +159,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         foreach ($this->container->findTaggedServiceIds('acmephp.service_locator') as $locatorId => $locatorTags) {
             if (!isset($locatorTags[0]['tag'])) {
                 throw new \InvalidArgumentException(
-                    sprintf('The tagged service "%s" must define have an alias', $serviceId)
+                    sprintf('The tagged service "%s" must define have an alias', $locatorId)
                 );
             }
             $locatorTags = $locatorTags[0]['tag'];

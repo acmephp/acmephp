@@ -147,24 +147,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
     }
 
     /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
-     * @expectedExceptionMessage Loading of account key pair failed
-     */
-    public function testAuthorizeWithoutKeyFail()
-    {
-        $this->application = new SimpleApplication();
-
-        $command = $this->application->find('authorize');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            'command' => $command->getName(),
-            'domains' => 'example.com',
-            '--server' => 'https://localhost:14000/dir',
-        ]);
-    }
-
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
+     * @expectedException \AcmePhp\Cli\Exception\CommandFlowException
      */
     public function testCheckWithoutKeyFail()
     {
@@ -180,7 +163,23 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
     }
 
     /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
+     * @expectedException \AcmePhp\Cli\Exception\CommandFlowException
+     */
+    public function testAuthorizeWithoutKeyFail()
+    {
+        $this->application = new SimpleApplication();
+
+        $command = $this->application->find('authorize');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'domains' => 'example.com',
+            '--server' => 'https://localhost:14000/dir',
+        ]);
+    }
+
+    /**
+     * @expectedException \AcmePhp\Cli\Exception\CommandFlowException
      */
     public function testRequestWithoutKeyFail()
     {

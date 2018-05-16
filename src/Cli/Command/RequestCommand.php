@@ -13,6 +13,7 @@ namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
+use AcmePhp\Cli\Exception\CommandFlowException;
 use AcmePhp\Cli\Repository\Repository;
 use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClientV2Interface;
@@ -162,6 +163,9 @@ EOF;
         // Order
         $domains = array_merge([$domain], $alternativeNames);
         $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
+        if (!$this->getRepository()->hasCertificateOrder($domains)) {
+            throw new CommandFlowException('ask a challenge', 'authorize', $domains);
+        }
         $order = $this->getRepository()->loadCertificateOrder($domains);
 
         // Request
@@ -299,6 +303,9 @@ EOF;
             // Order
             $domains = array_merge([$domain], $alternativeNames);
             $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
+            if (!$this->getRepository()->hasCertificateOrder($domains)) {
+                throw new CommandFlowException('ask a challenge', 'authorize', $domains);
+            }
             $order = $this->getRepository()->loadCertificateOrder($domains);
 
             // Renewal
