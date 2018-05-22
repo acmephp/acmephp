@@ -170,6 +170,7 @@
                     </argument>
                 </service>
             </argument>
+            <call method="setLogger"><argument type="service" id="cli_logger"/></call>
             <tag name="acmephp.challenge_solver" alias="route53" />
         </service>
         <service id="acmephp.challenge_solver.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
