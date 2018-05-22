@@ -141,7 +141,7 @@ class AcmeClient implements AcmeClientV2Interface
                         'value' => $domain,
                     ];
                 },
-                $domains
+                array_values($domains)
             ),
         ];
 
