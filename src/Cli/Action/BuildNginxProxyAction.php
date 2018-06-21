@@ -46,6 +46,9 @@ class BuildNginxProxyAction implements ActionInterface
         $privateKey = $response->getCertificateRequest()->getKeyPair()->getPrivateKey();
         $certificate = $response->getCertificate();
 
+        // To handle wildcard certs
+        $domain = ltrim($domain, '*.');
+
         $this->repository->save('nginxproxy/'.$domain.'.key', $privateKey->getPEM());
 
         // Issuer chain
