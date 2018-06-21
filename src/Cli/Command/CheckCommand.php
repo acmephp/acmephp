@@ -11,11 +11,11 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Cli\Exception\CommandFlowException;
 use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
-use AcmePhp\Core\Exception\Protocol\ProtocolException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -95,7 +95,7 @@ EOF
                 }
             } else {
                 if (!$repository->hasDomainAuthorizationChallenge($domain)) {
-                    throw new ProtocolException('You have to ask a challenge first with the command "authorize"');
+                    throw new CommandFlowException('ask a challenge', 'authorize', [$domains]);
                 }
                 $authorizationChallenge = $repository->loadDomainAuthorizationChallenge($domain);
                 if (!$solver->supports($authorizationChallenge)) {
