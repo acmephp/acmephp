@@ -54,7 +54,7 @@ class BuildNginxProxyAction implements ActionInterface
         }, $certificate->getIssuerChain());
 
         // Full chain
-        $fullChainPem = $certificate->getPEM().implode("\n", $issuerChain);
+        $fullChainPem = $certificate->getPEM().PHP_EOL.implode("\n", $issuerChain);
 
         $this->repository->save('nginxproxy/'.$domain.'.crt', $fullChainPem);
     }
