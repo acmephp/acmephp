@@ -15,6 +15,8 @@ use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Aws\Route53\Route53Client;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Webmozart\Assert\Assert;
 
 /**
@@ -24,6 +26,7 @@ use Webmozart\Assert\Assert;
  */
 class Route53Solver implements MultipleChallengesSolverInterface
 {
+    use LoggerAwareTrait;
     /**
      * @var DnsDataExtractor
      */
@@ -35,6 +38,11 @@ class Route53Solver implements MultipleChallengesSolverInterface
     private $client;
 
     /**
+     * @var array
+     */
+    private $cacheZones;
+
+    /**
      * @param DnsDataExtractor $extractor
      * @param Route53Client    $client
      */
@@ -44,6 +52,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
     ) {
         $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
         $this->client = null === $client ? new Route53Client([]) : $client;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -94,8 +103,10 @@ class Route53Solver implements MultipleChallengesSolverInterface
             }
         }
 
+        $records = [];
         foreach ($changesPerZone as $zoneId => $changes) {
-            $this->changeResourceRecordSets(
+            $this->logger->info('Updating route 53 DNS', ['zone' => $zoneId]);
+            $records[$zoneId] = $this->client->changeResourceRecordSets(
                 [
                     'ChangeBatch' => [
                         'Changes' => $changes,
@@ -103,6 +114,10 @@ class Route53Solver implements MultipleChallengesSolverInterface
                     'HostedZoneId' => $zoneId,
                 ]
             );
+        }
+        foreach ($records as $zoneId => $record) {
+            $this->logger->info('Waiting for Route 53 changes', ['zone' => $zoneId]);
+            $this->client->waitUntil('ResourceRecordSetsChanged', ['Id' => $record['ChangeInfo']['Id']]);
         }
     }
 
@@ -163,7 +178,8 @@ class Route53Solver implements MultipleChallengesSolverInterface
         }
 
         foreach ($changesPerZone as $zoneId => $changes) {
-            $this->changeResourceRecordSets(
+            $this->logger->info('Updating route 53 DNS', ['zone' => $zoneId]);
+            $this->client->changeResourceRecordSets(
                 [
                     'ChangeBatch' => [
                         'Changes' => $changes,
@@ -204,12 +220,6 @@ class Route53Solver implements MultipleChallengesSolverInterface
         return $groups;
     }
 
-    private function changeResourceRecordSets(array $payload)
-    {
-        $record = $this->client->changeResourceRecordSets($payload);
-        $this->client->waitUntil('ResourceRecordSetsChanged', ['Id' => $record['ChangeInfo']['Id']]);
-    }
-
     private function getZone($domain)
     {
         $domainParts = explode('.', $domain);
@@ -220,6 +230,22 @@ class Route53Solver implements MultipleChallengesSolverInterface
             range(1, count($domainParts))
         );
 
+        $zones = $this->getZones();
+        foreach ($domains as $cursorDomain) {
+            if (isset($zones[$cursorDomain.'.'])) {
+                return $zones[$cursorDomain.'.'];
+            }
+        }
+
+        throw new ChallengeFailedException(sprintf('Unable to find a zone for the domain "%s"', $domain));
+    }
+
+    private function getZones()
+    {
+        if (null !== $this->cacheZones) {
+            return $this->cacheZones;
+        }
+
         $zones = [];
         $args = [];
         do {
@@ -228,13 +254,8 @@ class Route53Solver implements MultipleChallengesSolverInterface
             $args = ['Marker' => $resp['NextMarker']];
         } while ($resp['IsTruncated']);
 
-        $zones = array_column($zones, null, 'Name');
-        foreach ($domains as $domain) {
-            if (isset($zones[$domain.'.'])) {
-                return $zones[$domain.'.'];
-            }
-        }
+        $this->cacheZones = array_column($zones, null, 'Name');
 
-        throw new ChallengeFailedException(sprintf('Unable to find a zone for the domain "%s"', $domain));
+        return $this->cacheZones;
     }
 }
