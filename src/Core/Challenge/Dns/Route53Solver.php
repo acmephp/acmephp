@@ -223,12 +223,12 @@ class Route53Solver implements MultipleChallengesSolverInterface
     private function getZone($domain)
     {
         $domainParts = explode('.', $domain);
-        $domains = array_map(
+        $domains = array_reverse(array_map(
             function ($index) use ($domainParts) {
                 return implode('.', array_slice($domainParts, count($domainParts) - $index));
             },
-            range(1, count($domainParts))
-        );
+            range(0, count($domainParts))
+        ));
 
         $zones = $this->getZones();
         foreach ($domains as $cursorDomain) {
