@@ -56,7 +56,7 @@ storage:
         #   username: username
         #   password: password
         #   # port: 22
-        #   # private_key: path/to/or/contents/of/privatekey
+        #   # privateKey: path/to/or/contents/of/privatekey
         #   # timeout: 30
 
         #
