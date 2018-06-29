@@ -116,7 +116,7 @@ certificates:
       # passive: true
       # ssl: true
       # timeout: 30
-      # private_key: path/to/or/contents/of/privatekey
+      # privateKey: path/to/or/contents/of/privatekey
 ```
 
 usage
