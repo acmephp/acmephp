@@ -59,6 +59,7 @@ RUN apk add --no-cache \
         php7-posix \
         php7-simplexml \
         php7-xmlwriter \
+        php7-xml \
         ca-certificates
 
 RUN echo "date.timezone = UTC" > /etc/php7/conf.d/symfony.ini \
