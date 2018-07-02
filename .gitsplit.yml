@@ -1,0 +1,14 @@
+# See https://github.com/jderusse/docker-gitsplit
+
+# Path to a cache directory Used to speed up the split over time by reusing git's objects
+cache_url: "/cache/gitsplit"
+
+splits:
+- prefix: "src/Core"
+  target: "https://${GH_TOKEN}@github.com/acmephp/core.git"
+- prefix: "src/Ssl"
+  target: "https://${GH_TOKEN}@github.com/acmephp/ssl.git"
+
+origins:
+- ^master$
+- ^\d+\.\d+\.\d+(-(alpha|beta|rc)\d)?$
