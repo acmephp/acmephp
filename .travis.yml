@@ -1,48 +1,55 @@
-language: php
-
 sudo: false
-
+language: php
 branches:
-    only:
-        - master
-
-cache:
-    directories:
-        - $HOME/.composer/cache/files
-        - $HOME/.php-cs-fixer
-
-matrix:
-    include:
-        - php: 5.5
-          services:
-              - docker
-        - php: 5.6
-          services:
-              - docker
-        - php: 7.0
-          env: deps=low
-          services:
-              - docker
-        - php: 7.1
-          services:
-              - docker
-        - php: 7.2
-          env: deps=high CS=true
-          services:
-              - docker
-
-before_install:
-    - stty cols 120
-    - phpenv config-rm xdebug.ini || echo "xdebug not available"
-    - if [[ $deps = high ]]; then composer update --no-interaction --no-progress --ansi; fi
-    - if [[ $deps = low ]]; then composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable; fi
-    - if [[ ! $deps ]]; then composer install --no-interaction --no-progress --ansi; fi
-    - ./tests/setup.sh
-    - mkdir -p "$HOME/.php-cs-fixer"
-
-script:
-    - ./tests/run.sh
-    - if [[ "$CS" == "true" ]]; then composer require "friendsofphp/php-cs-fixer:^2.11" && vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --diff --dry-run; fi
-
+  only:
+  - master
 notifications:
-    email: false
+  email: false
+
+.template_phpunit: &phpunit
+  services:
+  - docker
+  before_install:
+  - stty cols 120
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
+  - ./tests/setup.sh
+  install: composer install --no-interaction --no-progress --ansi
+  script: ./tests/run.sh
+  cache:
+    directories:
+    - $HOME/.composer/cache/files
+.template_phpunit_low: &phpunit_low
+  <<: *phpunit
+  install: composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable
+  env:
+    COMMENT: low deps
+.template_phpunit_high: &phpunit_high
+  <<: *phpunit
+  install: composer update --no-interaction --no-progress --ansi
+  env:
+    COMMENT: high deps
+
+jobs:
+  include:
+  - stage: test
+    php: 7.2
+    cache:
+      directories:
+      - $HOME/.composer/cache/files
+      - .cache
+    install:
+    - composer require "friendsofphp/php-cs-fixer:^2.11"
+    env:
+      COMMENT: php cs fixer
+    script:
+    - vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --diff --dry-run --cache-file .cache/php_cs
+  - <<: *phpunit
+    php: 5.5
+  - <<: *phpunit
+    php: 5.6
+  - <<: *phpunit_low
+    php: 7.0
+  - <<: *phpunit
+    php: 7.1
+  - <<: *phpunit_high
+    php: 7.2
