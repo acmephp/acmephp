@@ -21,23 +21,29 @@ notifications:
 .template_phpunit_low: &phpunit_low
   <<: *phpunit
   install: composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable
+  env:
+    COMMENT: low deps
 .template_phpunit_high: &phpunit_high
   <<: *phpunit
   install: composer update --no-interaction --no-progress --ansi
+  env:
+    COMMENT: high deps
 
 jobs:
   include:
-  - stage: standards
+  - stage: test
     php: 7.2
     cache:
       directories:
-      - $HOME/.php-cs-fixer
+      - $HOME/.composer/cache/files
+      - .cache
     install:
     - composer require "friendsofphp/php-cs-fixer:^2.11"
+    env:
+      COMMENT: php cs fixer
     script:
-    - vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --diff --dry-run
-  - stage: test
-    <<: *phpunit
+    - vendor/bin/php-cs-fixer fix --config=.php_cs --verbose --diff --dry-run --cache-file .cache/php_cs
+  - <<: *phpunit
     php: 5.5
   - <<: *phpunit
     php: 5.6
