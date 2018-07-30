@@ -13,6 +13,7 @@ namespace AcmePhp\Core;
 
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
+use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
@@ -60,7 +61,7 @@ class AcmeClient implements AcmeClientV2Interface
     private $directory;
 
     /**
-     * @var ResourcesAccount
+     * @var string
      */
     private $account;
 
@@ -212,6 +213,37 @@ class AcmeClient implements AcmeClientV2Interface
         $order = $this->requestOrder(array_unique(array_merge([$domain], $csr->getDistinguishedName()->getSubjectAlternativeNames())));
 
         return $this->finalizeOrder($order, $csr, $timeout);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function revokeCertificate(Certificate $certificate, $reasonCode = null)
+    {
+        $reasonCode && Assert::integer($reasonCode, 'reasonCode::$reasonCode expected an integer. Got: %s');
+
+        $formatted = str_ireplace('-----BEGIN CERTIFICATE-----', '', $certificate);
+        $formatted = str_ireplace('-----END CERTIFICATE-----', '', $formatted);
+        $formatted = base64_decode(trim($formatted));
+
+        $payload = [
+            'certificate' => $this->getHttpClient()->getBase64Encoder()->encode($formatted),
+            'reason' => (int)$reasonCode, // will defa
+        ];
+
+        try {
+            $this->getHttpClient()->signedKidRequest(
+                'POST',
+                $this->getResourceUrl(ResourcesDirectory::REVOKE_CERT),
+                $this->getResourceAccount(),
+                $payload
+            );
+        } catch ( AcmeCoreServerException $e ) {
+            throw new CertificateRevocationException($e->getMessage(), $e);
+        } catch ( AcmeCoreClientException $e ) {
+            throw new CertificateRevocationException($e->getMessage(), $e);
+        }
+
     }
 
     /**

@@ -40,6 +40,14 @@ class Certificate
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->certificatePEM;
+    }
+
+    /**
      * @return Certificate[]
      */
     public function getIssuerChain()
