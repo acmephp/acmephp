@@ -22,6 +22,7 @@ use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Protocol\CertificateOrder;
 use AcmePhp\Core\Protocol\ResourcesDirectory;
+use AcmePhp\Core\Protocol\RevocationReason;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -218,9 +219,11 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function revokeCertificate(Certificate $certificate, $reasonCode = null)
+    public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null)
     {
-        $reasonCode && Assert::integer($reasonCode, 'reasonCode::$reasonCode expected an integer. Got: %s');
+        if (null === $revocationReason) {
+            $revocationReason = RevocationReason::createDefaultReason();
+        }
 
         $formatted = str_ireplace('-----BEGIN CERTIFICATE-----', '', $certificate);
         $formatted = str_ireplace('-----END CERTIFICATE-----', '', $formatted);
@@ -228,7 +231,7 @@ class AcmeClient implements AcmeClientV2Interface
 
         $payload = [
             'certificate' => $this->getHttpClient()->getBase64Encoder()->encode($formatted),
-            'reason' => (int) $reasonCode,
+            'reason' => $revocationReason->getReasonType(),
         ];
 
         try {

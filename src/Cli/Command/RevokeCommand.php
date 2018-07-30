@@ -11,10 +11,8 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Cli\ActionHandler\ActionHandler;
-use AcmePhp\Cli\Repository\RepositoryInterface;
-use AcmePhp\Core\AcmeClientV2Interface;
 use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
+use AcmePhp\Core\Protocol\RevocationReason;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,35 +21,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RevokeCommand extends AbstractCommand
 {
     /**
-     * @var RepositoryInterface
-     */
-    private $repository;
-
-    /**
-     * @var AcmeClientV2Interface
-     */
-    private $client;
-
-    /**
-     * @var ActionHandler
-     */
-    private $actionHandler;
-
-    /**
      * {@inheritdoc}
      */
     protected function configure()
     {
+        $reasons = implode(PHP_EOL, RevocationReason::getFormattedReasons());
+
         $this->setName('revoke')
             ->setDefinition([
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain revoke a certificate for'),
-                new InputArgument('reason-code', InputOption::VALUE_OPTIONAL, 'The reason code for revocation'),
+                new InputArgument('reason-code', InputOption::VALUE_OPTIONAL, 'The reason code for revocation:'.PHP_EOL.$reasons),
             ])
             ->setDescription('Revoke a SSL certificate for a domain')
-            ->setHelp(<<<'EOF'
-The <info>%command.name%</info> command revoke a previously obtained certificate for a given domain
-EOF
-            );
+            ->setHelp('The <info>%command.name%</info> command revoke a previously obtained certificate for a given domain');
     }
 
     /**
@@ -59,26 +41,33 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->repository = $this->getRepository();
-        $this->client = $this->getClient();
-        $this->actionHandler = $this->getActionHandler();
+        $repository = $this->getRepository();
+        $client = $this->getClient();
 
         $domain = (string) $input->getArgument('domain');
-        $reasonCode = (int) $input->getArgument('reason-code');
+        $reasonCode = $input->getArgument('reason-code'); // ok to be null. LE expects 0 as default reason
 
-        if (!$this->repository->hasDomainCertificate($domain)) {
-
-            $this->error("Certificate for {$domain} not found locally");
+        try {
+            $revocationReason = isset($reasonCode[0]) ? new RevocationReason($reasonCode[0]) : RevocationReason::createDefaultReason();
+        } catch (\InvalidArgumentException $e) {
+            $this->warning('Reason code must be one of: '.PHP_EOL.implode(PHP_EOL, RevocationReason::getFormattedReasons()));
 
             return;
         }
 
-        $certificate = $this->repository->loadDomainCertificate($domain);
+        if (!$repository->hasDomainCertificate($domain)) {
+            $this->error('Certificate for '.$domain.' not found locally');
+
+            return;
+        }
+
+        $certificate = $repository->loadDomainCertificate($domain);
 
         try {
-            $this->client->revokeCertificate($certificate, $reasonCode);
+            $client->revokeCertificate($certificate, $revocationReason);
         } catch (CertificateRevocationException $e) {
             $this->error($e->getMessage());
+
             return;
         }
 
