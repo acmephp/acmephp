@@ -13,8 +13,8 @@ namespace AcmePhp\Core;
 
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
-use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
+use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
@@ -216,7 +216,7 @@ class AcmeClient implements AcmeClientV2Interface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function revokeCertificate(Certificate $certificate, $reasonCode = null)
     {
@@ -228,7 +228,7 @@ class AcmeClient implements AcmeClientV2Interface
 
         $payload = [
             'certificate' => $this->getHttpClient()->getBase64Encoder()->encode($formatted),
-            'reason' => (int)$reasonCode, // will defa
+            'reason' => (int) $reasonCode,
         ];
 
         try {
@@ -238,12 +238,11 @@ class AcmeClient implements AcmeClientV2Interface
                 $this->getResourceAccount(),
                 $payload
             );
-        } catch ( AcmeCoreServerException $e ) {
+        } catch (AcmeCoreServerException $e) {
             throw new CertificateRevocationException($e->getMessage(), $e);
-        } catch ( AcmeCoreClientException $e ) {
+        } catch (AcmeCoreClientException $e) {
             throw new CertificateRevocationException($e->getMessage(), $e);
         }
-
     }
 
     /**

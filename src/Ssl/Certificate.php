@@ -28,8 +28,8 @@ class Certificate
     private $issuerCertificate;
 
     /**
-     * @param string      $certificatePEM
-     * @param Certificate $issuerCertificate
+     * @param string           $certificatePEM
+     * @param Certificate|null $issuerCertificate
      */
     public function __construct($certificatePEM, self $issuerCertificate = null)
     {
