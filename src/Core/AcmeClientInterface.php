@@ -21,6 +21,7 @@ use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\RevocationReason;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -113,12 +114,12 @@ interface AcmeClientInterface
     public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180);
 
     /**
-     * @param Certificate $certificate
-     * @param int|null    $reasonCode
+     * @param Certificate           $certificate
+     * @param RevocationReason|null $revocationReason
      *
      * @throws CertificateRevocationException
      */
-    public function revokeCertificate(Certificate $certificate, $reasonCode = null);
+    public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null);
 
     /**
      * Get the HTTP client.
