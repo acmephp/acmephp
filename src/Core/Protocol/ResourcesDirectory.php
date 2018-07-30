@@ -23,6 +23,7 @@ class ResourcesDirectory
     const NEW_ACCOUNT = 'newAccount';
     const NEW_ORDER = 'newOrder';
     const NEW_NONCE = 'newNonce';
+    const REVOKE_CERT = 'revokeCert';
 
     /**
      * @var array
@@ -46,6 +47,7 @@ class ResourcesDirectory
             self::NEW_ACCOUNT,
             self::NEW_ORDER,
             self::NEW_NONCE,
+            self::REVOKE_CERT,
         ];
     }
 

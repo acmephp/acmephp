@@ -15,3 +15,4 @@ tests/Cli/Fixtures/challenges/.well-known/acme-challenge/*
 !tests/Cli/Fixtures/challenges/.well-known/acme-challenge/.gitkeep
 tests/Core/Fixtures/challenges/.well-known/acme-challenge/*
 !tests/Core/Fixtures/challenges/.well-known/acme-challenge/.gitkeep
+.idea

@@ -100,5 +100,10 @@ class AcmeClientTest extends AbstractFunctionnalTest
         $this->assertInstanceOf(CertificateResponse::class, $response);
         $this->assertEquals($csr, $response->getCertificateRequest());
         $this->assertInstanceOf(Certificate::class, $response->getCertificate());
+
+        /**
+         * Revoke certificate
+         */
+        $this->client->revokeCertificate($response->getCertificate());
     }
 }
