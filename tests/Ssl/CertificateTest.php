@@ -142,6 +142,6 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
 -----END CERTIFICATE-----
 ';
 
-        $this->assertSame($pem, (string)(new Certificate($pem)));
+        $this->assertSame($pem, (string) (new Certificate($pem)));
     }
 }

@@ -14,9 +14,6 @@ namespace AcmePhp\Cli\Command;
 use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClientV2Interface;
-use AcmePhp\Core\Exception\AcmeCoreClientException;
-use AcmePhp\Core\Exception\AcmeCoreException;
-use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,7 +45,7 @@ class RevokeCommand extends AbstractCommand
         $this->setName('revoke')
             ->setDefinition([
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain revoke a certificate for'),
-                new InputArgument('reason-code',  InputOption::VALUE_OPTIONAL, 'The reason code for revocation'),
+                new InputArgument('reason-code', InputOption::VALUE_OPTIONAL, 'The reason code for revocation'),
             ])
             ->setDescription('Revoke a SSL certificate for a domain')
             ->setHelp(<<<'EOF'
@@ -66,11 +63,13 @@ EOF
         $this->client = $this->getClient();
         $this->actionHandler = $this->getActionHandler();
 
-        $domain = (string)$input->getArgument('domain');
-        $reasonCode = (int)$input->getArgument('reason-code');
+        $domain = (string) $input->getArgument('domain');
+        $reasonCode = (int) $input->getArgument('reason-code');
 
         if (!$this->repository->hasDomainCertificate($domain)) {
+
             $this->error("Certificate for {$domain} not found locally");
+
             return;
         }
 

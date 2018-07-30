@@ -13,9 +13,9 @@ namespace AcmePhp\Core;
 
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
-use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestTimedOutException;
+use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
@@ -114,11 +114,9 @@ interface AcmeClientInterface
 
     /**
      * @param Certificate $certificate
-     * @param int|null $reasonCode
+     * @param int|null    $reasonCode
      *
      * @throws CertificateRevocationException
-     *
-     * @return void
      */
     public function revokeCertificate(Certificate $certificate, $reasonCode = null);
 
