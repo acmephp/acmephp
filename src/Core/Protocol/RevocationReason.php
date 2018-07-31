@@ -77,7 +77,7 @@ class RevocationReason
     /**
      * @return array
      */
-    public static function getReasonLabelMap()
+    private static function getReasonLabelMap()
     {
         return [
             self::REASON_UNSPECIFIED => 'unspecified',
