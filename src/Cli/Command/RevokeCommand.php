@@ -50,7 +50,7 @@ class RevokeCommand extends AbstractCommand
         try {
             $revocationReason = isset($reasonCode[0]) ? new RevocationReason($reasonCode[0]) : RevocationReason::createDefaultReason();
         } catch (\InvalidArgumentException $e) {
-            $this->warning('Reason code must be one of: '.PHP_EOL.implode(PHP_EOL, RevocationReason::getFormattedReasons()));
+            $this->error('Reason code must be one of: '.PHP_EOL.implode(PHP_EOL, RevocationReason::getFormattedReasons()));
 
             return;
         }

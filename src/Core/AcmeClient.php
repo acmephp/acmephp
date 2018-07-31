@@ -225,7 +225,7 @@ class AcmeClient implements AcmeClientV2Interface
             $revocationReason = RevocationReason::createDefaultReason();
         }
 
-        $formatted = str_ireplace('-----BEGIN CERTIFICATE-----', '', $certificate);
+        $formatted = str_ireplace('-----BEGIN CERTIFICATE-----', '', $certificate->getPEM());
         $formatted = str_ireplace('-----END CERTIFICATE-----', '', $formatted);
         $formatted = base64_decode(trim($formatted));
 
