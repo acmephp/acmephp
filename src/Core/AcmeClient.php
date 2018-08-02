@@ -225,6 +225,8 @@ class AcmeClient implements AcmeClientV2Interface
             $revocationReason = RevocationReason::createDefaultReason();
         }
 
+        openssl_x509_export(openssl_x509_read($certificate->getPEM()), $formatted);
+
         $formatted = str_ireplace('-----BEGIN CERTIFICATE-----', '', $certificate->getPEM());
         $formatted = str_ireplace('-----END CERTIFICATE-----', '', $formatted);
         $formatted = base64_decode(trim($formatted));
