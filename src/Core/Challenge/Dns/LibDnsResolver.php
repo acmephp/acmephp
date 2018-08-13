@@ -87,11 +87,15 @@ class LibDnsResolver implements DnsResolverInterface
     public function getTxtEntries($domain)
     {
         $nsDomain = implode('.', array_slice(explode('.', rtrim($domain, '.')), -2));
-        $nameServers = $this->request(
-            $nsDomain,
-            ResourceTypes::NS,
-            $this->nameServer
-        );
+        try {
+            $nameServers = $this->request(
+                $nsDomain,
+                ResourceTypes::NS,
+                $this->nameServer
+            );
+        } catch (\Exception $e) {
+            throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $this->nameServer), $e);
+        }
 
         $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $nsDomain, 'servers' => $nameServers]);
         if (empty($nameServers)) {
