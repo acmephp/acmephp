@@ -86,31 +86,24 @@ class LibDnsResolver implements DnsResolverInterface
      */
     public function getTxtEntries($domain)
     {
-        $nsDomain = implode('.', array_slice(explode('.', rtrim($domain, '.')), -2));
-        try {
-            $nameServers = $this->request(
-                $nsDomain,
-                ResourceTypes::NS,
-                $this->nameServer
-            );
-        } catch (\Exception $e) {
-            throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $this->nameServer), $e);
-        }
-
-        $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $nsDomain, 'servers' => $nameServers]);
-        if (empty($nameServers)) {
-            throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $this->nameServer));
-        }
-
+        $domain = \rtrim($domain, '.');
+        $nameServers = $this->getNameServers($domain);
+        $this->logger->debug('Fetched TXT records for domain', ['nsDomain' => $domain, 'servers' => $nameServers]);
         $identicalEntries = [];
         foreach ($nameServers as $nameServer) {
-            $ip = gethostbyname($nameServer);
             try {
-                $serverEntries = $this->request($domain, ResourceTypes::TXT, $ip);
+                $response = $this->request($domain, ResourceTypes::TXT, gethostbyname($nameServer));
             } catch (\Exception $e) {
-                throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $this->nameServer));
+                throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $nameServer));
             }
-            $identicalEntries[json_encode($serverEntries)][] = $nameServer;
+            $entries = [];
+            foreach ($response->getAnswerRecords() as $record) {
+                foreach ($record->getData() as $recordData) {
+                    $entries[] = (string) $recordData;
+                }
+            }
+
+            $identicalEntries[json_encode($entries)][] = $nameServer;
         }
 
         $this->logger->info('DNS records fetched', ['mapping' => $identicalEntries]);
@@ -121,10 +114,54 @@ class LibDnsResolver implements DnsResolverInterface
         return json_decode(key($identicalEntries));
     }
 
+    private function getNameServers($domain)
+    {
+        if ('' === $domain) {
+            return [$this->nameServer];
+        }
+
+        $parentNameServers = $this->getNameServers(implode('.', array_slice(explode('.', $domain), 1)));
+        $itemNameServers = [];
+        $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $domain, 'servers' => $parentNameServers]);
+        foreach ($parentNameServers as $parentNameServer) {
+            try {
+                $response = $this->request(
+                    $domain,
+                    ResourceTypes::NS,
+                    gethostbyname($parentNameServer)
+                );
+            } catch (\Exception $e) {
+                // ignore errors
+                continue;
+            }
+
+            foreach ($response->getAnswerRecords() as $record) {
+                try {
+                    $field = $record->getData()->getFieldByName('nsdname');
+                    $itemNameServers[] = $field->getValue();
+                } catch (\OutOfBoundsException $e) {
+                }
+            }
+            foreach ($response->getAuthorityRecords() as $record) {
+                try {
+                    $field = $record->getData()->getFieldByName('nsdname');
+                    $itemNameServers[] = $field->getValue();
+                } catch (\OutOfBoundsException $e) {
+                }
+            }
+        }
+        $itemNameServers = \array_unique($itemNameServers);
+        if (empty($itemNameServers)) {
+            return $parentNameServers;
+        }
+
+        return $itemNameServers;
+    }
+
     private function request($domain, $type, $nameServer)
     {
         $question = $this->questionFactory->create($type);
-        $question->setName(rtrim($domain, '.'));
+        $question->setName($domain);
 
         // Create request message
         $request = $this->messageFactory->create(MessageTypes::QUERY);
@@ -142,23 +179,17 @@ class LibDnsResolver implements DnsResolverInterface
         }
 
         // Decode response message
-        $response = $this->decoder->decode(fread($socket, 512));
-
+        try {
+            $response = $this->decoder->decode(fread($socket, 1 << 20));
+        } catch (\Exception $e) {
+            throw new AcmeDnsResolutionException('Failed to decode server response', $e);
+        }
         if (0 !== $response->getResponseCode()) {
             throw new AcmeDnsResolutionException(
                 sprintf('ServerName respond with error code "%d"', $response->getResponseCode())
             );
         }
 
-        $entries = [];
-        foreach ($response->getAnswerRecords() as $record) {
-            foreach ($record->getData() as $field) {
-                $entries[] = (string) $field;
-            }
-        }
-
-        sort($entries);
-
-        return array_unique($entries);
+        return $response;
     }
 }
