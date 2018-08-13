@@ -1,4 +1,4 @@
-FROM alpine:3.7 AS builder
+FROM alpine:3.8 AS builder
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -12,6 +12,7 @@ RUN apk add --no-cache \
         php7-iconv \
         php7-mbstring \
         php7-curl \
+        php7-ctype \
         php7-opcache \
         php7-sockets \
         php7-openssl
@@ -32,7 +33,7 @@ RUN apk add --no-cache \
         php7-tokenizer
 
 RUN composer install --no-dev --no-scripts --no-suggest --optimize-autoloader \
- && composer require "daverandom/libdns:^2.0" --no-scripts --no-suggest --optimize-autoloader
+ && composer require "daverandom/libdns:^2.0.1" --no-scripts --no-suggest --optimize-autoloader
 
 COPY ./src /srv/src
 COPY ./res /srv/res
@@ -42,7 +43,7 @@ RUN composer warmup-opcode -- /srv
 
 # =============================
 
-FROM alpine:3.7
+FROM alpine:3.8
 
 WORKDIR /srv
 
