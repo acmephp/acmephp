@@ -105,7 +105,11 @@ class LibDnsResolver implements DnsResolverInterface
         $identicalEntries = [];
         foreach ($nameServers as $nameServer) {
             $ip = gethostbyname($nameServer);
-            $serverEntries = $this->request($domain, ResourceTypes::TXT, $ip);
+            try {
+                $serverEntries = $this->request($domain, ResourceTypes::TXT, $ip);
+            } catch (\Exception $e) {
+                throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $this->nameServer));
+            }
             $identicalEntries[json_encode($serverEntries)][] = $nameServer;
         }
 
