@@ -127,6 +127,9 @@ EOL;
         if (null !== $organizationUnitName = $distinguishedName->getOrganizationalUnitName()) {
             $payload['organizationalUnitName'] = $organizationUnitName;
         }
+        if (null !== $commonName = $distinguishedName->getCommonName()) {
+            $payload['commonName'] = $commonName;
+        }
         if (null !== $emailAddress = $distinguishedName->getEmailAddress()) {
             $payload['emailAddress'] = $emailAddress;
         }
