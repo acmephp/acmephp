@@ -91,8 +91,12 @@ class LibDnsResolver implements DnsResolverInterface
         $this->logger->debug('Fetched TXT records for domain', ['nsDomain' => $domain, 'servers' => $nameServers]);
         $identicalEntries = [];
         foreach ($nameServers as $nameServer) {
+            $ipNameServer = gethostbynamel($nameServer);
+            if (empty($ipNameServer)) {
+                throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $nameServer));
+            }
             try {
-                $response = $this->request($domain, ResourceTypes::TXT, gethostbyname($nameServer));
+                $response = $this->request($domain, ResourceTypes::TXT, $ipNameServer[0]);
             } catch (\Exception $e) {
                 throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $nameServer));
             }
@@ -124,11 +128,15 @@ class LibDnsResolver implements DnsResolverInterface
         $itemNameServers = [];
         $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $domain, 'servers' => $parentNameServers]);
         foreach ($parentNameServers as $parentNameServer) {
+            $ipNameServer = gethostbynamel($parentNameServer);
+            if (empty($ipNameServer)) {
+                continue;
+            }
             try {
                 $response = $this->request(
                     $domain,
                     ResourceTypes::NS,
-                    gethostbyname($parentNameServer)
+                    $ipNameServer[0]
                 );
             } catch (\Exception $e) {
                 // ignore errors
