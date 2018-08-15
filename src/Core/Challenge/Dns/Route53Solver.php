@@ -85,21 +85,19 @@ class Route53Solver implements MultipleChallengesSolverInterface
 
             $authorizationChallengesPerRecordName = $this->groupAuthorizationChallengesPerRecordName($authorizationChallengesForDomain);
             foreach ($authorizationChallengesPerRecordName as $recordName => $authorizationChallengesForRecordName) {
-                $recordValues = array_unique(array_map([$this->extractor, 'getRecordValue'], $authorizationChallengesForRecordName));
+                $challengeValues = array_unique(array_map([$this->extractor, 'getRecordValue'], $authorizationChallengesForRecordName));
+                $recordIndex = $this->getPreviousRecordIndex($zone['Id'], $recordName);
 
-                $changesPerZone[$zone['Id']][] = [
-                    'Action' => 'UPSERT',
-                    'ResourceRecordSet' => [
-                        'Name' => $recordName,
-                        'ResourceRecords' => array_map(function ($recordValue) {
-                            return [
-                                'Value' => sprintf('"%s"', $recordValue),
-                            ];
-                        }, $recordValues),
-                        'TTL' => 5,
-                        'Type' => 'TXT',
-                    ],
-                ];
+                if (0 === count(array_diff($challengeValues, array_keys($recordIndex)))) {
+                    $this->logger->debug('Record already defined', ['recordName' => $recordName]);
+                    continue;
+                }
+
+                foreach ($challengeValues as $recordValue) {
+                    $recordIndex[$recordValue] = time();
+                }
+
+                $changesPerZone[$zone['Id']][] = $this->getSaveRecordQuery($recordName, $recordIndex);
             }
         }
 
@@ -143,37 +141,13 @@ class Route53Solver implements MultipleChallengesSolverInterface
 
             $authorizationChallengesPerRecordName = $this->groupAuthorizationChallengesPerRecordName($authorizationChallengesForDomain);
             foreach ($authorizationChallengesPerRecordName as $recordName => $authorizationChallengesForRecordName) {
-                $recordSets = $this->client->listResourceRecordSets(
-                    [
-                        'HostedZoneId' => $zone['Id'],
-                        'StartRecordName' => $recordName,
-                        'StartRecordType' => 'TXT',
-                    ]
-                );
+                $challengeValues = array_unique(array_map([$this->extractor, 'getRecordValue'], $authorizationChallengesForRecordName));
+                $recordIndex = $this->getPreviousRecordIndex($zone['Id'], $recordName);
 
-                $recordSets = array_filter(
-                    $recordSets['ResourceRecordSets'],
-                    function ($recordSet) use ($recordName) {
-                        return $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type'];
-                    }
-                );
-
-                if (!$recordSets) {
-                    return;
+                foreach ($challengeValues as $recordValue) {
+                    unset($recordIndex[$recordValue]);
                 }
-
-                if (!isset($changesPerZone[$zone['Id']])) {
-                    $changesPerZone[$zone['Id']] = [];
-                }
-                $changesPerZone[$zone['Id']] = array_merge($changesPerZone[$zone['Id']], array_map(
-                    function ($recordSet) {
-                        return [
-                            'Action' => 'DELETE',
-                            'ResourceRecordSet' => $recordSet,
-                        ];
-                    },
-                    $recordSets
-                ));
+                $changesPerZone[$zone['Id']][] = $this->getSaveRecordQuery($recordName, $recordIndex);
             }
         }
 
@@ -188,6 +162,71 @@ class Route53Solver implements MultipleChallengesSolverInterface
                 ]
             );
         }
+    }
+
+    private function getPreviousRecordIndex($zoneId, $recordName)
+    {
+        $previousRecordSets = $this->client->listResourceRecordSets([
+            'HostedZoneId' => $zoneId,
+            'StartRecordName' => $recordName,
+            'StartRecordType' => 'TXT',
+        ]);
+        $recordSets = array_filter(
+            $previousRecordSets['ResourceRecordSets'],
+            function ($recordSet) use ($recordName) {
+                return $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type'];
+            }
+        );
+        $recordIndex = [];
+        foreach ($recordSets as $previousRecordSet) {
+            $previousTxt = array_map(function ($resourceRecord) {
+                return \stripslashes(trim($resourceRecord['Value'], '"'));
+            }, $previousRecordSet['ResourceRecords']);
+            // Search the special Index
+            foreach ($previousTxt as $index => $recordValue) {
+                if (null !== $previousIndex = json_decode($recordValue, true)) {
+                    $recordIndex = $previousIndex;
+                    unset($previousTxt[$index]);
+                    break;
+                }
+            }
+            // Set default value
+            foreach ($previousTxt as $recordValue) {
+                if (!isset($recordIndex[$recordValue])) {
+                    $recordIndex[$recordValue] = time();
+                }
+            }
+        }
+
+        return $recordIndex;
+    }
+
+    private function getSaveRecordQuery($recordName, array $recordIndex)
+    {
+        //remove old indexes
+        $limitTime = time() - 86400;
+        foreach ($recordIndex as $recordValue => $time) {
+            if ($time < $limitTime) {
+                unset($recordIndex[$recordValue]);
+            }
+        }
+
+        $recordValues = \array_keys($recordIndex);
+        $recordValues[] = json_encode($recordIndex);
+
+        return [
+            'Action' => 'UPSERT',
+            'ResourceRecordSet' => [
+                'Name' => $recordName,
+                'ResourceRecords' => array_map(function ($recordValue) {
+                    return [
+                        'Value' => sprintf('"%s"', addslashes($recordValue)),
+                    ];
+                }, $recordValues),
+                'TTL' => 5,
+                'Type' => 'TXT',
+            ],
+        ];
     }
 
     /**
