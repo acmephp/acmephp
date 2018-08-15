@@ -62,6 +62,17 @@ class Route53SolverTest extends \PHPUnit_Framework_TestCase
                 'IsTruncated' => false,
             ]
         );
+        $mockClient->listResourceRecordSets([
+            'HostedZoneId' => 2,
+            'StartRecordName' => '_acme-challenge.bar.com.',
+            'StartRecordType' => 'TXT',
+        ])->willReturn(
+            [
+                'ResourceRecordSets' => [
+                    ['Name' => '_acme-challenge.bar.com.', 'Type' => 'TXT', 'ResourceRecords' => [['Value' => '"foo"']]],
+                ],
+            ]
+        );
         $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled();
         $mockClient->waitUntil('ResourceRecordSetsChanged', Argument::any())->shouldBeCalled();
 
@@ -93,10 +104,14 @@ class Route53SolverTest extends \PHPUnit_Framework_TestCase
                 'IsTruncated' => false,
             ]
         );
-        $mockClient->listResourceRecordSets(Argument::any())->willReturn(
+        $mockClient->listResourceRecordSets([
+            'HostedZoneId' => 2,
+            'StartRecordName' => '_acme-challenge.bar.com.',
+            'StartRecordType' => 'TXT',
+        ])->willReturn(
             [
                 'ResourceRecordSets' => [
-                    ['Id' => 1, 'Name' => $recordName, 'Type' => 'TXT'],
+                    ['Name' => '_acme-challenge.bar.com.', 'Type' => 'TXT', 'ResourceRecords' => [['Value' => '"foo"']]],
                 ],
             ]
         );
