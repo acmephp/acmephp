@@ -88,7 +88,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
                 $challengeValues = array_unique(array_map([$this->extractor, 'getRecordValue'], $authorizationChallengesForRecordName));
                 $recordIndex = $this->getPreviousRecordIndex($zone['Id'], $recordName);
 
-                if (0 === count(array_diff($challengeValues, array_keys($recordIndex)))) {
+                if (0 === \count(array_diff($challengeValues, array_keys($recordIndex)))) {
                     $this->logger->debug('Record already defined', ['recordName' => $recordName]);
                     continue;
                 }
@@ -264,9 +264,9 @@ class Route53Solver implements MultipleChallengesSolverInterface
         $domainParts = explode('.', $domain);
         $domains = array_reverse(array_map(
             function ($index) use ($domainParts) {
-                return implode('.', array_slice($domainParts, count($domainParts) - $index));
+                return implode('.', \array_slice($domainParts, \count($domainParts) - $index));
             },
-            range(0, count($domainParts))
+            range(0, \count($domainParts))
         ));
 
         $zones = $this->getZones();

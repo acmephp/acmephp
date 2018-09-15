@@ -68,7 +68,7 @@ class DomainConfiguration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->beforeNormalization()
                 ->ifTrue(function ($conf) {
-                    return isset($conf['solver']) && !is_array($conf['solver']);
+                    return isset($conf['solver']) && !\is_array($conf['solver']);
                 })
                 ->then(function ($conf) {
                     $conf['solver'] = ['name' => $conf['solver']];
@@ -114,7 +114,7 @@ class DomainConfiguration implements ConfigurationInterface
                     ->defaultValue(null)
                     ->validate()
                         ->ifTrue(function ($item) {
-                            return 2 !== strlen($item);
+                            return 2 !== \strlen($item);
                         })
                         ->thenInvalid('The country code "%s" is not valid.')
                     ->end()
@@ -185,7 +185,7 @@ class DomainConfiguration implements ConfigurationInterface
                 ->end()
                 ->beforeNormalization()
                     ->ifTrue(function ($conf) {
-                        return isset($conf['solver']) && !is_array($conf['solver']);
+                        return isset($conf['solver']) && !\is_array($conf['solver']);
                     })
                     ->then(function ($conf) {
                         $conf['solver'] = ['name' => $conf['solver']];
@@ -206,10 +206,10 @@ class DomainConfiguration implements ConfigurationInterface
                 continue;
             }
 
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 continue;
             }
-            if (!is_array($array1[$key])) {
+            if (!\is_array($array1[$key])) {
                 throw new \Exception('Trying to merge incompatible array');
             }
 

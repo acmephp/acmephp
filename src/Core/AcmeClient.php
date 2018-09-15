@@ -103,7 +103,7 @@ class AcmeClient implements AcmeClientV2Interface
             'contact' => [],
         ];
 
-        if (is_string($email)) {
+        if (\is_string($email)) {
             $payload['contact'][] = 'mailto:'.$email;
         }
 
@@ -223,7 +223,7 @@ class AcmeClient implements AcmeClientV2Interface
 
         $endTime = time() + $timeout;
         $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
-        if (in_array($response['status'], ['pending', 'ready'])) {
+        if (\in_array($response['status'], ['pending', 'ready'])) {
             $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
 
             $csrContent = $this->csrSigner->signCertificateRequest($csr);
@@ -236,7 +236,7 @@ class AcmeClient implements AcmeClientV2Interface
         }
 
         // Waiting loop
-        while (time() <= $endTime && (!isset($response['status']) || in_array($response['status'], ['pending', 'ready']))) {
+        while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], ['pending', 'ready']))) {
             sleep(1);
             $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
         }
