@@ -125,7 +125,7 @@ usage
 $ acmephp run path-to-config.yml
 ```
 
-## Using docker
+## Using docker
 
 You can also use the docker image to generate certificates.
 Certificates and keys are stored into the volume `/root/.acmephp`
