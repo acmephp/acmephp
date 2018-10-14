@@ -59,7 +59,7 @@ class DnsValidator implements ValidatorInterface
         $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
 
         try {
-            return in_array($recordValue, $this->dnsResolver->getTxtEntries($recordName));
+            return \in_array($recordValue, $this->dnsResolver->getTxtEntries($recordName));
         } catch (AcmeDnsResolutionException $e) {
             return false;
         }

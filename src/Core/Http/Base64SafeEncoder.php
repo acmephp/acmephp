@@ -35,7 +35,7 @@ class Base64SafeEncoder
      */
     public function decode($input)
     {
-        $remainder = strlen($input) % 4;
+        $remainder = \strlen($input) % 4;
 
         if ($remainder) {
             $padlen = 4 - $remainder;

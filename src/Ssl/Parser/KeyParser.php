@@ -40,7 +40,7 @@ class KeyParser
 
         $rawData = openssl_pkey_get_details($resource);
 
-        if (!is_array($rawData)) {
+        if (!\is_array($rawData)) {
             throw new KeyParsingException(sprintf('Fail to parse key with error: %s', openssl_error_string()));
         }
 

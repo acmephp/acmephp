@@ -68,7 +68,7 @@ EOF
             $domainString = $parsedCertificate->getSubject();
 
             $alternativeNames = array_diff($parsedCertificate->getSubjectAlternativeNames(), [$parsedCertificate->getSubject()]);
-            if (count($alternativeNames)) {
+            if (\count($alternativeNames)) {
                 sort($alternativeNames);
                 $last = array_pop($alternativeNames);
                 foreach ($alternativeNames as $alternativeName) {
