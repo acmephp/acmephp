@@ -47,7 +47,7 @@ abstract class Key
     public function getDER()
     {
         $lines = explode("\n", trim($this->keyPEM));
-        unset($lines[count($lines) - 1]);
+        unset($lines[\count($lines) - 1]);
         unset($lines[0]);
         $result = implode('', $lines);
         $result = base64_decode($result);

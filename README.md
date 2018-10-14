@@ -1,16 +1,11 @@
 Acme PHP
 ========
 
-[![Join the chat at https://gitter.im/acmephp/acmephp](https://badges.gitter.im/acmephp/acmephp.svg)](https://gitter.im/acmephp/acmephp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Build Status](https://img.shields.io/travis/acmephp/acmephp/master.svg?style=flat-square)](https://travis-ci.org/acmephp/acmephp)
 [![Quality Score](https://img.shields.io/scrutinizer/g/acmephp/acmephp.svg?style=flat-square)](https://scrutinizer-ci.com/g/acmephp/acmephp)
 [![StyleCI](https://styleci.io/repos/59910490/shield)](https://styleci.io/repos/59910490)
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-
-> **Note:** This project is in beta but follow a strict BC policy, even in beta (see
-> [the Backward Compatibility policy of Acme PHP](#backward-compatibility-policy) for more informations).
 
 Acme PHP is a simple yet very extensible CLI client for Let's Encrypt that will help
 you get and renew free HTTPS certificates.
@@ -19,6 +14,9 @@ Acme PHP is also an initiative to bring a robust, stable and powerful implementa
 of the ACME protocol in PHP. Using the Acme PHP library and core components, you will be
 able to deeply integrate the management of your certificates directly in your application
 (for instance, renew your certificates from your web interface).
+
+> If you want to chat with us or have questions, ping
+> @tgalopin or @jderusse on the [Symfony Slack](https://symfony.com/support)!
 
 ## Why should I use Acme PHP when I have an official client?
 

@@ -9,10 +9,6 @@ Acme PHP Core library
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-> **Note:** This project is in beta but follow a strict BC policy, even in beta (see
-> [the Backward Compatibility policy of Acme PHP](https://github.com/acmephp/acmephp#backward-compatibility-policy)
-> for more informations).
-
 Acme PHP Core is the core of the Acme PHP project : it is a basis for the others more
 high-level repositories. It consists of a raw implementation of the Let's Encrypt ACME protocol.
 

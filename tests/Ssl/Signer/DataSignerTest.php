@@ -82,9 +82,9 @@ jIsyJPXjdAhzAparBWwYzxywy+8PMA==
 -----END PRIVATE KEY-----
 ');
 
-        $this->assertEquals(512, strlen($this->service->signData('foo', $privateKey)));
-        $this->assertEquals(512, strlen($this->service->signData('foo', $privateKey, OPENSSL_ALGO_SHA256)));
-        $this->assertEquals(512, strlen($this->service->signData('foo', $privateKey, OPENSSL_ALGO_SHA512)));
+        $this->assertEquals(512, \strlen($this->service->signData('foo', $privateKey)));
+        $this->assertEquals(512, \strlen($this->service->signData('foo', $privateKey, OPENSSL_ALGO_SHA256)));
+        $this->assertEquals(512, \strlen($this->service->signData('foo', $privateKey, OPENSSL_ALGO_SHA512)));
         $this->assertEquals(
             $this->service->signData('foo', $privateKey),
             $this->service->signData('foo', $privateKey, OPENSSL_ALGO_SHA256)

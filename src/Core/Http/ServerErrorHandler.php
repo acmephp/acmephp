@@ -63,7 +63,7 @@ class ServerErrorHandler
 
         $body = \GuzzleHttp\Psr7\copy_to_string($response->getBody());
 
-        if (strlen($body) > 120) {
+        if (\strlen($body) > 120) {
             return substr($body, 0, 120).' (truncated...)';
         }
 

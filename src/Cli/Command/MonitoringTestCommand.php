@@ -53,7 +53,7 @@ EOF
 
         $level = $input->getArgument('level');
 
-        if (!in_array($level, [HandlerBuilderInterface::LEVEL_ERROR, HandlerBuilderInterface::LEVEL_INFO], true)) {
+        if (!\in_array($level, [HandlerBuilderInterface::LEVEL_ERROR, HandlerBuilderInterface::LEVEL_INFO], true)) {
             throw new AcmeCliException('Level '.$level.' is not valid (available levels: info, error)');
         }
 

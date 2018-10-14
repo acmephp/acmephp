@@ -46,7 +46,7 @@ class CertificateOrder
 
         foreach ($authorizationsChallenges as &$authorizationChallenges) {
             foreach ($authorizationChallenges as &$authorizationChallenge) {
-                if (is_array($authorizationChallenge)) {
+                if (\is_array($authorizationChallenge)) {
                     $authorizationChallenge = AuthorizationChallenge::fromArray($authorizationChallenge);
                 }
             }

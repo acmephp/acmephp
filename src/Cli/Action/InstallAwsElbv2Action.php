@@ -22,7 +22,7 @@ class InstallAwsElbv2Action extends AbstractAwsAction
     {
         $elbv2Client = $this->clientFactory->getElbv2Client($region);
         $elb = $elbv2Client->describeLoadBalancers(['Names' => [$loadBalancerName]]);
-        if (1 !== count($elb['LoadBalancers'])) {
+        if (1 !== \count($elb['LoadBalancers'])) {
             throw new \Exception(sprintf('Unable to find Load balancer "%s"', $loadBalancerName));
         }
         $loadBalancerArn = $elb['LoadBalancers'][0]['LoadBalancerArn'];
