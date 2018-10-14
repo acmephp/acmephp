@@ -228,10 +228,10 @@ class SelfUpdateCommand extends Command
 
             $newVersion = $updater->getNewVersion();
             $oldVersion = $updater->getOldVersion();
-            if (40 === strlen($newVersion)) {
+            if (40 === \strlen($newVersion)) {
                 $newVersion = 'dev-'.$newVersion;
             }
-            if (40 === strlen($oldVersion)) {
+            if (40 === \strlen($oldVersion)) {
                 $oldVersion = 'dev-'.$oldVersion;
             }
 

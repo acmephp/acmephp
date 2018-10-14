@@ -111,7 +111,7 @@ class LibDnsResolver implements DnsResolverInterface
         }
 
         $this->logger->info('DNS records fetched', ['mapping' => $identicalEntries]);
-        if (1 !== count($identicalEntries)) {
+        if (1 !== \count($identicalEntries)) {
             throw new AcmeDnsResolutionException('Dns not fully propagated');
         }
 
@@ -124,7 +124,7 @@ class LibDnsResolver implements DnsResolverInterface
             return [$this->nameServer];
         }
 
-        $parentNameServers = $this->getNameServers(implode('.', array_slice(explode('.', $domain), 1)));
+        $parentNameServers = $this->getNameServers(implode('.', \array_slice(explode('.', $domain), 1)));
         $itemNameServers = [];
         $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $domain, 'servers' => $parentNameServers]);
         foreach ($parentNameServers as $parentNameServer) {

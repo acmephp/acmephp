@@ -98,7 +98,7 @@ class FilesystemAction extends AbstractAction
     {
         $masterContent = $this->master->read($path);
 
-        if (!is_string($masterContent)) {
+        if (!\is_string($masterContent)) {
             throw new \RuntimeException(sprintf('File %s could not be read on master storage', $path));
         }
 

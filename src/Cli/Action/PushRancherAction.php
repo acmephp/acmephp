@@ -90,7 +90,7 @@ class PushRancherAction implements ActionInterface
             $certificates = array_merge($certificates, $page['data']);
 
             $nextPage = null;
-            if (isset($page['pagination'], $page['pagination']['next']) && is_string($page['pagination']['next'])) {
+            if (isset($page['pagination'], $page['pagination']['next']) && \is_string($page['pagination']['next'])) {
                 $nextPage = $page['pagination']['next'];
             }
         }

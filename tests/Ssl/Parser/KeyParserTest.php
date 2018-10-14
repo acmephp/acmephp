@@ -67,8 +67,8 @@ class KeyParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(OPENSSL_KEYTYPE_RSA, $result->getType());
         $this->assertEquals(4096, $result->getBits());
         $this->assertInternalType('array', $result->getDetails());
-        $this->assertEquals(256, strlen($result->getDetail('p')));
-        $this->assertEquals(256, strlen($result->getDetail('q')));
+        $this->assertEquals(256, \strlen($result->getDetail('p')));
+        $this->assertEquals(256, \strlen($result->getDetail('q')));
         $this->assertEquals(trim($this->getPublicKey()->getPEM()), trim($result->getKey()));
     }
 

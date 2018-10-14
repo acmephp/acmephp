@@ -23,7 +23,7 @@ class SimpleDnsResolver implements DnsResolverInterface
      */
     public static function isSupported()
     {
-        return function_exists('dns_get_record');
+        return \function_exists('dns_get_record');
     }
 
     /**

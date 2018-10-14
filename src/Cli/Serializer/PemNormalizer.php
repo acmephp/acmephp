@@ -42,7 +42,7 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     public function supportsNormalization($data, $format = null)
     {
-        return is_object($data) && ($data instanceof Certificate || $data instanceof Key);
+        return \is_object($data) && ($data instanceof Certificate || $data instanceof Key);
     }
 
     /**
@@ -50,6 +50,6 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return is_string($data);
+        return \is_string($data);
     }
 }
