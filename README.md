@@ -9,9 +9,6 @@ Acme PHP
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-> **Note:** This project is in beta but follow a strict BC policy, even in beta (see
-> [the Backward Compatibility policy of Acme PHP](#backward-compatibility-policy) for more informations).
-
 Acme PHP is a simple yet very extensible CLI client for Let's Encrypt that will help
 you get and renew free HTTPS certificates.
 

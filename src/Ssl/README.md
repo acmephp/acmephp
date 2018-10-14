@@ -9,13 +9,6 @@ Acme PHP SSL library
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-> **Note:** This project is in beta but follow a strict BC policy, even in beta (see
-> [the Backward Compatibility policy of Acme PHP](https://github.com/acmephp/acmephp#backward-compatibility-policy)
-> for more informations).
->
-> Moreover, this repository is in beta stage only to follow the same versionning as the global project.
-> This library's API won't change in the near future (we don't want BC breaks now).
-
 Acme PHP SSL is a PHP wrapper around OpenSSL extension providing SSL encoding,
 decoding, parsing and signing features.
 
