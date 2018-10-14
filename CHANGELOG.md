@@ -1,3 +1,82 @@
+14/10/2018 12:05  1.0.0  First stable release
+1e4ba50 Merge pull request #135 from acmephp/prepare-release
+13866eb Update README
+9d773bb Remove beta messages
+25e986e Prepare stable release, use only PrettyCI and fix CS
+6267095 Merge pull request #134 from ScullWM/patch-1
+542ed28 Fix markdown error
+c90e0a8 Merge pull request #132 from jderusse/optimize-route53
+c6b767a Optimize Route53 resolution
+d4d2fa6 Merge pull request #131 from jderusse/catch-unresolvabled-nameserver
+d57be04 Merge pull request #130 from alexmckinnon/csr-payload
+1fd6427 Add common name to CSR payload
+95f30c4 atch case where NameServer is not resolvable
+421a4ab Merge pull request #128 from jderusse/update-dependencies
+cdde24e Update dependencies
+9b8ae4c Merge pull request #127 from jderusse/improve-libdns-fetching
+d553270 Improve DNS checking
+93bf725 Merge pull request #126 from jderusse/catch-libdns-exception-2
+c40f93b Catch exception on external calls
+9bdd3ed Merge pull request #125 from jderusse/catch-libdns-exception
+1930de5 Wrap external call in try/catch block
+03b5532 Merge pull request #123 from jderusse/fix-status
+c2b6b8d Allow "ready" status for orders with valid challenges
+f039226 Merge pull request #119 from acmephp/auto-split
+9ea70bc Automate split
+32ccf3f Merge pull request #120 from jderusse/refactor-travis
+2b5b296 Add comments
+9b7ea2b Switch to travis pipeline
+bbe4b9b Merge pull request #116 from jderusse/fix-sftp-config
+db6c434 Merge pull request #115 from jderusse/fix-missing-lib
+db391fc Add lib-xml used by SFTP adapter
+922bd70 Fix typo in config
+4a08ccc Merge pull request #113 from jderusse/fix-route53-domain-lookupx
+bce7338 Fix Route53 zone search
+c08891c Merge pull request #109 from jderusse/optimize-resolve
+5dddf23 Optimize Route53 solvin
+166dde3 Merge pull request #112 from kirtangajjar/fix-nginxproxy-wildcard
+a848329 Merge pull request #111 from kirtangajjar/fix-nginxproxy-crt-generation
+01f00c8 Merge pull request #107 from jderusse/feature-improve-error-messages
+34bd808 Merge pull request #108 from jderusse/fix-payload
+ca6531f Fix nginxproxy wildcard certificates
+bac8140 Fixed in a bit better way
+d081953 Fix nginxproxy crt generation
+09ff221 Remove non linear index on array
+26e672a Improve error messages
+74dd66d Merge pull request #104 from benjilevens/laravel-5.5
+55d7b9b Merge pull request #106 from benjilevens/jose-json
+2dd3303 Merge pull request #102 from jderusse/feature-skip-challenge
+d4dcd9f Merge pull request #105 from benjilevens/request-certificate-calling-finalize-order
+503c4df Use more appropriate Accept and Content-Type headers
+475f359 Support multiple versions of swift mailer
+4b9dac7 Make requestCertificate call finalizeOrder with required parameters
+005081d Bump Swiftmailer version to prevent composer conflicts when installing into a Laravel 5.5 project
+82e5e5b Skip challenge when no renewal
+fd54a08 Merge pull request #101 from jderusse/feature-multiple-challenges
+dd88adc Optimize challenge solving by solving several challenges at once
+0e618e3 Merge pull request #100 from jderusse/feature-file-solver
+898c939 Use service locator
+04c9814 Add a filesystem solver (to upload http challenge)
+9818d39 Merge pull request #98 from jderusse/fix-tree
+208913f Refactor file tree
+4966d60 Merge pull request #96 from jderusse/fix-combined-public
+1671a5b Merge pull request #97 from jderusse/fix-status-expired
+e327321 Add an option to hide/show expired certificates
+51ebab0 Move combined certificate in private folder
+bd1478e Merge pull request #95 from jderusse/fix-ci
+a08cb2e Fix CS
+1d590bb Switch from styleCi to travis
+477929d Merge pull request #94 from jderusse/fix-debug
+75552fd Remove debug
+c4b8c66 Merge pull request #87 from jderusse/feature/run
+38e49cb Add a run command
+15c1809 Merge pull request #93 from jderusse/feature/docker
+9907669 Add a dockerfile
+a7b8581 Merge pull request #92 from jderusse/v2
+1550972 Implement v2 protocol
+6d15380 Implement ELB installation
+3c8b06a Add Route53 solver
+f306733 Bump to dev
 21/01/2018 18:31  1.0.0-beta5  Fix deprecations and allow setting KeyPair from Client object
 466e009 Release of new version 1.0.0-beta5
 0a94b15 Fix mailer handler
