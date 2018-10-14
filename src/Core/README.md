@@ -1,8 +1,6 @@
 Acme PHP Core library
 =====================
 
-[![Join the chat at https://gitter.im/acmephp/acmephp](https://badges.gitter.im/acmephp/acmephp.svg)](https://gitter.im/acmephp/acmephp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Build Status](https://img.shields.io/travis/acmephp/acmephp/master.svg?style=flat-square)](https://travis-ci.org/acmephp/acmephp)
 [![Quality Score](https://img.shields.io/scrutinizer/g/acmephp/acmephp.svg?style=flat-square)](https://scrutinizer-ci.com/g/acmephp/acmephp)
 [![StyleCI](https://styleci.io/repos/59910490/shield)](https://styleci.io/repos/59910490)
@@ -11,6 +9,9 @@ Acme PHP Core library
 
 Acme PHP Core is the core of the Acme PHP project : it is a basis for the others more
 high-level repositories. It consists of a raw implementation of the Let's Encrypt ACME protocol.
+
+> If you want to chat with us or have questions, ping
+> @tgalopin or @jderusse on the [Symfony Slack](https://symfony.com/support)!
 
 ## When use Acme PHP Core?
 
