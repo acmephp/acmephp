@@ -29,7 +29,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=5.5.9",
         "ext-openssl": "*",
         "guzzlehttp/guzzle": "^6.0",
         "symfony/config": "^3.0",
@@ -64,6 +64,11 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\AcmePhp\\": "tests/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "5.5.9"
         }
     },
     "extra": {
