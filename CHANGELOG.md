@@ -1,3 +1,10 @@
+27/10/2018 12:07  1.0.1  Fix PHP version issue
+6079833 Merge pull request #137 from acmephp/fix-php-version
+6d6e2d2 Fix tests configuration
+12ed5fc Fix PHP version in composer.json
+958d497 Remove Gitter
+a4effb8 Add link to core and ssl libraries in README
+b17236e Bump to dev
 14/10/2018 12:05  1.0.0  First stable release
 1e4ba50 Merge pull request #135 from acmephp/prepare-release
 13866eb Update README
