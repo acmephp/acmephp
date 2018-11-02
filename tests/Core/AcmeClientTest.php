@@ -60,6 +60,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
         $this->assertArrayHasKey('key', $data);
 
         $solver = new SimpleHttpSolver();
+
         /*
          * Ask for domain challenge
          */
@@ -105,7 +106,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Revoke certificate
          *
-         * Acme will not let you revoke the same cert twice so this test should pass both cases
+         * ACME will not let you revoke the same cert twice so this test should pass both cases
          */
         try {
             $this->client->revokeCertificate($response->getCertificate());

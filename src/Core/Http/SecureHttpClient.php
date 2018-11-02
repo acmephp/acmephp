@@ -115,7 +115,7 @@ class SecureHttpClient
         $protected = [
             'alg' => 'RS256',
             'jwk' => $this->getJWK(),
-            'nonce' => $this->getNonce($endpoint),
+            'nonce' => $this->getNonce(),
             'url' => $endpoint,
         ];
 
@@ -232,7 +232,7 @@ class SecureHttpClient
 
         try {
             if ('' === $body) {
-                return;
+                throw new \InvalidArgumentException('Empty body received.');
             }
 
             $data = JsonDecoder::decode($body, true);
