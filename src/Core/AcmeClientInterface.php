@@ -15,11 +15,14 @@ use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestTimedOutException;
+use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\RevocationReason;
+use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 
@@ -109,6 +112,14 @@ interface AcmeClientInterface
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
     public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180);
+
+    /**
+     * @param Certificate           $certificate
+     * @param RevocationReason|null $revocationReason
+     *
+     * @throws CertificateRevocationException
+     */
+    public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null);
 
     /**
      * Get the HTTP client.

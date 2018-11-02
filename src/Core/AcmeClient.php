@@ -14,6 +14,7 @@ namespace AcmePhp\Core;
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\CertificateRequestFailedException;
+use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
@@ -21,6 +22,7 @@ use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Protocol\CertificateOrder;
 use AcmePhp\Core\Protocol\ResourcesDirectory;
+use AcmePhp\Core\Protocol\RevocationReason;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -60,7 +62,7 @@ class AcmeClient implements AcmeClientV2Interface
     private $directory;
 
     /**
-     * @var ResourcesAccount
+     * @var string
      */
     private $account;
 
@@ -219,7 +221,7 @@ class AcmeClient implements AcmeClientV2Interface
      */
     public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180)
     {
-        Assert::integer($timeout, 'requestCertificate::$timeout expected an integer. Got: %s');
+        Assert::integer($timeout, 'finalizeOrder::$timeout expected an integer. Got: %s');
 
         $endTime = time() + $timeout;
         $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
@@ -236,7 +238,7 @@ class AcmeClient implements AcmeClientV2Interface
         }
 
         // Waiting loop
-        while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], ['pending', 'ready']))) {
+        while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], ['pending', 'processing', 'ready']))) {
             sleep(1);
             $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
         }
@@ -252,6 +254,40 @@ class AcmeClient implements AcmeClientV2Interface
         }
 
         return new CertificateResponse($csr, $certificatesChain);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null)
+    {
+        if (!$this->getResourceUrl(ResourcesDirectory::REVOKE_CERT)) {
+            throw new CertificateRevocationException('This ACME server does not support certificate revocation.');
+        }
+
+        if (null === $revocationReason) {
+            $revocationReason = RevocationReason::createDefaultReason();
+        }
+
+        openssl_x509_export(openssl_x509_read($certificate->getPEM()), $formattedPem);
+
+        $formattedPem = str_ireplace('-----BEGIN CERTIFICATE-----', '', $formattedPem);
+        $formattedPem = str_ireplace('-----END CERTIFICATE-----', '', $formattedPem);
+        $formattedPem = $this->getHttpClient()->getBase64Encoder()->encode(base64_decode(trim($formattedPem)));
+
+        try {
+            $this->getHttpClient()->signedKidRequest(
+                'POST',
+                $this->getResourceUrl(ResourcesDirectory::REVOKE_CERT),
+                $this->getResourceAccount(),
+                ['certificate' => $formattedPem, 'reason' => $revocationReason->getReasonType()],
+                false
+            );
+        } catch (AcmeCoreServerException $e) {
+            throw new CertificateRevocationException($e->getMessage(), $e);
+        } catch (AcmeCoreClientException $e) {
+            throw new CertificateRevocationException($e->getMessage(), $e);
+        }
     }
 
     /**

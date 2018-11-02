@@ -14,6 +14,7 @@ namespace Tests\AcmePhp\Core;
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\AcmeClientV2Interface;
 use AcmePhp\Core\Challenge\Http\SimpleHttpSolver;
+use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;
@@ -59,6 +60,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
         $this->assertArrayHasKey('key', $data);
 
         $solver = new SimpleHttpSolver();
+
         /*
          * Ask for domain challenge
          */
@@ -100,5 +102,16 @@ class AcmeClientTest extends AbstractFunctionnalTest
         $this->assertInstanceOf(CertificateResponse::class, $response);
         $this->assertEquals($csr, $response->getCertificateRequest());
         $this->assertInstanceOf(Certificate::class, $response->getCertificate());
+
+        /*
+         * Revoke certificate
+         *
+         * ACME will not let you revoke the same cert twice so this test should pass both cases
+         */
+        try {
+            $this->client->revokeCertificate($response->getCertificate());
+        } catch (CertificateRevocationException $e) {
+            $this->assertContains('Unable to find specified certificate', $e->getPrevious()->getPrevious()->getMessage());
+        }
     }
 }
