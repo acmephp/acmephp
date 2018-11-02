@@ -2,10 +2,11 @@ Acme PHP
 ========
 
 [![Build Status](https://img.shields.io/travis/acmephp/acmephp/master.svg?style=flat-square)](https://travis-ci.org/acmephp/acmephp)
-[![Quality Score](https://img.shields.io/scrutinizer/g/acmephp/acmephp.svg?style=flat-square)](https://scrutinizer-ci.com/g/acmephp/acmephp)
 [![StyleCI](https://styleci.io/repos/59910490/shield)](https://styleci.io/repos/59910490)
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+
+[![SymfonyInsight](https://insight.symfony.com/projects/4eb121bf-9f9d-4d16-813b-f98f07003eaf/big.svg)](https://insight.symfony.com/projects/4eb121bf-9f9d-4d16-813b-f98f07003eaf)
 
 Acme PHP is a simple yet very extensible CLI client for Let's Encrypt that will help
 you get and renew free HTTPS certificates.

@@ -16,17 +16,8 @@ namespace AcmePhp\Cli\Exception;
  */
 class CommandFlowException extends AcmeCliException
 {
-    /**
-     * @var string
-     */
     private $missing;
-    /**
-     * @var string
-     */
     private $command;
-    /**
-     * @var array
-     */
     private $arguments;
 
     /**
@@ -51,5 +42,29 @@ class CommandFlowException extends AcmeCliException
         ));
 
         parent::__construct($message, $previous);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMissing()
+    {
+        return $this->missing;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommand()
+    {
+        return $this->command;
+    }
+
+    /**
+     * @return array
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
     }
 }
