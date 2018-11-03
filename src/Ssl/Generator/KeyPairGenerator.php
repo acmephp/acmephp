@@ -11,10 +11,12 @@
 
 namespace AcmePhp\Ssl\Generator;
 
+use AcmePhp\Ssl\Exception\KeyGenerationException;
 use AcmePhp\Ssl\Exception\KeyPairGenerationException;
+use AcmePhp\Ssl\Generator\EcKey\EcKeyGenerator;
+use AcmePhp\Ssl\Generator\RsaKey\RsaKeyGenerator;
+use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
 use AcmePhp\Ssl\KeyPair;
-use AcmePhp\Ssl\PrivateKey;
-use AcmePhp\Ssl\PublicKey;
 use Webmozart\Assert\Assert;
 
 /**
@@ -24,58 +26,47 @@ use Webmozart\Assert\Assert;
  */
 class KeyPairGenerator
 {
+    private $generator;
+
+    public function __construct(PrivateKeyGeneratorInterface $generator = null)
+    {
+        $this->generator = $generator ?: new ChainPrivateKeyGenerator(
+            [
+                new RsaKeyGenerator(),
+                new EcKeyGenerator(),
+            ]
+        );
+    }
+
     /**
      * Generate KeyPair.
      *
-     * @param int $keySize size of the key
+     * @param KeyOption $keyOption configuration of the key to generate
      *
      * @throws KeyPairGenerationException when OpenSSL failed to generate keys
      *
      * @return KeyPair
      */
-    public function generateKeyPair($keySize = 4096)
+    public function generateKeyPair($keyOption = null)
     {
-        Assert::integer($keySize, __METHOD__.'::$keySize should be an integer. Got: %s');
-
-        $key = openssl_pkey_new(
-            [
-                'private_key_type' => OPENSSL_KEYTYPE_RSA,
-                'private_key_bits' => $keySize,
-            ]
-        );
-
-        if (!$key) {
-            throw new KeyPairGenerationException(
-                sprintf(
-                    'OpenSSL key creation failed during generation with error: %s',
-                    openssl_error_string()
-                )
-            );
+        if (null === $keyOption) {
+            $keyOption = new RsaKeyOption();
         }
-
-        if (!openssl_pkey_export($key, $privateKey)) {
-            throw new KeyPairGenerationException(
-                sprintf(
-                    'OpenSSL key export failed during generation with error: %s',
-                    openssl_error_string()
-                )
-            );
+        if (\is_int($keyOption)) {
+            @trigger_error('Passing a keySize to "generateKeyPair" is deprecated since version 1.1 and will be removed in 2.0. Pass an instance of KeyOption instead', E_USER_DEPRECATED);
+            $keyOption = new RsaKeyOption($keyOption);
         }
+        Assert::isInstanceOf($keyOption, KeyOption::class);
 
-        $details = openssl_pkey_get_details($key);
-
-        if (!\is_array($details)) {
-            throw new KeyPairGenerationException(
-                sprintf(
-                    'OpenSSL key parsing failed during generation with error: %s',
-                    openssl_error_string()
-                )
-            );
+        try {
+            $privateKey = $this->generator->generatePrivateKey($keyOption);
+        } catch (KeyGenerationException $e) {
+            throw new KeyPairGenerationException('Fail to generate a KeyPair with the given options', 0, $e);
         }
 
         return new KeyPair(
-            new PublicKey($details['key']),
-            new PrivateKey($privateKey)
+            $privateKey->getPublicKey(),
+            $privateKey
         );
     }
 }

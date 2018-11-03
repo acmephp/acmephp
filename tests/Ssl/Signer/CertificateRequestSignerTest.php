@@ -14,6 +14,7 @@ namespace Tests\AcmePhp\Ssl\Signer;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\Generator\KeyPairGenerator;
+use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
 use PHPUnit\Framework\TestCase;
 
@@ -35,7 +36,7 @@ class CertificateRequestSignerTest extends TestCase
             'acmephp.com',
             'FR', 'france', 'Paris', 'acme', 'IT', 'qa@acmephp.com', []
         );
-        $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(1024);
+        $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
         $result = $this->service->signCertificateRequest(
             new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
@@ -63,7 +64,7 @@ class CertificateRequestSignerTest extends TestCase
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com'
         );
-        $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(1024);
+        $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
         $result = $this->service->signCertificateRequest(
             new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
@@ -85,7 +86,7 @@ class CertificateRequestSignerTest extends TestCase
             'acmephp.com',
             'FR', 'france', 'Paris', 'acme', 'IT', 'qa@acmephp.com', ['www.acmephp.com']
         );
-        $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(1024);
+        $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
         $result = $this->service->signCertificateRequest(
             new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)

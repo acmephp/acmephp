@@ -13,6 +13,8 @@
         "certificate",
         "ssl",
         "openssl",
+        "RSA",
+        "ECDSA",
         "CSR",
         "x509",
         "cli"
@@ -33,6 +35,7 @@
         "ext-hash": "*",
         "ext-json": "*",
         "ext-filter": "*",
+        "ext-mbstring": "*",
         "ext-openssl": "*",
         "aws/aws-sdk-php": "^3.38",
         "guzzlehttp/guzzle": "^6.0",

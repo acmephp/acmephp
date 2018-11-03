@@ -58,6 +58,8 @@ class KeyParser
             $details = $rawData['dsa'];
         } elseif (OPENSSL_KEYTYPE_DH === $rawData['type']) {
             $details = $rawData['dh'];
+        } elseif (OPENSSL_KEYTYPE_EC === $rawData['type']) {
+            $details = $rawData['ec'];
         }
 
         return new ParsedKey($key, $rawData['key'], $rawData['bits'], $rawData['type'], $details);

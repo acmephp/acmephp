@@ -13,6 +13,7 @@ namespace AcmePhp\Ssl\Signer;
 
 use AcmePhp\Ssl\Exception\DataSigningException;
 use AcmePhp\Ssl\PrivateKey;
+use Webmozart\Assert\Assert;
 
 /**
  * Provide tools to sign data using a private key.
@@ -21,21 +22,142 @@ use AcmePhp\Ssl\PrivateKey;
  */
 class DataSigner
 {
+    const FORMAT_DER = 'DER';
+    const FORMAT_ECDSA = 'ECDSA';
+
     /**
      * Generate a signature of the given data using a private key and an algorithm.
      *
-     * @param string     $data
-     * @param PrivateKey $privateKey
-     * @param int        $algorithm
+     * @param string     $data       Data to sign
+     * @param PrivateKey $privateKey Key used to sign
+     * @param int        $algorithm  Signature algorithm defined by constants OPENSSL_ALGO_*
+     * @param string     $format     Format of the output
      *
      * @return string
      */
-    public function signData($data, PrivateKey $privateKey, $algorithm = OPENSSL_ALGO_SHA256)
+    public function signData($data, PrivateKey $privateKey, $algorithm = OPENSSL_ALGO_SHA256, $format = self::FORMAT_DER)
     {
+        Assert::oneOf($format, [self::FORMAT_ECDSA, self::FORMAT_DER], 'The format %s to sign request does not exists. Available format: %s');
+
         if (!openssl_sign($data, $signature, $privateKey->getResource(), $algorithm)) {
-            throw new DataSigningException(sprintf('OpenSSL data signing failed with error: %s', openssl_error_string()));
+            throw new DataSigningException(
+                sprintf('OpenSSL data signing failed with error: %s', openssl_error_string())
+            );
         }
 
-        return $signature;
+        switch ($format) {
+            case self::FORMAT_DER:
+                return $signature;
+            case self::FORMAT_ECDSA:
+                switch ($algorithm) {
+                    case OPENSSL_ALGO_SHA256:
+                        return $this->DERtoECDSA($signature, 64);
+                    case OPENSSL_ALGO_SHA384:
+                        return $this->DERtoECDSA($signature, 96);
+                    case OPENSSL_ALGO_SHA512:
+                        return $this->DERtoECDSA($signature, 132);
+                }
+                throw new DataSigningException('Unable to generate a ECDSA signature with the given algorithm');
+            default:
+                throw new DataSigningException('The given format does exists');
+        }
+    }
+
+    /**
+     * Convert a ECDSA signature into DER.
+     *
+     * The code is a copy/paste from another lib (web-token/jwt-core) which is not compatible with php <= 7.0
+     *
+     * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
+     */
+    private function ECDSAtoDER($signature, $partLength)
+    {
+        $signature = \unpack('H*', $signature)[1];
+        if (\mb_strlen($signature, '8bit') !== 2 * $partLength) {
+            throw new DataSigningException('Invalid length.');
+        }
+        $R = \mb_substr($signature, 0, $partLength, '8bit');
+        $S = \mb_substr($signature, $partLength, null, '8bit');
+
+        $R = $this->preparePositiveInteger($R);
+        $Rl = \mb_strlen($R, '8bit') / 2;
+        $S = $this->preparePositiveInteger($S);
+        $Sl = \mb_strlen($S, '8bit') / 2;
+        $der = \pack(
+            'H*',
+            '30'.($Rl + $Sl + 4 > 128 ? '81' : '').\dechex($Rl + $Sl + 4)
+            .'02'.\dechex($Rl).$R
+            .'02'.\dechex($Sl).$S
+        );
+
+        return $der;
+    }
+
+    /**
+     * Convert a DER signature into ECDSA.
+     *
+     * The code is a copy/paste from another lib (web-token/jwt-core) which is not compatible with php <= 7.0
+     *
+     * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
+     */
+    private function DERtoECDSA($der, $partLength)
+    {
+        $hex = \unpack('H*', $der)[1];
+        if ('30' !== \mb_substr($hex, 0, 2, '8bit')) { // SEQUENCE
+            throw new DataSigningException('Invalid signature provided');
+        }
+        if ('81' === \mb_substr($hex, 2, 2, '8bit')) { // LENGTH > 128
+            $hex = \mb_substr($hex, 6, null, '8bit');
+        } else {
+            $hex = \mb_substr($hex, 4, null, '8bit');
+        }
+        if ('02' !== \mb_substr($hex, 0, 2, '8bit')) { // INTEGER
+            throw new DataSigningException('Invalid signature provided');
+        }
+
+        $Rl = \hexdec(\mb_substr($hex, 2, 2, '8bit'));
+        $R = $this->retrievePositiveInteger(\mb_substr($hex, 4, $Rl * 2, '8bit'));
+        $R = \str_pad($R, $partLength, '0', STR_PAD_LEFT);
+
+        $hex = \mb_substr($hex, 4 + $Rl * 2, null, '8bit');
+        if ('02' !== \mb_substr($hex, 0, 2, '8bit')) { // INTEGER
+            throw new DataSigningException('Invalid signature provided');
+        }
+        $Sl = \hexdec(\mb_substr($hex, 2, 2, '8bit'));
+        $S = $this->retrievePositiveInteger(\mb_substr($hex, 4, $Sl * 2, '8bit'));
+        $S = \str_pad($S, $partLength, '0', STR_PAD_LEFT);
+
+        return \pack('H*', $R.$S);
+    }
+
+    /**
+     * The code is a copy/paste from another lib (web-token/jwt-core) which is not compatible with php <= 7.0.
+     *
+     * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
+     */
+    private function preparePositiveInteger($data)
+    {
+        if (\mb_substr($data, 0, 2, '8bit') > '7f') {
+            return '00'.$data;
+        }
+        while ('00' === \mb_substr($data, 0, 2, '8bit') && \mb_substr($data, 2, 2, '8bit') <= '7f') {
+            $data = \mb_substr($data, 2, null, '8bit');
+        }
+
+        return $data;
+    }
+
+    /**
+     * The code is a copy/paste from another lib (web-token/jwt-core) which is not compatible with php <= 7.0.
+     *
+     * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
+     */
+    private function retrievePositiveInteger($data)
+    {
+        while ('00' === \mb_substr($data, 0, 2, '8bit') && \mb_substr($data, 2, 2, '8bit') > '7f') {
+            $data = \mb_substr($data, 2, null, '8bit');
+        }
+
+        return $data;
     }
 }

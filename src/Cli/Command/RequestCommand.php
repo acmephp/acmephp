@@ -13,6 +13,7 @@ namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Cli\ActionHandler\ActionHandler;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
+use AcmePhp\Cli\Command\Helper\KeyOptionCommandTrait;
 use AcmePhp\Cli\Exception\CommandFlowException;
 use AcmePhp\Cli\Repository\Repository;
 use AcmePhp\Cli\Repository\RepositoryInterface;
@@ -20,6 +21,7 @@ use AcmePhp\Core\AcmeClientV2Interface;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
+use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\ParsedCertificate;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,6 +34,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RequestCommand extends AbstractCommand
 {
+    use KeyOptionCommandTrait;
+
     /**
      * @var RepositoryInterface
      */
@@ -63,6 +67,7 @@ class RequestCommand extends AbstractCommand
                 new InputOption('unit', null, InputOption::VALUE_REQUIRED, 'Your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")'),
                 new InputOption('email', null, InputOption::VALUE_REQUIRED, 'Your e-mail address (field "E" of the distinguished name)'),
                 new InputOption('alternative-name', 'a', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Alternative domains for this certificate'),
+                new InputOption('key-type', 'k', InputOption::VALUE_REQUIRED, 'The type of private key used to sign certificates (one of RSA, EC)', 'RSA'),
             ])
             ->setDescription('Request a SSL certificate for a domain')
             ->setHelp(<<<'EOF'
@@ -106,7 +111,7 @@ EOF
         ]);
 
         // Certificate first request
-        return $this->executeFirstRequest($domain, $alternativeNames);
+        return $this->executeFirstRequest($domain, $alternativeNames, $input->getOption('key-type'));
     }
 
     private function hasValidCertificate($domain, array $alternativeNames)
@@ -135,8 +140,9 @@ EOF
      *
      * @param string $domain
      * @param array  $alternativeNames
+     * @param string $keyType
      */
-    private function executeFirstRequest($domain, array $alternativeNames)
+    private function executeFirstRequest($domain, array $alternativeNames, $keyType)
     {
         $introduction = <<<'EOF'
 
@@ -148,8 +154,10 @@ EOF;
 
         $this->info(sprintf($introduction, $domain));
 
-        // Generate domain key pair
-        $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
+        /* @var KeyPair $domainKeyPair */
+        $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair(
+            $this->createKeyOption($keyType)
+        );
         $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
 
         $this->debug('Domain key pair generated and stored', [

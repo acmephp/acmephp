@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Cli\Command\Helper\KeyOptionCommandTrait;
 use AcmePhp\Ssl\KeyPair;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,6 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RegisterCommand extends AbstractCommand
 {
+    use KeyOptionCommandTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -31,6 +34,7 @@ class RegisterCommand extends AbstractCommand
             ->setDefinition([
                 new InputArgument('email', InputArgument::OPTIONAL, 'An e-mail to use when certificates will expire soon'),
                 new InputOption('agreement', null, InputOption::VALUE_REQUIRED, '[DEPRECATED] The server usage conditions you agree with (automatically agreed with all licenses)'),
+                new InputOption('key-type', 'k', InputOption::VALUE_REQUIRED, 'The type of private key used to sign certificates (one of RSA, EC)', 'RSA'),
             ])
             ->setDescription('Register your account private key in the ACME server')
             ->setHelp(<<<'EOF'
@@ -59,8 +63,10 @@ EOF
             $this->notice('No account key pair was found, generating one...');
             $this->debug('Generating a key pair');
 
-            /** @var KeyPair $accountKeyPair */
-            $accountKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
+            /* @var KeyPair $accountKeyPair */
+            $accountKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair(
+                $this->createKeyOption($input->getOption('key-type'))
+            );
 
             $this->debug('Key pair generated, storing', ['public_key' => $accountKeyPair->getPublicKey()->getPEM()]);
             $repository->storeAccountKeyPair($accountKeyPair);

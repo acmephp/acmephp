@@ -9,6 +9,8 @@
         "https",
         "acmephp",
         "ssl",
+        "RSA",
+        "ECDSA",
         "openssl",
         "CSR",
         "x509"

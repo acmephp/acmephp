@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Cli\Command\Helper\KeyOptionCommandTrait;
 use AcmePhp\Cli\Configuration\DomainConfiguration;
 use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
 use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
@@ -23,6 +24,7 @@ use AcmePhp\Core\Protocol\CertificateOrder;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
+use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\ParsedCertificate;
 use Symfony\Component\Config\Definition\Processor;
@@ -39,6 +41,8 @@ use Webmozart\PathUtil\Path;
  */
 class RunCommand extends AbstractCommand
 {
+    use KeyOptionCommandTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -71,8 +75,9 @@ EOF
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), getcwd()));
+        $keyOption = $this->createKeyOption($config['key_type']);
 
-        $this->register($config['contact_email']);
+        $this->register($config['contact_email'], $keyOption);
         foreach ($config['certificates'] as $domainConfig) {
             $domain = $domainConfig['domain'];
 
@@ -92,14 +97,14 @@ EOF
                 );
             } else {
                 $order = $this->challengeDomains($domainConfig);
-                $response = $this->requestCertificate($order, $domainConfig, (int) $input->getOption('delay'));
+                $response = $this->requestCertificate($order, $domainConfig, $keyOption);
             }
 
             $this->installCertificate($response, $domainConfig['install']);
         }
     }
 
-    private function register($email)
+    private function register($email, KeyOption $keyOption)
     {
         $this->output->writeln(
             sprintf(
@@ -113,7 +118,7 @@ EOF
             $this->output->writeln('<info>No account key pair was found, generating one...</info>');
 
             /** @var KeyPair $accountKeyPair */
-            $accountKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
+            $accountKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair($keyOption);
 
             $repository->storeAccountKeyPair($accountKeyPair);
         }
@@ -186,7 +191,7 @@ EOF
         return true;
     }
 
-    private function requestCertificate(CertificateOrder $order, $domainConfig, $delay)
+    private function requestCertificate(CertificateOrder $order, $domainConfig, KeyOption $keyOption)
     {
         $domain = $domainConfig['domain'];
         $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
@@ -207,7 +212,7 @@ EOF
         if ($repository->hasDomainKeyPair($domain)) {
             $domainKeyPair = $repository->loadDomainKeyPair($domain);
         } else {
-            $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair();
+            $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair($keyOption);
             $repository->storeDomainKeyPair($domain, $domainKeyPair);
         }
 
