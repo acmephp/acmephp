@@ -11,7 +11,7 @@
 
 namespace AcmePhp\Core\Challenge\Dns;
 
-use AcmePhp\Cli\Exception\AcmeDnsResolutionException;
+use AcmePhp\Core\Exception\AcmeDnsResolutionException;
 use LibDNS\Decoder\Decoder;
 use LibDNS\Decoder\DecoderFactory;
 use LibDNS\Encoder\Encoder;

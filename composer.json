@@ -30,32 +30,40 @@
     ],
     "require": {
         "php": ">=5.5.9",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-filter": "*",
         "ext-openssl": "*",
+        "aws/aws-sdk-php": "^3.38",
         "guzzlehttp/guzzle": "^6.0",
-        "symfony/config": "^3.0",
-        "symfony/console": "^3.0",
-        "symfony/dependency-injection": "^3.3",
-        "symfony/serializer": "^3.0",
-        "symfony/yaml": "^3.0",
-        "monolog/monolog": "^1.19",
-        "swiftmailer/swiftmailer": "^5.4|^6.0",
+        "guzzlehttp/psr7": "^1.0",
         "league/flysystem": "^1.0.19",
+        "league/flysystem-memory": "^1.0",
         "league/flysystem-sftp": "^1.0.7",
-        "webmozart/assert": "^1.0",
-        "webmozart/path-util": "^2.3",
+        "monolog/monolog": "^1.19",
         "padraic/phar-updater": "^1.0",
-        "aws/aws-sdk-php": "^3.38"
+        "psr/container": "^1.0",
+        "psr/http-message": "^1.0",
+        "psr/log": "^1.0",
+        "swiftmailer/swiftmailer": "^5.4|^6.0",
+        "symfony/config": "^3.0|^4.0",
+        "symfony/console": "^3.0|^4.0",
+        "symfony/dependency-injection": "^3.3|^4.0",
+        "symfony/filesystem": "^3.0|^4.0",
+        "symfony/serializer": "^3.0|^4.0",
+        "symfony/yaml": "^3.0|^4.0",
+        "webmozart/assert": "^1.0",
+        "webmozart/path-util": "^2.3"
     },
     "suggest": {
         "daverandom/libdns": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.31|^5.7.3",
-        "symfony/finder": "^3.4",
-        "symfony/process": "^3.4",
-        "league/flysystem-memory": "^1.0",
-        "symfony/phpunit-bridge": "^3.4",
-        "symfony/var-dumper": "^3.4"
+        "symfony/finder": "^3.4|^4.0",
+        "symfony/process": "^3.4|^4.0",
+        "symfony/phpunit-bridge": "^3.4|^4.0",
+        "symfony/var-dumper": "^3.4|^4.0"
     },
     "autoload": {
         "psr-4": {

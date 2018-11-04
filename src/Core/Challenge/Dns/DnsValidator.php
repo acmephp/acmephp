@@ -11,8 +11,8 @@
 
 namespace AcmePhp\Core\Challenge\Dns;
 
-use AcmePhp\Cli\Exception\AcmeDnsResolutionException;
 use AcmePhp\Core\Challenge\ValidatorInterface;
+use AcmePhp\Core\Exception\AcmeDnsResolutionException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 
 /**

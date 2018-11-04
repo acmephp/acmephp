@@ -31,6 +31,7 @@
     },
     "require": {
         "php": ">=5.5.0",
+        "ext-hash": "*",
         "ext-openssl": "*",
         "webmozart/assert": "^1.0"
     },
