@@ -9,14 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Cli\Exception;
-
-@trigger_error(sprintf('The "%s" class is deprecated since version 1.1 and will be removed in 2.0., use %s instead.', AcmeDnsResolutionException::class, \AcmePhp\Core\Exception\AcmeDnsResolutionException::class), E_USER_DEPRECATED);
+namespace AcmePhp\Core\Exception;
 
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class AcmeDnsResolutionException extends AcmeCliException
+class AcmeDnsResolutionException extends AcmeCoreException
 {
     public function __construct($message, \Exception $previous = null)
     {
