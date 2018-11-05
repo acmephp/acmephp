@@ -15,8 +15,9 @@ use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\Generator\KeyPairGenerator;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
+use PHPUnit\Framework\TestCase;
 
-class CertificateRequestSignerTest extends \PHPUnit_Framework_TestCase
+class CertificateRequestSignerTest extends TestCase
 {
     /** @var CertificateRequestSigner */
     private $service;

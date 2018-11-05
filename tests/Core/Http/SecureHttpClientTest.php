@@ -24,9 +24,10 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-class SecureHttpClientTest extends \PHPUnit_Framework_TestCase
+class SecureHttpClientTest extends TestCase
 {
     /**
      * @param array $responses

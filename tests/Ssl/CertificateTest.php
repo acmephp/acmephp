@@ -13,8 +13,9 @@ namespace Tests\AcmePhp\Ssl;
 
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\PublicKey;
+use PHPUnit\Framework\TestCase;
 
-class CertificateTest extends \PHPUnit_Framework_TestCase
+class CertificateTest extends TestCase
 {
     public function test getPublicKey returns a PublicKey()
     {

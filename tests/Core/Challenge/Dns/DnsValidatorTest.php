@@ -15,8 +15,9 @@ use AcmePhp\Core\Challenge\Dns\DnsDataExtractor;
 use AcmePhp\Core\Challenge\Dns\DnsResolverInterface;
 use AcmePhp\Core\Challenge\Dns\DnsValidator;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use PHPUnit\Framework\TestCase;
 
-class DnsValidatorTest extends \PHPUnit_Framework_TestCase
+class DnsValidatorTest extends TestCase
 {
     public function testSupports()
     {

@@ -16,11 +16,12 @@ use AcmePhp\Core\Challenge\Http\HttpValidator;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-class HttpValidatorTest extends \PHPUnit_Framework_TestCase
+class HttpValidatorTest extends TestCase
 {
     public function testSupports()
     {

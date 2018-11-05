@@ -15,9 +15,10 @@ use AcmePhp\Core\Challenge\Dns\DnsDataExtractor;
 use AcmePhp\Core\Challenge\Dns\Route53Solver;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Aws\Route53\Route53Client;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
-class Route53SolverTest extends \PHPUnit_Framework_TestCase
+class Route53SolverTest extends TestCase
 {
     public function testSupports()
     {

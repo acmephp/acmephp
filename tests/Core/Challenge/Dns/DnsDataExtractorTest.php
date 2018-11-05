@@ -14,8 +14,9 @@ namespace Tests\AcmePhp\Core\Challenge\Dns;
 use AcmePhp\Core\Challenge\Dns\DnsDataExtractor;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use PHPUnit\Framework\TestCase;
 
-class DnsDataExtractorTest extends \PHPUnit_Framework_TestCase
+class DnsDataExtractorTest extends TestCase
 {
     public function testGetRecordName()
     {
