@@ -64,36 +64,6 @@ class DataSigner
     }
 
     /**
-     * Convert a ECDSA signature into DER.
-     *
-     * The code is a copy/paste from another lib (web-token/jwt-core) which is not compatible with php <= 7.0
-     *
-     * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
-     */
-    private function ECDSAtoDER($signature, $partLength)
-    {
-        $signature = \unpack('H*', $signature)[1];
-        if (\mb_strlen($signature, '8bit') !== 2 * $partLength) {
-            throw new DataSigningException('Invalid length.');
-        }
-        $R = \mb_substr($signature, 0, $partLength, '8bit');
-        $S = \mb_substr($signature, $partLength, null, '8bit');
-
-        $R = $this->preparePositiveInteger($R);
-        $Rl = \mb_strlen($R, '8bit') / 2;
-        $S = $this->preparePositiveInteger($S);
-        $Sl = \mb_strlen($S, '8bit') / 2;
-        $der = \pack(
-            'H*',
-            '30'.($Rl + $Sl + 4 > 128 ? '81' : '').\dechex($Rl + $Sl + 4)
-            .'02'.\dechex($Rl).$R
-            .'02'.\dechex($Sl).$S
-        );
-
-        return $der;
-    }
-
-    /**
      * Convert a DER signature into ECDSA.
      *
      * The code is a copy/paste from another lib (web-token/jwt-core) which is not compatible with php <= 7.0

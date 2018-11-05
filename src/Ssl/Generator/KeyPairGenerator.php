@@ -13,6 +13,8 @@ namespace AcmePhp\Ssl\Generator;
 
 use AcmePhp\Ssl\Exception\KeyGenerationException;
 use AcmePhp\Ssl\Exception\KeyPairGenerationException;
+use AcmePhp\Ssl\Generator\DhKey\DhKeyGenerator;
+use AcmePhp\Ssl\Generator\DsaKey\DsaKeyGenerator;
 use AcmePhp\Ssl\Generator\EcKey\EcKeyGenerator;
 use AcmePhp\Ssl\Generator\RsaKey\RsaKeyGenerator;
 use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
@@ -34,6 +36,8 @@ class KeyPairGenerator
             [
                 new RsaKeyGenerator(),
                 new EcKeyGenerator(),
+                new DhKeyGenerator(),
+                new DsaKeyGenerator(),
             ]
         );
     }

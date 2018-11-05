@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Ssl\Generator\RsaKey;
+namespace AcmePhp\Ssl\Generator\DhKey;
 
 use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\Generator\OpensslPrivateKeyGeneratorTrait;
@@ -17,31 +17,34 @@ use AcmePhp\Ssl\Generator\PrivateKeyGeneratorInterface;
 use Webmozart\Assert\Assert;
 
 /**
- * Generate random RSA private key using OpenSSL.
+ * Generate random DH private key using OpenSSL.
  *
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class RsaKeyGenerator implements PrivateKeyGeneratorInterface
+class DhKeyGenerator implements PrivateKeyGeneratorInterface
 {
     use OpensslPrivateKeyGeneratorTrait;
 
     /**
-     * @param RsaKeyOption|KeyOption $keyOption
+     * @param DhKeyOption|KeyOption $keyOption
      */
     public function generatePrivateKey(KeyOption $keyOption)
     {
-        Assert::isInstanceOf($keyOption, RsaKeyOption::class);
+        Assert::isInstanceOf($keyOption, DhKeyOption::class);
 
         return $this->generatePrivateKeyFromOpensslOptions(
             [
-                'private_key_type' => OPENSSL_KEYTYPE_RSA,
-                'private_key_bits' => $keyOption->getBits(),
+                'private_key_type' => OPENSSL_KEYTYPE_DH,
+                'dh' => [
+                    'p' => $keyOption->getPrime(),
+                    'g' => $keyOption->getGenerator(),
+                ],
             ]
         );
     }
 
     public function supportsKeyOption(KeyOption $keyOption)
     {
-        return $keyOption instanceof RsaKeyOption;
+        return $keyOption instanceof DhKeyOption;
     }
 }
