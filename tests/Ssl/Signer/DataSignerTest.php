@@ -13,8 +13,9 @@ namespace Tests\AcmePhp\Ssl\Signer;
 
 use AcmePhp\Ssl\PrivateKey;
 use AcmePhp\Ssl\Signer\DataSigner;
+use PHPUnit\Framework\TestCase;
 
-class DataSignerTest extends \PHPUnit_Framework_TestCase
+class DataSignerTest extends TestCase
 {
     /** @var DataSigner */
     private $service;

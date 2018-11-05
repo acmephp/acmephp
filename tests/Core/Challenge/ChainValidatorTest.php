@@ -14,8 +14,9 @@ namespace Tests\AcmePhp\Core\Challenge;
 use AcmePhp\Core\Challenge\ChainValidator;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use PHPUnit\Framework\TestCase;
 
-class ChainValidatorTest extends \PHPUnit_Framework_TestCase
+class ChainValidatorTest extends TestCase
 {
     public function testSupports()
     {

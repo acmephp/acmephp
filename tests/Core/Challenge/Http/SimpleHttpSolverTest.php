@@ -14,10 +14,11 @@ namespace Tests\AcmePhp\Core\Challenge\Http;
 use AcmePhp\Core\Challenge\Http\HttpDataExtractor;
 use AcmePhp\Core\Challenge\Http\SimpleHttpSolver;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SimpleHttpSolverTest extends \PHPUnit_Framework_TestCase
+class SimpleHttpSolverTest extends TestCase
 {
     public function testSupports()
     {

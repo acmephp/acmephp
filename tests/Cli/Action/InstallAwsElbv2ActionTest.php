@@ -22,9 +22,10 @@ use AcmePhp\Ssl\PrivateKey;
 use AcmePhp\Ssl\PublicKey;
 use Aws\ElasticLoadBalancingV2\ElasticLoadBalancingV2Client;
 use Aws\Iam\IamClient;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
-class InstallAwsElbv2ActionTest extends \PHPUnit_Framework_TestCase
+class InstallAwsElbv2ActionTest extends TestCase
 {
     public function testHandle()
     {

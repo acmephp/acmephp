@@ -13,9 +13,10 @@ namespace Tests\AcmePhp\Core\Challenge\Dns;
 
 use AcmePhp\Core\Challenge\Dns\DnsValidator;
 use AcmePhp\Core\Challenge\Dns\SimpleDnsResolver;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\DnsMock;
 
-class SimpleDnsResolverTest extends \PHPUnit_Framework_TestCase
+class SimpleDnsResolverTest extends TestCase
 {
     public function testGetTxtEntries()
     {

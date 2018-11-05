@@ -19,8 +19,9 @@ use AcmePhp\Ssl\Generator\KeyPairGenerator;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
 use GuzzleHttp\Client;
+use PHPUnit\Framework\TestCase;
 
-class SecureHttpClientFactoryTest extends \PHPUnit_Framework_TestCase
+class SecureHttpClientFactoryTest extends TestCase
 {
     public function testCreateClient()
     {

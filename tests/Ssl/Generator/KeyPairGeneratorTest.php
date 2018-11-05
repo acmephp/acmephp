@@ -13,8 +13,9 @@ namespace Tests\AcmePhp\Ssl\Generator;
 
 use AcmePhp\Ssl\Generator\KeyPairGenerator;
 use AcmePhp\Ssl\KeyPair;
+use PHPUnit\Framework\TestCase;
 
-class KeyPairGeneratorTest extends \PHPUnit_Framework_TestCase
+class KeyPairGeneratorTest extends TestCase
 {
     /** @var KeyPairGenerator */
     private $service;

@@ -14,8 +14,9 @@ namespace Tests\AcmePhp\Ssl\Parser;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\ParsedCertificate;
 use AcmePhp\Ssl\Parser\CertificateParser;
+use PHPUnit\Framework\TestCase;
 
-class CertificateParserTest extends \PHPUnit_Framework_TestCase
+class CertificateParserTest extends TestCase
 {
     /** @var CertificateParser */
     private $service;

@@ -14,9 +14,10 @@ namespace Tests\AcmePhp\Core\Challenge;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Challenge\WaitingValidator;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\ClockMock;
 
-class WaitingValidatorTest extends \PHPUnit_Framework_TestCase
+class WaitingValidatorTest extends TestCase
 {
     public function setUp()
     {

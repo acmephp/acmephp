@@ -13,8 +13,9 @@ namespace Tests\AcmePhp\Core\Challenge\Http;
 
 use AcmePhp\Core\Challenge\Http\HttpDataExtractor;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use PHPUnit\Framework\TestCase;
 
-class HttpDataExtractorTest extends \PHPUnit_Framework_TestCase
+class HttpDataExtractorTest extends TestCase
 {
     public function testGetCheckUrl()
     {

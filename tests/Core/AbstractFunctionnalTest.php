@@ -11,10 +11,11 @@
 
 namespace Tests\AcmePhp\Core;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
-abstract class AbstractFunctionnalTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractFunctionnalTest extends TestCase
 {
     /**
      * @param string $token

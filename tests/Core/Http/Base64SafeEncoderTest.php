@@ -12,8 +12,9 @@
 namespace Tests\AcmePhp\Core\Http;
 
 use AcmePhp\Core\Http\Base64SafeEncoder;
+use PHPUnit\Framework\TestCase;
 
-class Base64SafeEncoderTest extends \PHPUnit_Framework_TestCase
+class Base64SafeEncoderTest extends TestCase
 {
     /**
      * @dataProvider getTestVectors

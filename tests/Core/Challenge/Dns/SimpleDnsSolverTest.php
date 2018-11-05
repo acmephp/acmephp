@@ -14,10 +14,11 @@ namespace Tests\AcmePhp\Core\Challenge\Dns;
 use AcmePhp\Core\Challenge\Dns\DnsDataExtractor;
 use AcmePhp\Core\Challenge\Dns\SimpleDnsSolver;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SimpleDnsSolverTest extends \PHPUnit_Framework_TestCase
+class SimpleDnsSolverTest extends TestCase
 {
     public function testSupports()
     {

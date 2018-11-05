@@ -16,10 +16,11 @@ use AcmePhp\Core\Challenge\Http\HttpDataExtractor;
 use AcmePhp\Core\Filesystem\FilesystemFactoryInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use League\Flysystem\FilesystemInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Container\ContainerInterface;
 
-class FilesystemSolverTest extends \PHPUnit_Framework_TestCase
+class FilesystemSolverTest extends TestCase
 {
     public function testSupports()
     {

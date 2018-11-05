@@ -16,8 +16,9 @@ use AcmePhp\Ssl\ParsedKey;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\PrivateKey;
 use AcmePhp\Ssl\PublicKey;
+use PHPUnit\Framework\TestCase;
 
-class KeyParserTest extends \PHPUnit_Framework_TestCase
+class KeyParserTest extends TestCase
 {
     /** @var KeyParser */
     private $service;

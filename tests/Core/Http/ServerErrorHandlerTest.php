@@ -25,8 +25,9 @@ use AcmePhp\Core\Exception\Server\UnknownHostServerException;
 use AcmePhp\Core\Http\ServerErrorHandler;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
 
-class ServerErrorHandlerTest extends \PHPUnit_Framework_TestCase
+class ServerErrorHandlerTest extends TestCase
 {
     public function getErrorTypes()
     {
