@@ -30,6 +30,10 @@ class EcKeyGenerator implements PrivateKeyGeneratorInterface
      */
     public function generatePrivateKey(KeyOption $keyOption)
     {
+        if (\PHP_VERSION_ID < 70100) {
+            throw new \LogicException('The generation of ECDSA requires a version of PHP >= 7.1');
+        }
+
         Assert::isInstanceOf($keyOption, EcKeyOption::class);
 
         return $this->generatePrivateKeyFromOpensslOptions(
