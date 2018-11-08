@@ -22,10 +22,19 @@
         </service>
 
         <!-- SSL -->
-        <service id="ssl.key_pair_generator" class="AcmePhp\Ssl\Generator\KeyPairGenerator" />
+        <service id="ssl.private_key_generator" class="AcmePhp\Ssl\Generator\ChainPrivateKeyGenerator" public="false" >
+            <argument type="collection">
+                <argument type="service" id="ssl.rsa_key_generator"/>
+                <argument type="service" id="ssl.ec_key_generator"/>
+            </argument>
+        </service>
+        <service id="ssl.rsa_key_generator" class="AcmePhp\Ssl\Generator\RsaKey\RsaKeyGenerator" public="false" />
+        <service id="ssl.ec_key_generator" class="AcmePhp\Ssl\Generator\EcKey\EcKeyGenerator" public="false" />
+        <service id="ssl.key_pair_generator" class="AcmePhp\Ssl\Generator\KeyPairGenerator">
+            <argument type="service" id="ssl.private_key_generator"/>
+        </service>
         <service id="ssl.certificate_parser" class="AcmePhp\Ssl\Parser\CertificateParser" />
         <service id="ssl.key_parser" class="AcmePhp\Ssl\Parser\KeyParser" />
-        <service id="ssl.certificate_parser" class="AcmePhp\Ssl\Parser\CertificateParser" />
         <service id="ssl.csr_signer" class="AcmePhp\Ssl\Signer\CertificateRequestSigner" />
         <service id="ssl.data_signer" class="AcmePhp\Ssl\Signer\DataSigner" />
 

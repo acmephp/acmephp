@@ -12,7 +12,6 @@
 namespace Tests\AcmePhp\Core;
 
 use AcmePhp\Core\AcmeClient;
-use AcmePhp\Core\AcmeClientV2Interface;
 use AcmePhp\Core\Challenge\Http\SimpleHttpSolver;
 use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Http\Base64SafeEncoder;
@@ -23,7 +22,10 @@ use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
+use AcmePhp\Ssl\Generator\EcKey\EcKeyOption;
+use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\Generator\KeyPairGenerator;
+use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
 use GuzzleHttp\Client;
@@ -31,14 +33,12 @@ use GuzzleHttp\Client;
 class AcmeClientTest extends AbstractFunctionnalTest
 {
     /**
-     * @var AcmeClientV2Interface
+     * @dataProvider getKeyOptions
      */
-    private $client;
-
-    public function setUp()
+    public function testFullProcess(KeyOption $keyOption)
     {
         $secureHttpClient = new SecureHttpClient(
-            (new KeyPairGenerator())->generateKeyPair(),
+            (new KeyPairGenerator())->generateKeyPair($keyOption),
             new Client(),
             new Base64SafeEncoder(),
             new KeyParser(),
@@ -46,15 +46,12 @@ class AcmeClientTest extends AbstractFunctionnalTest
             new ServerErrorHandler()
         );
 
-        $this->client = new AcmeClient($secureHttpClient, 'https://localhost:14000/dir');
-    }
+        $client = new AcmeClient($secureHttpClient, 'https://localhost:14000/dir');
 
-    public function testFullProcess()
-    {
         /*
          * Register account
          */
-        $data = $this->client->registerAccount();
+        $data = $client->registerAccount();
 
         $this->assertInternalType('array', $data);
         $this->assertArrayHasKey('key', $data);
@@ -64,7 +61,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Ask for domain challenge
          */
-        $order = $this->client->requestOrder(['acmephp.com']);
+        $order = $client->requestOrder(['acmephp.com']);
         $challenges = $order->getAuthorizationChallenges('acmephp.com');
         foreach ($challenges as $challenge) {
             if ('http-01' === $challenge->getType()) {
@@ -87,7 +84,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
         $this->assertTrue($process->isRunning());
 
         try {
-            $check = $this->client->challengeAuthorization($challenge);
+            $check = $client->challengeAuthorization($challenge);
             $this->assertEquals('valid', $check['status']);
         } finally {
             $process->stop();
@@ -96,8 +93,8 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Request certificate
          */
-        $csr = new CertificateRequest(new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair());
-        $response = $this->client->finalizeOrder($order, $csr);
+        $csr = new CertificateRequest(new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair($keyOption));
+        $response = $client->finalizeOrder($order, $csr);
 
         $this->assertInstanceOf(CertificateResponse::class, $response);
         $this->assertEquals($csr, $response->getCertificateRequest());
@@ -109,9 +106,19 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * ACME will not let you revoke the same cert twice so this test should pass both cases
          */
         try {
-            $this->client->revokeCertificate($response->getCertificate());
+            $client->revokeCertificate($response->getCertificate());
         } catch (CertificateRevocationException $e) {
             $this->assertContains('Unable to find specified certificate', $e->getPrevious()->getPrevious()->getMessage());
+        }
+    }
+
+    public function getKeyOptions()
+    {
+        yield [new RsaKeyOption(1024)];
+        yield [new RsaKeyOption(4098)];
+        if (\PHP_VERSION_ID >= 70100) {
+            yield [new EcKeyOption('prime256v1')];
+            yield [new EcKeyOption('secp384r1')];
         }
     }
 }

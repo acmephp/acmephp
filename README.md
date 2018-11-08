@@ -85,6 +85,7 @@ config file like
 
 ```yaml
 contact_email: contact@company
+key_type: RSA                                          # RSA or EC (for ECDSA). Default "RSA"
 
 defaults:
   distinguished_name:

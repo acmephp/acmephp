@@ -48,7 +48,23 @@ class DomainConfiguration implements ConfigurationInterface
                         ->ifTrue(function ($item) {
                             return !filter_var($item, FILTER_VALIDATE_EMAIL);
                         })
-                        ->thenInvalid('The email "%s" is not valid.')
+                        ->thenInvalid('The email %s is not valid.')
+                    ->end()
+                ->end()
+                ->scalarNode('key_type')
+                    ->info('Type of private key (RSA or EC).')
+                    ->defaultValue('RSA')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($conf) {
+                            return \strtoupper($conf);
+                        })
+                    ->end()
+                    ->validate()
+                        ->ifTrue(function ($item) {
+                            return !\in_array($item, ['RSA', 'EC']);
+                        })
+                        ->thenInvalid('The keyType %s is not valid. Supported types are: RSA, EC')
                     ->end()
                 ->end()
             ->end()
@@ -95,7 +111,7 @@ class DomainConfiguration implements ConfigurationInterface
                 ->ifTrue(function ($item) {
                     return !isset($item['name']);
                 })
-                ->thenInvalid('The name attribute "%s" is required in install property.')
+                ->thenInvalid('The name attribute %s is required in install property.')
             ->end();
     }
 
@@ -116,7 +132,7 @@ class DomainConfiguration implements ConfigurationInterface
                         ->ifTrue(function ($item) {
                             return 2 !== \strlen($item);
                         })
-                        ->thenInvalid('The country code "%s" is not valid.')
+                        ->thenInvalid('The country code %s is not valid.')
                     ->end()
                 ->end()
                 ->scalarNode('state')
@@ -142,7 +158,7 @@ class DomainConfiguration implements ConfigurationInterface
                         ->ifTrue(function ($item) {
                             return !filter_var($item, FILTER_VALIDATE_EMAIL);
                         })
-                        ->thenInvalid('The email "%s" is not valid.')
+                        ->thenInvalid('The email %s is not valid.')
                     ->end()
                 ->end()
             ->end();
@@ -178,7 +194,7 @@ class DomainConfiguration implements ConfigurationInterface
                                 ->ifTrue(function ($item) {
                                     return !isset($item['action']);
                                 })
-                                ->thenInvalid('The action attribute "%s" is required in install property.')
+                                ->thenInvalid('The action attribute %s is required in install property.')
                             ->end()
                         ->end()
                     ->end()

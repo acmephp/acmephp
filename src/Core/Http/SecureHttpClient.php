@@ -112,16 +112,18 @@ class SecureHttpClient
     {
         $privateKey = $this->accountKeyPair->getPrivateKey();
 
+        $alg = $this->getAlg();
         $protected = [
-            'alg' => 'RS256',
+            'alg' => $alg,
             'jwk' => $this->getJWK(),
             'nonce' => $this->getNonce(),
             'url' => $endpoint,
         ];
+        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
 
-        $protected = $this->base64Encoder->encode(json_encode($protected));
+        $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
-        $signature = $this->base64Encoder->encode($this->dataSigner->signData($protected.'.'.$payload, $privateKey));
+        $signature = $this->base64Encoder->encode($this->dataSigner->signData($protected.'.'.$payload, $privateKey, $algorithm, $format));
 
         $payload = [
             'protected' => $protected,
@@ -136,17 +138,77 @@ class SecureHttpClient
         }
     }
 
+    private function getAlg()
+    {
+        $privateKey = $this->accountKeyPair->getPrivateKey();
+        $parsedKey = $this->keyParser->parse($privateKey);
+        switch ($parsedKey->getType()) {
+            case OPENSSL_KEYTYPE_RSA:
+                return 'RS256';
+            case OPENSSL_KEYTYPE_EC:
+                switch ($parsedKey->getBits()) {
+                    case 256:
+                    case 384:
+                        return 'ES'.$parsedKey->getBits();
+                    case 521:
+                        return 'ES512';
+                }
+                // no break to let the default case
+            default:
+                throw new AcmeCoreClientException('Private key type is not supported');
+        }
+    }
+
+    private function extractSignOptionFromJWSAlg($alg)
+    {
+        if (!\preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
+            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
+        }
+
+        if (!\defined('OPENSSL_ALGO_SHA'.$match[2])) {
+            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
+        }
+
+        $algorithm = \constant('OPENSSL_ALGO_SHA'.$match[2]);
+
+        switch ($match[1]) {
+            case 'RS':
+                $format = DataSigner::FORMAT_DER;
+                break;
+            case 'ES':
+                $format = DataSigner::FORMAT_ECDSA;
+                break;
+            default:
+                throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
+        }
+
+        return [$algorithm, $format];
+    }
+
     public function getJWK()
     {
         $privateKey = $this->accountKeyPair->getPrivateKey();
         $parsedKey = $this->keyParser->parse($privateKey);
 
-        return [
-            // this order matter
-            'e' => $this->base64Encoder->encode($parsedKey->getDetail('e')),
-            'kty' => 'RSA',
-            'n' => $this->base64Encoder->encode($parsedKey->getDetail('n')),
-        ];
+        switch ($parsedKey->getType()) {
+            case OPENSSL_KEYTYPE_RSA:
+                return [
+                    // this order matters
+                    'e' => $this->base64Encoder->encode($parsedKey->getDetail('e')),
+                    'kty' => 'RSA',
+                    'n' => $this->base64Encoder->encode($parsedKey->getDetail('n')),
+                ];
+            case OPENSSL_KEYTYPE_EC:
+                return [
+                    // this order matters
+                    'crv' => 'P-'.$parsedKey->getBits(),
+                    'kty' => 'EC',
+                    'x' => $this->base64Encoder->encode($parsedKey->getDetail('x')),
+                    'y' => $this->base64Encoder->encode($parsedKey->getDetail('y')),
+                ];
+            default:
+                throw new AcmeCoreClientException('Private key type not supported');
+        }
     }
 
     public function getJWKThumbprint()
@@ -172,20 +234,22 @@ class SecureHttpClient
     {
         $privateKey = $this->accountKeyPair->getPrivateKey();
 
+        $alg = $this->getAlg();
         $protected = [
-            'alg' => 'RS256',
+            'alg' => $alg,
             'kid' => $account,
             'nonce' => $this->getNonce(),
             'url' => $endpoint,
         ];
+        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
 
-        $protected = $this->base64Encoder->encode(json_encode($protected));
+        $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         if ($payload === []) {
             $payload = $this->base64Encoder->encode('{}');
         } else {
             $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
         }
-        $signature = $this->base64Encoder->encode($this->dataSigner->signData($protected.'.'.$payload, $privateKey));
+        $signature = $this->base64Encoder->encode($this->dataSigner->signData($protected.'.'.$payload, $privateKey, $algorithm, $format));
 
         $payload = [
             'protected' => $protected,

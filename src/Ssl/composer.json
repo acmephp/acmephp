@@ -9,6 +9,8 @@
         "https",
         "acmephp",
         "ssl",
+        "RSA",
+        "ECDSA",
         "openssl",
         "CSR",
         "x509"
@@ -33,6 +35,7 @@
         "php": ">=5.5.0",
         "ext-hash": "*",
         "ext-openssl": "*",
+        "lib-openssl": ">=0.9.8",
         "webmozart/assert": "^1.0"
     },
     "require-dev": {

@@ -9,11 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace AcmePhp\Ssl\Exception;
+namespace AcmePhp\Ssl\Generator;
 
-/**
- * @author Jérémy Derussé <jeremy@derusse.com>
- */
-class KeyPairGenerationException extends KeyGenerationException
+interface KeyOption
 {
 }
