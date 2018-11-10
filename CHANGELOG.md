@@ -1,3 +1,24 @@
+10/11/2018 12:55  1.1.0  Add support for certificate revocation and ECDSA certificates
+6933ffb Merge pull request #141 from jderusse/ecdsa
+f7bac9e Fix undefined const OPENSSL_KEYTYPE_EC
+5cf1a8d Add DH and DSA generators
+c22cd9e Add support for ECDSA
+3881f18 Merge pull request #143 from jderusse/update-phpunit
+2cf3baf Use simple-phpunit to run tests
+5194897 Merge pull request #142 from jderusse/fix-deps
+4f13320 Add missing dependencies in composer.json files
+da7c0e1 Merge pull request #139 from acmephp/revoke-certificate
+39cf7fa Fix certificate revocation
+27d4355 Update test to pass with Pebble implementation
+94e2f20 Remove Certificate::__toString(), Command validation failure warning -> error
+ef00e5f Add revocation reason and more helpful doc
+c61019c Fix cs issues
+7418bd9 Add api for certificate revocation
+6d3888e Merge pull request #140 from acmephp/remove-scrutinizer
+29258e6 Remove Scrutinizer
+61df472 Merge pull request #138 from acmephp/remove-config-platform
+af56ed7 Remove config.platform.php in Composer
+e8029c2 Bump to dev
 27/10/2018 12:07  1.0.1  Fix PHP version issue
 6079833 Merge pull request #137 from acmephp/fix-php-version
 6d6e2d2 Fix tests configuration
