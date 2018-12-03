@@ -24,8 +24,13 @@ class DomainConfiguration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('acmephp');
+        $treeBuilder = new TreeBuilder('acmephp');
+        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            $rootNode = $treeBuilder->root('acmephp');
+        }
+
         $rootNode
             ->beforeNormalization()
                 ->ifTrue(function ($conf) {
@@ -76,8 +81,11 @@ class DomainConfiguration implements ConfigurationInterface
 
     private function createDefaultsSection()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('defaults');
+        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+            $rootNode = (new TreeBuilder('defaults'))->getRootNode();
+        } else {
+            $rootNode = (new TreeBuilder())->root('defaults');
+        }
 
         $rootNode
             ->info('Default configurations overridable by each certificate section.')
@@ -100,8 +108,11 @@ class DomainConfiguration implements ConfigurationInterface
 
     private function createSolverSection()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('solver', 'array');
+        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+            $rootNode = (new TreeBuilder('solver'))->getRootNode();
+        } else {
+            $rootNode = (new TreeBuilder())->root('solver');
+        }
 
         return $rootNode
             ->info('Challenge\'s solver configuration.')
@@ -117,9 +128,11 @@ class DomainConfiguration implements ConfigurationInterface
 
     private function createDistinguishedNameSection()
     {
-        $treeBuilder = new TreeBuilder();
-
-        $rootNode = $treeBuilder->root('distinguished_name', 'array');
+        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+            $rootNode = (new TreeBuilder('distinguished_name'))->getRootNode();
+        } else {
+            $rootNode = (new TreeBuilder())->root('distinguished_name');
+        }
 
         return $rootNode
             ->info('Distinguished Name (or a DN) informations.')
@@ -166,8 +179,11 @@ class DomainConfiguration implements ConfigurationInterface
 
     private function createCertificatesSection()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('certificates');
+        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+            $rootNode = (new TreeBuilder('certificates'))->getRootNode();
+        } else {
+            $rootNode = (new TreeBuilder())->root('certificates');
+        }
 
         return $rootNode
             ->prototype('array')
