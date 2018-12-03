@@ -25,8 +25,12 @@ class AcmeConfiguration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('acmephp');
+        $treeBuilder = new TreeBuilder('acmephp');
+        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            $rootNode = $treeBuilder->root('acmephp');
+        }
 
         $this->createRootNode($rootNode);
 

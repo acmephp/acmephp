@@ -46,6 +46,10 @@ abstract class AbstractFunctionnalTest extends TestCase
             '"'.$documentRoot.'"',
         ]);
 
+        if (\method_exists(Process::class, 'fromShellCommandline')) {
+            return Process::fromShellCommandline('exec '.$script, $documentRoot, null, null, null);
+        }
+
         return new Process('exec '.$script, $documentRoot, null, null, null);
     }
 }
