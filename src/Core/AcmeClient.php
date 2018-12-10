@@ -193,11 +193,11 @@ class AcmeClient implements AcmeClientV2Interface
             $response = (array) $this->getHttpClient()->unsignedRequest('GET', $challenge->getUrl());
         }
 
+        if (isset($response['status']) && 'pending' === $response['status']) {
+            throw new ChallengeTimedOutException($response);
+        }
         if (!isset($response['status']) || 'valid' !== $response['status']) {
             throw new ChallengeFailedException($response);
-        }
-        if ('pending' === $response['status']) {
-            throw new ChallengeTimedOutException($response);
         }
 
         return $response;
