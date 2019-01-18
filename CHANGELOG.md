@@ -1,3 +1,10 @@
+18/01/2019 15:17  1.1.1  Several bug fixes
+952b1a6 Merge pull request #148 from rokclimb15/patch-1
+56df417 Correctly throw ChallengeTimedOutException
+c7f523f Merge pull request #145 from jderusse/fix-exceptionx
+034b6a2 Fix exception constructor
+ff10617 Merge pull request #146 from jderusse/fix-deprec
+9e754ad Fix 4.2 deprecations
 10/11/2018 12:55  1.1.0  Add support for certificate revocation and ECDSA certificates
 6933ffb Merge pull request #141 from jderusse/ecdsa
 f7bac9e Fix undefined const OPENSSL_KEYTYPE_EC
