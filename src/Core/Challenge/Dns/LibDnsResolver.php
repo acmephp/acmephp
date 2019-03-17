@@ -86,7 +86,7 @@ class LibDnsResolver implements DnsResolverInterface
      */
     public function getTxtEntries($domain)
     {
-        $domain = \rtrim($domain, '.');
+        $domain = rtrim($domain, '.');
         $nameServers = $this->getNameServers($domain);
         $this->logger->debug('Fetched TXT records for domain', ['nsDomain' => $domain, 'servers' => $nameServers]);
         $identicalEntries = [];
@@ -158,7 +158,7 @@ class LibDnsResolver implements DnsResolverInterface
                 }
             }
         }
-        $itemNameServers = \array_unique($itemNameServers);
+        $itemNameServers = array_unique($itemNameServers);
         if (empty($itemNameServers)) {
             return $parentNameServers;
         }
