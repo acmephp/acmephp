@@ -38,9 +38,12 @@ class PrivateKey extends Key
      */
     public function getPublicKey()
     {
-        if (!$details = openssl_pkey_get_details($this->getResource())) {
+        $resource = $this->getResource();
+        if (!$details = openssl_pkey_get_details($resource)) {
             throw new KeyFormatException(sprintf('Failed to extract public key: %s', openssl_error_string()));
         }
+
+        openssl_free_key($resource);
 
         return new PublicKey($details['key']);
     }
