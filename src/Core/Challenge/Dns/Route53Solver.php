@@ -180,7 +180,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
         $recordIndex = [];
         foreach ($recordSets as $previousRecordSet) {
             $previousTxt = array_map(function ($resourceRecord) {
-                return \stripslashes(trim($resourceRecord['Value'], '"'));
+                return stripslashes(trim($resourceRecord['Value'], '"'));
             }, $previousRecordSet['ResourceRecords']);
             // Search the special Index
             foreach ($previousTxt as $index => $recordValue) {
@@ -211,7 +211,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
             }
         }
 
-        $recordValues = \array_keys($recordIndex);
+        $recordValues = array_keys($recordIndex);
         $recordValues[] = json_encode($recordIndex);
 
         return [

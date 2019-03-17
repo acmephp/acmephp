@@ -72,32 +72,32 @@ class DataSigner
      */
     private function DERtoECDSA($der, $partLength)
     {
-        $hex = \unpack('H*', $der)[1];
-        if ('30' !== \mb_substr($hex, 0, 2, '8bit')) { // SEQUENCE
+        $hex = unpack('H*', $der)[1];
+        if ('30' !== mb_substr($hex, 0, 2, '8bit')) { // SEQUENCE
             throw new DataSigningException('Invalid signature provided');
         }
-        if ('81' === \mb_substr($hex, 2, 2, '8bit')) { // LENGTH > 128
-            $hex = \mb_substr($hex, 6, null, '8bit');
+        if ('81' === mb_substr($hex, 2, 2, '8bit')) { // LENGTH > 128
+            $hex = mb_substr($hex, 6, null, '8bit');
         } else {
-            $hex = \mb_substr($hex, 4, null, '8bit');
+            $hex = mb_substr($hex, 4, null, '8bit');
         }
-        if ('02' !== \mb_substr($hex, 0, 2, '8bit')) { // INTEGER
+        if ('02' !== mb_substr($hex, 0, 2, '8bit')) { // INTEGER
             throw new DataSigningException('Invalid signature provided');
         }
 
-        $Rl = \hexdec(\mb_substr($hex, 2, 2, '8bit'));
-        $R = $this->retrievePositiveInteger(\mb_substr($hex, 4, $Rl * 2, '8bit'));
-        $R = \str_pad($R, $partLength, '0', STR_PAD_LEFT);
+        $Rl = hexdec(mb_substr($hex, 2, 2, '8bit'));
+        $R = $this->retrievePositiveInteger(mb_substr($hex, 4, $Rl * 2, '8bit'));
+        $R = str_pad($R, $partLength, '0', STR_PAD_LEFT);
 
-        $hex = \mb_substr($hex, 4 + $Rl * 2, null, '8bit');
-        if ('02' !== \mb_substr($hex, 0, 2, '8bit')) { // INTEGER
+        $hex = mb_substr($hex, 4 + $Rl * 2, null, '8bit');
+        if ('02' !== mb_substr($hex, 0, 2, '8bit')) { // INTEGER
             throw new DataSigningException('Invalid signature provided');
         }
-        $Sl = \hexdec(\mb_substr($hex, 2, 2, '8bit'));
-        $S = $this->retrievePositiveInteger(\mb_substr($hex, 4, $Sl * 2, '8bit'));
-        $S = \str_pad($S, $partLength, '0', STR_PAD_LEFT);
+        $Sl = hexdec(mb_substr($hex, 2, 2, '8bit'));
+        $S = $this->retrievePositiveInteger(mb_substr($hex, 4, $Sl * 2, '8bit'));
+        $S = str_pad($S, $partLength, '0', STR_PAD_LEFT);
 
-        return \pack('H*', $R.$S);
+        return pack('H*', $R.$S);
     }
 
     /**
@@ -107,11 +107,11 @@ class DataSigner
      */
     private function preparePositiveInteger($data)
     {
-        if (\mb_substr($data, 0, 2, '8bit') > '7f') {
+        if (mb_substr($data, 0, 2, '8bit') > '7f') {
             return '00'.$data;
         }
-        while ('00' === \mb_substr($data, 0, 2, '8bit') && \mb_substr($data, 2, 2, '8bit') <= '7f') {
-            $data = \mb_substr($data, 2, null, '8bit');
+        while ('00' === mb_substr($data, 0, 2, '8bit') && mb_substr($data, 2, 2, '8bit') <= '7f') {
+            $data = mb_substr($data, 2, null, '8bit');
         }
 
         return $data;
@@ -124,8 +124,8 @@ class DataSigner
      */
     private function retrievePositiveInteger($data)
     {
-        while ('00' === \mb_substr($data, 0, 2, '8bit') && \mb_substr($data, 2, 2, '8bit') > '7f') {
-            $data = \mb_substr($data, 2, null, '8bit');
+        while ('00' === mb_substr($data, 0, 2, '8bit') && mb_substr($data, 2, 2, '8bit') > '7f') {
+            $data = mb_substr($data, 2, null, '8bit');
         }
 
         return $data;

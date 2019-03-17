@@ -21,13 +21,13 @@ trait KeyOptionCommandTrait
 {
     private function createKeyOption($keyType)
     {
-        switch (\strtoupper($keyType)) {
+        switch (strtoupper($keyType)) {
             case 'RSA':
                 return new RsaKeyOption();
             case 'EC':
                 return new EcKeyOption();
             default:
-                throw new \InvalidArgumentException(sprintf('The keyType "%s" is not valid. Supported types are: RSA, EC', \strtoupper($keyType)));
+                throw new \InvalidArgumentException(sprintf('The keyType "%s" is not valid. Supported types are: RSA, EC', strtoupper($keyType)));
         }
     }
 }

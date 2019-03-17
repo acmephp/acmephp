@@ -19,6 +19,7 @@ $config = PhpCsFixer\Config::create()
         'header_comment' => ['header' => $header],
         'linebreak_after_opening_tag' => true,
         'modernize_types_casting' => true,
+        'native_function_invocation' => ['include' => ['@compiler_optimized'], 'scope' => 'namespaced'],
         'no_superfluous_elseif' => true,
         'no_useless_else' => true,
         'phpdoc_order' => true,

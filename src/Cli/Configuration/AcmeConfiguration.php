@@ -26,7 +26,7 @@ class AcmeConfiguration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('acmephp');
-        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
             $rootNode = $treeBuilder->getRootNode();
         } else {
             $rootNode = $treeBuilder->root('acmephp');
@@ -60,7 +60,7 @@ class AcmeConfiguration implements ConfigurationInterface
                                 ->cannotBeEmpty()
                                 ->validate()
                                 ->ifTrue(function ($action) {
-                                    return !array_key_exists('action', $action);
+                                    return !\array_key_exists('action', $action);
                                 })
                                     ->thenInvalid('The "action" configuration key is required.')
                                 ->end()

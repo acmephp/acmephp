@@ -50,12 +50,12 @@ abstract class AbstractCommand extends Command implements LoggerInterface
     protected $output;
 
     /**
-     * @var null|array
+     * @var array|null
      */
     private $configuration;
 
     /**
-     * @var null|ContainerBuilder
+     * @var ContainerBuilder|null
      */
     private $container;
 
