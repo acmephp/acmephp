@@ -161,7 +161,7 @@ class SecureHttpClient
 
     private function extractSignOptionFromJWSAlg($alg)
     {
-        if (!\preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
+        if (!preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
             throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
         }
 
