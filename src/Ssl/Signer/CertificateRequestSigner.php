@@ -90,6 +90,8 @@ EOL;
                 ]
             );
 
+            openssl_free_key($resource);
+
             if (!$csr) {
                 throw new CSRSigningException(
                     sprintf('OpenSSL CSR signing failed with error: %s', openssl_error_string())
