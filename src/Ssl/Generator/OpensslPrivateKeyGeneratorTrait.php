@@ -32,6 +32,8 @@ trait OpensslPrivateKeyGeneratorTrait
             );
         }
 
+        openssl_free_key($resource);
+
         return new PrivateKey($privateKey);
     }
 }
