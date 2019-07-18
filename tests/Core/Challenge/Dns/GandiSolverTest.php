@@ -64,8 +64,8 @@ class GandiSolverTest extends TestCase
                     'rrset_type' => 'TXT',
                     'rrset_ttl' => 600,
                     'rrset_name' => '_acme-challenge.sub-domain',
-                    'rrset_values' => ['record_value']
-                ]
+                    'rrset_values' => ['record_value'],
+                ],
             ]
         )->shouldBeCalled();
 

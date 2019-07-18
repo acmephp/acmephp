@@ -50,7 +50,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
 
     /**
      * @param DnsDataExtractor $extractor
-     * @param ClientInterface    $client
+     * @param ClientInterface  $client
      */
     public function __construct(
         DnsDataExtractor $extractor = null,
@@ -99,11 +99,11 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
             $recordName = $this->extractor->getRecordName($authorizationChallenge);
             $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
 
-            $subDomain = \str_replace('.' . $topLevelDomain . '.', '', $recordName);
+            $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
 
             $this->client->request(
                 'PUT',
-                'https://dns.api.gandi.net/api/v5/domains/' . $topLevelDomain . '/records/' . $subDomain . '/TXT',
+                'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
                 [
                     'headers' => [
                         'X-Api-Key' => $this->apiKey,
@@ -112,8 +112,8 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
                         'rrset_type' => 'TXT',
                         'rrset_ttl' => 600,
                         'rrset_name' => $subDomain,
-                        'rrset_values' => [$recordValue]
-                    ]
+                        'rrset_values' => [$recordValue],
+                    ],
                 ]
             );
 
@@ -140,11 +140,11 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
             $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
             $recordName = $this->extractor->getRecordName($authorizationChallenge);
 
-            $subDomain = \str_replace('.' . $topLevelDomain . '.', '', $recordName);
+            $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
 
             $this->client->request(
                 'DELETE',
-                'https://dns.api.gandi.net/api/v5/domains/' . $topLevelDomain . '/records/' . $subDomain . '/TXT',
+                'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
                 [
                     'headers' => [
                         'X-Api-Key' => $this->apiKey,
@@ -163,7 +163,6 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
     {
         return \implode('.', \array_slice(\explode('.', $domain), -2));
     }
-
 
     /**
      * @param AuthorizationChallenge[] $authorizationChallenges
