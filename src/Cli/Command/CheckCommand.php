@@ -34,7 +34,7 @@ class CheckCommand extends AbstractCommand
     {
         $this->setName('check')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53)', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53, gandi)', 'http'),
                 new InputOption('no-test', 't', InputOption::VALUE_NONE, 'Whether or not internal tests should be disabled'),
                 new InputArgument('domains', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'The list of domains to check the authorization for'),
             ])
