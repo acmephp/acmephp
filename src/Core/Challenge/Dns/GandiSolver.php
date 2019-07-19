@@ -116,8 +116,6 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
                     ],
                 ]
             );
-
-            // TODO: Validate that record was set.
         }
     }
 
@@ -162,35 +160,5 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
     protected function getTopLevelDomain($domain)
     {
         return \implode('.', \array_slice(\explode('.', $domain), -2));
-    }
-
-    /**
-     * @param AuthorizationChallenge[] $authorizationChallenges
-     *
-     * @return AuthorizationChallenge[][]
-     */
-    private function groupAuthorizationChallengesPerDomain(array $authorizationChallenges)
-    {
-        $groups = [];
-        foreach ($authorizationChallenges as $authorizationChallenge) {
-            $groups[$authorizationChallenge->getDomain()][] = $authorizationChallenge;
-        }
-
-        return $groups;
-    }
-
-    /**
-     * @param AuthorizationChallenge[] $authorizationChallenges
-     *
-     * @return AuthorizationChallenge[][]
-     */
-    private function groupAuthorizationChallengesPerRecordName(array $authorizationChallenges)
-    {
-        $groups = [];
-        foreach ($authorizationChallenges as $authorizationChallenge) {
-            $groups[$this->extractor->getRecordName($authorizationChallenge)][] = $authorizationChallenge;
-        }
-
-        return $groups;
     }
 }
