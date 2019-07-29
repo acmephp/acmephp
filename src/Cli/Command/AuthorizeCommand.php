@@ -19,12 +19,21 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use AcmePhp\Cli\Command\Helper\KeyOptionCommandTrait;
+use AcmePhp\Ssl\CertificateRequest;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
 class AuthorizeCommand extends AbstractCommand
 {
+    use KeyOptionCommandTrait;
+
+    /**
+     * @var RepositoryInterface
+     */
+    private $repository;
+
     /**
      * {@inheritdoc}
      */
@@ -34,6 +43,14 @@ class AuthorizeCommand extends AbstractCommand
             ->setDefinition([
                 new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53)', 'http'),
                 new InputArgument('domains', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'List of domains to ask an authorization for'),
+                new InputOption('country', null, InputOption::VALUE_REQUIRED, 'Your country two-letters code (field "C" of the distinguished name, for instance: "US")'),
+                new InputOption('province', null, InputOption::VALUE_REQUIRED, 'Your country province (field "ST" of the distinguished name, for instance: "California")'),
+                new InputOption('locality', null, InputOption::VALUE_REQUIRED, 'Your locality (field "L" of the distinguished name, for instance: "Mountain View")'),
+                new InputOption('organization', null, InputOption::VALUE_REQUIRED, 'Your organization/company (field "O" of the distinguished name, for instance: "Acme PHP")'),
+                new InputOption('unit', null, InputOption::VALUE_REQUIRED, 'Your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")'),
+                new InputOption('email', null, InputOption::VALUE_REQUIRED, 'Your e-mail address (field "E" of the distinguished name)'),
+                new InputOption('alternative-name', 'a', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Alternative domains for this certificate'),
+                new InputOption('key-type', 'k', InputOption::VALUE_REQUIRED, 'The type of private key used to sign certificates (one of RSA, EC)', 'RSA'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
             ->setHelp(<<<'EOF'
@@ -56,8 +73,11 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->repository = $this->getRepository();
+
         $client = $this->getClient();
         $domains = $input->getArgument('domains');
+        $keyType = $input->getOption('key-type');
 
         $solverName = strtolower($input->getOption('solver'));
 
@@ -68,8 +88,37 @@ EOF
         $solver = $solverLocator->get($solverName);
         $this->debug('Solver found', ['name' => $solverName]);
 
+        $alternativeNames = $domains;
+        $domain = $alternativeNames[0];
+        sort($alternativeNames);
+
+        $introduction = <<<'EOF'
+
+There is currently no certificate for domain %s in the Acme PHP storage. As it is the
+first time you request a certificate for this domain, some configuration is required.
+ 
+<info>Generating domain key pair...</info>
+EOF;
+
+        $this->info(sprintf($introduction, $domain));
+
+        /* @var KeyPair $domainKeyPair */
+        $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair(
+            $this->createKeyOption($keyType)
+        );
+        $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
+
+        $this->debug('Domain key pair generated and stored', [
+            'domain' => $domain,
+            'public_key' => $domainKeyPair->getPublicKey()->getPEM(),
+        ]);
+        $distinguishedName = $this->getOrCreateDistinguishedName($domain, $alternativeNames);
+        $this->notice('Distinguished name informations have been stored locally for this domain (they won\'t be asked on renewal).');
+        $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
+        $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
+
         $this->notice(sprintf('Requesting an authorization token for domains %s ...', implode(', ', $domains)));
-        $order = $client->requestOrder($domains);
+        $order = $client->requestOrder($domains, $csr);
         $this->notice('The authorization tokens was successfully fetched!');
         $authorizationChallengesToSolve = [];
         foreach ($order->getAuthorizationsChallenges() as $domainKey => $authorizationChallenges) {

@@ -131,9 +131,14 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function requestOrder(array $domains)
+    public function requestOrder(array $domains, $csr = null)
     {
         Assert::allStringNotEmpty($domains, 'requestOrder::$domains expected a list of strings. Got: %s');
+
+        $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
+        $csrContent = $this->csrSigner->signCertificateRequest($csr);
+        $csrContent = trim(str_replace($humanText, '', $csrContent));
+        $csrContent = trim($this->getHttpClient()->getBase64Encoder()->encode(base64_decode($csrContent)));
 
         $payload = [
             'identifiers' => array_map(
@@ -145,6 +150,7 @@ class AcmeClient implements AcmeClientV2Interface
                 },
                 array_values($domains)
             ),
+            'csr' => $csrContent,
         ];
 
         $response = $this->getHttpClient()->signedKidRequest('POST', $this->getResourceUrl(ResourcesDirectory::NEW_ORDER), $this->getResourceAccount(), $payload);

@@ -44,7 +44,7 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      *
      * @return CertificateOrder the Order returned by the Certificate Authority
      */
-    public function requestOrder(array $domains);
+    public function requestOrder(array $domains, $csr = null);
 
     /**
      * Request a certificate for the given domain.
