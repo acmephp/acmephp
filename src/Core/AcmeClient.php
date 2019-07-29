@@ -396,7 +396,7 @@ oAeJpcfRxQIMUVhVHg1SLpzooWvb6mhSR6J7m8jzWOKLrmaYSw==
             $response['type'],
             $response['url'],
             $response['token'],
-            $response['token'].'.'.$base64encoder->encode($this->getHttpClient()->getJWKThumbprint())
+            isset($response['filecontent']) ? $response['filecontent'] : ($response['token'].'.'.$base64encoder->encode($this->getHttpClient()->getJWKThumbprint()))
         );
     }
 }
