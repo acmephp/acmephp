@@ -41,7 +41,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53)', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53, gandi)', 'http'),
                 new InputArgument('domains', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'List of domains to ask an authorization for'),
                 new InputOption('country', null, InputOption::VALUE_REQUIRED, 'Your country two-letters code (field "C" of the distinguished name, for instance: "US")'),
                 new InputOption('province', null, InputOption::VALUE_REQUIRED, 'Your country province (field "ST" of the distinguished name, for instance: "California")'),
