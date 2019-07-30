@@ -57,7 +57,7 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      * this operation could be long.
      *
      * @param CertificateOrder   $order   the Order returned by the Certificate Authority
-     * @param CertificateRequest $csr     the Certificate Signing Request (informations for the certificate)
+     * @param CertificateRequest|null $csr     the Certificate Signing Request (informations for the certificate)
      * @param int                $timeout the timeout period
      *
      * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
@@ -68,7 +68,7 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      *
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
-    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180);
+    public function finalizeOrder(CertificateOrder $order, $csr = null, $timeout = 180);
 
     /**
      * Request the current status of an authorization challenge.

@@ -100,7 +100,7 @@ EOF
                 $response = $this->requestCertificate($order, $domainConfig, $keyOption);
             }
 
-            $this->installCertificate($response, $domainConfig['install']);
+            $this->installCertificate($domain, $response, $domainConfig['install']);
         }
     }
 
@@ -134,12 +134,12 @@ EOF
         }
     }
 
-    private function installCertificate(CertificateResponse $response, array $actions)
+    private function installCertificate($domain, CertificateResponse $response, array $actions)
     {
         $this->output->writeln(
             sprintf(
                 '<comment>Installing certificate for domain %s...</comment>',
-                $response->getCertificateRequest()->getDistinguishedName()->getCommonName()
+                $domain
             )
         );
 
@@ -198,32 +198,35 @@ EOF
 
         $repository = $this->getRepository();
         $client = $this->getClient();
-        $distinguishedName = new DistinguishedName(
-            $domainConfig['domain'],
-            $domainConfig['distinguished_name']['country'],
-            $domainConfig['distinguished_name']['state'],
-            $domainConfig['distinguished_name']['locality'],
-            $domainConfig['distinguished_name']['organization_name'],
-            $domainConfig['distinguished_name']['organization_unit_name'],
-            $domainConfig['distinguished_name']['email_address'],
-            $domainConfig['subject_alternative_names']
-        );
+        $csr = null;
+        if (!$client->isCsrEager()) {
+            $distinguishedName = new DistinguishedName(
+                $domainConfig['domain'],
+                $domainConfig['distinguished_name']['country'],
+                $domainConfig['distinguished_name']['state'],
+                $domainConfig['distinguished_name']['locality'],
+                $domainConfig['distinguished_name']['organization_name'],
+                $domainConfig['distinguished_name']['organization_unit_name'],
+                $domainConfig['distinguished_name']['email_address'],
+                $domainConfig['subject_alternative_names']
+            );
 
-        if ($repository->hasDomainKeyPair($domain)) {
-            $domainKeyPair = $repository->loadDomainKeyPair($domain);
-        } else {
-            $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair($keyOption);
-            $repository->storeDomainKeyPair($domain, $domainKeyPair);
+            if ($repository->hasDomainKeyPair($domain)) {
+                $domainKeyPair = $repository->loadDomainKeyPair($domain);
+            } else {
+                $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair($keyOption);
+                $repository->storeDomainKeyPair($domain, $domainKeyPair);
+            }
+
+            $repository->storeDomainDistinguishedName($domain, $distinguishedName);
+
+            $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
         }
-
-        $repository->storeDomainDistinguishedName($domain, $distinguishedName);
-
-        $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
         $response = $client->finalizeOrder($order, $csr);
 
         $this->output->writeln('<info>Certificate requested successfully!</info>');
 
-        $repository->storeCertificateResponse($response);
+        $repository->storeCertificateResponse($domain, $response);
 
         return $response;
     }
@@ -246,35 +249,36 @@ EOF
         $client = $this->getClient();
         $domains = array_unique(array_merge([$domain], $domainConfig['subject_alternative_names']));
 
+        $csr = null;
+        if ($client->isCsrEager()) {
+            $domain = $domainConfig['domain'];
+            $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
 
-        $domain = $domainConfig['domain'];
-        $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
+            $repository = $this->getRepository();
+            $distinguishedName = new DistinguishedName(
+                $domainConfig['domain'],
+                $domainConfig['distinguished_name']['country'],
+                $domainConfig['distinguished_name']['state'],
+                $domainConfig['distinguished_name']['locality'],
+                $domainConfig['distinguished_name']['organization_name'],
+                $domainConfig['distinguished_name']['organization_unit_name'],
+                $domainConfig['distinguished_name']['email_address'],
+                $domainConfig['subject_alternative_names']
+            );
 
-        $repository = $this->getRepository();
-        $client = $this->getClient();
-        $distinguishedName = new DistinguishedName(
-            $domainConfig['domain'],
-            $domainConfig['distinguished_name']['country'],
-            $domainConfig['distinguished_name']['state'],
-            $domainConfig['distinguished_name']['locality'],
-            $domainConfig['distinguished_name']['organization_name'],
-            $domainConfig['distinguished_name']['organization_unit_name'],
-            $domainConfig['distinguished_name']['email_address'],
-            $domainConfig['subject_alternative_names']
-        );
+            if ($repository->hasDomainKeyPair($domain)) {
+                $domainKeyPair = $repository->loadDomainKeyPair($domain);
+            } else {
+                $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair($keyOption);
+                $repository->storeDomainKeyPair($domain, $domainKeyPair);
+            }
 
-        if ($repository->hasDomainKeyPair($domain)) {
-            $domainKeyPair = $repository->loadDomainKeyPair($domain);
-        } else {
-            $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair($keyOption);
-            $repository->storeDomainKeyPair($domain, $domainKeyPair);
+            $repository->storeDomainDistinguishedName($domain, $distinguishedName);
+
+            $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
+
+            $this->output->writeln('<comment>Requesting certificate order...</comment>');
         }
-
-        $repository->storeDomainDistinguishedName($domain, $distinguishedName);
-
-        $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
-
-        $this->output->writeln('<comment>Requesting certificate order...</comment>');
         $order = $client->requestOrder($domains, $csr);
 
         $authorizationChallengesToSolve = [];

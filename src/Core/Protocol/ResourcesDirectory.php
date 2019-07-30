@@ -24,6 +24,7 @@ class ResourcesDirectory
     const NEW_ORDER = 'newOrder';
     const NEW_NONCE = 'newNonce';
     const REVOKE_CERT = 'revokeCert';
+    const CSR_EAGER = 'csrEager';
 
     /**
      * @var array
@@ -48,6 +49,7 @@ class ResourcesDirectory
             self::NEW_ORDER,
             self::NEW_NONCE,
             self::REVOKE_CERT,
+            self::CSR_EAGER,
         ];
     }
 
@@ -67,5 +69,19 @@ class ResourcesDirectory
         );
 
         return isset($this->serverResources[$resource]) ? $this->serverResources[$resource] : null;
+    }
+
+    /**
+     * Is this server requires CSR Eager
+     *
+     * @return boolean
+     */
+    public function isCsrEager()
+    {
+        if (!isset($this->serverResources['meta']) || !isset($this->serverResources['meta'][self::CSR_EAGER])) {
+            return false;
+        }
+
+        return $this->serverResources['meta'][self::CSR_EAGER];
     }
 }

@@ -25,11 +25,11 @@ class CertificateResponse
     private $certificate;
 
     /**
-     * @param CertificateRequest $certificateRequest
+     * @param CertificateRequest|null $certificateRequest
      * @param Certificate        $certificate
      */
     public function __construct(
-        CertificateRequest $certificateRequest,
+        $certificateRequest,
         Certificate $certificate
     ) {
         $this->certificateRequest = $certificateRequest;
@@ -37,7 +37,7 @@ class CertificateResponse
     }
 
     /**
-     * @return CertificateRequest
+     * @return CertificateRequest|null
      */
     public function getCertificateRequest()
     {

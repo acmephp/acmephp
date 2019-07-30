@@ -81,13 +81,15 @@ class Repository implements RepositoryV2Interface
     /**
      * {@inheritdoc}
      */
-    public function storeCertificateResponse(CertificateResponse $certificateResponse)
+    public function storeCertificateResponse($domain, CertificateResponse $certificateResponse)
     {
-        $distinguishedName = $certificateResponse->getCertificateRequest()->getDistinguishedName();
-        $domain = $distinguishedName->getCommonName();
+        if ($certificateResponse->getCertificateRequest()) {
+            $distinguishedName = $certificateResponse->getCertificateRequest()->getDistinguishedName();
+            $domain = $distinguishedName->getCommonName();
 
-        $this->storeDomainKeyPair($domain, $certificateResponse->getCertificateRequest()->getKeyPair());
-        $this->storeDomainDistinguishedName($domain, $distinguishedName);
+            $this->storeDomainKeyPair($domain, $certificateResponse->getCertificateRequest()->getKeyPair());
+            $this->storeDomainDistinguishedName($domain, $distinguishedName);
+        }
         $this->storeDomainCertificate($domain, $certificateResponse->getCertificate());
     }
 

@@ -135,10 +135,13 @@ class AcmeClient implements AcmeClientV2Interface
     {
         Assert::allStringNotEmpty($domains, 'requestOrder::$domains expected a list of strings. Got: %s');
 
-        $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
-        $csrContent = $this->csrSigner->signCertificateRequest($csr);
-        $csrContent = trim(str_replace($humanText, '', $csrContent));
-        $csrContent = trim($this->getHttpClient()->getBase64Encoder()->encode(base64_decode($csrContent)));
+        $csrContent = null;
+        if ($this->isCsrEager()) {
+            $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
+            $csrContent = $this->csrSigner->signCertificateRequest($csr);
+            $csrContent = trim(str_replace($humanText, '', $csrContent));
+            $csrContent = trim($this->getHttpClient()->getBase64Encoder()->encode(base64_decode($csrContent)));
+        }
 
         $payload = [
             'identifiers' => array_map(
@@ -225,19 +228,21 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180)
+    public function finalizeOrder(CertificateOrder $order, $csr = null, $timeout = 180)
     {
         Assert::integer($timeout, 'finalizeOrder::$timeout expected an integer. Got: %s');
 
         $endTime = time() + $timeout;
         $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
         if (\in_array($response['status'], ['pending', 'ready'])) {
-            $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
+            $csrContent = null;
+            if (!$this->isCsrEager()) {
+                $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
 
-            $csrContent = $this->csrSigner->signCertificateRequest($csr);
-            $csrContent = trim(str_replace($humanText, '', $csrContent));
-            $csrContent = trim($this->getHttpClient()->getBase64Encoder()->encode(base64_decode($csrContent)));
-
+                $csrContent = $this->csrSigner->signCertificateRequest($csr);
+                $csrContent = trim(str_replace($humanText, '', $csrContent));
+                $csrContent = trim($this->getHttpClient()->getBase64Encoder()->encode(base64_decode($csrContent)));
+            }
             $response = $this->getHttpClient()->signedKidRequest('POST', $response['finalize'], $this->getResourceAccount(), [
                 'csr' => $csrContent,
             ]);
@@ -314,6 +319,21 @@ class AcmeClient implements AcmeClientV2Interface
         return $this->directory->getResourceUrl($resource);
     }
 
+    /**
+     * Find a resource URL.
+     *
+     * @return boolean
+     */
+    public function isCsrEager()
+    {
+        if (!$this->directory) {
+            $this->directory = new ResourcesDirectory(
+                $this->getHttpClient()->unsignedRequest('GET', $this->directoryUrl, null, true)
+            );
+        }
+
+        return $this->directory->isCsrEager();
+    }
     /**
      * Request a resource (URL is found using ACME server directory).
      *

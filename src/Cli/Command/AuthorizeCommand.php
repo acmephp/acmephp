@@ -102,21 +102,23 @@ EOF;
 
         $this->info(sprintf($introduction, $domain));
 
-        /* @var KeyPair $domainKeyPair */
-        $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair(
-            $this->createKeyOption($keyType)
-        );
-        $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
+        $csr = null;
+        if ($this->getClient()->isCsrEager()) {
+            /* @var KeyPair $domainKeyPair */
+            $domainKeyPair = $this->getContainer()->get('ssl.key_pair_generator')->generateKeyPair(
+                $this->createKeyOption($keyType)
+            );
+            $this->repository->storeDomainKeyPair($domain, $domainKeyPair);
 
-        $this->debug('Domain key pair generated and stored', [
-            'domain' => $domain,
-            'public_key' => $domainKeyPair->getPublicKey()->getPEM(),
-        ]);
-        $distinguishedName = $this->getOrCreateDistinguishedName($domain, $alternativeNames);
-        $this->notice('Distinguished name informations have been stored locally for this domain (they won\'t be asked on renewal).');
-        $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
-        $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
-
+            $this->debug('Domain key pair generated and stored', [
+                'domain' => $domain,
+                'public_key' => $domainKeyPair->getPublicKey()->getPEM(),
+            ]);
+            $distinguishedName = $this->getOrCreateDistinguishedName($domain, $alternativeNames);
+            $this->notice('Distinguished name informations have been stored locally for this domain (they won\'t be asked on renewal).');
+            $this->notice(sprintf('Loading the order related to the domains %s ...', implode(', ', $domains)));
+            $csr = new CertificateRequest($distinguishedName, $domainKeyPair);
+        }
         $this->notice(sprintf('Requesting an authorization token for domains %s ...', implode(', ', $domains)));
         $order = $client->requestOrder($domains, $csr);
         $this->notice('The authorization tokens was successfully fetched!');

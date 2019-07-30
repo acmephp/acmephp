@@ -35,11 +35,12 @@ interface RepositoryInterface
      *      - the certificate request
      *      - the certificate
      *
+     * @param string $domain
      * @param CertificateResponse $certificateResponse
      *
      * @throws AcmeCliException
      */
-    public function storeCertificateResponse(CertificateResponse $certificateResponse);
+    public function storeCertificateResponse($domain, CertificateResponse $certificateResponse);
 
     /**
      * Store a given key pair as the account key pair (the global key pair used to
