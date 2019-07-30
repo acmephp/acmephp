@@ -1,3 +1,4 @@
+31/07/2019 01:16  1.1.2  Implement csrEager
 18/01/2019 15:17  1.1.1  Several bug fixes
 952b1a6 Merge pull request #148 from rokclimb15/patch-1
 56df417 Correctly throw ChallengeTimedOutException
