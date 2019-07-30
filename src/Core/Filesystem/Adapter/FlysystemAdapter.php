@@ -39,6 +39,7 @@ class FlysystemAdapter implements FilesystemInterface
 
     public function delete($path)
     {
+        return;
         $isOnRemote = $this->filesystem->has($path);
         if ($isOnRemote && !$this->filesystem->delete($path)) {
             throw $this->createRuntimeException($path, 'delete');

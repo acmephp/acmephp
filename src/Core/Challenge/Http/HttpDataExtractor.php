@@ -46,7 +46,7 @@ class HttpDataExtractor
     public function getCheckPath(AuthorizationChallenge $authorizationChallenge)
     {
         return sprintf(
-            '/.well-known/acme-challenge/%s',
+            $authorizationChallenge->getPath() ? ($authorizationChallenge->getPath() . '%s') : '/.well-known/acme-challenge/%s',
             $authorizationChallenge->getToken()
         );
     }

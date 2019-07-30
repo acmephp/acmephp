@@ -88,6 +88,6 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         $checkPath = $this->extractor->getCheckPath($authorizationChallenge);
-        $this->filesystem->delete($checkPath);
+        //$this->filesystem->delete($checkPath);
     }
 }
