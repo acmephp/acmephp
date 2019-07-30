@@ -39,8 +39,6 @@ class FlysystemAdapter implements FilesystemInterface
 
     public function delete($path)
     {
-        // @TODO: trustocean can't delete. because it requires async to verify
-        return;
         $isOnRemote = $this->filesystem->has($path);
         if ($isOnRemote && !$this->filesystem->delete($path)) {
             throw $this->createRuntimeException($path, 'delete');

@@ -127,7 +127,10 @@ class AuthorizationChallenge
             $data['type'],
             $data['url'],
             $data['token'],
-            $data['payload']
+            $data['payload'],
+            isset($data['path']) ? $data['path'] : null,
+            isset($data['verifyurl']) ? $data['verifyurl'] : null,
+            isset($data['filecontent']) ? $data['filecontent'] : null
         );
     }
 
@@ -196,7 +199,7 @@ class AuthorizationChallenge
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPath()
     {
@@ -204,7 +207,7 @@ class AuthorizationChallenge
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getVerifyurl()
     {
@@ -212,7 +215,7 @@ class AuthorizationChallenge
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFilecontent()
     {

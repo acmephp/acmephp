@@ -88,8 +88,6 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         $checkPath = $this->extractor->getCheckPath($authorizationChallenge);
-
-        // @TODO: trustocean can't delete. because it requires async to verify
-        //$this->filesystem->delete($checkPath);
+        $this->filesystem->delete($checkPath);
     }
 }
