@@ -6,58 +6,11 @@ branches:
 notifications:
   email: false
 
-.template_phpunit: &phpunit
-  services:
-  - docker
-  before_install:
-  - stty cols 120
-  - phpenv config-rm xdebug.ini || echo "xdebug not available"
-  - ./tests/setup.sh
-  install: composer install --no-interaction --no-progress --ansi
-  script: ./tests/run.sh
-  cache:
-    directories:
-    - $HOME/.composer/cache/files
-.template_phpunit_low: &phpunit_low
-  <<: *phpunit
-  install: composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable
-  env:
-    COMMENT: low deps
-.template_phpunit_high: &phpunit_high
-  <<: *phpunit
-  install: composer update --no-interaction --no-progress --ansi
-  env:
-    COMMENT: high deps
-
 jobs:
   include:
   - <<: *phpunit
     php: 5.6
-  - <<: *phpunit_low
-    php: 7.0
-  - <<: *phpunit
-    php: 7.1
-  - <<: *phpunit_high
-    php: 7.2
-  - stage: split
-    php: 7.2
-    cache:
-      directories:
-      - $HOME/.gitsplit/cache
-    if: branch = master AND fork = false
     install:
-    - composer config platform.php 5.6.3
     - composer update --no-dev
     - php -d phar.readonly=0 script/build_phar.php
     - sh script/upload_phar.sh
-    - docker pull jderusse/gitsplit:2.0
-    - git config remote.origin.fetch "+refs/*:refs/*"
-    - git config remote.origin.mirror true
-    - git fetch --unshallow || true
-    env:
-      COMMENT: split repo
-    script:
-    - docker run --rm -t -e GH_TOKEN -v "$HOME/.gitsplit/cache":/cache/gitsplit -v ${PWD}:/srv jderusse/gitsplit:2.0 gitsplit --ref "${TRAVIS_BRANCH}";
-env:
-    global:
-      secure: "guVs6Ym+RKa+4l3UAR/LbS360VziKilA+FHn89R9vszDuOm7Yj0+KvuE+c6nCSNL6JgVsBN6X14naDuDPrb/61HMCOZZhehL3lHu5j76sF7dxRgkftuT6vdn7z0Zz1Kaw7iH1oEgSsVpL9zKXEC9acgWHNb894ecBn80lhLiI5GfGzEcTEpfuowT0MOaFe0Oa5mFIFux4p4DWEZSkEmc21GYZI/CQe5VhRUGjApJNNiKtcHw1Qvdbu1Ubaq9W0issjXjEeBibSeIfjN6++L+k6QH1AITTTTJRRsz1O2T+8N9PxGjHR0o3+IfCC1oEQ6Ezlx10uS8TL85ytlRtZg+NNTJ1FDHQ39/M5ZcOpkrL9ohlfbVq3bcxp5i/Iu2UnO4ZvpMxRQLT1sH735gEt5NeNn9vsNm2M7ke/7oEi8rksixI1bakEFkOrsbGBDMg797wE9DtUFoY3JOKzKkCQjXiUkCsT2UalDoUauF7CkM3+QrEyhPOeNFK5lgRBsVJfeD6idNCmIvONoN8F8FCBlYvhrsLkTtwpO1uFyMboJ3/CIT8S4l1C3JPcTnMt2DUMYXxOv/tl/1x1MtL785tOb+OWs1Sta2H/Bllxp9qUPmNM1+uj71aTPqBLpWCwF2skRywW7Jqb9qGsROiOVUa6to1hMbbKSOoL59KqZF6e2EDpo="
