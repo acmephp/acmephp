@@ -16,7 +16,7 @@ install:
   - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer update --no-dev --prefer-dist --no-interaction --no-suggest
   - composer global require humbug/box
   - mv box.json.dist box.json
-  - ln -s ~/.composer/vendor ~/vendor
-  - php -d phar.readonly=0 vendor/humbug/box/bin/box build
+  - ln -s ~/.config/composer/vendor ~/vendor
+  - php -d phar.readonly=0 ~/.config/composer/vendor/humbug/box/bin/box build
   - sh script/upload_phar.sh
   - exit 0
