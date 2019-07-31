@@ -32,7 +32,7 @@ class AuthorizeCommand extends AbstractCommand
     {
         $this->setName('authorize')
             ->setDefinition([
-                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53, gandi)', 'http'),
+                new InputOption('solver', 's', InputOption::VALUE_REQUIRED, 'The type of challenge solver to use (available: http, dns, route53, gandi, aliyun)', 'http'),
                 new InputArgument('domains', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'List of domains to ask an authorization for'),
             ])
             ->setDescription('Ask the ACME server for an authorization token to check you are the owner of a domain')
@@ -44,7 +44,7 @@ the server to check you are the own of the domain by checking this URL.
 Ask the server for an authorization token:
 
   <info>php %command.full_name% example.com www.exemple.org *.example.io</info>
-  
+
 Follow the instructions to expose your token on the specific URL, and then run the <info>check</info>
 command to tell the server to check your token.
 EOF
