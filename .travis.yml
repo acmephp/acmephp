@@ -7,10 +7,16 @@ notifications:
 
 matrix:
   include:
-    - php: 5.6
+    - php: 7.2
       env: ENV=building
 
 install:
+  - composer global require bamarni/composer-bin-plugin
+  - composer global require humbug/box
+  - ln -s ~/.composer/vendor ~/vendor
+  - composer config platform.php 5.6.3
   - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer update --no-dev --prefer-dist --no-interaction --no-suggest
-  - php -d phar.readonly=0 script/build_phar.php
+  - mv box.json.dist box.json
+  - php -d phar.readonly=0 ~/.composer/vendor/humbug/box/bin/box build
   - sh script/upload_phar.sh
+  - exit 0

@@ -22,6 +22,5 @@
     "main": "bin/acme",
     "output": "build/acmephp.phar",
     "chmod": "0755",
-    "stub": true,
-    "key": "../private.key"
+    "stub": true
 }
