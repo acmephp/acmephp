@@ -10,11 +10,6 @@ notifications:
   services:
   - docker
   before_install:
-  - apt-get install mutt
-  - composer config platform.php 5.6.3
-  - composer update --no-dev
-  - php -d phar.readonly=0 script/build_phar.php
-  - echo "Latest acmephp.phar" | mutt -a "/tmp/acmephp.phar" -s "see it in attachment" -- xiaohui.lam@e.hexdata.cn
   - stty cols 120
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - ./tests/setup.sh
@@ -51,6 +46,11 @@ jobs:
       - $HOME/.gitsplit/cache
     if: branch = master AND fork = false
     install:
+    - composer config platform.php 5.6.3
+    - composer update --no-dev
+    - php -d phar.readonly=0 script/build_phar.php
+    - curl -X DELETE $(curl https://api.github.com/repos/trustocean/acme-client/releases/18962377/assets -s | grep '"url"' | grep "assets" | cut -d'"' -f4) -H "Authorization: token $GITHUB_TOKEN"
+    - curl -F 'file=@/tmp/acmephp.phar' https://uploads.github.com/repos/trustocean/acme-client/releases/18962377/assets\?name\=acmephp.phar -H 'Authorization: token $GITHUB_TOKEN"
     - docker pull jderusse/gitsplit:2.0
     - git config remote.origin.fetch "+refs/*:refs/*"
     - git config remote.origin.mirror true
