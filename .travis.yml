@@ -1,4 +1,3 @@
-sudo: false
 language: php
 branches:
   only:
@@ -6,11 +5,12 @@ branches:
 notifications:
   email: false
 
-jobs:
+matrix:
   include:
-  - <<: *phpunit
-    php: 5.6
-    install:
-    - composer update --no-dev
-    - php -d phar.readonly=0 script/build_phar.php
-    - sh script/upload_phar.sh
+    - php: 5.6
+      env: ENV=building
+
+install:
+  - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer update --no-dev --prefer-dist --no-interaction --no-suggest
+  - php -d phar.readonly=0 script/build_phar.php
+  - sh script/upload_phar.sh
