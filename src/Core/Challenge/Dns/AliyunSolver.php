@@ -18,13 +18,13 @@ use GuzzleHttp\ClientInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Webmozart\Assert\Assert;
-use AlibabaCloud\Alidns\V20150109\AddDomainRecord;
 use AlibabaCloud\Alidns\Alidns;
+use AlibabaCloud\Client\AlibabaCloud;
 
 /**
- * ACME DNS solver with automate configuration of a Gandi.Net.
+ * ACME DNS solver with automate configuration of a Aliyun.com
  *
- * @author Alexander Obuhovich <aik.bold@gmail.com>
+ * @author Xiaohui Lam <xiaohui.lam@aliyun.com>
  */
 class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableServiceInterface
 {
@@ -48,7 +48,12 @@ class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableSer
     /**
      * @var string
      */
-    private $apiKey;
+    private $accessKeyId;
+
+    /**
+     * @var string
+     */
+    private $accessKeySecret;
 
     /**
      * @param DnsDataExtractor $extractor
@@ -70,7 +75,10 @@ class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableSer
      */
     public function configure(array $config)
     {
-        $this->apiKey = $config['api_key'];
+        $this->accessKeyId = $config['access_key_id'];
+        $this->accessKeySecret = $config['access_key_secret'];
+
+        AlibabaCloud::accessKeyClient($this->accessKeyId, $this->accessKeySecret)->regionId('cn-hangzhou')->asDefaultClient();
     }
 
     /**
@@ -94,7 +102,6 @@ class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableSer
      */
     public function solveAll(array $authorizationChallenges)
     {
-
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
         foreach ($authorizationChallenges as $authorizationChallenge) {
             $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
@@ -103,12 +110,27 @@ class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableSer
             $subDomain = \str_replace('.' . $topLevelDomain . '.', '', $recordName);
 
             $dns = new Alidns();
-            $dns->v20150109()->addDomainRecord([
-                'DomainName' => $topLevelDomain,
-                'Type' => isset($authorizationChallenge['dnsType']) ? $authorizationChallenge['dnsType'] : 'TXT',
-                'PR' => $subDomain,
-                'Value' => $recordValue,
-            ]);
+            $do = $dns->v20150109()->addDomainRecord()
+                ->withDomainName('a.com')
+                ->withType('TXT')
+                ->withRR('bb')
+                ->withValue('aaa')
+                ->request();
+
+            /**
+             * @var \AlibabaCloud\Client\Result\Result $response
+             */
+            $response = $dns->v20150109()->addDomainRecord()
+                ->withDomainName($topLevelDomain)
+                ->withType(isset($authorizationChallenge['dnsType']) ? $authorizationChallenge['dnsType'] : 'TXT')
+                ->withRR($subDomain)
+                ->withValue($recordValue)
+                ->request();
+
+            /**
+             * Store to $authorizationChallenge, because when it requires recordId when clear
+             */
+            $authorizationChallenge->recordId = $response->get('RecordId');
         }
     }
 
@@ -127,12 +149,10 @@ class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableSer
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
         foreach ($authorizationChallenges as $authorizationChallenge) {
-            $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
-            $recordName = $this->extractor->getRecordName($authorizationChallenge);
-            $subDomain = \str_replace('.' . $topLevelDomain . '.', '', $recordName);
-
             $dns = new Alidns();
-            $dns->v20150109()->deleteDomainRecord(null);
+            $dns->v20150109()->deleteDomainRecord()
+                ->withRecordId($authorizationChallenge->recordId)
+                ->request();
         }
     }
 
