@@ -1,2 +1,2 @@
-curl -X DELETE $(curl https://api.github.com/repos/trustocean/acme-client/releases/18962377/assets -H "Authorization: token $GITHUB_TOKEN" -s | grep '"url"' | grep "assets" | cut -d'"' -f4) -H "Authorization: token $GITHUB_TOKEN"
+curl -X DELETE $(curl https://api.github.com/repos/trustocean/acme-client/releases/18962377/assets -H "Authorization: token $GITHUB_TOKEN" -s | grep '"url"' | grep "assets" | cut -d'"' -f4) -H "Authorization: token $GITHUB_TOKEN" || echo failed
 curl -F 'file=@/tmp/acmephp.phar' 'https://uploads.github.com/repos/trustocean/acme-client/releases/18962377/assets?name=acmephp.phar' -H "Authorization: token $GITHUB_TOKEN"
