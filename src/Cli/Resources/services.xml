@@ -125,6 +125,9 @@
         <service id="acmephp.action.install_aliyun_cdn" class="AcmePhp\Cli\Action\InstallAliyunCdnAction" public="false">
             <tag name="acmephp.action" alias="install_aliyun_cdn" />
         </service>
+        <service id="acmephp.action.install_aliyun_waf" class="AcmePhp\Cli\Action\InstallAliyunWafAction" public="false">
+            <tag name="acmephp.action" alias="install_aliyun_waf" />
+        </service>
 
         <service id="acmephp.action.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection"/>
