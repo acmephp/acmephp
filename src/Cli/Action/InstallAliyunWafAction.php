@@ -39,23 +39,17 @@ class InstallAliyunWafAction extends AbstractAction
 
         $key = $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM();
 
-        try {
-            AlibabaCloud::accessKeyClient($config['accessKeyId'], $config['accessKeySecret'])->regionId('cn-hangzhou')->asDefaultClient();
-            $response = WafOpenapi::v20161111()->upgradeInstance()
-                ->host('wafopenapi.cn-hangzhou.aliyuncs.com')
-                ->action('CreateCertAndKey')
-                ->setProtocol('https')
-                ->version('2018-01-17')
-                ->withCert($cert)
-                ->withKey($key)
-                ->withDomain($config['domain'])
-                ->withHttpsCertName($config['domain'])
-                ->withInstanceId($config['instanceId'])
-                ->request();
-        } catch (ServerException $e) {
-            throw $e;
-        } catch (ClientException $e) {
-            throw $e;
-        }
+        AlibabaCloud::accessKeyClient($config['accessKeyId'], $config['accessKeySecret'])->regionId('cn-hangzhou')->asDefaultClient();
+        $response = WafOpenapi::v20161111()->upgradeInstance()
+            ->host('wafopenapi.cn-hangzhou.aliyuncs.com')
+            ->action('CreateCertAndKey')
+            ->setProtocol('https')
+            ->version('2018-01-17')
+            ->withCert($cert)
+            ->withKey($key)
+            ->withDomain($config['domain'])
+            ->withHttpsCertName($config['domain'])
+            ->withInstanceId($config['instanceId'])
+            ->request();
     }
 }
