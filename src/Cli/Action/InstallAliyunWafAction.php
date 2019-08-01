@@ -13,8 +13,6 @@ namespace AcmePhp\Cli\Action;
 
 use AcmePhp\Ssl\CertificateResponse;
 use AlibabaCloud\Client\AlibabaCloud;
-use AlibabaCloud\Client\Exception\ClientException;
-use AlibabaCloud\Client\Exception\ServerException;
 use AlibabaCloud\WafOpenapi\WafOpenapi;
 
 /**
