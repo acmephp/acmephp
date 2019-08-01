@@ -14,9 +14,11 @@ namespace AcmePhp\Cli\Action;
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\WafOpenapi\WafOpenapi;
 use AcmePhp\Ssl\CertificateResponse;
+use AlibabaCloud\Client\Exception\ServerException;
+use AlibabaCloud\Client\Exception\ClientException;
 
 /**
- * Action to install certificate in an AWS ELBv2.
+ * Action to install certificate in an Aliyun Waf.
  *
  * @author Xiaohui Lam <xiaohui.lam@aliyun.com>
  */
@@ -37,12 +39,23 @@ class InstallAliyunWafAction extends AbstractAction
 
         $key = $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM();
 
-        AlibabaCloud::accessKeyClient('', '')->regionId('cn')->asDefaultClient();
-        WafOpenapi::v20180117()->createCertAndKey()
-            ->withCert($cert)
-            ->withKey($key)
-            ->withDomain()
-            ->withHttpsCertName()
-            ->withInstanceId();
+        try {
+            AlibabaCloud::accessKeyClient($config['accessKeyId'], $config['accessKeySecret'])->regionId('cn-hangzhou')->asDefaultClient();
+            $response = WafOpenapi::v20161111()->upgradeInstance()
+                ->host('wafopenapi.cn-hangzhou.aliyuncs.com')
+                ->action('CreateCertAndKey')
+                ->setProtocol('https')
+                ->version('2018-01-17')
+                ->withCert($cert)
+                ->withKey($key)
+                ->withDomain($config['domain'])
+                ->withHttpsCertName($config['domain'])
+                ->withInstanceId($config['instanceId'])
+                ->request();
+        } catch (ServerException $e) {
+            throw $e;
+        } catch (ClientException $e) {
+            throw $e;
+        }
     }
 }
