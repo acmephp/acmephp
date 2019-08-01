@@ -13,6 +13,7 @@ namespace AcmePhp\Cli\Action;
 
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\WafOpenapi\WafOpenapi;
+use AcmePhp\Ssl\CertificateResponse;
 
 /**
  * Action to install certificate in an AWS ELBv2.
@@ -21,15 +22,25 @@ use AlibabaCloud\WafOpenapi\WafOpenapi;
  */
 class InstallAliyunWafAction extends AbstractAction
 {
-    protected function installCertificate($certificateArn, $region, $loadBalancerName, $loadBalancerPort)
+    /**
+     * {@inheritdoc}
+     */
+    public function handle($config, CertificateResponse $response)
     {
-        print_r($certificateArn);
-        exit;
+        $issuerChain = [];
+        $issuerCertificate = $response->getCertificate()->getIssuerCertificate();
+        while (null !== $issuerCertificate) {
+            $issuerChain[] = $issuerCertificate->getPEM();
+            $issuerCertificate = $issuerCertificate->getIssuerCertificate();
+        }
+        $cert = implode("\n", $issuerChain);
+
+        $key = $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM();
 
         AlibabaCloud::accessKeyClient('', '')->regionId('cn')->asDefaultClient();
         WafOpenapi::v20180117()->createCertAndKey()
-            ->withCert($certificateArn)
-            ->withKey()
+            ->withCert($cert)
+            ->withKey($key)
             ->withDomain()
             ->withHttpsCertName()
             ->withInstanceId();

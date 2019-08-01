@@ -122,7 +122,7 @@
             <argument type="service" id="http.raw_client" />
             <tag name="acmephp.action" alias="push_rancher" />
         </service>
-        <service id="acmephp.action.install_aliyun_waf" class="AcmePhp\Cli\Action\InstallAwsElbv2Action" public="false">
+        <service id="acmephp.action.install_aliyun_waf" class="AcmePhp\Cli\Action\InstallAliyunWafAction" public="false">
             <argument type="service" id="aws.client_factory" />
             <tag name="acmephp.action" alias="install_aliyun_waf" />
         </service>
