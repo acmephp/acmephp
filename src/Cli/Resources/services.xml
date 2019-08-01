@@ -123,7 +123,6 @@
             <tag name="acmephp.action" alias="push_rancher" />
         </service>
         <service id="acmephp.action.install_aliyun_waf" class="AcmePhp\Cli\Action\InstallAliyunWafAction" public="false">
-            <argument type="service" id="aws.client_factory" />
             <tag name="acmephp.action" alias="install_aliyun_waf" />
         </service>
         <service id="acmephp.action.install_aliyun_cdn" class="AcmePhp\Cli\Action\InstallAliyunCdnAction" public="false">
