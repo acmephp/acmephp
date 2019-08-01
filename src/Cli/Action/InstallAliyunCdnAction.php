@@ -12,8 +12,8 @@
 namespace AcmePhp\Cli\Action;
 
 use AcmePhp\Ssl\CertificateResponse;
-use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Cdn\Cdn;
+use AlibabaCloud\Client\AlibabaCloud;
 
 /**
  * Action to install certificate in an Aliyun Waf.
