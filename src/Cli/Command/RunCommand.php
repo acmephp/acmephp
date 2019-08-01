@@ -80,9 +80,9 @@ EOF
         $this->register($config['contact_email'], $keyOption);
         foreach ($config['certificates'] as $domainConfig) {
             $domain = $domainConfig['domain'];
+            $repository = $this->getRepository();
 
             if ($this->isUpToDate($domain, $domainConfig, (int) $input->getOption('delay'))) {
-                $repository = $this->getRepository();
                 $certificate = $this->getRepository()->loadDomainCertificate($domain);
                 /** @var ParsedCertificate $parsedCertificate */
                 $parsedCertificate = $this->getContainer()->get('ssl.certificate_parser')->parse($certificate);
@@ -97,7 +97,16 @@ EOF
                 );
             } else {
                 $order = $this->challengeDomains($domainConfig, $keyOption);
-                $response = $this->requestCertificate($order, $domainConfig, $keyOption);
+                $this->requestCertificate($order, $domainConfig, $keyOption);
+
+                $certificate = $this->getRepository()->loadDomainCertificate($domain);
+                $response = new CertificateResponse(
+                    new CertificateRequest(
+                        $repository->loadDomainDistinguishedName($domain),
+                        $repository->loadDomainKeyPair($domain)
+                    ),
+                    $certificate
+                );
             }
 
             $this->installCertificate($domain, $response, $domainConfig['install']);
