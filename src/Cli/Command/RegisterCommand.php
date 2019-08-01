@@ -54,6 +54,8 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->error('This command is deprecated. Use command "run" instead');
+
         $repository = $this->getRepository();
 
         /*
