@@ -45,6 +45,7 @@ class InstallAliyunCdnAction extends AbstractAction
             ->withForceSet(1)
             ->withServerCertificate($cert)
             ->withPrivateKey($key)
-            ->withServerCertificateStatus('on');
+            ->withServerCertificateStatus('on')
+            ->request();
     }
 }
