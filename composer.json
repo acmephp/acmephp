@@ -57,7 +57,8 @@
         "symfony/serializer": "^3.0|^4.0",
         "symfony/yaml": "^3.0|^4.0",
         "webmozart/assert": "^1.0",
-        "webmozart/path-util": "^2.3"
+        "webmozart/path-util": "^2.3",
+        "alibabacloud/cdn": "^1.7"
     },
     "suggest": {
         "daverandom/libdns": "^2.0"
