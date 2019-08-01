@@ -11,11 +11,11 @@
 
 namespace AcmePhp\Cli\Action;
 
+use AcmePhp\Ssl\CertificateResponse;
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\WafOpenapi\WafOpenapi;
-use AcmePhp\Ssl\CertificateResponse;
-use AlibabaCloud\Client\Exception\ServerException;
 use AlibabaCloud\Client\Exception\ClientException;
+use AlibabaCloud\Client\Exception\ServerException;
 
 /**
  * Action to install certificate in an Aliyun Waf.
