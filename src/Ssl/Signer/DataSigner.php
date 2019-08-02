@@ -14,6 +14,8 @@ namespace AcmePhp\Ssl\Signer;
 use AcmePhp\Ssl\Exception\DataSigningException;
 use AcmePhp\Ssl\PrivateKey;
 use Webmozart\Assert\Assert;
+use AcmePhp\Ssl\PublicKey;
+use AcmePhp\Ssl\Exception\DataCheckingSignException;
 
 /**
  * Provide tools to sign data using a private key.
@@ -64,6 +66,30 @@ class DataSigner
             default:
                 throw new DataSigningException('The given format does exists');
         }
+    }
+
+    /**
+     * Check sign
+     *
+     * @param string $signature
+     * @param string $data
+     * @param PublicKey $publicKey
+     * @param int $algorithm
+     * @param string $format
+     * @return void
+     */
+    public function checkSign($signature, $data, PublicKey $publicKey, $algorithm = OPENSSL_ALGO_SHA256, $format = self::FORMAT_DER)
+    {
+        Assert::oneOf($format, [self::FORMAT_ECDSA, self::FORMAT_DER], 'The format %s to sign request does not exists. Available format: %s');
+
+        $resource = $publicKey->getResource();
+        if (1 != openssl_verify($data, $signature, $resource, $algorithm)) {
+            throw new DataCheckingSignException(
+                sprintf('OpenSSL data checking sign failed with error: %s', openssl_error_string())
+            );
+        }
+
+        openssl_free_key($resource);
     }
 
     /**
