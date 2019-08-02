@@ -42,7 +42,7 @@ class InstallAliyunCdnAction extends AbstractAction
         AlibabaCloud::accessKeyClient($config['accessKeyId'], $config['accessKeySecret'])->regionId('cn-hangzhou')->asDefaultClient();
         Cdn::v20180510()->setDomainServerCertificate()
             ->withDomainName($config['domain'])
-            ->withCertName($config['domain'] . '_' . date('Y_m_d_H_i_s'))
+            ->withCertName($config['domain'].'_'.date('Y_m_d_H_i_s'))
             ->withCertType('upload')
             ->withForceSet(1)
             ->withServerCertificate($cert)
