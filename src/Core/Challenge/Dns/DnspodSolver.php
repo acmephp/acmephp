@@ -15,12 +15,12 @@ use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
 use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
+use function GuzzleHttp\json_decode;
 use GuzzleHttp\ClientInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
-use Webmozart\Assert\Assert;
 use QcloudApi;
-use function GuzzleHttp\json_decode;
+use Webmozart\Assert\Assert;
 
 /**
  * ACME DNS solver with automate configuration of a DnsPod.cn (TencentCloud NS)
@@ -103,13 +103,13 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
         $config = array(
-            'SecretId'       => $this->secretId,
-            'SecretKey'      => $this->secretKey,
-            'RequestMethod'  => 'GET',
-            'DefaultRegion'  => 'gz'
+            'SecretId' => $this->secretId,
+            'SecretKey' => $this->secretKey,
+            'RequestMethod' => 'GET',
+            'DefaultRegion' => 'gz'
         );
         /**
-         * @var \QcloudApi_Module_Cns $cns
+         * @var \QcloudApi_Module_Cns
          */
         $cns = QcloudApi::load(QcloudApi::MODULE_CNS, $config);
 
@@ -153,13 +153,13 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
         $config = array(
-            'SecretId'       => $this->secretId,
-            'SecretKey'      => $this->secretKey,
-            'RequestMethod'  => 'GET',
-            'DefaultRegion'  => 'gz'
+            'SecretId' => $this->secretId,
+            'SecretKey' => $this->secretKey,
+            'RequestMethod' => 'GET',
+            'DefaultRegion' => 'gz'
         );
         /**
-         * @var \QcloudApi_Module_Cns $cns
+         * @var \QcloudApi_Module_Cns
          */
         $cns = QcloudApi::load(QcloudApi::MODULE_CNS, $config);
 
