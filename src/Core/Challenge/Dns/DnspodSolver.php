@@ -23,7 +23,7 @@ use QcloudApi;
 use Webmozart\Assert\Assert;
 
 /**
- * ACME DNS solver with automate configuration of a DnsPod.cn (TencentCloud NS)
+ * ACME DNS solver with automate configuration of a DnsPod.cn (TencentCloud NS).
  *
  * @author Xiaohui Lam <xiaohui.lam@e.hexdata.cn>
  */
@@ -128,7 +128,7 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
                 'value' => $recordValue,
             ]);
 
-            if ($solve === false) {
+            if (false === $solve) {
                 throw $cns->getError();
             }
 
