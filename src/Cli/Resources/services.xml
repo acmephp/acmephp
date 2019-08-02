@@ -200,6 +200,12 @@
             <call method="setLogger"><argument type="service" id="cli_logger"/></call>
             <tag name="acmephp.challenge_solver" alias="aliyun" />
         </service>
+        <service id="acmephp.challenge_solver.dnspod" class="AcmePhp\Core\Challenge\Dns\DnspodSolver" public="false">
+            <argument type="service" id="challenge_extractor.dns" />
+            <argument type="service" id="http.raw_client" />
+            <call method="setLogger"><argument type="service" id="cli_logger"/></call>
+            <tag name="acmephp.challenge_solver" alias="dnspod" />
+        </service>
         <service id="acmephp.challenge_solver.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection"/>
             <tag name="acmephp.service_locator" tag="acmephp.challenge_solver"/>
