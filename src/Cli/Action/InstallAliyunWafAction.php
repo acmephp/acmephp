@@ -46,7 +46,7 @@ class InstallAliyunWafAction extends AbstractAction
             ->withCert($cert)
             ->withKey($key)
             ->withDomain($config['domain'])
-            ->withHttpsCertName($config['domain'])
+            ->withHttpsCertName($config['domain'] . '_' . date('Y_m_d_H_i_s'))
             ->withInstanceId($config['instanceId'])
             ->request();
     }
