@@ -125,6 +125,9 @@
         <service id="acmephp.action.install_aliyun_cdn" class="AcmePhp\Cli\Action\InstallAliyunCdnAction" public="false">
             <tag name="acmephp.action" alias="install_aliyun_cdn" />
         </service>
+        <service id="acmephp.action.install_aliyun_waf" class="AcmePhp\Cli\Action\InstallAliyunWafAction" public="false">
+            <tag name="acmephp.action" alias="install_aliyun_waf" />
+        </service>
 
         <service id="acmephp.action.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection"/>
@@ -184,6 +187,12 @@
             </argument>
             <call method="setLogger"><argument type="service" id="cli_logger"/></call>
             <tag name="acmephp.challenge_solver" alias="route53" />
+        </service>
+        <service id="acmephp.challenge_solver.gandi" class="AcmePhp\Core\Challenge\Dns\GandiSolver" public="false">
+            <argument type="service" id="challenge_extractor.dns" />
+            <argument type="service" id="http.raw_client" />
+            <call method="setLogger"><argument type="service" id="cli_logger"/></call>
+            <tag name="acmephp.challenge_solver" alias="gandi" />
         </service>
         <service id="acmephp.challenge_solver.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection"/>
