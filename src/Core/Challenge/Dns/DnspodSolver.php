@@ -102,12 +102,12 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
-        $config = array(
+        $config = [
             'SecretId' => $this->secretId,
             'SecretKey' => $this->secretKey,
             'RequestMethod' => 'GET',
-            'DefaultRegion' => 'gz'
-        );
+            'DefaultRegion' => 'gz',
+        ];
         /**
          * @var \QcloudApi_Module_Cns
          */
@@ -152,12 +152,12 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
-        $config = array(
+        $config = [
             'SecretId' => $this->secretId,
             'SecretKey' => $this->secretKey,
             'RequestMethod' => 'GET',
-            'DefaultRegion' => 'gz'
-        );
+            'DefaultRegion' => 'gz',
+        ];
         /**
          * @var \QcloudApi_Module_Cns
          */
