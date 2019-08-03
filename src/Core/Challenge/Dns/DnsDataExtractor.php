@@ -43,6 +43,9 @@ class DnsDataExtractor
      */
     public function getRecordName(AuthorizationChallenge $authorizationChallenge)
     {
+        if ($authorizationChallenge->getToken()) {
+            return $authorizationChallenge->getToken();
+        }
         return sprintf('_acme-challenge.%s.', $authorizationChallenge->getDomain());
     }
 
@@ -55,6 +58,24 @@ class DnsDataExtractor
      */
     public function getRecordValue(AuthorizationChallenge $authorizationChallenge)
     {
+        if ($authorizationChallenge->getFilecontent()) {
+            return $authorizationChallenge->getFilecontent();
+        }
         return $this->encoder->encode(hash('sha256', $authorizationChallenge->getPayload(), true));
+    }
+
+    /**
+     * Retrieves the value of the NS Type
+     *
+     * @param AuthorizationChallenge $authorizationChallenge
+     *
+     * @return string
+     */
+    public function getRecordType(AuthorizationChallenge $authorizationChallenge)
+    {
+        if ($authorizationChallenge->getPath()) {
+            return $authorizationChallenge->getPath();
+        }
+        return 'TXT';
     }
 }

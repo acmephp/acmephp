@@ -123,7 +123,7 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
             $solve = $cns->RecordCreate([
                 'domain' => $topLevelDomain,
                 'subDomain' => $subDomain,
-                'recordType' => 'TXT',
+                'recordType' => $this->extractor->getRecordType($authorizationChallenge),
                 'recordLine' => '默认',
                 'value' => $recordValue,
             ]);
