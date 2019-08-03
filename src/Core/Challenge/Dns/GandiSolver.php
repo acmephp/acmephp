@@ -12,6 +12,7 @@
 namespace AcmePhp\Core\Challenge\Dns;
 
 use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
+use AcmePhp\Core\Challenge\Dns\Traits\TopLevelDomainTrait;
 use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
@@ -27,7 +28,7 @@ use Webmozart\Assert\Assert;
  */
 class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServiceInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait, TopLevelDomainTrait;
     /**
      * @var DnsDataExtractor
      */
@@ -150,15 +151,5 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
                 ]
             );
         }
-    }
-
-    /**
-     * @param string $domain
-     *
-     * @return string
-     */
-    protected function getTopLevelDomain($domain)
-    {
-        return \implode('.', \array_slice(\explode('.', $domain), -2));
     }
 }

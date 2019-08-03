@@ -12,8 +12,10 @@
 namespace AcmePhp\Core\Challenge\Dns;
 
 use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
+use AcmePhp\Core\Challenge\Dns\Traits\TopLevelDomainTrait;
 use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use function GuzzleHttp\json_decode;
@@ -21,7 +23,6 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use QcloudApi;
 use Webmozart\Assert\Assert;
-use Exception;
 
 /**
  * ACME DNS solver with automate configuration of a DnsPod.cn (TencentCloud NS).
@@ -30,7 +31,8 @@ use Exception;
  */
 class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableServiceInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait, TopLevelDomainTrait;
+
     /**
      * @var DnsDataExtractor
      */
@@ -176,15 +178,5 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
                 'recordId' => $authorizationChallenge->recordId,
             ]);
         }
-    }
-
-    /**
-     * @param string $domain
-     *
-     * @return string
-     */
-    protected function getTopLevelDomain($domain)
-    {
-        return \implode('.', \array_slice(\explode('.', $domain), -2));
     }
 }
