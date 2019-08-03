@@ -12,8 +12,8 @@
 namespace AcmePhp\Core\Challenge\Dns;
 
 use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
-use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Challenge\Dns\Traits\TopLevelDomainTrait;
+use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Exception;
 use GuzzleHttp\Client;
