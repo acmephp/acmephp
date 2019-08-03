@@ -43,7 +43,7 @@ class DnsDataExtractor
      */
     public function getRecordName(AuthorizationChallenge $authorizationChallenge)
     {
-        if ($authorizationChallenge->getToken()) {
+        if (trim($authorizationChallenge->getFilecontent())) {
             return $authorizationChallenge->getToken();
         }
         return sprintf('_acme-challenge.%s.', $authorizationChallenge->getDomain());
@@ -58,7 +58,7 @@ class DnsDataExtractor
      */
     public function getRecordValue(AuthorizationChallenge $authorizationChallenge)
     {
-        if ($authorizationChallenge->getFilecontent()) {
+        if (trim($authorizationChallenge->getFilecontent())) {
             return $authorizationChallenge->getFilecontent();
         }
         return $this->encoder->encode(hash('sha256', $authorizationChallenge->getPayload(), true));
