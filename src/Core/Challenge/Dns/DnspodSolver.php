@@ -21,6 +21,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use QcloudApi;
 use Webmozart\Assert\Assert;
+use Exception;
 
 /**
  * ACME DNS solver with automate configuration of a DnsPod.cn (TencentCloud NS).
@@ -129,7 +130,11 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
             ]);
 
             if (false === $solve) {
-                throw $cns->getError();
+                /**
+                 * @var \QcloudApi_Common_Error
+                 */
+                $err = $cns->getError();
+                throw new Exception($err->getMessage(), $err->getCode());
             }
 
             $data = json_decode($cns->getLastResponse(), true);
