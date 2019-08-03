@@ -36,6 +36,8 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      * to expose the payload for the verification (see challengeAuthorization).
      *
      * @param string[] $domains the domains to challenge
+     * @param CertificateRequest|null $csr
+     * @param string|null $challenge_type
      *
      * @throws AcmeCoreServerException        when the ACME server returns an error HTTP status code
      *                                        (the exception will be more specific if detail is provided)
@@ -44,7 +46,7 @@ interface AcmeClientV2Interface extends AcmeClientInterface
      *
      * @return CertificateOrder the Order returned by the Certificate Authority
      */
-    public function requestOrder(array $domains, $csr = null);
+    public function requestOrder(array $domains, $csr = null, $challenge_type = null);
 
     /**
      * Request a certificate for the given domain.

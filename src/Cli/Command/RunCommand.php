@@ -259,7 +259,13 @@ EOF
         $domains = array_unique(array_merge([$domain], $domainConfig['subject_alternative_names']));
 
         $csr = null;
+        $challenge_type = null;
         if ($client->isCsrEager()) {
+            $challenge_type = 'http-01';
+            if (substr(get_class($solver), 0, 26) == 'AcmePhp\Core\Challenge\Dns') {
+                $challenge_type = 'dns-01';
+            }
+
             $domain = $domainConfig['domain'];
             $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
 
@@ -288,7 +294,7 @@ EOF
 
             $this->output->writeln('<comment>Requesting certificate order...</comment>');
         }
-        $order = $client->requestOrder($domains, $csr);
+        $order = $client->requestOrder($domains, $csr, $challenge_type);
 
         $authorizationChallengesToSolve = [];
         foreach ($order->getAuthorizationsChallenges() as $domain => $authorizationChallenges) {

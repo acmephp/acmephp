@@ -131,7 +131,7 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function requestOrder(array $domains, $csr = null)
+    public function requestOrder(array $domains, $csr = null, $challenge_type = null)
     {
         Assert::allStringNotEmpty($domains, 'requestOrder::$domains expected a list of strings. Got: %s');
 
@@ -153,8 +153,13 @@ class AcmeClient implements AcmeClientV2Interface
                 },
                 array_values($domains)
             ),
-            'csr' => $csrContent,
         ];
+        if ($csrContent) {
+            $payload['csr'] = $csrContent;
+        }
+        if ($challenge_type) {
+            $payload['challenge_type'] = $challenge_type;
+        }
 
         $response = $this->getHttpClient()->signedKidRequest('POST', $this->getResourceUrl(ResourcesDirectory::NEW_ORDER), $this->getResourceAccount(), $payload);
         if (!isset($response['authorizations']) || !$response['authorizations']) {
