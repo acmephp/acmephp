@@ -119,7 +119,7 @@ class SecureHttpClient
             'nonce' => $this->getNonce(),
             'url' => $endpoint,
         ];
-        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
+        list($algorithm, $format) = $this->dataSigner->extractSignOptionFromJWSAlg($alg);
 
         $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
@@ -157,32 +157,6 @@ class SecureHttpClient
             default:
                 throw new AcmeCoreClientException('Private key type is not supported');
         }
-    }
-
-    private function extractSignOptionFromJWSAlg($alg)
-    {
-        if (!preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
-            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
-        }
-
-        if (!\defined('OPENSSL_ALGO_SHA'.$match[2])) {
-            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
-        }
-
-        $algorithm = \constant('OPENSSL_ALGO_SHA'.$match[2]);
-
-        switch ($match[1]) {
-            case 'RS':
-                $format = DataSigner::FORMAT_DER;
-                break;
-            case 'ES':
-                $format = DataSigner::FORMAT_ECDSA;
-                break;
-            default:
-                throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
-        }
-
-        return [$algorithm, $format];
     }
 
     public function getJWK()
@@ -241,7 +215,7 @@ class SecureHttpClient
             'nonce' => $this->getNonce(),
             'url' => $endpoint,
         ];
-        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
+        list($algorithm, $format) = $this->dataSigner->extractSignOptionFromJWSAlg($alg);
 
         $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         if ($payload === []) {
