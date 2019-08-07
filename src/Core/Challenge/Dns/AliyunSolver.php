@@ -107,22 +107,42 @@ class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableSer
             $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
             $recordName = $this->extractor->getRecordName($authorizationChallenge);
             $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
+            $recordType = isset($authorizationChallenge['dnsType']) ? $authorizationChallenge['dnsType'] : 'TXT';
+
             $subDomain = \str_replace('.' . $topLevelDomain . '.', '', $recordName);
 
             $dns = new Alidns();
-            $do = $dns->v20150109()->addDomainRecord()
-                ->withDomainName('a.com')
-                ->withType('TXT')
-                ->withRR('bb')
-                ->withValue('aaa')
-                ->request();
+
+            if (strtolower($recordType) == 'cname') {
+                /**
+                 * @var \AlibabaCloud\Client\Result\Result $list
+                 */
+                $list = $dns->v20150109()->describeSubDomainRecords()
+                    ->withSubDomain($subDomain)
+                    ->withType($recordType)
+                    ->withPageSize(100)
+                    ->request();
+
+                $records = $list->get('DomainRecords');
+                $records = isset($records['Record']) ? $records['Record'] : $records;
+
+                foreach ($records as $record) {
+                    try {
+                        $recordId = $record['RecordId'];
+                        $dns->v20150109()->deleteDomainRecord()
+                            ->withRecordId($recordId)
+                            ->request();
+                    } catch (\Exception $e) {
+                    }
+                }
+            }
 
             /**
              * @var \AlibabaCloud\Client\Result\Result $response
              */
             $response = $dns->v20150109()->addDomainRecord()
                 ->withDomainName($topLevelDomain)
-                ->withType(isset($authorizationChallenge['dnsType']) ? $authorizationChallenge['dnsType'] : 'TXT')
+                ->withType($recordType)
                 ->withRR($subDomain)
                 ->withValue($recordValue)
                 ->request();
