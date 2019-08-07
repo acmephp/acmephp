@@ -123,10 +123,32 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
 
             $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
 
+            $recordType = $this->extractor->getRecordType($authorizationChallenge);
+
+            if (strtolower($recordType) == 'cname') {
+                // 因为 DNSPod 免费版套餐 同一名称 cname 不能并存
+                // 所以要删除旧的
+
+                $cns->RecordList([
+                    'domain' => $topLevelDomain,
+                    'subDomain' => $subDomain,
+                    'recordType' => $recordType,
+                ]);
+                $data = json_decode($cns->getLastResponse(), true);
+                if ($data && isset($data['data']) && isset($data['data']['records']) && is_array($data['data']['records']) && count($data['data']['records'])) {
+                    $existedRecord = $data['data']['records'][0];
+                    if (isset($existedRecord['id'])) {
+                        $cns->RecordDelete([
+                            'domain' => $topLevelDomain,
+                            'recordId' => $existedRecord['id'],
+                        ]);
+                    }
+                }
+            }
             $solve = $cns->RecordCreate([
                 'domain' => $topLevelDomain,
                 'subDomain' => $subDomain,
-                'recordType' => $this->extractor->getRecordType($authorizationChallenge),
+                'recordType' => $recordType,
                 'recordLine' => '默认',
                 'value' => $recordValue,
             ]);
