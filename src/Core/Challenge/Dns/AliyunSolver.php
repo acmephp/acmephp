@@ -122,7 +122,7 @@ class AliyunSolver implements MultipleChallengesSolverInterface, ConfigurableSer
                      * @var \AlibabaCloud\Client\Result\Result $list
                      */
                     $list = $dns->v20150109()->describeSubDomainRecords()
-                        ->withSubDomain($subDomain)
+                        ->withSubDomain($subDomain . '.' . $topLevelDomain)
                         ->withType($recordType)
                         ->withPageSize(100)
                         ->request();
