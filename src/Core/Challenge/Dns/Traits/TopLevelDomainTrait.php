@@ -11,8 +11,8 @@
 
 namespace AcmePhp\Core\Challenge\Dns\Traits;
 
-use LayerShifter\TLDDatabase\Exceptions\ParserException;
-use LayerShifter\TLDExtract\Extract as TLDExtract;
+use LayerShifter\TLDExtract\Extract;
+use AcmePhp\Cli\Exception\AcmeDnsResolutionException;
 
 trait TopLevelDomainTrait
 {
@@ -23,10 +23,10 @@ trait TopLevelDomainTrait
      */
     protected function getTopLevelDomain($domain)
     {
-        $extract = new TLDExtract();
+        $extract = new Extract();
         $parse = $extract->parse(str_replace('*.', '', $domain));
         if (!$parse->isValidDomain()) {
-            throw new ParserException($domain.' is not a valid domain', 1);
+            throw new AcmeDnsResolutionException($domain.' is not a valid domain');
         }
 
         return $parse->getRegistrableDomain();
