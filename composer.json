@@ -59,7 +59,7 @@
         "webmozart/assert": "^1.0",
         "webmozart/path-util": "^2.3",
         "alibabacloud/wafopenapi": "^1.7",
-        "alibabacloud/cdn": "^1.7"，
+        "alibabacloud/cdn": "^1.7",
         "tencentyun-api/qcloudapi-sdk-php": "^2.0",
         "layershifter/tld-extract": "^2.0"
     },
