@@ -18,11 +18,13 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use function GuzzleHttp\json_decode;
+use GuzzleHttp\Exception\InvalidArgumentException;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use QcloudApi;
 use Webmozart\Assert\Assert;
+
+use function GuzzleHttp\json_decode;
 
 /**
  * ACME DNS solver with automate configuration of a DnsPod.cn (TencentCloud NS).
@@ -112,7 +114,7 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
             'DefaultRegion' => 'gz',
         ];
         /**
-         * @var \QcloudApi_Module_Cns
+         * @var \QcloudApi_Module_Cns $cns
          */
         $cns = QcloudApi::load(QcloudApi::MODULE_CNS, $config);
 
@@ -138,7 +140,18 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
                     'subDomain' => $subDomain,
                     'recordType' => $recordType,
                 ]);
-                $data = json_decode($cns->getLastResponse(), true);
+                try {
+                    $data = json_decode($cns->getLastResponse(), true);
+                } catch (InvalidArgumentException $e) {
+                    $err = $cns->getError();
+                    if ($err) {
+                        print_r($err->getExt());
+                        throw new \Exception($err->getMessage(), $err->getCode());
+                    } else {
+                        echo $cns->getLastResponse();
+                    }
+                    throw $e;
+                }
                 if ($data && isset($data['data']) && isset($data['data']['records']) && \is_array($data['data']['records']) && \count($data['data']['records'])) {
                     foreach ($data['data']['records'] as $existedRecord) {
                         if (isset($existedRecord['id'])) {
