@@ -22,6 +22,7 @@ use GuzzleHttp\Exception\InvalidArgumentException;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use QcloudApi;
+use QcloudApi_Common_Request;
 use Webmozart\Assert\Assert;
 
 use function GuzzleHttp\json_decode;
@@ -145,6 +146,9 @@ class DnspodSolver implements MultipleChallengesSolverInterface, ConfigurableSer
                 } catch (InvalidArgumentException $e) {
                     $err = $cns->getError();
                     if ($err) {
+                        if ($err->getCode() == 3000) {
+                            throw new \Exception('DNSPod Api Exception:' . QcloudApi_Common_Request::getRawResponse(), $err->getCode());
+                        }
                         print_r($err->getExt());
                         throw new \Exception($err->getMessage(), $err->getCode());
                     } else {
