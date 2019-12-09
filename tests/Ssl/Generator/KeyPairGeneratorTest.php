@@ -45,10 +45,10 @@ class KeyPairGeneratorTest extends TestCase
         $result = $this->service->generateKeyPair(new RsaKeyOption(1024));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertContains('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertContains('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertInternalType('resource', $result->getPublicKey()->getResource());
-        $this->assertInternalType('resource', $result->getPrivateKey()->getResource());
+        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
+        $this->assertStringContainsString('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
+        $this->assertIsResource($result->getPublicKey()->getResource());
+        $this->assertIsResource($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertEquals(1024, $details['bits']);
@@ -63,10 +63,10 @@ class KeyPairGeneratorTest extends TestCase
         ));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertContains('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertContains('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertInternalType('resource', $result->getPublicKey()->getResource());
-        $this->assertInternalType('resource', $result->getPrivateKey()->getResource());
+        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
+        $this->assertStringContainsString('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
+        $this->assertIsResource($result->getPublicKey()->getResource());
+        $this->assertIsResource($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertArrayHasKey('dh', $details);
@@ -77,10 +77,10 @@ class KeyPairGeneratorTest extends TestCase
         $result = $this->service->generateKeyPair(new DsaKeyOption(1024));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertContains('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertContains('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertInternalType('resource', $result->getPublicKey()->getResource());
-        $this->assertInternalType('resource', $result->getPrivateKey()->getResource());
+        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
+        $this->assertStringContainsString('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
+        $this->assertIsResource($result->getPublicKey()->getResource());
+        $this->assertIsResource($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertEquals(1024, $details['bits']);
@@ -95,10 +95,10 @@ class KeyPairGeneratorTest extends TestCase
         $result = $this->service->generateKeyPair(new EcKeyOption('secp112r1'));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertContains('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertContains('-----BEGIN EC PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertInternalType('resource', $result->getPublicKey()->getResource());
-        $this->assertInternalType('resource', $result->getPrivateKey()->getResource());
+        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
+        $this->assertStringContainsString('-----BEGIN EC PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
+        $this->assertIsResource($result->getPublicKey()->getResource());
+        $this->assertIsResource($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertEquals(112, $details['bits']);

@@ -30,19 +30,15 @@ class KeyParserTest extends TestCase
         $this->service = new KeyParser();
     }
 
-    /**
-     * @expectedException \AcmePhp\Ssl\Exception\KeyParsingException
-     */
     public function test parse PublicKey raise proper exception()
     {
+        $this->expectException('AcmePhp\Ssl\Exception\KeyParsingException');
         $this->service->parse(new PublicKey('Not a key'));
     }
 
-    /**
-     * @expectedException \AcmePhp\Ssl\Exception\KeyParsingException
-     */
     public function test parse PrivateKey raise proper exception()
     {
+        $this->expectException('AcmePhp\Ssl\Exception\KeyParsingException');
         $this->service->parse(new PrivateKey('Not a key'));
     }
 
@@ -51,11 +47,9 @@ class KeyParserTest extends TestCase
         $this->assertFalse($this->service->parse($this->getPrivateKey())->hasDetail('invalid'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function test get PrivateKey get invalid detail raise proper exception()
     {
+        $this->expectException('InvalidArgumentException');
         $this->service->parse($this->getPrivateKey())->getDetail('invalid');
     }
 
@@ -67,7 +61,7 @@ class KeyParserTest extends TestCase
         $this->assertInstanceOf(Key::class, $result->getSource());
         $this->assertEquals(OPENSSL_KEYTYPE_RSA, $result->getType());
         $this->assertEquals(4096, $result->getBits());
-        $this->assertInternalType('array', $result->getDetails());
+        $this->assertIsArray($result->getDetails());
         $this->assertEquals(256, \strlen($result->getDetail('p')));
         $this->assertEquals(256, \strlen($result->getDetail('q')));
         $this->assertEquals(trim($this->getPublicKey()->getPEM()), trim($result->getKey()));
@@ -81,7 +75,7 @@ class KeyParserTest extends TestCase
         $this->assertInstanceOf(Key::class, $result->getSource());
         $this->assertEquals(OPENSSL_KEYTYPE_RSA, $result->getType());
         $this->assertEquals(4096, $result->getBits());
-        $this->assertInternalType('array', $result->getDetails());
+        $this->assertIsArray($result->getDetails());
         $this->assertEquals(trim($this->getPublicKey()->getPEM()), trim($result->getKey()));
     }
 

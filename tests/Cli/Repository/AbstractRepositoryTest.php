@@ -82,11 +82,9 @@ abstract class AbstractRepositoryTest extends TestCase
         $this->assertEquals($keyPair, $this->repository->loadAccountKeyPair());
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
-     */
     public function testLoadAccountKeyPairFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
         $this->repository->loadAccountKeyPair();
     }
 
@@ -108,11 +106,9 @@ abstract class AbstractRepositoryTest extends TestCase
         $this->assertEquals($keyPair, $this->repository->loadDomainKeyPair('example.com'));
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
-     */
     public function testLoadDomainKeyPairFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
         $this->repository->loadDomainKeyPair('example.com');
     }
 
@@ -158,11 +154,9 @@ abstract class AbstractRepositoryTest extends TestCase
         $this->assertEquals($challenge, $this->repository->loadDomainAuthorizationChallenge('example.com'));
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
-     */
     public function testLoadDomainAuthorizationChallengeFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
         $this->repository->loadDomainAuthorizationChallenge('example.com');
     }
 
@@ -215,11 +209,9 @@ abstract class AbstractRepositoryTest extends TestCase
         $this->assertEquals($dn, $this->repository->loadDomainDistinguishedName('example.com'));
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
-     */
     public function testLoadDomainDistinguishedNameFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
         $this->repository->loadDomainDistinguishedName('example.com');
     }
 
@@ -247,11 +239,9 @@ abstract class AbstractRepositoryTest extends TestCase
         $this->assertEquals($cert, $this->repository->loadDomainCertificate('example.com'));
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\AcmeCliException
-     */
     public function testLoadDomainCertificateFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
         $this->repository->loadDomainCertificate('example.com');
     }
 

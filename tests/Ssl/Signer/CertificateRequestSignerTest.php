@@ -41,8 +41,8 @@ class CertificateRequestSignerTest extends TestCase
         $result = $this->service->signCertificateRequest(
             new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
         );
-        $this->assertInternalType('string', $result);
-        $this->assertContains('-----BEGIN CERTIFICATE REQUEST-----', $result);
+        $this->assertIsString($result);
+        $this->assertStringContainsString('-----BEGIN CERTIFICATE REQUEST-----', $result);
 
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
@@ -69,8 +69,8 @@ class CertificateRequestSignerTest extends TestCase
         $result = $this->service->signCertificateRequest(
             new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
         );
-        $this->assertInternalType('string', $result);
-        $this->assertContains('-----BEGIN CERTIFICATE REQUEST-----', $result);
+        $this->assertIsString($result);
+        $this->assertStringContainsString('-----BEGIN CERTIFICATE REQUEST-----', $result);
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
             [
@@ -91,8 +91,8 @@ class CertificateRequestSignerTest extends TestCase
         $result = $this->service->signCertificateRequest(
             new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
         );
-        $this->assertInternalType('string', $result);
-        $this->assertContains('-----BEGIN CERTIFICATE REQUEST-----', $result);
+        $this->assertIsString($result);
+        $this->assertStringContainsString('-----BEGIN CERTIFICATE REQUEST-----', $result);
 
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(

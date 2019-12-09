@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tests\AcmePhp\Core\Challenge\Dns;
+namespace Tests\AcmePhp\Cli\Action;
 
 use AcmePhp\Cli\Action\InstallAwsElbv2Action;
 use AcmePhp\Cli\Aws\ClientFactory;
