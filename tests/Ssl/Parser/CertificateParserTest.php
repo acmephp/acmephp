@@ -28,11 +28,9 @@ class CertificateParserTest extends TestCase
         $this->service = new CertificateParser();
     }
 
-    /**
-     * @expectedException \AcmePhp\Ssl\Exception\CertificateParsingException
-     */
     public function test parse raise proper exception()
     {
+        $this->expectException('AcmePhp\Ssl\Exception\CertificateParsingException');
         $this->service->parse(new Certificate('Not a cert'));
     }
 

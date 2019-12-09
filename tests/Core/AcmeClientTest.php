@@ -53,7 +53,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
          */
         $data = $client->registerAccount();
 
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
         $this->assertArrayHasKey('key', $data);
 
         $solver = new SimpleHttpSolver();
@@ -71,7 +71,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
 
         $this->assertInstanceOf(AuthorizationChallenge::class, $challenge);
         $this->assertEquals('acmephp.com', $challenge->getDomain());
-        $this->assertContains('https://localhost:14000/chalZ/', $challenge->getUrl());
+        $this->assertStringContainsString('https://localhost:14000/chalZ/', $challenge->getUrl());
 
         $solver->solve($challenge);
 
@@ -108,7 +108,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
         try {
             $client->revokeCertificate($response->getCertificate());
         } catch (CertificateRevocationException $e) {
-            $this->assertContains('Unable to find specified certificate', $e->getPrevious()->getPrevious()->getMessage());
+            $this->assertStringContainsString('Unable to find specified certificate', $e->getPrevious()->getPrevious()->getMessage());
         }
     }
 

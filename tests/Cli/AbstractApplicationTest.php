@@ -63,8 +63,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
         $registerDisplay = $registerTester->getDisplay();
 
-        $this->assertContains('No account key pair was found, generating one', $registerDisplay);
-        $this->assertContains('Account registered successfully', $registerDisplay);
+        $this->assertStringContainsString('No account key pair was found, generating one', $registerDisplay);
+        $this->assertStringContainsString('Account registered successfully', $registerDisplay);
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/account/key.private.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/account/key.public.pem');
 
@@ -81,8 +81,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
         $authorizeDisplay = $authorizeTest->getDisplay();
 
-        $this->assertContains('The authorization tokens was successfully fetched', $authorizeDisplay);
-        $this->assertContains('http://acmephp.com/.well-known/acme-challenge/', $authorizeDisplay);
+        $this->assertStringContainsString('The authorization tokens was successfully fetched', $authorizeDisplay);
+        $this->assertStringContainsString('http://acmephp.com/.well-known/acme-challenge/', $authorizeDisplay);
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/var/acmephp.com/authorization_challenge.json');
 
         /*
@@ -112,7 +112,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
             $checkDisplay = $checkTest->getDisplay();
 
-            $this->assertContains('The authorization check was successful', $checkDisplay);
+            $this->assertStringContainsString('The authorization check was successful', $checkDisplay);
         } finally {
             $process->stop();
         }
@@ -136,8 +136,8 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
         $requestDisplay = $requestTest->getDisplay();
 
-        $this->assertContains('The SSL certificate was fetched successfully', $requestDisplay);
-        $this->assertContains(Path::canonicalize(__DIR__.'/Fixtures/local/master'), $requestDisplay);
+        $this->assertStringContainsString('The SSL certificate was fetched successfully', $requestDisplay);
+        $this->assertStringContainsString(Path::canonicalize(__DIR__.'/Fixtures/local/master'), $requestDisplay);
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.private.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.public.pem');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/cert.pem');
@@ -146,11 +146,9 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/fullchain.pem');
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\CommandFlowException
-     */
     public function testCheckWithoutKeyFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\CommandFlowException');
         $this->application = new SimpleApplication();
 
         $command = $this->application->find('check');
@@ -162,11 +160,9 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         ]);
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\CommandFlowException
-     */
     public function testAuthorizeWithoutKeyFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\CommandFlowException');
         $this->application = new SimpleApplication();
 
         $command = $this->application->find('authorize');
@@ -178,11 +174,9 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         ]);
     }
 
-    /**
-     * @expectedException \AcmePhp\Cli\Exception\CommandFlowException
-     */
     public function testRequestWithoutKeyFail()
     {
+        $this->expectException('AcmePhp\Cli\Exception\CommandFlowException');
         $this->application = new SimpleApplication();
 
         $command = $this->application->find('request');

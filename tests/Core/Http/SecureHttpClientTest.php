@@ -72,11 +72,9 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals(['test' => 'ok'], $data);
     }
 
-    /**
-     * @expectedException \AcmePhp\Core\Exception\Protocol\ExpectedJsonException
-     */
     public function testInvalidUnsignedJsonRequest()
     {
+        $this->expectException('AcmePhp\Core\Exception\Protocol\ExpectedJsonException');
         $client = $this->createMockedClient([new Response(200, [], 'invalid json')], false);
         $client->unsignedRequest('GET', '/foo', ['foo' => 'bar'], true);
     }
@@ -95,11 +93,9 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals(['test' => 'ok'], $data);
     }
 
-    /**
-     * @expectedException \AcmePhp\Core\Exception\Protocol\ExpectedJsonException
-     */
     public function testInvalidSignedJsonRequest()
     {
+        $this->expectException('AcmePhp\Core\Exception\Protocol\ExpectedJsonException');
         $client = $this->createMockedClient([new Response(200, [], 'invalid json')], false);
         $client->signedRequest('GET', '/foo', ['foo' => 'bar'], true);
     }
@@ -142,7 +138,7 @@ class SecureHttpClientTest extends TestCase
         $body = \GuzzleHttp\Psr7\copy_to_string($request->getBody());
         $payload = @json_decode($body, true);
 
-        $this->assertInternalType('array', $payload);
+        $this->assertIsArray($payload);
         $this->assertArrayHasKey('protected', $payload);
         $this->assertArrayHasKey('payload', $payload);
         $this->assertArrayHasKey('signature', $payload);

@@ -6,6 +6,7 @@
     beStrictAboutTestsThatDoNotTestAnything = "true"
     beStrictAboutOutputDuringTests          = "true"
     colors                                  = "true"
+    convertNoticesToExceptions              = "false"
     verbose                                 = "true"
     bootstrap                               = "vendor/autoload.php"
 >

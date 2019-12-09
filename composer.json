@@ -65,10 +65,10 @@
         "daverandom/libdns": "^2.0"
     },
     "require-dev": {
-        "phpspec/prophecy": "^1.8",
+        "phpspec/prophecy": "^1.9",
         "symfony/finder": "^3.4|^4.0",
         "symfony/process": "^3.4|^4.0",
-        "symfony/phpunit-bridge": "^3.4.19|^4.0",
+        "symfony/phpunit-bridge": "^4.4",
         "symfony/var-dumper": "^3.4|^4.0"
     },
     "autoload": {

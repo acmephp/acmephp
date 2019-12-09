@@ -60,9 +60,9 @@ class ServerErrorHandlerTest extends TestCase
         $exception = $errorHandler->createAcmeExceptionForResponse(new Request('GET', '/foo/bar'), $response);
 
         $this->assertInstanceOf($exceptionClass, $exception);
-        $this->assertContains($type, $exception->getMessage());
-        $this->assertContains($exceptionClass.'Detail', $exception->getMessage());
-        $this->assertContains('/foo/bar', $exception->getMessage());
+        $this->assertStringContainsString($type, $exception->getMessage());
+        $this->assertStringContainsString($exceptionClass.'Detail', $exception->getMessage());
+        $this->assertStringContainsString('/foo/bar', $exception->getMessage());
     }
 
     public function testDefaultExceptionThrownWithInvalidJson()
@@ -75,8 +75,8 @@ class ServerErrorHandlerTest extends TestCase
         );
 
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);
-        $this->assertContains('non-ACME', $exception->getMessage());
-        $this->assertContains('/foo/bar', $exception->getMessage());
+        $this->assertStringContainsString('non-ACME', $exception->getMessage());
+        $this->assertStringContainsString('/foo/bar', $exception->getMessage());
     }
 
     public function testDefaultExceptionThrownNonAcmeJson()
@@ -89,7 +89,7 @@ class ServerErrorHandlerTest extends TestCase
         );
 
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);
-        $this->assertContains('non-ACME', $exception->getMessage());
-        $this->assertContains('/foo/bar', $exception->getMessage());
+        $this->assertStringContainsString('non-ACME', $exception->getMessage());
+        $this->assertStringContainsString('/foo/bar', $exception->getMessage());
     }
 }

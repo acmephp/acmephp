@@ -74,7 +74,7 @@ class Route53SolverTest extends TestCase
                 ],
             ]
         );
-        $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled();
+        $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled()->willReturn(['ChangeInfo' => ['Id' => 'foo']]);
         $mockClient->waitUntil('ResourceRecordSetsChanged', Argument::any())->shouldBeCalled();
 
         $solver->solve($stubChallenge->reveal());

@@ -102,6 +102,6 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
 
         $resource = $certificate->getPublicKeyResource();
 
-        $this->assertInternalType('resource', $resource);
+        $this->assertIsResource($resource);
     }
 }
