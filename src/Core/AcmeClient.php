@@ -154,7 +154,7 @@ class AcmeClient implements AcmeClientV2Interface
 
         $orderEndpoint = $this->getHttpClient()->getLastLocation();
         foreach ($response['authorizations'] as $authorizationEndpoint) {
-            $authorizationsResponse = $this->getHttpClient()->unsignedRequest('GET', $authorizationEndpoint, null, true);
+            $authorizationsResponse = $this->getHttpClient()->signedKidRequest('POST', $authorizationEndpoint, $this->getResourceAccount(), null);
             $domain = (empty($authorizationsResponse['wildcard']) ? '' : '*.').$authorizationsResponse['identifier']['value'];
             foreach ($authorizationsResponse['challenges'] as $challenge) {
                 $authorizationsChallenges[$domain][] = $this->createAuthorizationChallenge($authorizationsResponse['identifier']['value'], $challenge);
@@ -169,7 +169,7 @@ class AcmeClient implements AcmeClientV2Interface
      */
     public function reloadAuthorization(AuthorizationChallenge $challenge)
     {
-        $response = (array) $this->getHttpClient()->unsignedRequest('GET', $challenge->getUrl());
+        $response = (array) $this->getHttpClient()->signedKidRequest('POST', $challenge->getUrl(), $this->getResourceAccount(), null);
 
         return $this->createAuthorizationChallenge($challenge->getDomain(), $response);
     }
@@ -182,7 +182,7 @@ class AcmeClient implements AcmeClientV2Interface
         Assert::integer($timeout, 'challengeAuthorization::$timeout expected an integer. Got: %s');
 
         $endTime = time() + $timeout;
-        $response = (array) $this->getHttpClient()->unsignedRequest('GET', $challenge->getUrl());
+        $response = (array) $this->getHttpClient()->signedKidRequest('POST', $challenge->getUrl(), $this->getResourceAccount(), null);
         if ('pending' === $response['status']) {
             $response = (array) $this->getHttpClient()->signedKidRequest('POST', $challenge->getUrl(), $this->getResourceAccount(), []);
         }
@@ -190,7 +190,7 @@ class AcmeClient implements AcmeClientV2Interface
         // Waiting loop
         while (time() <= $endTime && (!isset($response['status']) || 'pending' === $response['status'])) {
             sleep(1);
-            $response = (array) $this->getHttpClient()->unsignedRequest('GET', $challenge->getUrl());
+            $response = (array) $this->getHttpClient()->signedKidRequest('POST', $challenge->getUrl(), $this->getResourceAccount(), null);
         }
 
         if (isset($response['status']) && 'pending' === $response['status']) {
@@ -224,7 +224,7 @@ class AcmeClient implements AcmeClientV2Interface
         Assert::integer($timeout, 'finalizeOrder::$timeout expected an integer. Got: %s');
 
         $endTime = time() + $timeout;
-        $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
+        $response = $this->getHttpClient()->signedKidRequest('POST', $order->getOrderEndpoint(), $this->getResourceAccount(), null);
         if (\in_array($response['status'], ['pending', 'ready'])) {
             $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
 
@@ -240,14 +240,14 @@ class AcmeClient implements AcmeClientV2Interface
         // Waiting loop
         while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], ['pending', 'processing', 'ready']))) {
             sleep(1);
-            $response = $this->getHttpClient()->signedKidRequest('GET', $order->getOrderEndpoint(), $this->getResourceAccount());
+            $response = $this->getHttpClient()->signedKidRequest('POST', $order->getOrderEndpoint(), $this->getResourceAccount(), null);
         }
 
         if ('valid' !== $response['status']) {
             throw new CertificateRequestFailedException('The order has not been validated');
         }
 
-        $response = $this->getHttpClient()->unsignedRequest('GET', $response['certificate'], null, false);
+        $response = $this->getHttpClient()->signedKidRequest('POST', $response['certificate'], $this->getResourceAccount(), null, false);
         $certificatesChain = null;
         foreach (array_reverse(explode("\n\n", $response)) as $pem) {
             $certificatesChain = new Certificate($pem, $certificatesChain);

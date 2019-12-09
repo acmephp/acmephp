@@ -230,7 +230,7 @@ class SecureHttpClient
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
-    public function signedKidRequest($method, $endpoint, $account, array $payload = [], $returnJson = true)
+    public function signedKidRequest($method, $endpoint, $account, ?array $payload = [], $returnJson = true)
     {
         $privateKey = $this->accountKeyPair->getPrivateKey();
 
@@ -244,7 +244,9 @@ class SecureHttpClient
         list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
 
         $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
-        if ($payload === []) {
+        if (null === $payload) {
+            $payload = '';
+        } elseif ($payload === []) {
             $payload = $this->base64Encoder->encode('{}');
         } else {
             $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
@@ -392,9 +394,10 @@ class SecureHttpClient
         $request = new Request($method, $endpoint);
         $request = $request->withHeader('Accept', 'application/json,application/jose+json,');
 
-        if ('POST' === $method && \is_array($data)) {
+        if ('POST' === $method) {
             $request = $request->withHeader('Content-Type', 'application/jose+json');
-            $request = $request->withBody(\GuzzleHttp\Psr7\stream_for(json_encode($data)));
+            $body = \GuzzleHttp\Psr7\stream_for(null === $data ? '' : json_encode($data));
+            $request = $request->withBody($body);
         }
 
         return $request;
