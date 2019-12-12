@@ -18,6 +18,7 @@ use AcmePhp\Core\Exception\Server\ConnectionServerException;
 use AcmePhp\Core\Exception\Server\InternalServerException;
 use AcmePhp\Core\Exception\Server\InvalidEmailServerException;
 use AcmePhp\Core\Exception\Server\MalformedServerException;
+use AcmePhp\Core\Exception\Server\OrderNotReadyServerException;
 use AcmePhp\Core\Exception\Server\RateLimitedServerException;
 use AcmePhp\Core\Exception\Server\TlsServerException;
 use AcmePhp\Core\Exception\Server\UnauthorizedServerException;
@@ -41,6 +42,7 @@ class ServerErrorHandler
         'serverInternal' => InternalServerException::class,
         'invalidEmail' => InvalidEmailServerException::class,
         'malformed' => MalformedServerException::class,
+        'orderNotReady' => OrderNotReadyServerException::class,
         'rateLimited' => RateLimitedServerException::class,
         'tls' => TlsServerException::class,
         'unauthorized' => UnauthorizedServerException::class,
