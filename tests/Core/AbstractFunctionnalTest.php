@@ -11,45 +11,25 @@
 
 namespace Tests\AcmePhp\Core;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 abstract class AbstractFunctionnalTest extends TestCase
 {
-    /**
-     * @param string $token
-     * @param string $payload
-     *
-     * @return Process
-     */
-    protected function createServerProcess($token, $payload)
+    protected function handleChallenge($token, $payload)
     {
-        $listen = '0.0.0.0:5002';
-        $documentRoot = __DIR__.'/Fixtures/challenges';
+        $fakeServer = new Client();
+        $response = $fakeServer->post('http://localhost:8055/add-http01', [RequestOptions::JSON => ['token' => $token, 'content' => $payload]]);
 
-        // Create file
-        file_put_contents($documentRoot.'/.well-known/acme-challenge/'.$token, $payload);
+        $this->assertSame(200, $response->getStatusCode());
+    }
 
-        // Start server
-        $finder = new PhpExecutableFinder();
+    protected function cleanChallenge($token)
+    {
+        $fakeServer = new Client();
+        $response = $fakeServer->post('http://localhost:8055/del-http01', [RequestOptions::JSON => ['token' => $token]]);
 
-        if (false === $binary = $finder->find()) {
-            throw new \RuntimeException('Unable to find PHP binary to start server.');
-        }
-
-        $script = implode(' ', [
-            '"'.$binary.'"',
-            '"-S"',
-            '"'.$listen.'"',
-            '"-t"',
-            '"'.$documentRoot.'"',
-        ]);
-
-        if (method_exists(Process::class, 'fromShellCommandline')) {
-            return Process::fromShellCommandline('exec '.$script, $documentRoot, null, null, null);
-        }
-
-        return new Process('exec '.$script, $documentRoot, null, null, null);
+        $this->assertSame(200, $response->getStatusCode());
     }
 }

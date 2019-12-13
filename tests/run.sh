@@ -27,4 +27,4 @@ p9BI7gVKtWSZYegicA==
 echo "$cert" > "$tempfile"
 trap "{ rm -f $tempfile; }" EXIT
 
-php -d curl.cainfo="$tempfile" ./vendor/bin/simple-phpunit $*
+php -d curl.cainfo="$tempfile" ./vendor/bin/simple-phpunit "$@"

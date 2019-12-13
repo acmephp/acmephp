@@ -67,5 +67,7 @@ EOF
 
         $this->notice('Triggered successfully');
         $this->info('You should have been alerted');
+
+        return 0;
     }
 }

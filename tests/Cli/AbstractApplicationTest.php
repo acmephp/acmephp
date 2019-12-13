@@ -95,11 +95,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
             true
         );
 
-        $process = $this->createServerProcess($challenge['token'], $challenge['payload']);
-        $process->start();
-
-        $this->assertTrue($process->isRunning());
-
+        $this->handleChallenge($challenge['token'], $challenge['payload']);
         try {
             $check = $this->application->find('check');
             $checkTest = new CommandTester($check);
@@ -114,7 +110,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
             $this->assertStringContainsString('The authorization check was successful', $checkDisplay);
         } finally {
-            $process->stop();
+            $this->cleanChallenge($challenge['token']);
         }
 
         /*

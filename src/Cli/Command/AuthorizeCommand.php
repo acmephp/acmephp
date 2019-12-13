@@ -132,5 +132,7 @@ EOF
             $solverName,
             implode(' ', array_keys($order->getAuthorizationsChallenges()))
         ));
+
+        return 0;
     }
 }

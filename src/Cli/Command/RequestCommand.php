@@ -238,6 +238,8 @@ EOF;
         ];
 
         $this->info(strtr(strtr($success, $replacements), ['{domain}' => $domain]));
+
+        return 0;
     }
 
     /**
@@ -343,6 +345,8 @@ EOF;
 
             throw $e;
         }
+
+        return 0;
     }
 
     /**

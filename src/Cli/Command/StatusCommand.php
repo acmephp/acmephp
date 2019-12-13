@@ -87,5 +87,7 @@ EOF
         }
 
         $table->render();
+
+        return 0;
     }
 }

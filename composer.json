@@ -67,8 +67,7 @@
     "require-dev": {
         "phpspec/prophecy": "^1.9",
         "symfony/finder": "^3.4|^4.0",
-        "symfony/process": "^3.4|^4.0",
-        "symfony/phpunit-bridge": "^4.4",
+        "symfony/phpunit-bridge": "^5.0",
         "symfony/var-dumper": "^3.4|^4.0"
     },
     "autoload": {

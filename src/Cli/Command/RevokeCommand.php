@@ -72,5 +72,7 @@ class RevokeCommand extends AbstractCommand
         }
 
         $this->notice('Certificate revoked successfully!');
+
+        return 0;
     }
 }
