@@ -64,7 +64,7 @@ class Certificate
     }
 
     /**
-     * @return Certificate
+     * @return Certificate|null
      */
     public function getIssuerCertificate()
     {
