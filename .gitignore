@@ -5,13 +5,3 @@ vendor/
 .php_cs.cache
 doc/.couscous
 .subsplit
-tests/Cli/Fixtures/local/master/*
-!tests/Cli/Fixtures/local/master/.gitkeep
-tests/Cli/Fixtures/sftp/*
-!tests/Cli/Fixtures/sftp/.gitkeep
-tests/Cli/Fixtures/monitoring/*
-!tests/Cli/Fixtures/monitoring/.gitkeep
-tests/Cli/Fixtures/challenges/.well-known/acme-challenge/*
-!tests/Cli/Fixtures/challenges/.well-known/acme-challenge/.gitkeep
-tests/Core/Fixtures/challenges/.well-known/acme-challenge/*
-!tests/Core/Fixtures/challenges/.well-known/acme-challenge/.gitkeep

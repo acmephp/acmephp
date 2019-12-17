@@ -110,32 +110,9 @@ class SecureHttpClient
      */
     public function signedRequest($method, $endpoint, array $payload = [], $returnJson = true)
     {
-        $privateKey = $this->accountKeyPair->getPrivateKey();
+        @trigger_error('The method signedRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request, signKidPayload instead', E_USER_DEPRECATED);
 
-        $alg = $this->getAlg();
-        $protected = [
-            'alg' => $alg,
-            'jwk' => $this->getJWK(),
-            'nonce' => $this->getNonce(),
-            'url' => $endpoint,
-        ];
-        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
-
-        $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
-        $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
-        $signature = $this->base64Encoder->encode($this->dataSigner->signData($protected.'.'.$payload, $privateKey, $algorithm, $format));
-
-        $payload = [
-            'protected' => $protected,
-            'payload' => $payload,
-            'signature' => $signature,
-        ];
-
-        try {
-            return $this->unsignedRequest($method, $endpoint, $payload, $returnJson);
-        } catch (BadNonceServerException $e) {
-            return $this->unsignedRequest($method, $endpoint, $payload, $returnJson);
-        }
+        return $this->request($method, $endpoint, $this->signJwkPayload($endpoint, $payload), $returnJson);
     }
 
     private function getAlg()
@@ -217,6 +194,86 @@ class SecureHttpClient
     }
 
     /**
+     * Generates a payload signed with account's KID.
+     *
+     * @param string $endpoint
+     * @param string $account
+     * @param array  $payload
+     *
+     * @return array the signed Pyaload
+     */
+    public function signKidPayload($endpoint, $account, array $payload = null)
+    {
+        return $this->signPayload(
+            [
+                'alg' => $this->getAlg(),
+                'kid' => $account,
+                'nonce' => $this->getNonce(),
+                'url' => $endpoint,
+            ],
+            $payload
+        );
+    }
+
+    /**
+     * Generates a payload signed with JWK.
+     *
+     * @param string $endpoint
+     * @param array  $payload
+     *
+     * @return array the signed Payload
+     */
+    public function signJwkPayload($endpoint, array $payload = null)
+    {
+        return $this->signPayload(
+            [
+                'alg' => $this->getAlg(),
+                'jwk' => $this->getJWK(),
+                'nonce' => $this->getNonce(),
+                'url' => $endpoint,
+            ],
+            $payload
+        );
+    }
+
+    /**
+     * Sign the given Payload.
+     *
+     * @param array      $protected
+     * @param array|null $payload
+     *
+     * @return array
+     */
+    private function signPayload(array $protected, array $payload = null)
+    {
+        if (!isset($protected['alg'])) {
+            throw new \InvalidArgumentException('The property "alg" is required in the protected array');
+        }
+        $alg = $protected['alg'];
+
+        $privateKey = $this->accountKeyPair->getPrivateKey();
+        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
+
+        $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
+        if (null === $payload) {
+            $payload = '';
+        } elseif ($payload === []) {
+            $payload = $this->base64Encoder->encode('{}');
+        } else {
+            $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
+        }
+        $signature = $this->base64Encoder->encode(
+            $this->dataSigner->signData($protected.'.'.$payload, $privateKey, $algorithm, $format)
+        );
+
+        return [
+            'protected' => $protected,
+            'payload' => $payload,
+            'signature' => $signature,
+        ];
+    }
+
+    /**
      * Send a request encoded in the format defined by the ACME protocol.
      *
      * @param string $method
@@ -225,43 +282,16 @@ class SecureHttpClient
      * @param array  $payload
      * @param bool   $returnJson
      *
-     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      * @throws AcmeCoreClientException when an error occured during response parsing
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
     public function signedKidRequest($method, $endpoint, $account, array $payload = [], $returnJson = true)
     {
-        $privateKey = $this->accountKeyPair->getPrivateKey();
+        @trigger_error('The method signedKidRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request, signKidPayload instead.', E_USER_DEPRECATED);
 
-        $alg = $this->getAlg();
-        $protected = [
-            'alg' => $alg,
-            'kid' => $account,
-            'nonce' => $this->getNonce(),
-            'url' => $endpoint,
-        ];
-        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
-
-        $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
-        if ($payload === []) {
-            $payload = $this->base64Encoder->encode('{}');
-        } else {
-            $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
-        }
-        $signature = $this->base64Encoder->encode($this->dataSigner->signData($protected.'.'.$payload, $privateKey, $algorithm, $format));
-
-        $payload = [
-            'protected' => $protected,
-            'payload' => $payload,
-            'signature' => $signature,
-        ];
-
-        try {
-            return $this->unsignedRequest($method, $endpoint, $payload, $returnJson);
-        } catch (BadNonceServerException $e) {
-            return $this->unsignedRequest($method, $endpoint, $payload, $returnJson);
-        }
+        return $this->request($method, $endpoint, $this->signKidPayload($endpoint, $account, $payload), $returnJson);
     }
 
     /**
@@ -272,20 +302,50 @@ class SecureHttpClient
      * @param array  $data
      * @param bool   $returnJson
      *
-     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      * @throws AcmeCoreClientException when an error occured during response parsing
      * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
     public function unsignedRequest($method, $endpoint, array $data = null, $returnJson = true)
     {
-        $request = $this->createRequest($method, $endpoint, $data);
+        @trigger_error('The method unsignedRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request instead.', E_USER_DEPRECATED);
+
+        return $this->request($method, $endpoint, $data, $returnJson);
+    }
+
+    /**
+     * Send a request encoded in the format defined by the ACME protocol.
+     *
+     * @param string $method
+     * @param string $endpoint
+     * @param array  $data
+     * @param bool   $returnJson
+     *
+     * @throws AcmeCoreClientException when an error occured during response parsing
+     * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
+     *
+     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
+     */
+    public function request($method, $endpoint, array $data = [], $returnJson = true)
+    {
+        $call = function () use ($method, $endpoint, $data) {
+            $request = $this->createRequest($method, $endpoint, $data);
+            try {
+                $this->lastResponse = $this->httpClient->send($request);
+            } catch (\Exception $exception) {
+                $this->handleClientException($request, $exception);
+            }
+
+            return $request;
+        };
 
         try {
-            $this->lastResponse = $this->httpClient->send($request);
-        } catch (\Exception $exception) {
-            $this->handleClientException($request, $exception);
+            $request = $call();
+        } catch (BadNonceServerException $e) {
+            $request = $call();
         }
 
         $body = \GuzzleHttp\Psr7\copy_to_string($this->lastResponse->getBody());
@@ -421,7 +481,7 @@ class SecureHttpClient
         }
 
         if (null !== $this->nonceEndpoint) {
-            $this->unsignedRequest('HEAD', $this->nonceEndpoint, null, false);
+            $this->request('HEAD', $this->nonceEndpoint, [], false);
             if ($this->lastResponse->hasHeader('Replay-Nonce')) {
                 return $this->lastResponse->getHeaderLine('Replay-Nonce');
             }

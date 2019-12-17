@@ -149,5 +149,7 @@ EOF
                 $solver->cleanup($authorizationChallenge);
             }
         }
+
+        return 0;
     }
 }

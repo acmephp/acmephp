@@ -58,6 +58,142 @@ class SecureHttpClientTest extends TestCase
         );
     }
 
+    public function testSignKidPayload()
+    {
+        $client = $this->createMockedClient([]);
+        $payload = $client->signKidPayload('/foo', 'account', ['foo' => 'bar']);
+
+        $this->assertIsArray($payload);
+        $this->assertArrayHasKey('protected', $payload);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertArrayHasKey('signature', $payload);
+        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload']));
+    }
+
+    public function testSignKidPayloadWithEmptyPayload()
+    {
+        $client = $this->createMockedClient([]);
+        $payload = $client->signKidPayload('/foo', 'account', []);
+
+        $this->assertIsArray($payload);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertSame('{}', \base64_decode($payload['payload']));
+    }
+
+    public function testSignKidPayloadWithNullPayload()
+    {
+        $client = $this->createMockedClient([]);
+        $payload = $client->signKidPayload('/foo', 'account');
+
+        $this->assertIsArray($payload);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertSame('', \base64_decode($payload['payload']));
+    }
+
+    public function testSignJwkPayload()
+    {
+        $client = $this->createMockedClient([]);
+        $payload = $client->signJwkPayload('/foo', ['foo' => 'bar']);
+
+        $this->assertIsArray($payload);
+        $this->assertArrayHasKey('protected', $payload);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertArrayHasKey('signature', $payload);
+        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload']));
+    }
+
+    public function testSignJwkPayloadWithEmptyPayload()
+    {
+        $client = $this->createMockedClient([]);
+        $payload = $client->signJwkPayload('/foo', []);
+
+        $this->assertIsArray($payload);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertSame('{}', \base64_decode($payload['payload']));
+    }
+
+    public function testSignJwkPayloadWithNullPayload()
+    {
+        $client = $this->createMockedClient([]);
+        $payload = $client->signJwkPayload('/foo');
+
+        $this->assertIsArray($payload);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertSame('', \base64_decode($payload['payload']));
+    }
+
+    public function testValidStringRequest()
+    {
+        $client = $this->createMockedClient([new Response(200, [], 'foo')], false);
+        $body = $client->request('GET', '/foo', ['foo' => 'bar'], false);
+        $this->assertEquals('foo', $body);
+    }
+
+    public function testValidJsonRequest()
+    {
+        $client = $this->createMockedClient([new Response(200, [], json_encode(['test' => 'ok']))], false);
+        $data = $client->request('GET', '/foo', ['foo' => 'bar'], true);
+        $this->assertEquals(['test' => 'ok'], $data);
+    }
+
+    public function testInvalidJsonRequest()
+    {
+        $this->expectException('AcmePhp\Core\Exception\Protocol\ExpectedJsonException');
+        $client = $this->createMockedClient([new Response(200, [], 'invalid json')], false);
+        $client->request('GET', '/foo', ['foo' => 'bar'], true);
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testRequestPayload()
+    {
+        $container = [];
+
+        $stack = HandlerStack::create(new MockHandler([new Response(200, [], json_encode(['test' => 'ok']))]));
+        $stack->push(Middleware::history($container));
+
+        $keyPairGenerator = new KeyPairGenerator();
+
+        $dataSigner = $this->getMockBuilder(DataSigner::class)->getMock();
+        $dataSigner->expects($this->once())
+            ->method('signData')
+            ->willReturn('foobar');
+
+        $client = new SecureHttpClient(
+            $keyPairGenerator->generateKeyPair(),
+            new Client(['handler' => $stack]),
+            new Base64SafeEncoder(),
+            new KeyParser(),
+            $dataSigner,
+            $this->getMockBuilder(ServerErrorHandler::class)->getMock()
+        );
+
+        $client->request('POST', '/acme/new-reg', $client->signJwkPayload('/acme/new-reg', ['contact' => 'foo@bar.com']), true);
+
+        // Check request object
+        $this->assertCount(1, $container);
+
+        /** @var RequestInterface $request */
+        $request = $container[0]['request'];
+
+        $this->assertInstanceOf(RequestInterface::class, $request);
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('/acme/new-reg', ($request->getUri() instanceof Uri) ? $request->getUri()->getPath() : $request->getUri());
+
+        $body = \GuzzleHttp\Psr7\copy_to_string($request->getBody());
+        $payload = @json_decode($body, true);
+
+        $this->assertIsArray($payload);
+        $this->assertArrayHasKey('protected', $payload);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertArrayHasKey('signature', $payload);
+        $this->assertEquals('Zm9vYmFy', $payload['signature']);
+    }
+
+    /**
+     * @group legacy
+     */
     public function testValidUnsignedStringRequest()
     {
         $client = $this->createMockedClient([new Response(200, [], 'foo')], false);
@@ -65,6 +201,9 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals('foo', $body);
     }
 
+    /**
+     * @group legacy
+     */
     public function testValidUnsignedJsonRequest()
     {
         $client = $this->createMockedClient([new Response(200, [], json_encode(['test' => 'ok']))], false);
@@ -72,6 +211,9 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals(['test' => 'ok'], $data);
     }
 
+    /**
+     * @group legacy
+     */
     public function testInvalidUnsignedJsonRequest()
     {
         $this->expectException('AcmePhp\Core\Exception\Protocol\ExpectedJsonException');
@@ -79,6 +221,9 @@ class SecureHttpClientTest extends TestCase
         $client->unsignedRequest('GET', '/foo', ['foo' => 'bar'], true);
     }
 
+    /**
+     * @group legacy
+     */
     public function testValidSignedStringRequest()
     {
         $client = $this->createMockedClient([new Response(200, [], 'foo')], false);
@@ -86,6 +231,9 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals('foo', $body);
     }
 
+    /**
+     * @group legacy
+     */
     public function testValidSignedJsonRequest()
     {
         $client = $this->createMockedClient([new Response(200, [], json_encode(['test' => 'ok']))], false);
@@ -93,6 +241,9 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals(['test' => 'ok'], $data);
     }
 
+    /**
+     * @group legacy
+     */
     public function testInvalidSignedJsonRequest()
     {
         $this->expectException('AcmePhp\Core\Exception\Protocol\ExpectedJsonException');
@@ -100,6 +251,9 @@ class SecureHttpClientTest extends TestCase
         $client->signedRequest('GET', '/foo', ['foo' => 'bar'], true);
     }
 
+    /**
+     * @group legacy
+     */
     public function testSignedRequestPayload()
     {
         $container = [];

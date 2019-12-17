@@ -33,7 +33,6 @@ class MonitoredApplicationTest extends AbstractApplicationTest
     protected function getFixturesDirectories()
     {
         return [
-            __DIR__.'/../Cli/Fixtures/challenges/.well-known/acme-challenge',
             __DIR__.'/../Cli/Fixtures/local/backup',
             __DIR__.'/../Cli/Fixtures/local/master',
         ];

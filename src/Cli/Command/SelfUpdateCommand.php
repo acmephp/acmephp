@@ -102,13 +102,13 @@ class SelfUpdateCommand extends Command
         if ($input->getOption('rollback')) {
             $this->rollback();
 
-            return;
+            return 0;
         }
 
         if ($input->getOption('check')) {
             $this->printAvailableUpdates();
 
-            return;
+            return 0;
         }
 
         /*
@@ -117,25 +117,25 @@ class SelfUpdateCommand extends Command
         if ($input->getOption('dev')) {
             $this->updateToDevelopmentBuild();
 
-            return;
+            return 0;
         }
 
         if ($input->getOption('pre')) {
             $this->updateToPreReleaseBuild();
 
-            return;
+            return 0;
         }
 
         if ($input->getOption('stable')) {
             $this->updateToStableBuild();
 
-            return;
+            return 0;
         }
 
         if ($input->getOption('non-dev')) {
             $this->updateToMostRecentNonDevRemote();
 
-            return;
+            return 0;
         }
 
         /*
@@ -145,7 +145,7 @@ class SelfUpdateCommand extends Command
         if ($parser->isStable($this->version)) {
             $this->updateToStableBuild();
 
-            return;
+            return 0;
         }
 
         /*
@@ -153,6 +153,8 @@ class SelfUpdateCommand extends Command
          * of stability.
          */
         $this->updateToMostRecentNonDevRemote();
+
+        return 0;
     }
 
     protected function getStableUpdater()

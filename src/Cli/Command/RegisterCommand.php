@@ -90,5 +90,7 @@ EOF
         $client->registerAccount(null, $email);
 
         $this->notice('Account registered successfully!');
+
+        return 0;
     }
 }

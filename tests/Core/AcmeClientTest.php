@@ -78,16 +78,12 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Challenge check
          */
-        $process = $this->createServerProcess($challenge->getToken(), $challenge->getPayload());
-        $process->start();
-        sleep(1);
-        $this->assertTrue($process->isRunning());
-
+        $this->handleChallenge($challenge->getToken(), $challenge->getPayload());
         try {
             $check = $client->challengeAuthorization($challenge);
             $this->assertEquals('valid', $check['status']);
         } finally {
-            $process->stop();
+            $this->cleanChallenge($challenge->getToken());
         }
 
         /*
