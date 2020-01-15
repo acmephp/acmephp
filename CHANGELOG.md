@@ -1,3 +1,50 @@
+15/01/2020 22:42  1.2.0  Release version 1.2.0
+d031223 Merge pull request #185 from miranovy/master
+24b8575 Fix getIssuerCertificate return type
+df8f156 Merge pull request #183 from jderusse/split-request
+b86d2d6 Merge pull request #184 from miranovy/master
+ec1bbba fix the wrong return type
+028470a fix the wrong return type
+25a12e3 Split Sign and Request
+937a2f7 Merge pull request #182 from pauladams8/master
+c592b85 added orderNotReady error type
+0d09084 Merge pull request #180 from jderusse/fix-test
+f0e9422 Add php 7.3 and 7.4
+6b65f1a Merge pull request #164 from trustocean/feat-install-aliyun-cdn
+d060f0c style ci, no spacing near dot
+222f184 重名时阿里云会报错
+51da67e Merge branch 'master' of https://github.com/acmephp/acmephp into feat-install-aliyun-cdn
+9203dec Merge pull request #163 from trustocean/feat-install-aliyun-waf
+ce4bb92 style ci
+45037e1 Merge branch 'master' of https://github.com/acmephp/acmephp into feat-install-aliyun-cdn
+dcd1ad7 fixbug
+bce7829 fixbug
+3292b41 fix
+2400302 remove wrong conf
+0501e56 register in services
+505d4c2 stash
+0d522f7 Update InstallAliyunWafAction.php
+91049e3 Remove try...catch wrapper
+e9fefc3 stash
+2d88030 Merge pull request #161 from jderusse/deprecate-commands
+723de09 style ci
+1a17f6e fix style ci
+40558ea close #17
+05a2f39 fix
+8541342 statsh
+d865632 Merge pull request #162 from aik099/gandi-dns-solver-feat
+83e47d3 Removed unused code
+62d9b1b CS fixes
+9eeb20a Adding Gandi.Net DNS solver class
+8bae348 Deprecate commands in favor of run
+9ef2916 Merge pull request #153 from elliotfehr/missed-memleak
+c1271c0 free openssl resource after reading
+b276743 Merge pull request #151 from elliotfehr/openssl-mem-leak
+1effe3e Merge branch 'master' into openssl-mem-leak
+58ee1e6 Merge pull request #152 from jderusse/fix-cs
+2071f9d Fix CS
+bb55db6 free the key resource after reading
+8c9d313 Build 1.1.1 PHAR
 18/01/2019 15:17  1.1.1  Several bug fixes
 952b1a6 Merge pull request #148 from rokclimb15/patch-1
 56df417 Correctly throw ChallengeTimedOutException
