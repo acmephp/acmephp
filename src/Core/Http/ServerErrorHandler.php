@@ -59,6 +59,11 @@ class ServerErrorHandler
      */
     public static function getResponseBodySummary(ResponseInterface $response)
     {
+        // Rewind the stream if possible to allow re-reading for the summary.
+        if ($response->getBody()->isSeekable()) {
+            $response->getBody()->rewind();
+        }
+
         if (method_exists(RequestException::class, 'getResponseBodySummary')) {
             return RequestException::getResponseBodySummary($response);
         }
