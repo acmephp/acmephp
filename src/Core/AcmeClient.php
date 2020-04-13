@@ -189,17 +189,17 @@ class AcmeClient implements AcmeClientV2Interface
         $client = $this->getHttpClient();
         $challengeUrl = $challenge->getUrl();
         $response = (array) $client->request('POST', $challengeUrl, $client->signKidPayload($challengeUrl, $this->getResourceAccount(), null));
-        if ('pending' === $response['status']) {
+        if ('pending' === $response['status'] || 'processing' === $response['status']) {
             $response = (array) $client->request('POST', $challengeUrl, $client->signKidPayload($challengeUrl, $this->getResourceAccount(), []));
         }
 
         // Waiting loop
-        while (time() <= $endTime && (!isset($response['status']) || 'pending' === $response['status'])) {
+        while (time() <= $endTime && (!isset($response['status']) || 'pending' === $response['status'] || 'processing' === $response['status'])) {
             sleep(1);
             $response = (array) $client->request('POST', $challengeUrl, $client->signKidPayload($challengeUrl, $this->getResourceAccount(), null));
         }
 
-        if (isset($response['status']) && 'pending' === $response['status']) {
+        if (isset($response['status']) && ('pending' === $response['status'] || 'processing' === $response['status'])) {
             throw new ChallengeTimedOutException($response);
         }
         if (!isset($response['status']) || 'valid' !== $response['status']) {
@@ -233,7 +233,7 @@ class AcmeClient implements AcmeClientV2Interface
         $client = $this->getHttpClient();
         $orderEndpoint = $order->getOrderEndpoint();
         $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
-        if (\in_array($response['status'], ['pending', 'ready'])) {
+        if (\in_array($response['status'], ['pending', 'processing', 'ready'])) {
             $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
 
             $csrContent = $this->csrSigner->signCertificateRequest($csr);
