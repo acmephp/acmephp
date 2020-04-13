@@ -77,6 +77,7 @@ class ServerErrorHandlerTest extends TestCase
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);
         $this->assertStringContainsString('non-ACME', $exception->getMessage());
         $this->assertStringContainsString('/foo/bar', $exception->getMessage());
+        $this->assertStringContainsString('Invalid JSON', $exception->getMessage());
     }
 
     public function testDefaultExceptionThrownNonAcmeJson()
@@ -91,5 +92,6 @@ class ServerErrorHandlerTest extends TestCase
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);
         $this->assertStringContainsString('non-ACME', $exception->getMessage());
         $this->assertStringContainsString('/foo/bar', $exception->getMessage());
+        $this->assertStringContainsString('"not":"acme"', $exception->getMessage());
     }
 }
