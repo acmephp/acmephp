@@ -48,13 +48,6 @@ class SecureHttpClientFactory
      */
     private $errorHandler;
 
-    /**
-     * @param ClientInterface    $httpClient
-     * @param Base64SafeEncoder  $base64Encoder
-     * @param KeyParser          $keyParser
-     * @param DataSigner         $dataSigner
-     * @param ServerErrorHandler $errorHandler
-     */
     public function __construct(
         ClientInterface $httpClient,
         Base64SafeEncoder $base64Encoder,
@@ -71,8 +64,6 @@ class SecureHttpClientFactory
 
     /**
      * Create a SecureHttpClient using a given account KeyPair.
-     *
-     * @param KeyPair $accountKeyPair
      *
      * @return SecureHttpClient
      */

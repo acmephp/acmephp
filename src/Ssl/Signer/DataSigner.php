@@ -41,9 +41,7 @@ class DataSigner
 
         $resource = $privateKey->getResource();
         if (!openssl_sign($data, $signature, $resource, $algorithm)) {
-            throw new DataSigningException(
-                sprintf('OpenSSL data signing failed with error: %s', openssl_error_string())
-            );
+            throw new DataSigningException(sprintf('OpenSSL data signing failed with error: %s', openssl_error_string()));
         }
 
         openssl_free_key($resource);

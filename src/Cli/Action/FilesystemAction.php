@@ -33,8 +33,7 @@ class FilesystemAction extends AbstractAction
     protected $filesystemFactoryLocator;
 
     /**
-     * @param FlysystemFilesystemInterface $master
-     * @param ContainerInterface           $filesystemFactoryLocator
+     * @param ContainerInterface $filesystemFactoryLocator
      */
     public function __construct(
         FlysystemFilesystemInterface $master,
@@ -66,9 +65,8 @@ class FilesystemAction extends AbstractAction
     }
 
     /**
-     * @param string              $type
-     * @param string              $path
-     * @param FilesystemInterface $filesystem
+     * @param string $type
+     * @param string $path
      */
     private function mirror($type, $path, FilesystemInterface $filesystem)
     {
@@ -82,8 +80,7 @@ class FilesystemAction extends AbstractAction
     }
 
     /**
-     * @param string              $path
-     * @param FilesystemInterface $filesystem
+     * @param string $path
      */
     private function mirrorDirectory($path, FilesystemInterface $filesystem)
     {
@@ -91,8 +88,7 @@ class FilesystemAction extends AbstractAction
     }
 
     /**
-     * @param string              $path
-     * @param FilesystemInterface $filesystem
+     * @param string $path
      */
     private function mirrorFile($path, FilesystemInterface $filesystem)
     {

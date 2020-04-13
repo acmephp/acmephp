@@ -67,9 +67,7 @@ class AcmeClient implements AcmeClientV2Interface
     private $account;
 
     /**
-     * @param SecureHttpClient              $httpClient
-     * @param string                        $directoryUrl
-     * @param CertificateRequestSigner|null $csrSigner
+     * @param string $directoryUrl
      */
     public function __construct(SecureHttpClient $httpClient, $directoryUrl, CertificateRequestSigner $csrSigner = null)
     {
@@ -321,7 +319,6 @@ class AcmeClient implements AcmeClientV2Interface
      *
      * @param string $method
      * @param string $resource
-     * @param array  $payload
      * @param bool   $returnJson
      *
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code

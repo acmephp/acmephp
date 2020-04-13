@@ -16,8 +16,6 @@ interface FilesystemFactoryInterface
     /**
      * Create a new Filesystem.
      *
-     * @param array $config
-     *
      * @return FilesystemInterface
      */
     public function create(array $config);

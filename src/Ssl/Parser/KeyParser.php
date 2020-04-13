@@ -26,8 +26,6 @@ class KeyParser
     /**
      * Parse the key.
      *
-     * @param Key $key
-     *
      * @return ParsedKey
      */
     public function parse(Key $key)

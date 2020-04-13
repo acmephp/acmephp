@@ -37,9 +37,7 @@ class ChainPrivateKeyGenerator implements PrivateKeyGeneratorInterface
             }
         }
 
-        throw new \LogicException(
-            sprintf('Unable to find a generator for a key option of type %s', \get_class($keyOption))
-        );
+        throw new \LogicException(sprintf('Unable to find a generator for a key option of type %s', \get_class($keyOption)));
     }
 
     public function supportsKeyOption(KeyOption $keyOption)

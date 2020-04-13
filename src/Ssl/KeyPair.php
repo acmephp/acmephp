@@ -24,10 +24,6 @@ class KeyPair
     /** @var PrivateKey */
     private $privateKey;
 
-    /**
-     * @param PublicKey  $publicKey
-     * @param PrivateKey $privateKey
-     */
     public function __construct(PublicKey $publicKey, PrivateKey $privateKey)
     {
         $this->publicKey = $publicKey;

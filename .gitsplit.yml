@@ -4,11 +4,11 @@
 cache_url: "/cache/gitsplit"
 
 splits:
-- prefix: "src/Core"
-  target: "https://${GH_TOKEN}@github.com/acmephp/core.git"
-- prefix: "src/Ssl"
-  target: "https://${GH_TOKEN}@github.com/acmephp/ssl.git"
+  - prefix: "src/Core"
+    target: "https://${GH_TOKEN}@github.com/acmephp/core.git"
+  - prefix: "src/Ssl"
+    target: "https://${GH_TOKEN}@github.com/acmephp/ssl.git"
 
 origins:
-- ^master$
-- ^\d+\.\d+\.\d+(-(alpha|beta|rc)\d)?$
+  - ^master$
+  - ^\d+\.\d+\.\d+(-(alpha|beta|rc)\d)?$

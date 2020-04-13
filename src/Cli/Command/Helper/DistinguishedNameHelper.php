@@ -32,8 +32,6 @@ class DistinguishedNameHelper extends Helper
     }
 
     /**
-     * @param DistinguishedName $distinguishedName
-     *
      * @return bool
      */
     public function isReadyForRequest(DistinguishedName $distinguishedName)
@@ -48,11 +46,6 @@ class DistinguishedNameHelper extends Helper
     }
 
     /**
-     * @param QuestionHelper    $helper
-     * @param InputInterface    $input
-     * @param OutputInterface   $output
-     * @param DistinguishedName $distinguishedName
-     *
      * @return DistinguishedName
      */
     public function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, DistinguishedName $distinguishedName)

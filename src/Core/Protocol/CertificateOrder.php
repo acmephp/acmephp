@@ -68,8 +68,6 @@ class CertificateOrder
     }
 
     /**
-     * @param array $data
-     *
      * @return AuthorizationChallenge
      */
     public static function fromArray(array $data)

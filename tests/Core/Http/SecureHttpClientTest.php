@@ -30,8 +30,7 @@ use Psr\Http\Message\RequestInterface;
 class SecureHttpClientTest extends TestCase
 {
     /**
-     * @param array $responses
-     * @param bool  $willThrow
+     * @param bool $willThrow
      *
      * @return SecureHttpClient
      */

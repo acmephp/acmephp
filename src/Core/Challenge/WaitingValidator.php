@@ -32,8 +32,7 @@ class WaitingValidator implements ValidatorInterface
     private $timeout;
 
     /**
-     * @param ValidatorInterface $validator
-     * @param int                $timeout
+     * @param int $timeout
      */
     public function __construct(ValidatorInterface $validator, $timeout = 180)
     {

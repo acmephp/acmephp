@@ -37,9 +37,6 @@ class AcmeConfiguration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
     protected function createRootNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode

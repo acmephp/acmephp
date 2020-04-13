@@ -24,10 +24,6 @@ class CertificateResponse
     /** @var Certificate */
     private $certificate;
 
-    /**
-     * @param CertificateRequest $certificateRequest
-     * @param Certificate        $certificate
-     */
     public function __construct(
         CertificateRequest $certificateRequest,
         Certificate $certificate

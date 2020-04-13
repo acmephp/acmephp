@@ -25,8 +25,6 @@ class CertificateRequestSigner
     /**
      * Generate a CSR from the given distinguishedName and keyPair.
      *
-     * @param CertificateRequest $certificateRequest
-     *
      * @return string
      */
     public function signCertificateRequest(CertificateRequest $certificateRequest)
@@ -42,8 +40,6 @@ class CertificateRequestSigner
 
     /**
      * Generate a CSR object with SANs from the given distinguishedName and keyPair.
-     *
-     * @param CertificateRequest $certificateRequest
      *
      * @return mixed
      */
@@ -93,9 +89,7 @@ EOL;
             openssl_free_key($resource);
 
             if (!$csr) {
-                throw new CSRSigningException(
-                    sprintf('OpenSSL CSR signing failed with error: %s', openssl_error_string())
-                );
+                throw new CSRSigningException(sprintf('OpenSSL CSR signing failed with error: %s', openssl_error_string()));
             }
 
             return $csr;
@@ -106,8 +100,6 @@ EOL;
 
     /**
      * Retrieves a CSR payload from the given distinguished name.
-     *
-     * @param DistinguishedName $distinguishedName
      *
      * @return array
      */

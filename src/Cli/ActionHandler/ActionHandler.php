@@ -37,11 +37,6 @@ class ActionHandler
      */
     private $postGenerateConfig;
 
-    /**
-     * @param ContainerInterface $actionLocator
-     * @param LoggerInterface    $cliLogger
-     * @param array              $postGenerateConfig
-     */
     public function __construct(ContainerInterface $actionLocator, LoggerInterface $cliLogger, array $postGenerateConfig)
     {
         $this->actionLocator = $actionLocator;
@@ -51,8 +46,6 @@ class ActionHandler
 
     /**
      * Apply all the registered actions to the given certificate response.
-     *
-     * @param CertificateResponse $response
      *
      * @throws AcmeCliException       if the configuration is invalid
      * @throws AcmeCliActionException if there is a problem during the execution of an action
@@ -64,10 +57,7 @@ class ActionHandler
         // Prepare
         foreach ($this->postGenerateConfig as $key => $actionConfig) {
             if (empty($actionConfig['action'])) {
-                throw new AcmeCliException(sprintf(
-                    'No action was configured at key storage.post_generate.%s, a non-empty "action" key is required.',
-                    $key
-                ));
+                throw new AcmeCliException(sprintf('No action was configured at key storage.post_generate.%s, a non-empty "action" key is required.', $key));
             }
 
             $name = $actionConfig['action'];

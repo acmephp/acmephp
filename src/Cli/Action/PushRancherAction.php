@@ -30,9 +30,6 @@ class PushRancherAction implements ActionInterface
      */
     private $httpClient;
 
-    /**
-     * @param Client $httpClient
-     */
     public function __construct(Client $httpClient)
     {
         $this->httpClient = $httpClient;

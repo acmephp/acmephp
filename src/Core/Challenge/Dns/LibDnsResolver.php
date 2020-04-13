@@ -193,9 +193,7 @@ class LibDnsResolver implements DnsResolverInterface
             throw new AcmeDnsResolutionException('Failed to decode server response', $e);
         }
         if (0 !== $response->getResponseCode()) {
-            throw new AcmeDnsResolutionException(
-                sprintf('ServerName respond with error code "%d"', $response->getResponseCode())
-            );
+            throw new AcmeDnsResolutionException(sprintf('ServerName respond with error code "%d"', $response->getResponseCode()));
         }
 
         return $response;

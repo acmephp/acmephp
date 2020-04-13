@@ -52,7 +52,6 @@ class DistinguishedName
      * @param string $organizationName
      * @param string $organizationalUnitName
      * @param string $emailAddress
-     * @param array  $subjectAlternativeNames
      */
     public function __construct(
         $commonName,
