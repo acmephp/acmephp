@@ -65,10 +65,7 @@ class Repository implements RepositoryV2Interface
     private $enableBackup;
 
     /**
-     * @param SerializerInterface $serializer
-     * @param FilesystemInterface $master
-     * @param FilesystemInterface $backup
-     * @param bool                $enableBackup
+     * @param bool $enableBackup
      */
     public function __construct(SerializerInterface $serializer, FilesystemInterface $master, FilesystemInterface $backup, $enableBackup)
     {

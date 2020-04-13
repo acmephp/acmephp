@@ -25,8 +25,6 @@ class CertificateParser
     /**
      * Parse the certificate.
      *
-     * @param Certificate $certificate
-     *
      * @return ParsedCertificate
      */
     public function parse(Certificate $certificate)
@@ -34,9 +32,7 @@ class CertificateParser
         $rawData = openssl_x509_parse($certificate->getPEM());
 
         if (!\is_array($rawData)) {
-            throw new CertificateParsingException(
-                sprintf('Fail to parse certificate with error: %s', openssl_error_string())
-            );
+            throw new CertificateParsingException(sprintf('Fail to parse certificate with error: %s', openssl_error_string()));
         }
 
         if (!isset($rawData['subject']['CN'])) {

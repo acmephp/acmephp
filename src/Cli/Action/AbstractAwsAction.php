@@ -27,9 +27,6 @@ abstract class AbstractAwsAction extends AbstractAction
      */
     protected $clientFactory;
 
-    /**
-     * @param ClientFactory $clientFactory
-     */
     public function __construct(ClientFactory $clientFactory)
     {
         $this->clientFactory = $clientFactory;

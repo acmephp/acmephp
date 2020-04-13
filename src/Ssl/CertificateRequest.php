@@ -24,10 +24,6 @@ class CertificateRequest
     /** @var KeyPair */
     private $keyPair;
 
-    /**
-     * @param DistinguishedName $distinguishedName
-     * @param KeyPair           $keyPair
-     */
     public function __construct(DistinguishedName $distinguishedName, KeyPair $keyPair)
     {
         $this->distinguishedName = $distinguishedName;

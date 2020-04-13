@@ -38,11 +38,9 @@ class ParsedKey
     private $details;
 
     /**
-     * @param Key    $source
      * @param string $key
      * @param int    $bits
      * @param int    $type
-     * @param array  $details
      */
     public function __construct(Key $source, $key, $bits, $type, array $details = [])
     {

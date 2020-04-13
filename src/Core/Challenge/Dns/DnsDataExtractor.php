@@ -37,8 +37,6 @@ class DnsDataExtractor
     /**
      * Retrieves the name of the TXT record to register.
      *
-     * @param AuthorizationChallenge $authorizationChallenge
-     *
      * @return string
      */
     public function getRecordName(AuthorizationChallenge $authorizationChallenge)
@@ -48,8 +46,6 @@ class DnsDataExtractor
 
     /**
      * Retrieves the value of the TXT record to register.
-     *
-     * @param AuthorizationChallenge $authorizationChallenge
      *
      * @return string
      */

@@ -33,9 +33,6 @@ class HttpValidator implements ValidatorInterface
      */
     private $client;
 
-    /**
-     * @param Client|null $client
-     */
     public function __construct(HttpDataExtractor $extractor = null, Client $client = null)
     {
         $this->extractor = null === $extractor ? new HttpDataExtractor() : $extractor;

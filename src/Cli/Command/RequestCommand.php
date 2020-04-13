@@ -141,7 +141,6 @@ EOF
      * Request a first certificate for the given domain.
      *
      * @param string $domain
-     * @param array  $alternativeNames
      * @param string $keyType
      */
     private function executeFirstRequest($domain, array $alternativeNames, $keyType)
@@ -246,7 +245,6 @@ EOF;
      * Renew a given domain certificate.
      *
      * @param string $domain
-     * @param array  $alternativeNames
      */
     private function executeRenewal($domain, array $alternativeNames)
     {
@@ -353,7 +351,6 @@ EOF;
      * Retrieve the stored distinguishedName or create a new one if needed.
      *
      * @param string $domain
-     * @param array  $alternativeNames
      *
      * @return DistinguishedName
      */

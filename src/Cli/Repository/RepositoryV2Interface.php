@@ -22,9 +22,6 @@ interface RepositoryV2Interface extends RepositoryInterface
     /**
      * Store a given certificate as associated to a given domain.
      *
-     * @param array            $domains
-     * @param CertificateOrder $order
-     *
      * @throws AcmeCliException
      */
     public function storeCertificateOrder(array $domains, CertificateOrder $order);

@@ -22,8 +22,7 @@ interface ActionInterface
      * Get a certificate response and execute the action with it.
      * Use the given configuration if needed.
      *
-     * @param array               $config
-     * @param CertificateResponse $response
+     * @param array $config
      */
     public function handle($config, CertificateResponse $response);
 }

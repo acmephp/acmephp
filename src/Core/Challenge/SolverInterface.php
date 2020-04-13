@@ -23,23 +23,17 @@ interface SolverInterface
     /**
      * Determines whether or not the solver supports a given Challenge.
      *
-     * @param AuthorizationChallenge $authorizationChallenge
-     *
      * @return bool The solver supports the given challenge's type
      */
     public function supports(AuthorizationChallenge $authorizationChallenge);
 
     /**
      * Solve the given authorization challenge.
-     *
-     * @param AuthorizationChallenge $authorizationChallenge
      */
     public function solve(AuthorizationChallenge $authorizationChallenge);
 
     /**
      * Cleanup the environments after a successful challenge.
-     *
-     * @param AuthorizationChallenge $authorizationChallenge
      */
     public function cleanup(AuthorizationChallenge $authorizationChallenge);
 }

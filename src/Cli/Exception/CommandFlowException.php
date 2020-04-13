@@ -21,10 +21,9 @@ class CommandFlowException extends AcmeCliException
     private $arguments;
 
     /**
-     * @param string          $missing   Missing requirement to fix the flow
-     * @param string          $command   Name of the command to run in order to fix the flow
-     * @param array           $arguments Optional list of missing arguments
-     * @param \Exception|null $previous
+     * @param string $missing   Missing requirement to fix the flow
+     * @param string $command   Name of the command to run in order to fix the flow
+     * @param array  $arguments Optional list of missing arguments
      */
     public function __construct($missing, $command, array $arguments = [], \Exception $previous = null)
     {

@@ -20,8 +20,6 @@ interface ConfigurableServiceInterface
 {
     /**
      * Configure the service with a set of configuration.
-     *
-     * @param array $config
      */
     public function configure(array $config);
 }

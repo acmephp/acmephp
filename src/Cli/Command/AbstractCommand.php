@@ -158,18 +158,14 @@ abstract class AbstractCommand extends Command implements LoggerInterface
 
         foreach ($this->container->findTaggedServiceIds('acmephp.service_locator') as $locatorId => $locatorTags) {
             if (!isset($locatorTags[0]['tag'])) {
-                throw new \InvalidArgumentException(
-                    sprintf('The tagged service "%s" must define have an alias', $locatorId)
-                );
+                throw new \InvalidArgumentException(sprintf('The tagged service "%s" must define have an alias', $locatorId));
             }
             $locatorTags = $locatorTags[0]['tag'];
             $factories = [];
             foreach ($this->container->findTaggedServiceIds($locatorTags) as $serviceId => $tags) {
                 foreach ($tags as $tag) {
                     if (!isset($tag['alias'])) {
-                        throw new \InvalidArgumentException(
-                            sprintf('The tagged service "%s" must define have an alias', $serviceId)
-                        );
+                        throw new \InvalidArgumentException(sprintf('The tagged service "%s" must define have an alias', $serviceId));
                     }
 
                     $factories[$tag['alias']] = new ServiceClosureArgument(new Reference($serviceId));

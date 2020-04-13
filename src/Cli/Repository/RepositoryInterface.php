@@ -35,8 +35,6 @@ interface RepositoryInterface
      *      - the certificate request
      *      - the certificate
      *
-     * @param CertificateResponse $certificateResponse
-     *
      * @throws AcmeCliException
      */
     public function storeCertificateResponse(CertificateResponse $certificateResponse);
@@ -44,8 +42,6 @@ interface RepositoryInterface
     /**
      * Store a given key pair as the account key pair (the global key pair used to
      * interact with the ACME server).
-     *
-     * @param KeyPair $keyPair
      *
      * @throws AcmeCliException
      */
@@ -70,8 +66,7 @@ interface RepositoryInterface
     /**
      * Store a given key pair as associated to a given domain.
      *
-     * @param string  $domain
-     * @param KeyPair $keyPair
+     * @param string $domain
      *
      * @throws AcmeCliException
      */
@@ -100,8 +95,7 @@ interface RepositoryInterface
     /**
      * Store a given authorization challenge as associated to a given domain.
      *
-     * @param string                 $domain
-     * @param AuthorizationChallenge $authorizationChallenge
+     * @param string $domain
      *
      * @throws AcmeCliException
      */
@@ -130,8 +124,7 @@ interface RepositoryInterface
     /**
      * Store a given distinguished name as associated to a given domain.
      *
-     * @param string            $domain
-     * @param DistinguishedName $distinguishedName
+     * @param string $domain
      *
      * @throws AcmeCliException
      */
@@ -160,8 +153,7 @@ interface RepositoryInterface
     /**
      * Store a given certificate as associated to a given domain.
      *
-     * @param string      $domain
-     * @param Certificate $certificate
+     * @param string $domain
      *
      * @throws AcmeCliException
      */

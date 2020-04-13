@@ -114,9 +114,6 @@ interface AcmeClientInterface
     public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180);
 
     /**
-     * @param Certificate           $certificate
-     * @param RevocationReason|null $revocationReason
-     *
      * @throws CertificateRevocationException
      */
     public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null);

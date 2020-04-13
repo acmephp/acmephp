@@ -23,16 +23,12 @@ interface ValidatorInterface
     /**
      * Determines whether or not the validator supports a given Challenge.
      *
-     * @param AuthorizationChallenge $authorizationChallenge
-     *
      * @return bool The validator supports the given challenge's type
      */
     public function supports(AuthorizationChallenge $authorizationChallenge);
 
     /**
      * Internally validate the challenge by performing the same kind of test than the CA.
-     *
-     * @param AuthorizationChallenge $authorizationChallenge
      *
      * @return bool The challenge is valid
      */

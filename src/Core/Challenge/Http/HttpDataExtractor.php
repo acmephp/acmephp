@@ -23,8 +23,6 @@ class HttpDataExtractor
     /**
      * Retrieves the absolute URL called by the CA.
      *
-     * @param AuthorizationChallenge $authorizationChallenge
-     *
      * @return string
      */
     public function getCheckUrl(AuthorizationChallenge $authorizationChallenge)
@@ -39,8 +37,6 @@ class HttpDataExtractor
     /**
      * Retrieves the absolute path called by the CA.
      *
-     * @param AuthorizationChallenge $authorizationChallenge
-     *
      * @return string
      */
     public function getCheckPath(AuthorizationChallenge $authorizationChallenge)
@@ -53,8 +49,6 @@ class HttpDataExtractor
 
     /**
      * Retrieves the content that should be returned in the response.
-     *
-     * @param AuthorizationChallenge $authorizationChallenge
      *
      * @return string
      */
