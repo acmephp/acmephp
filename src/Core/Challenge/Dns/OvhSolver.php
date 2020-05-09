@@ -15,6 +15,7 @@ use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
 use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientException;
 use GuzzleHttp\ClientInterface;
 use Ovh\Api;
 use Psr\Log\LoggerAwareTrait;
@@ -113,7 +114,7 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
         
         foreach ($authorizationChallenges as $authorizationChallenge) {
             
-            $this->logger->info("Create TXT for " . $authorizationChallenge->getDomain());
+            $this->logger->debug("Create TXT for " . $authorizationChallenge->getDomain());
             
             $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
             $recordName = $this->extractor->getRecordName($authorizationChallenge);
@@ -121,46 +122,35 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
             
             $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
             
-            $ovh = new Api($this->appKey,  // Application Key
-                $this->appSecret,  // Application Secret
-                $this->endPoint,      // Endpoint of API OVH Europe (List of available endpoints)
-                $this->consumerKey); // Consumer Key
+            $client = new Client(['http_errors' => false]);
             
-                $result = $ovh->get('/auth/currentCredential');
-                
-                print_r( $result );
-            
+            $ovh = new Api($this->appKey,
+                $this->appSecret,
+                $this->endPoint,
+                $this->consumerKey,
+                $client);
+
             $result = $ovh->post('/domain/zone/' . $topLevelDomain . '/record', array(
-            'fieldType' => 'TXT', // Resource record Name (type: zone.NamedResolutionFieldTypeEnum)
-            'subDomain' => $subDomain, // Resource record subdomain (type: string)
-            'target' => $recordValue, // Resource record target (type: string)
-            'ttl' => 600, // Resource record ttl (type: long)
+            'fieldType' => 'TXT',
+            'subDomain' => $subDomain,
+            'target' => $recordValue,
+            'ttl' => 600,
             ));
             
-            print_r($result);
+            if (isset($result['message']) && $result['message'] != ""){
+                $this->logger->error("OVH Exception Post = " . $result['message'] . " " . $topLevelDomain);
+                throw new \Exception("OVH Exception Post = " . $result['message'] . " " . $topLevelDomain);
+            }
             
             $this->logger->info("Refresh zone for " . $authorizationChallenge->getDomain());
             $result = $ovh->post('/domain/zone/' . $topLevelDomain . '/refresh');
-            print_r($result);
             
-            $this->logger->info("done");
+            if (isset($result['message']) && $result['message'] != ""){
+                $this->logger->error("OVH Exception Refresh= " . $result['message'] . " " . $topLevelDomain);
+                throw new \Exception("OVH Exception Refresh= " . $result['message'] . " " . $topLevelDomain);
+            }
             
-            /*$this->client->request(
-                'PUT',
-                'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
-                [
-                    'headers' => [
-                        'X-Api-Key' => $this->apiKey,
-                    ],
-                    'json' => [
-                        'rrset_type' => 'TXT',
-                        'rrset_ttl' => 600,
-                        'rrset_name' => $subDomain,
-                        'rrset_values' => [$recordValue],
-                    ],
-                ]
-                );
-                */
+            $this->logger->debug("Create done.");
         }
     }
     
@@ -181,48 +171,50 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
         
         foreach ($authorizationChallenges as $authorizationChallenge) {
             
-            $this->logger->info("Get record id for " . $authorizationChallenge->getDomain());
+            $this->logger->debug("Cleanup record id for " . $authorizationChallenge->getDomain());
             
             $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
             $recordName = $this->extractor->getRecordName($authorizationChallenge);
             
             $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
             
-            $ovh = new Api($this->appKey,  // Application Key
-                $this->appSecret,  // Application Secret
-                $this->endPoint,      // Endpoint of API OVH Europe (List of available endpoints)
-                $this->consumerKey); // Consumer Key
+            $client = new Client(['http_errors' => false]);
+            
+            $ovh = new Api($this->appKey,
+                $this->appSecret,
+                $this->endPoint,
+                $this->consumerKey,
+                $client);
             
             $result = $ovh->get('/domain/zone/' . $topLevelDomain . '/record', array(
             'fieldType' => 'TXT', // Filter the value of fieldType property (like) (type: zone.NamedResolutionFieldTypeEnum)
             'subDomain' => $subDomain, // Filter the value of subDomain property (like) (type: string)
             ));
             
-            print_r($result);
-            
-            if (count($result) == 1){
-                $id = $result[0];
-                $this->logger->info("Delete record id for " . $authorizationChallenge->getDomain() . " " . $id);
-                
-                $result = $ovh->delete('/domain/zone/' . $topLevelDomain .'/record/' .$id);
-                print_r($result);
-                
-                $this->logger->info("Refresh zone for " . $authorizationChallenge->getDomain());
-                $result = $ovh->post('/domain/zone/' . $topLevelDomain . '/refresh');
-                print_r($result);
-                
-                $this->logger->info("done");
+            if (isset($result['message']) && $result['message'] != ""){
+                $this->logger->error("OVH Exception Get= " . $result['message'] . " " . $topLevelDomain);
+                throw new \Exception("OVH Exception Get= " . $result['message'] . " " . $topLevelDomain);
             }
             
-            /*$this->client->request(
-                'DELETE',
-                'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
-                [
-                    'headers' => [
-                        'X-Api-Key' => $this->apiKey,
-                    ],
-                ]
-                );*/
+            if (count($result) == 1 && isset($result[0])){
+                $id = $result[0];
+                $this->logger->debug("Delete record id for " . $authorizationChallenge->getDomain() . " " . $id);
+                $result = $ovh->delete('/domain/zone/' . $topLevelDomain .'/record/' .$id);
+                
+                if (isset($result['message']) && $result['message'] != ""){
+                    $this->logger->error("OVH Exception Delete= " . $result['message'] . " " . $topLevelDomain);
+                    throw new \Exception("OVH Exception Delete= " . $result['message'] . " " . $topLevelDomain);
+                }
+                
+                $this->logger->debug("Refresh zone for " . $authorizationChallenge->getDomain());
+                $result = $ovh->post('/domain/zone/' . $topLevelDomain . '/refresh');
+                if (isset($result['message']) && $result['message'] != ""){
+                    $this->logger->error("OVH Exception Refresh= " . $result['message'] . " " . $topLevelDomain);
+                    throw new \Exception("OVH Exception Refresh= " . $result['message'] . " " . $topLevelDomain);
+                }
+                
+                $this->logger->debug("Cleanup done");
+            }
         }
     }
     
