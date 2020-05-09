@@ -5,3 +5,6 @@ vendor/
 .php_cs.cache
 doc/.couscous
 .subsplit
+/config.yml
+/.buildpath
+/.project
