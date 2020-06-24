@@ -20,6 +20,7 @@ use AcmePhp\Core\Exception\Server\InvalidEmailServerException;
 use AcmePhp\Core\Exception\Server\MalformedServerException;
 use AcmePhp\Core\Exception\Server\OrderNotReadyServerException;
 use AcmePhp\Core\Exception\Server\RateLimitedServerException;
+use AcmePhp\Core\Exception\Server\RejectedIdentifierServerException;
 use AcmePhp\Core\Exception\Server\TlsServerException;
 use AcmePhp\Core\Exception\Server\UnauthorizedServerException;
 use AcmePhp\Core\Exception\Server\UnknownHostServerException;
@@ -39,11 +40,12 @@ class ServerErrorHandler
         'badCSR' => BadCsrServerException::class,
         'badNonce' => BadNonceServerException::class,
         'connection' => ConnectionServerException::class,
-        'serverInternal' => InternalServerException::class,
         'invalidEmail' => InvalidEmailServerException::class,
         'malformed' => MalformedServerException::class,
         'orderNotReady' => OrderNotReadyServerException::class,
         'rateLimited' => RateLimitedServerException::class,
+        'rejectedIdentifier' => RejectedIdentifierServerException::class,
+        'serverInternal' => InternalServerException::class,
         'tls' => TlsServerException::class,
         'unauthorized' => UnauthorizedServerException::class,
         'unknownHost' => UnknownHostServerException::class,

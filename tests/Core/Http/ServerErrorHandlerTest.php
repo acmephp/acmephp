@@ -19,6 +19,7 @@ use AcmePhp\Core\Exception\Server\InternalServerException;
 use AcmePhp\Core\Exception\Server\InvalidEmailServerException;
 use AcmePhp\Core\Exception\Server\MalformedServerException;
 use AcmePhp\Core\Exception\Server\RateLimitedServerException;
+use AcmePhp\Core\Exception\Server\RejectedIdentifierServerException;
 use AcmePhp\Core\Exception\Server\TlsServerException;
 use AcmePhp\Core\Exception\Server\UnauthorizedServerException;
 use AcmePhp\Core\Exception\Server\UnknownHostServerException;
@@ -39,6 +40,7 @@ class ServerErrorHandlerTest extends TestCase
             ['invalidEmail', InvalidEmailServerException::class],
             ['malformed', MalformedServerException::class],
             ['rateLimited', RateLimitedServerException::class],
+            ['rejectedIdentifier', RejectedIdentifierServerException::class],
             ['tls', TlsServerException::class],
             ['unauthorized', UnauthorizedServerException::class],
             ['unknownHost', UnknownHostServerException::class],
