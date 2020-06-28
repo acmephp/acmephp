@@ -23,7 +23,7 @@ class UnsupportedIdentifierServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            "[unsupportedIdentifier] An identifier is of an unsupported type: ".$detail,
+            '[unsupportedIdentifier] An identifier is of an unsupported type: '.$detail,
             $previous
         );
     }
