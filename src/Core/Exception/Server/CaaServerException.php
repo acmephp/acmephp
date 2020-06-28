@@ -17,13 +17,13 @@ use Psr\Http\Message\RequestInterface;
 /**
  * @author Alex Plekhanov <alex@plekhanov.dev>
  */
-class RejectedIdentifierServerException extends AcmeCoreServerException
+class CaaServerException extends AcmeCoreServerException
 {
     public function __construct(RequestInterface $request, $detail, \Exception $previous = null)
     {
         parent::__construct(
             $request,
-            '[rejectedIdentifier] The server will not issue certificates for the identifier: '.$detail,
+            '[caa] Certification Authority Authorization (CAA) records forbid the CA from issuing a certificate: '.$detail,
             $previous
         );
     }

@@ -17,13 +17,13 @@ use Psr\Http\Message\RequestInterface;
 /**
  * @author Alex Plekhanov <alex@plekhanov.dev>
  */
-class RejectedIdentifierServerException extends AcmeCoreServerException
+class UnsupportedIdentifierServerException extends AcmeCoreServerException
 {
     public function __construct(RequestInterface $request, $detail, \Exception $previous = null)
     {
         parent::__construct(
             $request,
-            '[rejectedIdentifier] The server will not issue certificates for the identifier: '.$detail,
+            "[unsupportedIdentifier] An identifier is of an unsupported type: ".$detail,
             $previous
         );
     }

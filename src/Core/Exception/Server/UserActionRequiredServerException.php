@@ -17,13 +17,13 @@ use Psr\Http\Message\RequestInterface;
 /**
  * @author Alex Plekhanov <alex@plekhanov.dev>
  */
-class RejectedIdentifierServerException extends AcmeCoreServerException
+class UserActionRequiredServerException extends AcmeCoreServerException
 {
     public function __construct(RequestInterface $request, $detail, \Exception $previous = null)
     {
         parent::__construct(
             $request,
-            '[rejectedIdentifier] The server will not issue certificates for the identifier: '.$detail,
+            "[userActionRequired] Visit the “instance” URL and take actions specified there: ".$detail,
             $previous
         );
     }
