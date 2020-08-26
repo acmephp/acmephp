@@ -14,14 +14,23 @@ namespace Tests\AcmePhp\Core\Http;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Server\BadCsrServerException;
 use AcmePhp\Core\Exception\Server\BadNonceServerException;
+use AcmePhp\Core\Exception\Server\CaaServerException;
 use AcmePhp\Core\Exception\Server\ConnectionServerException;
+use AcmePhp\Core\Exception\Server\DnsServerException;
+use AcmePhp\Core\Exception\Server\IncorrectResponseServerException;
 use AcmePhp\Core\Exception\Server\InternalServerException;
+use AcmePhp\Core\Exception\Server\InvalidContactServerException;
 use AcmePhp\Core\Exception\Server\InvalidEmailServerException;
 use AcmePhp\Core\Exception\Server\MalformedServerException;
+use AcmePhp\Core\Exception\Server\OrderNotReadyServerException;
 use AcmePhp\Core\Exception\Server\RateLimitedServerException;
+use AcmePhp\Core\Exception\Server\RejectedIdentifierServerException;
 use AcmePhp\Core\Exception\Server\TlsServerException;
 use AcmePhp\Core\Exception\Server\UnauthorizedServerException;
 use AcmePhp\Core\Exception\Server\UnknownHostServerException;
+use AcmePhp\Core\Exception\Server\UnsupportedContactServerException;
+use AcmePhp\Core\Exception\Server\UnsupportedIdentifierServerException;
+use AcmePhp\Core\Exception\Server\UserActionRequiredServerException;
 use AcmePhp\Core\Http\ServerErrorHandler;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -34,14 +43,23 @@ class ServerErrorHandlerTest extends TestCase
         return [
             ['badCSR', BadCsrServerException::class],
             ['badNonce', BadNonceServerException::class],
+            ['caa', CaaServerException::class],
             ['connection', ConnectionServerException::class],
-            ['serverInternal', InternalServerException::class],
+            ['dns', DnsServerException::class],
+            ['incorrectResponse', IncorrectResponseServerException::class],
+            ['invalidContact', InvalidContactServerException::class],
             ['invalidEmail', InvalidEmailServerException::class],
             ['malformed', MalformedServerException::class],
+            ['orderNotReady', OrderNotReadyServerException::class],
             ['rateLimited', RateLimitedServerException::class],
+            ['rejectedIdentifier', RejectedIdentifierServerException::class],
+            ['serverInternal', InternalServerException::class],
             ['tls', TlsServerException::class],
             ['unauthorized', UnauthorizedServerException::class],
             ['unknownHost', UnknownHostServerException::class],
+            ['unsupportedContact', UnsupportedContactServerException::class],
+            ['unsupportedIdentifier', UnsupportedIdentifierServerException::class],
+            ['userActionRequired', UserActionRequiredServerException::class],
         ];
     }
 
