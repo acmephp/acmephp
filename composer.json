@@ -39,7 +39,7 @@
         "ext-openssl": "*",
         "lib-openssl": ">=0.9.8",
         "aws/aws-sdk-php": "^3.38",
-        "guzzlehttp/guzzle": "^6.0",
+        "guzzlehttp/guzzle": "^6.0|^7.0",
         "guzzlehttp/psr7": "^1.0",
         "league/flysystem": "^1.0.19",
         "league/flysystem-memory": "^1.0",
