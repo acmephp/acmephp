@@ -76,9 +76,13 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the certificate and
      * this operation could be long.
      *
-     * @param CertificateOrder   $order   the Order returned by the Certificate Authority
-     * @param CertificateRequest $csr     the Certificate Signing Request (informations for the certificate)
-     * @param int                $timeout the timeout period
+     * @param CertificateOrder   $order                                 the Order returned by the Certificate Authority
+     * @param CertificateRequest $csr                                   the Certificate Signing Request (informations for the certificate)
+     * @param int                $timeout                               the timeout period
+     * @param bool               $returnAlternateCertificateIfAvailable whether the alternate certificate provided by
+     *                                                                  the CA should be returned instead of the main one.
+     *                                                                  This is especially useful following
+     *                                                                  https://letsencrypt.org/2019/04/15/transitioning-to-isrg-root.html.
      *
      * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
      *                                             (the exception will be more specific if detail is provided)
@@ -88,7 +92,7 @@ interface AcmeClientInterface
      *
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
-    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, int $timeout = 180): CertificateResponse;
+    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse;
 
     /**
      * Request authorization challenge data for a given domain.
@@ -151,9 +155,13 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the certificate and
      * this operation could be long.
      *
-     * @param string             $domain  the domain to request a certificate for
-     * @param CertificateRequest $csr     the Certificate Signing Request (informations for the certificate)
-     * @param int                $timeout the timeout period
+     * @param string             $domain                                the domain to request a certificate for
+     * @param CertificateRequest $csr                                   the Certificate Signing Request (informations for the certificate)
+     * @param int                $timeout                               the timeout period
+     * @param bool               $returnAlternateCertificateIfAvailable whether the alternate certificate provided by
+     *                                                                  the CA should be returned instead of the main one.
+     *                                                                  This is especially useful following
+     *                                                                  https://letsencrypt.org/2019/04/15/transitioning-to-isrg-root.html.
      *
      * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
      *                                             (the exception will be more specific if detail is provided)
@@ -163,7 +171,7 @@ interface AcmeClientInterface
      *
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
-    public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180): CertificateResponse;
+    public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse;
 
     /**
      * Revoke a given certificate from the Certificate Authority.

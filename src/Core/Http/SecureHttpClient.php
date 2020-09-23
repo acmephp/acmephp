@@ -22,7 +22,9 @@ use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Header;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Utils;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Psr\Http\Message\ResponseInterface;
 
@@ -182,7 +184,8 @@ class SecureHttpClient
     }
 
     /**
-     * Send a request encoded in the format defined by the ACME protocol.
+     * Send a request encoded in the format defined by the ACME protocol
+     * and its content (optionally parsed as JSON).
      *
      * @throws AcmeCoreClientException when an error occured during response parsing
      * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
@@ -191,6 +194,35 @@ class SecureHttpClient
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
     public function request(string $method, string $endpoint, array $data = [], bool $returnJson = true)
+    {
+        $response = $this->rawRequest($method, $endpoint, $data);
+        $body = Utils::copyToString($response->getBody());
+
+        if (!$returnJson) {
+            return $body;
+        }
+
+        try {
+            if ('' === $body) {
+                throw new \InvalidArgumentException('Empty body received.');
+            }
+
+            $data = JsonDecoder::decode($body, true);
+        } catch (\InvalidArgumentException $exception) {
+            throw new ExpectedJsonException(sprintf('ACME client excepted valid JSON as a response to request "%s %s" (given: "%s")', $method, $endpoint, ServerErrorHandler::getResponseBodySummary($response)), $exception);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Send a request encoded in the format defined by the ACME protocol and return the response object.
+     *
+     * @throws AcmeCoreClientException when an error occured during response parsing
+     * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
+     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
+     */
+    public function rawRequest(string $method, string $endpoint, array $data = []): ResponseInterface
     {
         $call = function () use ($method, $endpoint, $data) {
             $request = $this->createRequest($method, $endpoint, $data);
@@ -204,28 +236,12 @@ class SecureHttpClient
         };
 
         try {
-            $request = $call();
+            $call();
         } catch (BadNonceServerException $e) {
-            $request = $call();
+            $call();
         }
 
-        $body = \GuzzleHttp\Psr7\copy_to_string($this->lastResponse->getBody());
-
-        if (!$returnJson) {
-            return $body;
-        }
-
-        try {
-            if ('' === $body) {
-                throw new \InvalidArgumentException('Empty body received.');
-            }
-
-            $data = JsonDecoder::decode($body, true);
-        } catch (\InvalidArgumentException $exception) {
-            throw new ExpectedJsonException(sprintf('ACME client excepted valid JSON as a response to request "%s %s" (given: "%s")', $request->getMethod(), $request->getUri(), ServerErrorHandler::getResponseBodySummary($this->lastResponse)), $exception);
-        }
-
-        return $data;
+        return $this->lastResponse;
     }
 
     public function setAccountKeyPair(KeyPair $keyPair)
@@ -245,7 +261,7 @@ class SecureHttpClient
 
     public function getLastLinks(): array
     {
-        return \GuzzleHttp\Psr7\parse_header($this->lastResponse->getHeader('Link'));
+        return Header::parse($this->lastResponse->getHeader('Link'));
     }
 
     public function getAccountKeyPair(): KeyPair
@@ -315,7 +331,7 @@ class SecureHttpClient
 
         if ('POST' === $method && \is_array($data)) {
             $request = $request->withHeader('Content-Type', 'application/jose+json');
-            $request = $request->withBody(\GuzzleHttp\Psr7\stream_for(json_encode($data)));
+            $request = $request->withBody(Utils::streamFor(json_encode($data)));
         }
 
         return $request;
