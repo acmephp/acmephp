@@ -19,8 +19,6 @@ notifications:
         - ./tests/setup.sh
     install: composer install --no-interaction --no-progress --ansi
     script: ./tests/run.sh
-    env:
-        SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT: 1
     cache:
         directories:
             - $HOME/.composer/cache/files
@@ -32,14 +30,12 @@ notifications:
         - composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable
     env:
         COMMENT: "low deps"
-        SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT: 1
 
 .template_phpunit_high: &phpunit_high
     <<: *phpunit
     install: composer update --no-interaction --no-progress --ansi
     env:
         COMMENT: "high deps"
-        SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT: 1
 
 jobs:
     include:
@@ -50,15 +46,6 @@ jobs:
             script:
                 - php php-cs-fixer.phar fix --dry-run --diff
 
-        -   <<: *phpunit
-            dist: trusty
-            php: 5.5
-        -   <<: *phpunit
-            php: 5.6
-        -   <<: *phpunit_low
-            php: 7.0
-        -   <<: *phpunit
-            php: 7.1
         -   <<: *phpunit
             php: 7.2
         -   <<: *phpunit
