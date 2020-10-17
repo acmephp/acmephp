@@ -22,7 +22,7 @@ use Webmozart\Assert\Assert;
 class PrivateKey extends Key
 {
     /**
-     *  {@inheritdoc}
+     * {@inheritdoc}
      */
     public function getResource()
     {
@@ -33,10 +33,7 @@ class PrivateKey extends Key
         return $resource;
     }
 
-    /**
-     * @return PublicKey
-     */
-    public function getPublicKey()
+    public function getPublicKey(): PublicKey
     {
         $resource = $this->getResource();
         if (!$details = openssl_pkey_get_details($resource)) {
@@ -51,12 +48,7 @@ class PrivateKey extends Key
         return new PublicKey($details['key']);
     }
 
-    /**
-     * @param $keyDER
-     *
-     * @return PrivateKey
-     */
-    public static function fromDER($keyDER)
+    public static function fromDER(string $keyDER): self
     {
         Assert::stringNotEmpty($keyDER, __METHOD__.'::$keyDER should be a non-empty string. Got %s');
 

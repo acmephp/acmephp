@@ -30,18 +30,12 @@ class CertificateRequest
         $this->keyPair = $keyPair;
     }
 
-    /**
-     * @return DistinguishedName
-     */
-    public function getDistinguishedName()
+    public function getDistinguishedName(): DistinguishedName
     {
         return $this->distinguishedName;
     }
 
-    /**
-     * @return KeyPair
-     */
-    public function getKeyPair()
+    public function getKeyPair(): KeyPair
     {
         return $this->keyPair;
     }

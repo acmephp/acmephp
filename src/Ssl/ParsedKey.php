@@ -37,15 +37,9 @@ class ParsedKey
     /** @var array */
     private $details;
 
-    /**
-     * @param string $key
-     * @param int    $bits
-     * @param int    $type
-     */
-    public function __construct(Key $source, $key, $bits, $type, array $details = [])
+    public function __construct(Key $source, string $key, int $bits, int $type, array $details = [])
     {
         Assert::stringNotEmpty($key, __CLASS__.'::$key expected a non empty string. Got: %s');
-        Assert::integer($bits, __CLASS__.'::$bits expected an integer. Got: %s');
         Assert::oneOf(
             $type,
             [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_DSA, OPENSSL_KEYTYPE_DH, OPENSSL_KEYTYPE_EC],
@@ -59,62 +53,37 @@ class ParsedKey
         $this->details = $details;
     }
 
-    /**
-     * @return Key
-     */
-    public function getSource()
+    public function getSource(): Key
     {
         return $this->source;
     }
 
-    /**
-     * @return string
-     */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @return int
-     */
-    public function getBits()
+    public function getBits(): int
     {
         return $this->bits;
     }
 
-    /**
-     * @return int
-     */
-    public function getType()
+    public function getType(): int
     {
         return $this->type;
     }
 
-    /**
-     * @return array
-     */
-    public function getDetails()
+    public function getDetails(): array
     {
         return $this->details;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasDetail($name)
+    public function hasDetail(string $name): bool
     {
         return isset($this->details[$name]);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getDetail($name)
+    public function getDetail(string $name)
     {
         Assert::oneOf($name, array_keys($this->details), 'ParsedKey::getDetail() expected one of: %2$s. Got: %s');
 

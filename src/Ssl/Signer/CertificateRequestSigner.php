@@ -24,10 +24,8 @@ class CertificateRequestSigner
 {
     /**
      * Generate a CSR from the given distinguishedName and keyPair.
-     *
-     * @return string
      */
-    public function signCertificateRequest(CertificateRequest $certificateRequest)
+    public function signCertificateRequest(CertificateRequest $certificateRequest): string
     {
         $csrObject = $this->createCsrWithSANsObject($certificateRequest);
 
@@ -40,8 +38,6 @@ class CertificateRequestSigner
 
     /**
      * Generate a CSR object with SANs from the given distinguishedName and keyPair.
-     *
-     * @return mixed
      */
     protected function createCsrWithSANsObject(CertificateRequest $certificateRequest)
     {
@@ -103,10 +99,8 @@ EOL;
 
     /**
      * Retrieves a CSR payload from the given distinguished name.
-     *
-     * @return array
      */
-    private function getCSRPayload(DistinguishedName $distinguishedName)
+    private function getCSRPayload(DistinguishedName $distinguishedName): array
     {
         $payload = [];
         if (null !== $countryName = $distinguishedName->getCountryName()) {

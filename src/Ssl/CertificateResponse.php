@@ -24,26 +24,18 @@ class CertificateResponse
     /** @var Certificate */
     private $certificate;
 
-    public function __construct(
-        CertificateRequest $certificateRequest,
-        Certificate $certificate
-    ) {
+    public function __construct(CertificateRequest $certificateRequest, Certificate $certificate)
+    {
         $this->certificateRequest = $certificateRequest;
         $this->certificate = $certificate;
     }
 
-    /**
-     * @return CertificateRequest
-     */
-    public function getCertificateRequest()
+    public function getCertificateRequest(): CertificateRequest
     {
         return $this->certificateRequest;
     }
 
-    /**
-     * @return Certificate
-     */
-    public function getCertificate()
+    public function getCertificate(): Certificate
     {
         return $this->certificate;
     }

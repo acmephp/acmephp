@@ -33,12 +33,7 @@ class PublicKey extends Key
         return $resource;
     }
 
-    /**
-     * @param $keyDER
-     *
-     * @return PublicKey
-     */
-    public static function fromDER($keyDER)
+    public static function fromDER(string $keyDER): self
     {
         Assert::stringNotEmpty($keyDER, __METHOD__.'::$keyDER should be a non-empty string. Got %s');
 
@@ -51,10 +46,7 @@ class PublicKey extends Key
         return new self(implode("\n", $lines));
     }
 
-    /**
-     * @return string
-     */
-    public function getHPKP()
+    public function getHPKP(): string
     {
         return base64_encode(hash('sha256', $this->getDER(), true));
     }

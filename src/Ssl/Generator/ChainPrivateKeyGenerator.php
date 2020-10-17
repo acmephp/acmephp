@@ -11,6 +11,8 @@
 
 namespace AcmePhp\Ssl\Generator;
 
+use AcmePhp\Ssl\PrivateKey;
+
 /**
  * Generate random RSA private key using OpenSSL.
  *
@@ -24,12 +26,12 @@ class ChainPrivateKeyGenerator implements PrivateKeyGeneratorInterface
     /**
      * @param PrivateKeyGeneratorInterface[] $generators
      */
-    public function __construct($generators)
+    public function __construct(iterable $generators)
     {
         $this->generators = $generators;
     }
 
-    public function generatePrivateKey(KeyOption $keyOption)
+    public function generatePrivateKey(KeyOption $keyOption): PrivateKey
     {
         foreach ($this->generators as $generator) {
             if ($generator->supportsKeyOption($keyOption)) {
@@ -40,7 +42,7 @@ class ChainPrivateKeyGenerator implements PrivateKeyGeneratorInterface
         throw new \LogicException(sprintf('Unable to find a generator for a key option of type %s', \get_class($keyOption)));
     }
 
-    public function supportsKeyOption(KeyOption $keyOption)
+    public function supportsKeyOption(KeyOption $keyOption): bool
     {
         foreach ($this->generators as $generator) {
             if ($generator->supportsKeyOption($keyOption)) {

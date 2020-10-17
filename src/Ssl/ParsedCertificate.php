@@ -54,18 +54,15 @@ class ParsedCertificate
      */
     public function __construct(
         Certificate $source,
-        $subject,
-        $issuer = null,
-        $selfSigned = true,
+        string $subject,
+        string $issuer = null,
+        bool $selfSigned = true,
         \DateTime $validFrom = null,
         \DateTime $validTo = null,
-        $serialNumber = null,
+        string $serialNumber = null,
         array $subjectAlternativeNames = []
     ) {
         Assert::stringNotEmpty($subject, __CLASS__.'::$subject expected a non empty string. Got: %s');
-        Assert::nullOrString($issuer, __CLASS__.'::$issuer expected a string or null. Got: %s');
-        Assert::nullOrBoolean($selfSigned, __CLASS__.'::$selfSigned expected a boolean or null. Got: %s');
-        Assert::nullOrString($serialNumber, __CLASS__.'::$serialNumber expected a string or null. Got: %s');
         Assert::allStringNotEmpty(
             $subjectAlternativeNames,
             __CLASS__.'::$subjectAlternativeNames expected a array of non empty string. Got: %s'
@@ -81,74 +78,47 @@ class ParsedCertificate
         $this->subjectAlternativeNames = $subjectAlternativeNames;
     }
 
-    /**
-     * @return Certificate
-     */
-    public function getSource()
+    public function getSource(): Certificate
     {
         return $this->source;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
 
-    /**
-     * @return string
-     */
-    public function getIssuer()
+    public function getIssuer(): ?string
     {
         return $this->issuer;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSelfSigned()
+    public function isSelfSigned(): bool
     {
         return $this->selfSigned;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getValidFrom()
+    public function getValidFrom(): \DateTimeInterface
     {
         return $this->validFrom;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getValidTo()
+    public function getValidTo(): \DateTimeInterface
     {
         return $this->validTo;
     }
 
-    /**
-     * @return bool
-     */
-    public function isExpired()
+    public function isExpired(): bool
     {
         return $this->validTo < (new \DateTime());
     }
 
-    /**
-     * @return string
-     */
-    public function getSerialNumber()
+    public function getSerialNumber(): ?string
     {
         return $this->serialNumber;
     }
 
-    /**
-     * @return array
-     */
-    public function getSubjectAlternativeNames()
+    public function getSubjectAlternativeNames(): array
     {
         return $this->subjectAlternativeNames;
     }

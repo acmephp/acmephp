@@ -19,7 +19,6 @@ use AcmePhp\Ssl\Generator\EcKey\EcKeyGenerator;
 use AcmePhp\Ssl\Generator\RsaKey\RsaKeyGenerator;
 use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
 use AcmePhp\Ssl\KeyPair;
-use Webmozart\Assert\Assert;
 
 /**
  * Generate random KeyPair using OpenSSL.
@@ -43,24 +42,15 @@ class KeyPairGenerator
     }
 
     /**
-     * Generate KeyPair.
-     *
-     * @param KeyOption $keyOption configuration of the key to generate
+     * @param KeyOption|null $keyOption configuration of the key to generate
      *
      * @throws KeyPairGenerationException when OpenSSL failed to generate keys
-     *
-     * @return KeyPair
      */
-    public function generateKeyPair($keyOption = null)
+    public function generateKeyPair(KeyOption $keyOption = null): KeyPair
     {
         if (null === $keyOption) {
             $keyOption = new RsaKeyOption();
         }
-        if (\is_int($keyOption)) {
-            @trigger_error('Passing a keySize to "generateKeyPair" is deprecated since version 1.1 and will be removed in 2.0. Pass an instance of KeyOption instead', E_USER_DEPRECATED);
-            $keyOption = new RsaKeyOption($keyOption);
-        }
-        Assert::isInstanceOf($keyOption, KeyOption::class);
 
         try {
             $privateKey = $this->generator->generatePrivateKey($keyOption);

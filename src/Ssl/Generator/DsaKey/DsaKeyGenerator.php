@@ -14,6 +14,7 @@ namespace AcmePhp\Ssl\Generator\DsaKey;
 use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\Generator\OpensslPrivateKeyGeneratorTrait;
 use AcmePhp\Ssl\Generator\PrivateKeyGeneratorInterface;
+use AcmePhp\Ssl\PrivateKey;
 use Webmozart\Assert\Assert;
 
 /**
@@ -25,22 +26,17 @@ class DsaKeyGenerator implements PrivateKeyGeneratorInterface
 {
     use OpensslPrivateKeyGeneratorTrait;
 
-    /**
-     * @param DsaKeyOption|KeyOption $keyOption
-     */
-    public function generatePrivateKey(KeyOption $keyOption)
+    public function generatePrivateKey(KeyOption $keyOption): PrivateKey
     {
         Assert::isInstanceOf($keyOption, DsaKeyOption::class);
 
-        return $this->generatePrivateKeyFromOpensslOptions(
-            [
-                'private_key_type' => OPENSSL_KEYTYPE_DSA,
-                'private_key_bits' => $keyOption->getBits(),
-            ]
-        );
+        return $this->generatePrivateKeyFromOpensslOptions([
+            'private_key_type' => OPENSSL_KEYTYPE_DSA,
+            'private_key_bits' => $keyOption->getBits(),
+        ]);
     }
 
-    public function supportsKeyOption(KeyOption $keyOption)
+    public function supportsKeyOption(KeyOption $keyOption): bool
     {
         return $keyOption instanceof DsaKeyOption;
     }

@@ -30,18 +30,12 @@ class KeyPair
         $this->privateKey = $privateKey;
     }
 
-    /**
-     * @return PublicKey
-     */
-    public function getPublicKey()
+    public function getPublicKey(): PublicKey
     {
         return $this->publicKey;
     }
 
-    /**
-     * @return PrivateKey
-     */
-    public function getPrivateKey()
+    public function getPrivateKey(): PrivateKey
     {
         return $this->privateKey;
     }

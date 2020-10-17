@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class CertificateTest extends TestCase
 {
-    public function test getPublicKey returns a PublicKey()
+    public function test_getPublicKey_returns_a_PublicKey()
     {
         $certificate = new Certificate(
                 '
@@ -61,7 +61,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertEquals('58b94e38ce0088f0ec5a0c38f04bd76c', md5($publicKey->getPEM()));
     }
 
-    public function test getPublicKeyResource returns a resource()
+    public function test_getPublicKeyResource_returns_a_resource()
     {
         $certificate = new Certificate(
             '

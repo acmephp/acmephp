@@ -23,12 +23,7 @@ use AcmePhp\Ssl\ParsedKey;
  */
 class KeyParser
 {
-    /**
-     * Parse the key.
-     *
-     * @return ParsedKey
-     */
-    public function parse(Key $key)
+    public function parse(Key $key): ParsedKey
     {
         try {
             $resource = $key->getResource();

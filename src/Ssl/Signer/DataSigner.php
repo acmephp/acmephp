@@ -22,8 +22,8 @@ use Webmozart\Assert\Assert;
  */
 class DataSigner
 {
-    const FORMAT_DER = 'DER';
-    const FORMAT_ECDSA = 'ECDSA';
+    public const FORMAT_DER = 'DER';
+    public const FORMAT_ECDSA = 'ECDSA';
 
     /**
      * Generate a signature of the given data using a private key and an algorithm.
@@ -32,10 +32,8 @@ class DataSigner
      * @param PrivateKey $privateKey Key used to sign
      * @param int        $algorithm  Signature algorithm defined by constants OPENSSL_ALGO_*
      * @param string     $format     Format of the output
-     *
-     * @return string
      */
-    public function signData($data, PrivateKey $privateKey, $algorithm = OPENSSL_ALGO_SHA256, $format = self::FORMAT_DER)
+    public function signData(string $data, PrivateKey $privateKey, int $algorithm = OPENSSL_ALGO_SHA256, string $format = self::FORMAT_DER): string
     {
         Assert::oneOf($format, [self::FORMAT_ECDSA, self::FORMAT_DER], 'The format %s to sign request does not exists. Available format: %s');
 
@@ -74,7 +72,7 @@ class DataSigner
      *
      * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
      */
-    private function DERtoECDSA($der, $partLength)
+    private function DERtoECDSA($der, $partLength): string
     {
         $hex = unpack('H*', $der)[1];
         if ('30' !== mb_substr($hex, 0, 2, '8bit')) { // SEQUENCE
@@ -102,23 +100,6 @@ class DataSigner
         $S = str_pad($S, $partLength, '0', STR_PAD_LEFT);
 
         return pack('H*', $R.$S);
-    }
-
-    /**
-     * The code is a copy/paste from another lib (web-token/jwt-core) which is not compatible with php <= 7.0.
-     *
-     * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
-     */
-    private function preparePositiveInteger($data)
-    {
-        if (mb_substr($data, 0, 2, '8bit') > '7f') {
-            return '00'.$data;
-        }
-        while ('00' === mb_substr($data, 0, 2, '8bit') && mb_substr($data, 2, 2, '8bit') <= '7f') {
-            $data = mb_substr($data, 2, null, '8bit');
-        }
-
-        return $data;
     }
 
     /**

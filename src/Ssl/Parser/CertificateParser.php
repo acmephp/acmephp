@@ -22,12 +22,7 @@ use AcmePhp\Ssl\ParsedCertificate;
  */
 class CertificateParser
 {
-    /**
-     * Parse the certificate.
-     *
-     * @return ParsedCertificate
-     */
-    public function parse(Certificate $certificate)
+    public function parse(Certificate $certificate): ParsedCertificate
     {
         $rawData = openssl_x509_parse($certificate->getPEM());
 
