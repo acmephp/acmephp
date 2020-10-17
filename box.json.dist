@@ -16,12 +16,12 @@
             "in": "vendor"
         }
     ],
-    "compactors": [ "Herrera\\Box\\Compactor\\Php" ],
+    "compactors": [ "KevinGH\\Box\\Compactor\\Php" ],
+    "check-requirements": false,
     "compression": "GZ",
     "git-version": "package_version",
     "main": "bin/acme",
     "output": "build/acmephp.phar",
-    "chmod": "0755",
-    "stub": true,
+    "algorithm": "OPENSSL",
     "key": "../private.key"
 }
