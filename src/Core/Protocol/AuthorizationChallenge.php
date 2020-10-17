@@ -134,7 +134,7 @@ class AuthorizationChallenge
      */
     public function isPending()
     {
-        return 'pending' === $this->status;
+        return 'pending' === $this->status || 'processing' === $this->status;
     }
 
     /**
