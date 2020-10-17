@@ -34,7 +34,7 @@ use Webmozart\Assert\Assert;
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class AcmeClient implements AcmeClientV2Interface
+class AcmeClient implements AcmeClientInterface
 {
     /**
      * @var SecureHttpClient

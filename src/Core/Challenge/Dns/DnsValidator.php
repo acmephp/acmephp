@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Core\Challenge\Dns;
 
+use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Exception\AcmeDnsResolutionException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
@@ -45,7 +46,7 @@ class DnsValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge)
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }
@@ -53,7 +54,7 @@ class DnsValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge)
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
         $recordValue = $this->extractor->getRecordValue($authorizationChallenge);

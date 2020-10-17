@@ -78,6 +78,7 @@ EOF
         $keyOption = $this->createKeyOption($config['key_type']);
 
         $this->register($config['contact_email'], $keyOption);
+
         foreach ($config['certificates'] as $domainConfig) {
             $domain = $domainConfig['domain'];
 
@@ -289,7 +290,7 @@ EOF
             }
 
             $this->output->writeln(sprintf('<info>Testing the challenge for domain %s...</info>', $domain));
-            if (time() - $startTestTime > 180 || !$validator->isValid($authorizationChallenge)) {
+            if (time() - $startTestTime > 180 || !$validator->isValid($authorizationChallenge, $solver)) {
                 $this->output->writeln(sprintf('<info>Can not self validate challenge for domain %s. Maybe letsencrypt will be able to do it...</info>', $domain));
             }
 

@@ -37,10 +37,10 @@ class ChainValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge)
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
     {
         foreach ($this->validators as $validator) {
-            if ($validator->supports($authorizationChallenge)) {
+            if ($validator->supports($authorizationChallenge, $solver)) {
                 return true;
             }
         }
@@ -51,11 +51,11 @@ class ChainValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge)
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
     {
         foreach ($this->validators as $validator) {
-            if ($validator->supports($authorizationChallenge)) {
-                return $validator->isValid($authorizationChallenge);
+            if ($validator->supports($authorizationChallenge, $solver)) {
+                return $validator->isValid($authorizationChallenge, $solver);
             }
         }
 

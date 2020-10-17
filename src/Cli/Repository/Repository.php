@@ -28,7 +28,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class Repository implements RepositoryV2Interface
+class Repository implements RepositoryInterface
 {
     const PATH_ACCOUNT_KEY_PRIVATE = 'account/key.private.pem';
     const PATH_ACCOUNT_KEY_PUBLIC = 'account/key.public.pem';
@@ -52,27 +52,12 @@ class Repository implements RepositoryV2Interface
     /**
      * @var FilesystemInterface
      */
-    private $master;
+    private $storage;
 
-    /**
-     * @var FilesystemInterface
-     */
-    private $backup;
-
-    /**
-     * @var bool
-     */
-    private $enableBackup;
-
-    /**
-     * @param bool $enableBackup
-     */
-    public function __construct(SerializerInterface $serializer, FilesystemInterface $master, FilesystemInterface $backup, $enableBackup)
+    public function __construct(SerializerInterface $serializer, FilesystemInterface $storage)
     {
         $this->serializer = $serializer;
-        $this->master = $master;
-        $this->backup = $backup;
-        $this->enableBackup = $enableBackup;
+        $this->storage = $storage;
     }
 
     /**
@@ -123,7 +108,7 @@ class Repository implements RepositoryV2Interface
      */
     public function hasAccountKeyPair()
     {
-        return $this->master->has(self::PATH_ACCOUNT_KEY_PRIVATE);
+        return $this->storage->has(self::PATH_ACCOUNT_KEY_PRIVATE);
     }
 
     /**
@@ -132,8 +117,8 @@ class Repository implements RepositoryV2Interface
     public function loadAccountKeyPair()
     {
         try {
-            $publicKeyPem = $this->master->read(self::PATH_ACCOUNT_KEY_PUBLIC);
-            $privateKeyPem = $this->master->read(self::PATH_ACCOUNT_KEY_PRIVATE);
+            $publicKeyPem = $this->storage->read(self::PATH_ACCOUNT_KEY_PUBLIC);
+            $privateKeyPem = $this->storage->read(self::PATH_ACCOUNT_KEY_PRIVATE);
 
             return new KeyPair(
                 $this->serializer->deserialize($publicKeyPem, PublicKey::class, PemEncoder::FORMAT),
@@ -169,7 +154,7 @@ class Repository implements RepositoryV2Interface
      */
     public function hasDomainKeyPair($domain)
     {
-        return $this->master->has($this->getPathForDomain(self::PATH_DOMAIN_KEY_PRIVATE, $domain));
+        return $this->storage->has($this->getPathForDomain(self::PATH_DOMAIN_KEY_PRIVATE, $domain));
     }
 
     /**
@@ -178,8 +163,8 @@ class Repository implements RepositoryV2Interface
     public function loadDomainKeyPair($domain)
     {
         try {
-            $publicKeyPem = $this->master->read($this->getPathForDomain(self::PATH_DOMAIN_KEY_PUBLIC, $domain));
-            $privateKeyPem = $this->master->read($this->getPathForDomain(self::PATH_DOMAIN_KEY_PRIVATE, $domain));
+            $publicKeyPem = $this->storage->read($this->getPathForDomain(self::PATH_DOMAIN_KEY_PUBLIC, $domain));
+            $privateKeyPem = $this->storage->read($this->getPathForDomain(self::PATH_DOMAIN_KEY_PRIVATE, $domain));
 
             return new KeyPair(
                 $this->serializer->deserialize($publicKeyPem, PublicKey::class, PemEncoder::FORMAT),
@@ -210,7 +195,7 @@ class Repository implements RepositoryV2Interface
      */
     public function hasDomainAuthorizationChallenge($domain)
     {
-        return $this->master->has($this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain));
+        return $this->storage->has($this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain));
     }
 
     /**
@@ -219,7 +204,7 @@ class Repository implements RepositoryV2Interface
     public function loadDomainAuthorizationChallenge($domain)
     {
         try {
-            $json = $this->master->read($this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain));
+            $json = $this->storage->read($this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain));
 
             return $this->serializer->deserialize($json, AuthorizationChallenge::class, JsonEncoder::FORMAT);
         } catch (\Exception $e) {
@@ -247,7 +232,7 @@ class Repository implements RepositoryV2Interface
      */
     public function hasDomainDistinguishedName($domain)
     {
-        return $this->master->has($this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain));
+        return $this->storage->has($this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain));
     }
 
     /**
@@ -256,7 +241,7 @@ class Repository implements RepositoryV2Interface
     public function loadDomainDistinguishedName($domain)
     {
         try {
-            $json = $this->master->read($this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain));
+            $json = $this->storage->read($this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain));
 
             return $this->serializer->deserialize($json, DistinguishedName::class, JsonEncoder::FORMAT);
         } catch (\Exception $e) {
@@ -302,7 +287,7 @@ class Repository implements RepositoryV2Interface
      */
     public function hasDomainCertificate($domain)
     {
-        return $this->master->has($this->getPathForDomain(self::PATH_DOMAIN_CERT_FULLCHAIN, $domain));
+        return $this->storage->has($this->getPathForDomain(self::PATH_DOMAIN_CERT_FULLCHAIN, $domain));
     }
 
     /**
@@ -311,7 +296,7 @@ class Repository implements RepositoryV2Interface
     public function loadDomainCertificate($domain)
     {
         try {
-            $pems = explode('-----BEGIN CERTIFICATE-----', $this->master->read($this->getPathForDomain(self::PATH_DOMAIN_CERT_FULLCHAIN, $domain)));
+            $pems = explode('-----BEGIN CERTIFICATE-----', $this->storage->read($this->getPathForDomain(self::PATH_DOMAIN_CERT_FULLCHAIN, $domain)));
         } catch (\Exception $e) {
             throw new AcmeCliException(sprintf('Loading of domain %s certificate failed', $domain), $e);
         }
@@ -354,7 +339,7 @@ class Repository implements RepositoryV2Interface
      */
     public function hasCertificateOrder(array $domains)
     {
-        return $this->master->has($this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains));
+        return $this->storage->has($this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains));
     }
 
     /**
@@ -363,7 +348,7 @@ class Repository implements RepositoryV2Interface
     public function loadCertificateOrder(array $domains)
     {
         try {
-            $json = $this->master->read($this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains));
+            $json = $this->storage->read($this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains));
 
             return $this->serializer->deserialize($json, CertificateOrder::class, JsonEncoder::FORMAT);
         } catch (\Exception $e) {
@@ -376,49 +361,13 @@ class Repository implements RepositoryV2Interface
      */
     public function save($path, $content, $visibility = self::VISIBILITY_PRIVATE)
     {
-        if (!$this->master->has($path)) {
-            // File creation: remove from backup if it existed and warm-up both master and backup
-            $this->createAndBackup($path, $content);
+        if (!$this->storage->has($path)) {
+            $this->storage->write($path, $content);
         } else {
-            // File update: backup before writing
-            $this->backupAndUpdate($path, $content);
+            $this->storage->update($path, $content);
         }
 
-        if ($this->enableBackup) {
-            $this->backup->setVisibility($path, $visibility);
-        }
-
-        $this->master->setVisibility($path, $visibility);
-    }
-
-    private function createAndBackup($path, $content)
-    {
-        if ($this->enableBackup) {
-            if ($this->backup->has($path)) {
-                $this->backup->delete($path);
-            }
-
-            $this->backup->write($path, $content);
-        }
-
-        $this->master->write($path, $content);
-    }
-
-    private function backupAndUpdate($path, $content)
-    {
-        if ($this->enableBackup) {
-            $oldContent = $this->master->read($path);
-
-            if (false !== $oldContent) {
-                if ($this->backup->has($path)) {
-                    $this->backup->update($path, $oldContent);
-                } else {
-                    $this->backup->write($path, $oldContent);
-                }
-            }
-        }
-
-        $this->master->update($path, $content);
+        $this->storage->setVisibility($path, $visibility);
     }
 
     private function normalizeDomain($domain)

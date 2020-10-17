@@ -46,7 +46,7 @@ jobs:
             script:
                 - php php-cs-fixer.phar fix --dry-run --diff
 
-        -   <<: *phpunit
+        -   <<: *phpunit_low
             php: 7.2
         -   <<: *phpunit
             php: 7.3

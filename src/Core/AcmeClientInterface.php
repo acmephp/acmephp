@@ -19,8 +19,8 @@ use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
-use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\CertificateOrder;
 use AcmePhp\Core\Protocol\RevocationReason;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
@@ -48,6 +48,48 @@ interface AcmeClientInterface
     public function registerAccount($agreement = null, $email = null);
 
     /**
+     * Request authorization challenge data for a list of domains.
+     *
+     * An AuthorizationChallenge is an association between a URI, a token and a payload.
+     * The Certificate Authority will create this challenge data and you will then have
+     * to expose the payload for the verification (see challengeAuthorization).
+     *
+     * @param string[] $domains the domains to challenge
+     *
+     * @throws AcmeCoreServerException        when the ACME server returns an error HTTP status code
+     *                                        (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException        when an error occured during response parsing
+     * @throws ChallengeNotSupportedException when the HTTP challenge is not supported by the server
+     *
+     * @return CertificateOrder the Order returned by the Certificate Authority
+     */
+    public function requestOrder(array $domains);
+
+    /**
+     * Request a certificate for the given domain.
+     *
+     * This method should be called only if a previous authorization challenge has
+     * been successful for the asked domain.
+     *
+     * WARNING : This method SHOULD NOT BE USED in a web action. It will
+     * wait for the Certificate Authority to validate the certificate and
+     * this operation could be long.
+     *
+     * @param CertificateOrder   $order   the Order returned by the Certificate Authority
+     * @param CertificateRequest $csr     the Certificate Signing Request (informations for the certificate)
+     * @param int                $timeout the timeout period
+     *
+     * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
+     *                                             (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException             when an error occured during response parsing
+     * @throws CertificateRequestFailedException   when the certificate request failed
+     * @throws CertificateRequestTimedOutException when the certificate request timed out
+     *
+     * @return CertificateResponse the certificate data to save it somewhere you want
+     */
+    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180);
+
+    /**
      * Request authorization challenge data for a given domain.
      *
      * An AuthorizationChallenge is an association between a URI, a token and a payload.
@@ -64,6 +106,15 @@ interface AcmeClientInterface
      * @return AuthorizationChallenge[] the list of challenges data returned by the Certificate Authority
      */
     public function requestAuthorization($domain);
+
+    /**
+     * Request the current status of an authorization challenge.
+     *
+     * @param AuthorizationChallenge $challenge The challenge to request
+     *
+     * @return AuthorizationChallenge A new instance of the challenge
+     */
+    public function reloadAuthorization(AuthorizationChallenge $challenge);
 
     /**
      * Ask the Certificate Authority to challenge a given authorization.
@@ -117,11 +168,4 @@ interface AcmeClientInterface
      * @throws CertificateRevocationException
      */
     public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null);
-
-    /**
-     * Get the HTTP client.
-     *
-     * @return SecureHttpClient
-     */
-    public function getHttpClient();
 }

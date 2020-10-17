@@ -13,6 +13,7 @@ namespace AcmePhp\Cli\Repository;
 
 use AcmePhp\Cli\Exception\AcmeCliException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\CertificateOrder;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
@@ -25,6 +26,33 @@ interface RepositoryInterface
 {
     const VISIBILITY_PUBLIC = 'public';
     const VISIBILITY_PRIVATE = 'private';
+
+    /**
+     * Store a given certificate as associated to a given domain.
+     *
+     * @throws AcmeCliException
+     */
+    public function storeCertificateOrder(array $domains, CertificateOrder $order);
+
+    /**
+     * Check if there is a certificate associated to the given domain in the repository.
+     *
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public function hasCertificateOrder(array $domains);
+
+    /**
+     * Load the certificate associated to a given domain.
+     *
+     * @param string $domain
+     *
+     * @throws AcmeCliException
+     *
+     * @return CertificateOrder
+     */
+    public function loadCertificateOrder(array $domains);
 
     /**
      * Extract important elements from the given certificate response and store them

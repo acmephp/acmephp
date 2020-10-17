@@ -11,26 +11,17 @@
 
 namespace Tests\AcmePhp\Cli;
 
-use Tests\AcmePhp\Cli\Mock\AbstractTestApplication;
-use Tests\AcmePhp\Cli\Mock\SimpleApplication;
-
 class SimpleApplicationTest extends AbstractApplicationTest
 {
-    /**
-     * @return array
-     */
-    protected function getFixturesDirectories()
+    protected function getFixturesDirectories(): array
     {
         return [
             __DIR__.'/../Cli/Fixtures/local/master',
         ];
     }
 
-    /**
-     * @return AbstractTestApplication
-     */
-    protected function createApplication()
+    protected function getConfigFile(): string
     {
-        return new SimpleApplication();
+        return __DIR__.'/Fixtures/config_simple.yaml';
     }
 }

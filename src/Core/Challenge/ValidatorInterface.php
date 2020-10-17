@@ -25,12 +25,12 @@ interface ValidatorInterface
      *
      * @return bool The validator supports the given challenge's type
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge);
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver);
 
     /**
      * Internally validate the challenge by performing the same kind of test than the CA.
      *
      * @return bool The challenge is valid
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge);
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver);
 }

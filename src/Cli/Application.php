@@ -11,12 +11,7 @@
 
 namespace AcmePhp\Cli;
 
-use AcmePhp\Cli\Command\AuthorizeCommand;
-use AcmePhp\Cli\Command\CheckCommand;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
-use AcmePhp\Cli\Command\MonitoringTestCommand;
-use AcmePhp\Cli\Command\RegisterCommand;
-use AcmePhp\Cli\Command\RequestCommand;
 use AcmePhp\Cli\Command\RevokeCommand;
 use AcmePhp\Cli\Command\RunCommand;
 use AcmePhp\Cli\Command\SelfUpdateCommand;
@@ -30,14 +25,12 @@ use Webmozart\PathUtil\Path;
  */
 class Application extends BaseApplication
 {
-    const VERSION = '1.3.0';
-
     /**
      * {@inheritdoc}
      */
     public function __construct()
     {
-        parent::__construct('Acme PHP - Let\'s Encrypt client', self::VERSION);
+        parent::__construct('Acme PHP - Let\'s Encrypt/ZeroSSL client', '');
     }
 
     /**
@@ -47,14 +40,9 @@ class Application extends BaseApplication
     {
         return array_merge(parent::getDefaultCommands(), [
             new RunCommand(),
-            new RegisterCommand(),
-            new AuthorizeCommand(),
-            new CheckCommand(),
-            new RequestCommand(),
             new RevokeCommand(),
             new StatusCommand(),
             new SelfUpdateCommand(),
-            new MonitoringTestCommand(),
         ]);
     }
 
@@ -109,13 +97,5 @@ class Application extends BaseApplication
     public function getStorageDirectory()
     {
         return Path::canonicalize('~/.acmephp/master');
-    }
-
-    /**
-     * @return string
-     */
-    public function getBackupDirectory()
-    {
-        return Path::canonicalize('~/.acmephp/backup');
     }
 }

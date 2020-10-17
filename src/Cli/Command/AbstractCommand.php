@@ -12,10 +12,9 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Cli\ActionHandler\ActionHandler;
-use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Configuration\AcmeConfiguration;
 use AcmePhp\Cli\Exception\CommandFlowException;
-use AcmePhp\Cli\Repository\RepositoryV2Interface;
+use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\Challenge\Dns\LibDnsResolver;
 use AcmePhp\Core\Http\SecureHttpClient;
@@ -69,23 +68,13 @@ abstract class AbstractCommand extends Command implements LoggerInterface
     }
 
     /**
-     * @return RepositoryV2Interface
+     * @return RepositoryInterface
      */
     protected function getRepository()
     {
         $this->debug('Loading repository');
 
         return $this->getContainer()->get('repository');
-    }
-
-    /**
-     * @return ActionHandler
-     */
-    protected function getActionHandler()
-    {
-        $this->debug('Loading action handler');
-
-        return $this->getContainer()->get('acmephp.action_handler');
     }
 
     /**
@@ -141,16 +130,12 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         // Application services and parameters
         $this->container->set('app', $this->getApplication());
         $this->container->set('container', $this->container);
-        $this->container->setParameter('app.version', Application::VERSION);
         $this->container->setParameter('app.storage_directory', $this->getApplication()->getStorageDirectory());
-        $this->container->setParameter('app.backup_directory', $this->getApplication()->getBackupDirectory());
 
         // Load configuration
         $processor = new Processor();
         $config = $processor->processConfiguration(new AcmeConfiguration(), $this->configuration);
-        $this->container->setParameter('storage.enable_backup', $config['storage']['enable_backup']);
         $this->container->setParameter('storage.post_generate', $config['storage']['post_generate']);
-        $this->container->setParameter('monitoring.handlers', $config['monitoring']);
 
         // Load services
         $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources'));

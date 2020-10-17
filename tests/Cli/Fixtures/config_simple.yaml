@@ -1,0 +1,13 @@
+contact_email: foo@example.com
+key_type: RSA
+
+defaults:
+    distinguished_name:
+        country: FR
+        locality: Paris
+        organization_name: Acme PHP
+
+certificates:
+    - domain: acmephp.com
+      solver:
+          name: mock-server
