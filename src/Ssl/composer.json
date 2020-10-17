@@ -32,18 +32,10 @@
         }
     },
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.2.5",
         "ext-hash": "*",
         "ext-openssl": "*",
         "lib-openssl": ">=0.9.8",
         "webmozart/assert": "^1.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^4.8.22"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
-        }
     }
 }

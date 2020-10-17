@@ -11,8 +11,6 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Cli\ActionHandler\ActionHandler;
-use AcmePhp\Cli\Configuration\AcmeConfiguration;
 use AcmePhp\Cli\Exception\CommandFlowException;
 use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClient;
@@ -20,7 +18,6 @@ use AcmePhp\Core\Challenge\Dns\LibDnsResolver;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -131,11 +128,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->container->set('app', $this->getApplication());
         $this->container->set('container', $this->container);
         $this->container->setParameter('app.storage_directory', $this->getApplication()->getStorageDirectory());
-
-        // Load configuration
-        $processor = new Processor();
-        $config = $processor->processConfiguration(new AcmeConfiguration(), $this->configuration);
-        $this->container->setParameter('storage.post_generate', $config['storage']['post_generate']);
 
         // Load services
         $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources'));

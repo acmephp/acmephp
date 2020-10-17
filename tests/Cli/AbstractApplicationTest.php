@@ -25,6 +25,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
     protected $application;
 
     abstract protected function getFixturesDirectories(): array;
+
     abstract protected function getConfigFile(): string;
 
     public function setUp(): void

@@ -4,6 +4,9 @@
     "type": "project",
     "license": "MIT",
     "homepage": "https://github.com/acmephp/acmephp",
+    "bin": [
+        "bin/acme"
+    ],
     "keywords": [
         "acme",
         "acmephp",
@@ -84,13 +87,5 @@
         "platform": {
             "php": "7.2.5"
         }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
-        }
-    },
-    "bin": [
-        "bin/acme"
-    ]
+    }
 }
