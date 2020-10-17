@@ -26,27 +26,23 @@ class FilesystemAction extends AbstractAction
     /**
      * @var FlysystemFilesystemInterface
      */
-    protected $master;
+    protected $storage;
+
     /**
      * @var ContainerInterface
      */
     protected $filesystemFactoryLocator;
 
-    /**
-     * @param ContainerInterface $filesystemFactoryLocator
-     */
-    public function __construct(
-        FlysystemFilesystemInterface $master,
-        ContainerInterface $filesystemFactoryLocator = null
-    ) {
-        $this->filesystemFactoryLocator = $filesystemFactoryLocator = null ? new ServiceLocator([]) : $filesystemFactoryLocator;
-        $this->master = $master;
+    public function __construct(FlysystemFilesystemInterface $storage, ContainerInterface $locator = null)
+    {
+        $this->storage = $storage;
+        $this->filesystemFactoryLocator = $locator ?: new ServiceLocator([]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function handle($config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response)
     {
         $this->assertConfiguration($config, ['adapter']);
 
@@ -54,7 +50,7 @@ class FilesystemAction extends AbstractAction
         $factory = $this->filesystemFactoryLocator->get($config['adapter']);
         $filesystem = $factory->create($config);
 
-        $files = $this->master->listContents('.', true);
+        $files = $this->storage->listContents('.', true);
         foreach ($files as $file) {
             if (0 === strpos($file['basename'], '.')) {
                 continue;
@@ -64,11 +60,8 @@ class FilesystemAction extends AbstractAction
         }
     }
 
-    /**
-     * @param string $type
-     * @param string $path
-     */
-    private function mirror($type, $path, FilesystemInterface $filesystem)
+
+    private function mirror(string $type, string $path, FilesystemInterface $filesystem)
     {
         if ('dir' === $type) {
             $this->mirrorDirectory($path, $filesystem);
@@ -79,25 +72,19 @@ class FilesystemAction extends AbstractAction
         $this->mirrorFile($path, $filesystem);
     }
 
-    /**
-     * @param string $path
-     */
-    private function mirrorDirectory($path, FilesystemInterface $filesystem)
+    private function mirrorDirectory(string $path, FilesystemInterface $filesystem)
     {
         $filesystem->createDir($path);
     }
 
-    /**
-     * @param string $path
-     */
-    private function mirrorFile($path, FilesystemInterface $filesystem)
+    private function mirrorFile(string $path, FilesystemInterface $filesystem)
     {
-        $masterContent = $this->master->read($path);
+        $storageContent = $this->storage->read($path);
 
-        if (!\is_string($masterContent)) {
-            throw new \RuntimeException(sprintf('File %s could not be read on master storage', $path));
+        if (!\is_string($storageContent)) {
+            throw new \RuntimeException(sprintf('File %s could not be read on storage storage', $path));
         }
 
-        $filesystem->write($path, $masterContent);
+        $filesystem->write($path, $storageContent);
     }
 }

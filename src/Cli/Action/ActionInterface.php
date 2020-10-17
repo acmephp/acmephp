@@ -24,5 +24,5 @@ interface ActionInterface
      *
      * @param array $config
      */
-    public function handle($config, CertificateResponse $response);
+    public function handle(array $config, CertificateResponse $response);
 }

@@ -16,7 +16,7 @@ namespace AcmePhp\Cli\Exception;
  */
 class AcmeCliActionException extends AcmeCliException
 {
-    public function __construct($actionName, \Exception $previous = null)
+    public function __construct(string $actionName, \Exception $previous = null)
     {
         parent::__construct(sprintf('An exception was thrown during action "%s"', $actionName), $previous);
     }

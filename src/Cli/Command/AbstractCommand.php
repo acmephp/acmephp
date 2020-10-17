@@ -26,9 +26,6 @@ use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
@@ -46,11 +43,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
     protected $output;
 
     /**
-     * @var array|null
-     */
-    private $configuration;
-
-    /**
      * @var ContainerBuilder|null
      */
     private $container;
@@ -64,20 +56,14 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->output = $output;
     }
 
-    /**
-     * @return RepositoryInterface
-     */
-    protected function getRepository()
+    protected function getRepository(): RepositoryInterface
     {
         $this->debug('Loading repository');
 
         return $this->getContainer()->get('repository');
     }
 
-    /**
-     * @return AcmeClient
-     */
-    protected function getClient()
+    protected function getClient(): AcmeClient
     {
         $this->debug('Creating Acme client');
         $this->notice('Loading account key pair...');
@@ -96,18 +82,12 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         return new AcmeClient($httpClient, $this->input->getOption('server'), $csrSigner);
     }
 
-    /**
-     * @return LoggerInterface
-     */
-    protected function getCliLogger()
+    protected function getCliLogger(): LoggerInterface
     {
         return $this->getContainer()->get('cli_logger');
     }
 
-    /**
-     * @return ContainerBuilder
-     */
-    protected function getContainer()
+    protected function getContainer(): ContainerBuilder
     {
         if (null === $this->container) {
             $this->initializeContainer();
@@ -118,10 +98,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
 
     private function initializeContainer()
     {
-        if (null === $this->configuration) {
-            $this->initializeConfiguration();
-        }
-
         $this->container = new ContainerBuilder();
 
         // Application services and parameters
@@ -156,25 +132,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         // Inject input and output
         $this->container->set('input', $this->input);
         $this->container->set('output', $this->output);
-    }
-
-    private function initializeConfiguration()
-    {
-        $configFile = $this->getApplication()->getConfigFile();
-        $referenceFile = $this->getApplication()->getConfigReferenceFile();
-
-        if (!file_exists($configFile)) {
-            $filesystem = new Filesystem();
-            $filesystem->dumpFile($configFile, file_get_contents($referenceFile));
-
-            $this->notice('Configuration file '.$configFile.' did not exist and has been created.');
-        }
-
-        if (!is_readable($configFile)) {
-            throw new IOException('Configuration file '.$configFile.' is not readable.');
-        }
-
-        $this->configuration = ['acmephp' => Yaml::parse(file_get_contents($configFile))];
     }
 
     /**

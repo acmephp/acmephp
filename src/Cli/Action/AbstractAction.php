@@ -18,11 +18,7 @@ use Webmozart\Assert\Assert;
  */
 abstract class AbstractAction implements ActionInterface
 {
-    /**
-     * @param array $configuration
-     * @param array $keys
-     */
-    protected function assertConfiguration($configuration, $keys)
+    protected function assertConfiguration(array $configuration, array $keys)
     {
         foreach ($keys as $key) {
             Assert::keyExists(

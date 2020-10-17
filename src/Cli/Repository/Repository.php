@@ -30,19 +30,19 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class Repository implements RepositoryInterface
 {
-    const PATH_ACCOUNT_KEY_PRIVATE = 'account/key.private.pem';
-    const PATH_ACCOUNT_KEY_PUBLIC = 'account/key.public.pem';
+    public const PATH_ACCOUNT_KEY_PRIVATE = 'account/key.private.pem';
+    public const PATH_ACCOUNT_KEY_PUBLIC = 'account/key.public.pem';
 
-    const PATH_DOMAIN_KEY_PUBLIC = 'certs/{domain}/private/key.public.pem';
-    const PATH_DOMAIN_KEY_PRIVATE = 'certs/{domain}/private/key.private.pem';
-    const PATH_DOMAIN_CERT_CERT = 'certs/{domain}/public/cert.pem';
-    const PATH_DOMAIN_CERT_CHAIN = 'certs/{domain}/public/chain.pem';
-    const PATH_DOMAIN_CERT_FULLCHAIN = 'certs/{domain}/public/fullchain.pem';
-    const PATH_DOMAIN_CERT_COMBINED = 'certs/{domain}/private/combined.pem';
+    public const PATH_DOMAIN_KEY_PUBLIC = 'certs/{domain}/private/key.public.pem';
+    public const PATH_DOMAIN_KEY_PRIVATE = 'certs/{domain}/private/key.private.pem';
+    public const PATH_DOMAIN_CERT_CERT = 'certs/{domain}/public/cert.pem';
+    public const PATH_DOMAIN_CERT_CHAIN = 'certs/{domain}/public/chain.pem';
+    public const PATH_DOMAIN_CERT_FULLCHAIN = 'certs/{domain}/public/fullchain.pem';
+    public const PATH_DOMAIN_CERT_COMBINED = 'certs/{domain}/private/combined.pem';
 
-    const PATH_CACHE_AUTHORIZATION_CHALLENGE = 'var/{domain}/authorization_challenge.json';
-    const PATH_CACHE_DISTINGUISHED_NAME = 'var/{domain}/distinguished_name.json';
-    const PATH_CACHE_CERTIFICATE_ORDER = 'var/{domains}/certificate_order.json';
+    public const PATH_CACHE_AUTHORIZATION_CHALLENGE = 'var/{domain}/authorization_challenge.json';
+    public const PATH_CACHE_DISTINGUISHED_NAME = 'var/{domain}/distinguished_name.json';
+    public const PATH_CACHE_CERTIFICATE_ORDER = 'var/{domains}/certificate_order.json';
 
     /**
      * @var SerializerInterface
@@ -93,20 +93,10 @@ class Repository implements RepositoryInterface
         }
     }
 
-    private function getPathForDomain($path, $domain)
-    {
-        return strtr($path, ['{domain}' => $this->normalizeDomain($domain)]);
-    }
-
-    private function getPathForDomainList($path, array $domains)
-    {
-        return strtr($path, ['{domains}' => $this->normalizeDomainList($domains)]);
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function hasAccountKeyPair()
+    public function hasAccountKeyPair(): bool
     {
         return $this->storage->has(self::PATH_ACCOUNT_KEY_PRIVATE);
     }
@@ -114,7 +104,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function loadAccountKeyPair()
+    public function loadAccountKeyPair(): KeyPair
     {
         try {
             $publicKeyPem = $this->storage->read(self::PATH_ACCOUNT_KEY_PUBLIC);
@@ -132,7 +122,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function storeDomainKeyPair($domain, KeyPair $keyPair)
+    public function storeDomainKeyPair(string $domain, KeyPair $keyPair)
     {
         try {
             $this->save(
@@ -152,7 +142,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasDomainKeyPair($domain)
+    public function hasDomainKeyPair(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_DOMAIN_KEY_PRIVATE, $domain));
     }
@@ -160,7 +150,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function loadDomainKeyPair($domain)
+    public function loadDomainKeyPair(string $domain): KeyPair
     {
         try {
             $publicKeyPem = $this->storage->read($this->getPathForDomain(self::PATH_DOMAIN_KEY_PUBLIC, $domain));
@@ -178,7 +168,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function storeDomainAuthorizationChallenge($domain, AuthorizationChallenge $authorizationChallenge)
+    public function storeDomainAuthorizationChallenge(string $domain, AuthorizationChallenge $authorizationChallenge)
     {
         try {
             $this->save(
@@ -193,7 +183,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasDomainAuthorizationChallenge($domain)
+    public function hasDomainAuthorizationChallenge(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain));
     }
@@ -201,7 +191,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function loadDomainAuthorizationChallenge($domain)
+    public function loadDomainAuthorizationChallenge(string $domain): AuthorizationChallenge
     {
         try {
             $json = $this->storage->read($this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain));
@@ -215,7 +205,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function storeDomainDistinguishedName($domain, DistinguishedName $distinguishedName)
+    public function storeDomainDistinguishedName(string $domain, DistinguishedName $distinguishedName)
     {
         try {
             $this->save(
@@ -230,7 +220,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasDomainDistinguishedName($domain)
+    public function hasDomainDistinguishedName(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain));
     }
@@ -238,7 +228,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function loadDomainDistinguishedName($domain)
+    public function loadDomainDistinguishedName(string $domain): DistinguishedName
     {
         try {
             $json = $this->storage->read($this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain));
@@ -252,7 +242,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function storeDomainCertificate($domain, Certificate $certificate)
+    public function storeDomainCertificate(string $domain, Certificate $certificate)
     {
         // Simple certificate
         $certPem = $this->serializer->serialize($certificate, PemEncoder::FORMAT);
@@ -285,7 +275,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasDomainCertificate($domain)
+    public function hasDomainCertificate(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_DOMAIN_CERT_FULLCHAIN, $domain));
     }
@@ -293,7 +283,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function loadDomainCertificate($domain)
+    public function loadDomainCertificate(string $domain): Certificate
     {
         try {
             $pems = explode('-----BEGIN CERTIFICATE-----', $this->storage->read($this->getPathForDomain(self::PATH_DOMAIN_CERT_FULLCHAIN, $domain)));
@@ -337,7 +327,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasCertificateOrder(array $domains)
+    public function hasCertificateOrder(array $domains): bool
     {
         return $this->storage->has($this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains));
     }
@@ -345,7 +335,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function loadCertificateOrder(array $domains)
+    public function loadCertificateOrder(array $domains): CertificateOrder
     {
         try {
             $json = $this->storage->read($this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains));
@@ -359,7 +349,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function save($path, $content, $visibility = self::VISIBILITY_PRIVATE)
+    public function save(string $path, string $content, string $visibility = self::VISIBILITY_PRIVATE)
     {
         if (!$this->storage->has($path)) {
             $this->storage->write($path, $content);
@@ -370,9 +360,19 @@ class Repository implements RepositoryInterface
         $this->storage->setVisibility($path, $visibility);
     }
 
+    private function getPathForDomain($path, $domain)
+    {
+        return strtr($path, ['{domain}' => $this->normalizeDomain($domain)]);
+    }
+
+    private function getPathForDomainList($path, array $domains)
+    {
+        return strtr($path, ['{domains}' => $this->normalizeDomainList($domains)]);
+    }
+
     private function normalizeDomain($domain)
     {
-        return $domain;
+        return trim($domain);
     }
 
     private function normalizeDomainList(array $domains)

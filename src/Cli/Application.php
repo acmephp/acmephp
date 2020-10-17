@@ -78,22 +78,6 @@ class Application extends BaseApplication
     /**
      * @return string
      */
-    public function getConfigFile()
-    {
-        return Path::canonicalize('~/.acmephp/acmephp.conf');
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfigReferenceFile()
-    {
-        return Path::canonicalize(__DIR__.'/../../res/acmephp.conf.dist');
-    }
-
-    /**
-     * @return string
-     */
     public function getStorageDirectory()
     {
         return Path::canonicalize('~/.acmephp/master');

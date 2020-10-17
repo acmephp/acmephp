@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Encoder\EncoderInterface;
  */
 class PemEncoder implements EncoderInterface, DecoderInterface
 {
-    const FORMAT = 'pem';
+    public const FORMAT = 'pem';
 
     /**
      * {@inheritdoc}

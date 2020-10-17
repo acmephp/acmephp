@@ -25,7 +25,7 @@ class CommandFlowException extends AcmeCliException
      * @param string $command   Name of the command to run in order to fix the flow
      * @param array  $arguments Optional list of missing arguments
      */
-    public function __construct($missing, $command, array $arguments = [], \Exception $previous = null)
+    public function __construct(string $missing, string $command, array $arguments = [], \Exception $previous = null)
     {
         $this->missing = $missing;
         $this->command = $command;
@@ -43,26 +43,17 @@ class CommandFlowException extends AcmeCliException
         parent::__construct($message, $previous);
     }
 
-    /**
-     * @return string
-     */
-    public function getMissing()
+    public function getMissing(): string
     {
         return $this->missing;
     }
 
-    /**
-     * @return string
-     */
-    public function getCommand()
+    public function getCommand(): string
     {
         return $this->command;
     }
 
-    /**
-     * @return array
-     */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }

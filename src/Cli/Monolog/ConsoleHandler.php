@@ -13,7 +13,6 @@ namespace AcmePhp\Cli\Monolog;
 
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -52,9 +51,10 @@ class ConsoleHandler extends AbstractProcessingHandler
      * @param array                $verbosityLevelMap Array that maps the OutputInterface verbosity to a minimum logging
      *                                                level (leave empty to use the default mapping)
      */
-    public function __construct(OutputInterface $output = null, $bubble = true, array $verbosityLevelMap = [])
+    public function __construct(OutputInterface $output = null, bool $bubble = true, array $verbosityLevelMap = [])
     {
         parent::__construct(Logger::DEBUG, $bubble);
+
         $this->output = $output;
 
         if ($verbosityLevelMap) {

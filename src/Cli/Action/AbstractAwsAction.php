@@ -35,7 +35,7 @@ abstract class AbstractAwsAction extends AbstractAction
     /**
      * {@inheritdoc}
      */
-    public function handle($config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response)
     {
         $this->assertConfiguration($config, ['loadbalancer', 'region']);
 
@@ -66,14 +66,12 @@ abstract class AbstractAwsAction extends AbstractAction
         }
         $chainPem = implode("\n", $issuerChain);
 
-        $response = $iamClient->uploadServerCertificate(
-            [
-                'ServerCertificateName' => $certificateName,
-                'CertificateBody' => $response->getCertificate()->getPEM(),
-                'PrivateKey' => $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM(),
-                'CertificateChain' => $chainPem,
-            ]
-        );
+        $response = $iamClient->uploadServerCertificate([
+            'ServerCertificateName' => $certificateName,
+            'CertificateBody' => $response->getCertificate()->getPEM(),
+            'PrivateKey' => $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM(),
+            'CertificateChain' => $chainPem,
+        ]);
 
         return $response['ServerCertificateMetadata']['Arn'];
     }

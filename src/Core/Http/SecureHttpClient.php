@@ -153,13 +153,8 @@ class SecureHttpClient
 
     /**
      * Generates a payload signed with JWK.
-     *
-     * @param string $endpoint
-     * @param array  $payload
-     *
-     * @return array the signed Payload
      */
-    public function signJwkPayload($endpoint, array $payload = null)
+    public function signJwkPayload(string $endpoint, array $payload = null): array
     {
         return $this->signPayload(
             [
@@ -327,7 +322,7 @@ class SecureHttpClient
         ];
     }
 
-    private function createRequest($method, $endpoint, $data)
+    private function createRequest($method, $endpoint, $data): Request
     {
         $request = new Request($method, $endpoint);
         $request = $request->withHeader('Accept', 'application/json,application/jose+json,');
@@ -351,7 +346,7 @@ class SecureHttpClient
         throw new AcmeCoreClientException(sprintf('An error occured during request "%s %s"', $request->getMethod(), $request->getUri()), $exception);
     }
 
-    private function getNonce()
+    private function getNonce(): ?string
     {
         if ($this->lastResponse && $this->lastResponse->hasHeader('Replay-Nonce')) {
             return $this->lastResponse->getHeaderLine('Replay-Nonce');
@@ -364,6 +359,8 @@ class SecureHttpClient
                 return $this->lastResponse->getHeaderLine('Replay-Nonce');
             }
         }
+
+        return null;
     }
 
     private function getAlg(): string
