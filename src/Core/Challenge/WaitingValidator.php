@@ -21,20 +21,13 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
  */
 class WaitingValidator implements ValidatorInterface
 {
-    /**
-     * @var ValidatorInterface
-     */
+    /** @var ValidatorInterface */
     private $validator;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $timeout;
 
-    /**
-     * @param int $timeout
-     */
-    public function __construct(ValidatorInterface $validator, $timeout = 180)
+    public function __construct(ValidatorInterface $validator, int $timeout = 180)
     {
         $this->validator = $validator;
         $this->timeout = $timeout;
@@ -43,7 +36,7 @@ class WaitingValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return $this->validator->supports($authorizationChallenge, $solver);
     }
@@ -51,7 +44,7 @@ class WaitingValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         $limitEndTime = time() + $this->timeout;
 

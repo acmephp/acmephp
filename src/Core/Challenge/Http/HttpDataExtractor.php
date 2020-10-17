@@ -22,10 +22,8 @@ class HttpDataExtractor
 {
     /**
      * Retrieves the absolute URL called by the CA.
-     *
-     * @return string
      */
-    public function getCheckUrl(AuthorizationChallenge $authorizationChallenge)
+    public function getCheckUrl(AuthorizationChallenge $authorizationChallenge): string
     {
         return sprintf(
             'http://%s%s',
@@ -36,10 +34,8 @@ class HttpDataExtractor
 
     /**
      * Retrieves the absolute path called by the CA.
-     *
-     * @return string
      */
-    public function getCheckPath(AuthorizationChallenge $authorizationChallenge)
+    public function getCheckPath(AuthorizationChallenge $authorizationChallenge): string
     {
         return sprintf(
             '/.well-known/acme-challenge/%s',
@@ -49,10 +45,8 @@ class HttpDataExtractor
 
     /**
      * Retrieves the content that should be returned in the response.
-     *
-     * @return string
      */
-    public function getCheckContent(AuthorizationChallenge $authorizationChallenge)
+    public function getCheckContent(AuthorizationChallenge $authorizationChallenge): string
     {
         return $authorizationChallenge->getPayload();
     }

@@ -25,7 +25,7 @@ class MockHttpValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return 'http-01' === $authorizationChallenge->getType() && $solver instanceof MockServerHttpSolver;
     }
@@ -33,7 +33,7 @@ class MockHttpValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return true;
     }

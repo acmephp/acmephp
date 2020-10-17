@@ -26,7 +26,7 @@ class MockServerHttpSolver implements SolverInterface
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge)
+    public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'http-01' === $authorizationChallenge->getType();
     }

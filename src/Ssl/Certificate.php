@@ -56,7 +56,7 @@ class Certificate
         return $this->certificatePEM;
     }
 
-    public function getIssuerCertificate(): ?Certificate
+    public function getIssuerCertificate(): ?self
     {
         return $this->issuerCertificate;
     }

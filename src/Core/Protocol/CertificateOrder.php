@@ -12,7 +12,6 @@
 namespace AcmePhp\Core\Protocol;
 
 use AcmePhp\Core\Exception\AcmeCoreClientException;
-use Webmozart\Assert\Assert;
 
 /**
  * Represent an ACME order.
@@ -21,29 +20,14 @@ use Webmozart\Assert\Assert;
  */
 class CertificateOrder
 {
-    /**
-     * @var AuthorizationChallenge[][]
-     */
+    /** @var AuthorizationChallenge[][] */
     private $authorizationsChallenges;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $orderEndpoint;
 
-    /**
-     * @param string $domain
-     * @param string $type
-     * @param string $url
-     * @param string $token
-     * @param string $payload
-     * @param string $order
-     */
-    public function __construct($authorizationsChallenges, $orderEndpoint = null)
+    public function __construct(array $authorizationsChallenges, string $orderEndpoint = null)
     {
-        Assert::isArray($authorizationsChallenges, 'Challenge::$authorizationsChallenges expected an array. Got: %s');
-        Assert::nullOrString($orderEndpoint, 'Challenge::$orderEndpoint expected a string or null. Got: %s');
-
         foreach ($authorizationsChallenges as &$authorizationChallenges) {
             foreach ($authorizationChallenges as &$authorizationChallenge) {
                 if (\is_array($authorizationChallenge)) {
@@ -56,10 +40,7 @@ class CertificateOrder
         $this->orderEndpoint = $orderEndpoint;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'authorizationsChallenges' => $this->getAuthorizationsChallenges(),
@@ -67,15 +48,9 @@ class CertificateOrder
         ];
     }
 
-    /**
-     * @return AuthorizationChallenge
-     */
-    public static function fromArray(array $data)
+    public static function fromArray(array $data): self
     {
-        return new self(
-            $data['authorizationsChallenges'],
-            $data['orderEndpoint']
-        );
+        return new self($data['authorizationsChallenges'], $data['orderEndpoint']);
     }
 
     /**
@@ -87,11 +62,9 @@ class CertificateOrder
     }
 
     /**
-     * @param string $domain
-     *
      * @return AuthorizationChallenge[]
      */
-    public function getAuthorizationChallenges($domain)
+    public function getAuthorizationChallenges(string $domain): array
     {
         if (!isset($this->authorizationsChallenges[$domain])) {
             throw new AcmeCoreClientException('The order does not contains any authorization challenge for the domain '.$domain);
@@ -100,10 +73,7 @@ class CertificateOrder
         return $this->authorizationsChallenges[$domain];
     }
 
-    /**
-     * @return string
-     */
-    public function getOrderEndpoint()
+    public function getOrderEndpoint(): string
     {
         return $this->orderEndpoint;
     }

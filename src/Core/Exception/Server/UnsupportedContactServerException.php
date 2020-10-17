@@ -19,7 +19,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class UnsupportedContactServerException extends AcmeCoreServerException
 {
-    public function __construct(RequestInterface $request, $detail, \Exception $previous = null)
+    public function __construct(RequestInterface $request, string $detail, \Exception $previous = null)
     {
         parent::__construct(
             $request,

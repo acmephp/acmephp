@@ -15,23 +15,16 @@ interface FilesystemInterface
 {
     /**
      * Write content to a file.
-     *
-     * @param string $path
-     * @param string $content
      */
-    public function write($path, $content);
+    public function write(string $path, string $content);
 
     /**
      * Delete a file.
-     *
-     * @param string $path
      */
-    public function delete($path);
+    public function delete(string $path);
 
     /**
      * Delete a directory.
-     *
-     * @param string $path
      */
-    public function createDir($path);
+    public function createDir(string $path);
 }

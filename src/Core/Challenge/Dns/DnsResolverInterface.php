@@ -19,18 +19,12 @@ namespace AcmePhp\Core\Challenge\Dns;
 interface DnsResolverInterface
 {
     /**
-     * Retrieves the list of TXT entries for the given domain.
-     *
-     * @param string $domain
-     *
-     * @return array
+     * Return whether or not the Resolver is supported.
      */
-    public function getTxtEntries($domain);
+    public static function isSupported(): bool;
 
     /**
-     * Return whether or not the Resolver is supported.
-     *
-     * @return bool
+     * Retrieves the list of TXT entries for the given domain.
      */
-    public static function isSupported();
+    public function getTxtEntries(string $domain): array;
 }

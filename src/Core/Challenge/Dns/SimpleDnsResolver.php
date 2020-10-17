@@ -21,7 +21,7 @@ class SimpleDnsResolver implements DnsResolverInterface
     /**
      * @{@inheritdoc}
      */
-    public static function isSupported()
+    public static function isSupported(): bool
     {
         return \function_exists('dns_get_record');
     }
@@ -29,7 +29,7 @@ class SimpleDnsResolver implements DnsResolverInterface
     /**
      * @{@inheritdoc}
      */
-    public function getTxtEntries($domain)
+    public function getTxtEntries($domain): array
     {
         $entries = [];
         foreach (dns_get_record($domain, DNS_TXT) as $record) {

@@ -21,9 +21,7 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
  */
 class ChainValidator implements ValidatorInterface
 {
-    /**
-     * @var ValidatorInterface[]
-     */
+    /** @var ValidatorInterface[] */
     private $validators;
 
     /**
@@ -37,7 +35,7 @@ class ChainValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         foreach ($this->validators as $validator) {
             if ($validator->supports($authorizationChallenge, $solver)) {
@@ -51,7 +49,7 @@ class ChainValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         foreach ($this->validators as $validator) {
             if ($validator->supports($authorizationChallenge, $solver)) {

@@ -20,14 +20,12 @@ use Webmozart\Assert\Assert;
  */
 class ResourcesDirectory
 {
-    const NEW_ACCOUNT = 'newAccount';
-    const NEW_ORDER = 'newOrder';
-    const NEW_NONCE = 'newNonce';
-    const REVOKE_CERT = 'revokeCert';
+    public const NEW_ACCOUNT = 'newAccount';
+    public const NEW_ORDER = 'newOrder';
+    public const NEW_NONCE = 'newNonce';
+    public const REVOKE_CERT = 'revokeCert';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $serverResources;
 
     public function __construct(array $serverResources)
@@ -38,7 +36,7 @@ class ResourcesDirectory
     /**
      * @return string[]
      */
-    public static function getResourcesNames()
+    public static function getResourcesNames(): array
     {
         return [
             self::NEW_ACCOUNT,
@@ -50,19 +48,15 @@ class ResourcesDirectory
 
     /**
      * Find a resource URL.
-     *
-     * @param string $resource
-     *
-     * @return string
      */
-    public function getResourceUrl($resource)
+    public function getResourceUrl(string $resource): string
     {
         Assert::oneOf(
             $resource,
-            self::getResourcesNames(),
+            array_keys($this->serverResources),
             'Resource type "%s" is not supported by the ACME server (supported: %2$s)'
         );
 
-        return isset($this->serverResources[$resource]) ? $this->serverResources[$resource] : null;
+        return $this->serverResources[$resource];
     }
 }

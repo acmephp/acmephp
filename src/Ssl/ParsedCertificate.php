@@ -45,9 +45,7 @@ class ParsedCertificate
     private $subjectAlternativeNames;
 
     /**
-     * @param string    $subject
      * @param string    $issuer
-     * @param bool      $selfSigned
      * @param \DateTime $validFrom
      * @param \DateTime $validTo
      * @param string    $serialNumber

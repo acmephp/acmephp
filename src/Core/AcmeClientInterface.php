@@ -45,7 +45,7 @@ interface AcmeClientInterface
      *
      * @return array the Certificate Authority response decoded from JSON into an array
      */
-    public function registerAccount($agreement = null, $email = null);
+    public function registerAccount(string $agreement = null, string $email = null): array;
 
     /**
      * Request authorization challenge data for a list of domains.
@@ -63,7 +63,7 @@ interface AcmeClientInterface
      *
      * @return CertificateOrder the Order returned by the Certificate Authority
      */
-    public function requestOrder(array $domains);
+    public function requestOrder(array $domains): CertificateOrder;
 
     /**
      * Request a certificate for the given domain.
@@ -87,7 +87,7 @@ interface AcmeClientInterface
      *
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
-    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180);
+    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, int $timeout = 180): CertificateResponse;
 
     /**
      * Request authorization challenge data for a given domain.
@@ -105,7 +105,7 @@ interface AcmeClientInterface
      *
      * @return AuthorizationChallenge[] the list of challenges data returned by the Certificate Authority
      */
-    public function requestAuthorization($domain);
+    public function requestAuthorization(string $domain): array;
 
     /**
      * Request the current status of an authorization challenge.
@@ -114,7 +114,7 @@ interface AcmeClientInterface
      *
      * @return AuthorizationChallenge A new instance of the challenge
      */
-    public function reloadAuthorization(AuthorizationChallenge $challenge);
+    public function reloadAuthorization(AuthorizationChallenge $challenge): AuthorizationChallenge;
 
     /**
      * Ask the Certificate Authority to challenge a given authorization.
@@ -138,7 +138,7 @@ interface AcmeClientInterface
      *
      * @return array the validate challenge response
      */
-    public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180);
+    public function challengeAuthorization(AuthorizationChallenge $challenge, int $timeout = 180): array;
 
     /**
      * Request a certificate for the given domain.
@@ -162,9 +162,11 @@ interface AcmeClientInterface
      *
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
-    public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180);
+    public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180): CertificateResponse;
 
     /**
+     * Revoke a given certificate from the Certificate Authority.
+     *
      * @throws CertificateRevocationException
      */
     public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null);

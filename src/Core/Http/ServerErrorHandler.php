@@ -68,10 +68,8 @@ class ServerErrorHandler
     /**
      * Get a response summary (useful for exceptions).
      * Use Guzzle method if available (Guzzle 6.1.1+).
-     *
-     * @return string
      */
-    public static function getResponseBodySummary(ResponseInterface $response)
+    public static function getResponseBodySummary(ResponseInterface $response): string
     {
         // Rewind the stream if possible to allow re-reading for the summary.
         if ($response->getBody()->isSeekable()) {
@@ -91,14 +89,11 @@ class ServerErrorHandler
         return $body;
     }
 
-    /**
-     * @return AcmeCoreServerException
-     */
     public function createAcmeExceptionForResponse(
         RequestInterface $request,
         ResponseInterface $response,
         \Exception $previous = null
-    ) {
+    ): AcmeCoreServerException {
         $body = \GuzzleHttp\Psr7\copy_to_string($response->getBody());
 
         try {
@@ -128,14 +123,11 @@ class ServerErrorHandler
         );
     }
 
-    /**
-     * @return AcmeCoreServerException
-     */
     private function createDefaultExceptionForResponse(
         RequestInterface $request,
         ResponseInterface $response,
         \Exception $previous = null
-    ) {
+    ): AcmeCoreServerException {
         return new AcmeCoreServerException(
             $request,
             sprintf(

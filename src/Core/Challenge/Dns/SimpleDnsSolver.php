@@ -39,14 +39,14 @@ class SimpleDnsSolver implements SolverInterface
      */
     public function __construct(DnsDataExtractor $extractor = null, OutputInterface $output = null)
     {
-        $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
-        $this->output = null === $output ? new NullOutput() : $output;
+        $this->extractor = $extractor ?: new DnsDataExtractor();
+        $this->output = $output ?: new NullOutput();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge)
+    public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }

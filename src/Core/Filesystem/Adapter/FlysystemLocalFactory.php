@@ -12,6 +12,7 @@
 namespace AcmePhp\Core\Filesystem\Adapter;
 
 use AcmePhp\Core\Filesystem\FilesystemFactoryInterface;
+use AcmePhp\Core\Filesystem\FilesystemInterface;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Webmozart\Assert\Assert;
@@ -21,7 +22,7 @@ class FlysystemLocalFactory implements FilesystemFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function create(array $config)
+    public function create(array $config): FilesystemInterface
     {
         Assert::keyExists($config, 'root', 'create::$config expected an array with the key %s.');
 

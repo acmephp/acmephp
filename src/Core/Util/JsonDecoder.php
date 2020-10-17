@@ -36,7 +36,7 @@ class JsonDecoder
      *
      * @see http://www.php.net/manual/en/function.json-decode.php
      */
-    public static function decode($json, $assoc = false, $depth = 512, $options = 0)
+    public static function decode(string $json, bool $assoc = false, int $depth = 512, int $options = 0)
     {
         $data = json_decode($json, $assoc, $depth, $options);
 

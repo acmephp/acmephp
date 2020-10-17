@@ -33,20 +33,20 @@ class DnsValidator implements ValidatorInterface
      */
     private $dnsResolver;
 
-    /**
-     * @param DnsDataExtractor     $extractor
-     * @param DnsResolverInterface $dnsResolver
-     */
     public function __construct(DnsDataExtractor $extractor = null, DnsResolverInterface $dnsResolver = null)
     {
-        $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
-        $this->dnsResolver = null === $dnsResolver ? (LibDnsResolver::isSupported() ? new LibDnsResolver() : new SimpleDnsResolver()) : $dnsResolver;
+        $this->extractor = $extractor ?: new DnsDataExtractor();
+
+        $this->dnsResolver = $dnsResolver;
+        if (!$this->dnsResolver) {
+            $this->dnsResolver = LibDnsResolver::isSupported() ? new LibDnsResolver() : new SimpleDnsResolver();
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }
@@ -54,13 +54,13 @@ class DnsValidator implements ValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver)
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
         $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
 
         try {
-            return \in_array($recordValue, $this->dnsResolver->getTxtEntries($recordName));
+            return \in_array($recordValue, $this->dnsResolver->getTxtEntries($recordName), false);
         } catch (AcmeDnsResolutionException $e) {
             return false;
         }

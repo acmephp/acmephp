@@ -16,7 +16,7 @@ namespace AcmePhp\Core\Exception\Protocol;
  */
 class CertificateRequestFailedException extends ProtocolException
 {
-    public function __construct($response)
+    public function __construct(string $response)
     {
         parent::__construct(sprintf('Certificate request failed (response: %s)', $response));
     }

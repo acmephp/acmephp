@@ -11,8 +11,6 @@
 
 namespace AcmePhp\Core\Protocol;
 
-use Webmozart\Assert\Assert;
-
 /**
  * Represent a ACME challenge.
  *
@@ -20,53 +18,26 @@ use Webmozart\Assert\Assert;
  */
 class AuthorizationChallenge
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $domain;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $status;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $type;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $url;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $token;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $payload;
 
-    /**
-     * @param string $domain
-     * @param string $status
-     * @param string $type
-     * @param string $url
-     * @param string $token
-     * @param string $payload
-     */
-    public function __construct($domain, $status, $type, $url, $token, $payload)
+    public function __construct(string $domain, string $status, string $type, string $url, string $token, string $payload)
     {
-        Assert::stringNotEmpty($domain, 'Challenge::$domain expected a non-empty string. Got: %s');
-        Assert::stringNotEmpty($status, 'Challenge::$status expected a non-empty string. Got: %s');
-        Assert::stringNotEmpty($type, 'Challenge::$type expected a non-empty string. Got: %s');
-        Assert::stringNotEmpty($url, 'Challenge::$url expected a non-empty string. Got: %s');
-        Assert::stringNotEmpty($token, 'Challenge::$token expected a non-empty string. Got: %s');
-        Assert::stringNotEmpty($payload, 'Challenge::$payload expected a non-empty string. Got: %s');
-
         $this->domain = $domain;
         $this->status = $status;
         $this->type = $type;
@@ -75,10 +46,7 @@ class AuthorizationChallenge
         $this->payload = $payload;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'domain' => $this->getDomain(),
@@ -90,10 +58,7 @@ class AuthorizationChallenge
         ];
     }
 
-    /**
-     * @return AuthorizationChallenge
-     */
-    public static function fromArray(array $data)
+    public static function fromArray(array $data): self
     {
         return new self(
             $data['domain'],
@@ -105,66 +70,42 @@ class AuthorizationChallenge
         );
     }
 
-    /**
-     * @return string
-     */
-    public function getDomain()
+    public function getDomain(): string
     {
         return $this->domain;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @return bool
-     */
-    public function isValid()
+    public function isValid(): bool
     {
         return 'valid' === $this->status;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPending()
+    public function isPending(): bool
     {
         return 'pending' === $this->status || 'processing' === $this->status;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * @return string
-     */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
 
-    /**
-     * @return string
-     */
-    public function getPayload()
+    public function getPayload(): string
     {
         return $this->payload;
     }
