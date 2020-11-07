@@ -60,7 +60,6 @@ class FilesystemAction extends AbstractAction
         }
     }
 
-
     private function mirror(string $type, string $path, FilesystemInterface $filesystem)
     {
         if ('dir' === $type) {
