@@ -53,12 +53,12 @@
         "psr/http-message": "^1.0",
         "psr/log": "^1.0",
         "swiftmailer/swiftmailer": "^5.4|^6.0",
-        "symfony/config": "^4.4|^5.0",
-        "symfony/console": "^4.4|^5.0",
-        "symfony/dependency-injection": "^4.4|^5.0",
-        "symfony/filesystem": "^4.4|^5.0",
-        "symfony/serializer": "^4.4|^5.0",
-        "symfony/yaml": "^4.4|^5.0",
+        "symfony/config": "^5.0",
+        "symfony/console": "^5.0",
+        "symfony/dependency-injection": "^5.0",
+        "symfony/filesystem": "^5.0",
+        "symfony/serializer": "^5.0",
+        "symfony/yaml": "^5.0",
         "webmozart/assert": "^1.0",
         "webmozart/path-util": "^2.3",
         "alibabacloud/cdn": "^1.7",
@@ -69,9 +69,9 @@
     },
     "require-dev": {
         "phpspec/prophecy": "^1.9",
-        "symfony/finder": "^4.4|^5.0",
+        "symfony/finder": "^5.0",
         "symfony/phpunit-bridge": "^5.0",
-        "symfony/var-dumper": "^4.4|^5.0"
+        "symfony/var-dumper": "^5.0"
     },
     "autoload": {
         "psr-4": {
