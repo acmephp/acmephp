@@ -15,6 +15,7 @@ use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\ExpectedJsonException;
 use AcmePhp\Core\Exception\Server\BadNonceServerException;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Core\Util\JsonDecoder;
 use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\Parser\KeyParser;
@@ -22,6 +23,7 @@ use AcmePhp\Ssl\Signer\DataSigner;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -122,34 +124,61 @@ class SecureHttpClient
 
     /**
      * Generates a payload signed with account's KID.
+     *
+     * @param string|array|null $payload
      */
-    public function signKidPayload(string $endpoint, string $account, array $payload = null): array
+    public function signKidPayload(string $endpoint, string $account, $payload = null, bool $withNonce = true): array
     {
-        return $this->signPayload(
-            [
-                'alg' => $this->getAlg(),
-                'kid' => $account,
-                'nonce' => $this->getNonce(),
-                'url' => $endpoint,
-            ],
-            $payload
-        );
+        $protected = ['alg' => $this->getAlg(), 'kid' => $account, 'url' => $endpoint];
+        if ($withNonce) {
+            $protected['nonce'] = $this->getNonce();
+        }
+
+        return $this->signPayload($protected, $payload);
     }
 
     /**
      * Generates a payload signed with JWK.
+     *
+     * @param string|array|null $payload
      */
-    public function signJwkPayload(string $endpoint, array $payload = null): array
+    public function signJwkPayload(string $endpoint, $payload = null, bool $withNonce = true): array
     {
-        return $this->signPayload(
-            [
-                'alg' => $this->getAlg(),
-                'jwk' => $this->getJWK(),
-                'nonce' => $this->getNonce(),
-                'url' => $endpoint,
-            ],
-            $payload
+        $protected = ['alg' => $this->getAlg(), 'jwk' => $this->getJWK(), 'url' => $endpoint];
+        if ($withNonce) {
+            $protected['nonce'] = $this->getNonce();
+        }
+
+        return $this->signPayload($protected, $payload);
+    }
+
+    /**
+     * Generates an External Account Binding payload signed with JWS.
+     *
+     * @param string|array|null $payload
+     */
+    public function createExternalAccountPayload(ExternalAccount $externalAccount, string $url): array
+    {
+        $signer = new Sha256();
+
+        $protected = [
+            'alg' => $signer->getAlgorithmId(),
+            'kid' => $externalAccount->getId(),
+            'url' => $url,
+        ];
+
+        $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
+        $encodedPayload = $this->base64Encoder->encode(json_encode($this->getJWK(), JSON_UNESCAPED_SLASHES));
+
+        $signature = $this->base64Encoder->encode(
+            (string) $signer->sign($encodedProtected.'.'.$encodedPayload, $externalAccount->getHmacKey())
         );
+
+        return [
+            'protected' => $encodedProtected,
+            'payload' => $encodedPayload,
+            'signature' => $signature,
+        ];
     }
 
     /**

@@ -61,12 +61,9 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * Register account
          */
         if ('eab' === getenv('PEBBLE_MODE')) {
-            $data = $client->registerAccount('titouan.galopin@acmephp.io', new ExternalAccount(
-                'ofX3Rmny4aAD3bwTBZnhJw',
-                'pfVgkYJ-mbNLtmVjpgYeH_s_VYv30MjTmqYXrh3HG0syrG-JtNV3SOQedzV-rPY314qY8v3b7Sc443e65nBLYw'
-            ));
+            $data = $client->registerAccount('titouan.galopin@acmephp.com', new ExternalAccount('kid1', 'testing'));
         } else {
-            $data = $client->registerAccount();
+            $data = $client->registerAccount('titouan.galopin@acmephp.com');
         }
 
         $this->assertIsArray($data);

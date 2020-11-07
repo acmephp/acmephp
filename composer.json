@@ -35,15 +35,18 @@
     ],
     "require": {
         "php": ">=7.2.5",
+        "ext-filter": "*",
         "ext-hash": "*",
         "ext-json": "*",
-        "ext-filter": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "lib-openssl": ">=0.9.8",
+        "alibabacloud/cdn": "^1.7",
+        "alibabacloud/wafopenapi": "^1.7",
         "aws/aws-sdk-php": "^3.38",
         "guzzlehttp/guzzle": "^6.0|^7.0",
         "guzzlehttp/psr7": "^1.0",
+        "lcobucci/jwt": "^3.3",
         "league/flysystem": "^1.0.19",
         "league/flysystem-memory": "^1.0",
         "league/flysystem-sftp": "^1.0.7",
@@ -60,9 +63,7 @@
         "symfony/serializer": "^5.0",
         "symfony/yaml": "^5.0",
         "webmozart/assert": "^1.0",
-        "webmozart/path-util": "^2.3",
-        "alibabacloud/cdn": "^1.7",
-        "alibabacloud/wafopenapi": "^1.7"
+        "webmozart/path-util": "^2.3"
     },
     "suggest": {
         "daverandom/libdns": "^2.0"
@@ -84,6 +85,7 @@
         }
     },
     "config": {
+        "sort-packages": true,
         "platform": {
             "php": "7.2.34"
         }

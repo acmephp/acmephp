@@ -28,6 +28,7 @@ use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Webmozart\Assert\Assert;
 
 /**
@@ -90,15 +91,12 @@ class AcmeClient implements AcmeClientInterface
             $payload['contact'][] = 'mailto:'.$email;
         }
 
-        /*
         if ($externalAccount) {
-            $payload['externalAccountBinding'] = $client->signKidPayload(
-                $this->getResourceUrl(ResourcesDirectory::NEW_ACCOUNT),
-                $eabKid,
-                null
+            $payload['externalAccountBinding'] = $client->createExternalAccountPayload(
+                $externalAccount,
+                $this->getResourceUrl(ResourcesDirectory::NEW_ACCOUNT)
             );
         }
-        */
 
         $this->requestResource('POST', ResourcesDirectory::NEW_ACCOUNT, $payload);
         $account = $this->getResourceAccount();

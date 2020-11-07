@@ -37,5 +37,8 @@
         "ext-openssl": "*",
         "lib-openssl": ">=0.9.8",
         "webmozart/assert": "^1.0"
+    },
+    "config": {
+        "sort-packages": true
     }
 }

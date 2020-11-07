@@ -7,6 +7,9 @@
         "httpPort": 5002,
         "tlsPort": 5001,
         "ocspResponderURL": "",
-        "externalAccountBindingRequired": true
+        "externalAccountBindingRequired": true,
+        "externalAccountMACKeys": {
+            "kid1": "dGVzdGluZw"
+        }
     }
 }

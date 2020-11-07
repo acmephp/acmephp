@@ -23,6 +23,7 @@ use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Server\MalformedServerException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Protocol\CertificateOrder;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\DistinguishedName;
@@ -139,7 +140,7 @@ class RunCommand extends AbstractCommand
         }
     }
 
-    private function resolveEabKid(): ?string
+    private function resolveEabKid(): ?ExternalAccount
     {
         if ('zerossl' !== $this->config['provider']) {
             return null;
@@ -158,7 +159,7 @@ class RunCommand extends AbstractCommand
                 throw new AcmeCliException('ZeroSSL External account Binding failed: are you sure your API key is valid?');
             }
 
-            return $eabCredentials->eab_kid;
+            return new ExternalAccount($eabCredentials->eab_kid, $eabCredentials->eab_hmac_key);
         }
 
         // Otherwise register on the fly
@@ -175,7 +176,7 @@ class RunCommand extends AbstractCommand
             throw new AcmeCliException('ZeroSSL External account Binding failed: registering your email failed.');
         }
 
-        return $eabCredentials->eab_kid;
+        return new ExternalAccount($eabCredentials->eab_kid, $eabCredentials->eab_hmac_key);
     }
 
     private function installCertificate(CertificateResponse $response, array $actions)
