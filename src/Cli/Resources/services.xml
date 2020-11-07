@@ -87,14 +87,6 @@
             <argument type="service" id="repository" />
             <tag name="acmephp.action" alias="build_nginxproxy" />
         </service>
-        <service id="acmephp.action.push_ftp" class="AcmePhp\Cli\Action\PushFtpAction" public="false">
-            <argument type="service" id="acmephp.action.mirror_file" />
-            <tag name="acmephp.action" alias="push_ftp" />
-        </service>
-        <service id="acmephp.action.push_sftp" class="AcmePhp\Cli\Action\PushSftpAction" public="false">
-            <argument type="service" id="acmephp.action.mirror_file" />
-            <tag name="acmephp.action" alias="push_sftp" />
-        </service>
         <service id="acmephp.action.mirror_file" class="AcmePhp\Cli\Action\FilesystemAction" public="false">
             <argument type="service" id="repository.storage" />
             <argument type="service" id="acmephp.filesystem_factory.locator" />

@@ -87,21 +87,6 @@ class SecureHttpClient
         $this->errorHandler = $errorHandler;
     }
 
-    /**
-     * Send a request encoded in the format defined by the ACME protocol.
-     *
-     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
-     * @throws AcmeCoreClientException when an error occured during response parsing
-     *
-     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
-     */
-    public function signedRequest(string $method, string $endpoint, array $payload = [], $returnJson = true)
-    {
-        @trigger_error('The method signedRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request, signKidPayload instead', E_USER_DEPRECATED);
-
-        return $this->request($method, $endpoint, $this->signJwkPayload($endpoint, $payload), $returnJson);
-    }
-
     public function getJWK(): array
     {
         $privateKey = $this->accountKeyPair->getPrivateKey();
@@ -165,37 +150,6 @@ class SecureHttpClient
             ],
             $payload
         );
-    }
-
-    /**
-     * Send a request encoded in the format defined by the ACME protocol.
-     *
-     * @throws AcmeCoreClientException when an error occured during response parsing
-     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
-     *
-     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
-     */
-    public function signedKidRequest(string $method, string $endpoint, string $account, array $payload = [], bool $returnJson = true)
-    {
-        @trigger_error('The method signedKidRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request, signKidPayload instead.', E_USER_DEPRECATED);
-
-        return $this->request($method, $endpoint, $this->signKidPayload($endpoint, $account, $payload), $returnJson);
-    }
-
-    /**
-     * Send a request encoded in the format defined by the ACME protocol.
-     *
-     * @throws AcmeCoreClientException when an error occured during response parsing
-     * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
-     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
-     *
-     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
-     */
-    public function unsignedRequest(string $method, string $endpoint, array $data = null, bool $returnJson = true)
-    {
-        @trigger_error('The method unsignedRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request instead.', E_USER_DEPRECATED);
-
-        return $this->request($method, $endpoint, $data, $returnJson);
     }
 
     /**
