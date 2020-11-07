@@ -63,7 +63,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         return $this->getContainer()->get('repository');
     }
 
-    protected function getClient(): AcmeClient
+    protected function getClient(string $directoryUrl): AcmeClient
     {
         $this->debug('Creating Acme client');
         $this->notice('Loading account key pair...');
@@ -79,7 +79,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         /** @var CertificateRequestSigner $csrSigner */
         $csrSigner = $this->getContainer()->get('ssl.csr_signer');
 
-        return new AcmeClient($httpClient, $this->input->getOption('server'), $csrSigner);
+        return new AcmeClient($httpClient, $directoryUrl, $csrSigner);
     }
 
     protected function getCliLogger(): LoggerInterface

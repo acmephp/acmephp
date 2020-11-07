@@ -46,7 +46,6 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $runTester->execute([
             'command' => 'run',
             'config' => $this->getConfigFile(),
-            '--server' => 'https://localhost:14000/dir',
         ]);
 
         $output = $runTester->getDisplay();

@@ -43,6 +43,8 @@ class RunCommand extends AbstractCommand
 {
     use KeyOptionCommandTrait;
 
+    private $config;
+
     /**
      * {@inheritdoc}
      */
@@ -61,12 +63,8 @@ class RunCommand extends AbstractCommand
                     ),
                 ]
             )
-            ->setDescription('Automaticaly chalenge domain and request certificates configured in the given file')
-            ->setHelp(
-                <<<'EOF'
-                The <info>%command.name%</info> challenge the domains, request the certificates and install them following a given configuration.
-EOF
-            );
+            ->setDescription('Automatically challenge domains and request certificates configured in the given file')
+            ->setHelp('The <info>%command.name%</info> challenge the domains, request the certificates and install them following a given configuration.');
     }
 
     /**
@@ -74,12 +72,12 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), getcwd()));
-        $keyOption = $this->createKeyOption($config['key_type']);
+        $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), getcwd()));
 
-        $this->register($config['contact_email'], $keyOption);
+        $keyOption = $this->createKeyOption($this->config['key_type']);
+        $this->register($this->config['contact_email'], $keyOption);
 
-        foreach ($config['certificates'] as $domainConfig) {
+        foreach ($this->config['certificates'] as $domainConfig) {
             $domain = $domainConfig['domain'];
 
             if ($this->isUpToDate($domain, $domainConfig, (int) $input->getOption('delay'))) {
@@ -126,15 +124,54 @@ EOF
             $repository->storeAccountKeyPair($accountKeyPair);
         }
 
-        $client = $this->getClient();
+        $client = $this->getClient(self::PROVIDERS[$this->config['provider']]);
         $this->output->writeln('<info>Registering on the ACME server...</info>');
 
         try {
-            $client->registerAccount(null, $email);
+            $client->registerAccount($email, $this->resolveEabKid());
             $this->output->writeln('<info>Account registered successfully!</info>');
         } catch (MalformedServerException $e) {
             $this->output->writeln('<info>Account already registered!</info>');
         }
+    }
+
+    private function resolveEabKid(): ?string
+    {
+        if ('zerossl' !== $this->config['provider']) {
+            return null;
+        }
+
+        // If an API is provided, use it
+        if ($this->config['zerossl_api_key']) {
+            $eabCredentials = \GuzzleHttp\json_decode(
+                (new Client())
+                    ->post('https://api.zerossl.com/acme/eab-credentials/?access_key='.$this->config['zerossl_api_key'])
+                    ->getBody()
+                    ->getContents()
+            );
+
+            if (!isset($eabCredentials->success) || !$eabCredentials->success) {
+                throw new AcmeCliException('ZeroSSL External account Binding failed: are you sure your API key is valid?');
+            }
+
+            return $eabCredentials->eab_kid;
+        }
+
+        // Otherwise register on the fly
+        $eabCredentials = \GuzzleHttp\json_decode(
+            (new Client())
+                ->post('https://api.zerossl.com/acme/eab-credentials-email', [
+                    'form_params' => ['email' => $this->config['contact_email']],
+                ])
+                ->getBody()
+                ->getContents()
+        );
+
+        if (!isset($eabCredentials->success) || !$eabCredentials->success) {
+            throw new AcmeCliException('ZeroSSL External account Binding failed: registering your email failed.');
+        }
+
+        return $eabCredentials->eab_kid;
     }
 
     private function installCertificate(CertificateResponse $response, array $actions)
@@ -200,7 +237,7 @@ EOF
         $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
 
         $repository = $this->getRepository();
-        $client = $this->getClient();
+        $client = $this->getClient(self::PROVIDERS[$this->config['provider']]);
         $distinguishedName = new DistinguishedName(
             $domainConfig['domain'],
             $domainConfig['distinguished_name']['country'],
@@ -246,7 +283,7 @@ EOF
         /** @var ValidatorInterface $validator */
         $validator = $this->getContainer()->get('challenge_validator');
 
-        $client = $this->getClient();
+        $client = $this->getClient(self::PROVIDERS[$this->config['provider']]);
         $domains = array_unique(array_merge([$domain], $domainConfig['subject_alternative_names']));
 
         $this->output->writeln('<comment>Requesting certificate order...</comment>');
@@ -314,9 +351,7 @@ EOF
 
     private function getConfig($configFile)
     {
-        return $this->resolveConfig(
-            $this->loadConfig($configFile)
-        );
+        return $this->resolveConfig($this->loadConfig($configFile));
     }
 
     private function loadConfig($configFile)

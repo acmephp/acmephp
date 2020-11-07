@@ -18,6 +18,7 @@ use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -32,8 +33,16 @@ use GuzzleHttp\Client;
 
 class AcmeClientTest extends AbstractFunctionnalTest
 {
+    public function provideKeyOptions()
+    {
+        yield 'rsa1024' => [new RsaKeyOption(1024)];
+        yield 'rsa4098' => [new RsaKeyOption(4098)];
+        yield 'ecprime256v1' => [new EcKeyOption('prime256v1')];
+        yield 'ecsecp384r1' => [new EcKeyOption('secp384r1')];
+    }
+
     /**
-     * @dataProvider getKeyOptions
+     * @dataProvider provideKeyOptions
      */
     public function testFullProcess(KeyOption $keyOption)
     {
@@ -51,7 +60,14 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Register account
          */
-        $data = $client->registerAccount();
+        if ('eab' === getenv('PEBBLE_MODE')) {
+            $data = $client->registerAccount('titouan.galopin@acmephp.io', new ExternalAccount(
+                'ofX3Rmny4aAD3bwTBZnhJw',
+                'pfVgkYJ-mbNLtmVjpgYeH_s_VYv30MjTmqYXrh3HG0syrG-JtNV3SOQedzV-rPY314qY8v3b7Sc443e65nBLYw'
+            ));
+        } else {
+            $data = $client->registerAccount();
+        }
 
         $this->assertIsArray($data);
         $this->assertArrayHasKey('key', $data);
@@ -105,16 +121,6 @@ class AcmeClientTest extends AbstractFunctionnalTest
             $client->revokeCertificate($response->getCertificate());
         } catch (CertificateRevocationException $e) {
             $this->assertStringContainsString('Unable to find specified certificate', $e->getPrevious()->getPrevious()->getMessage());
-        }
-    }
-
-    public function getKeyOptions()
-    {
-        yield [new RsaKeyOption(1024)];
-        yield [new RsaKeyOption(4098)];
-        if (\PHP_VERSION_ID >= 70100) {
-            yield [new EcKeyOption('prime256v1')];
-            yield [new EcKeyOption('secp384r1')];
         }
     }
 }

@@ -252,31 +252,34 @@ class SecureHttpClient
         if (!isset($protected['alg'])) {
             throw new \InvalidArgumentException('The property "alg" is required in the protected array');
         }
+
         $alg = $protected['alg'];
 
         $privateKey = $this->accountKeyPair->getPrivateKey();
         list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
 
-        $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
+        $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
+
         if (null === $payload) {
-            $payload = '';
+            $encodedPayload = '';
         } elseif ([] === $payload) {
-            $payload = $this->base64Encoder->encode('{}');
+            $encodedPayload = $this->base64Encoder->encode('{}');
         } else {
-            $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
+            $encodedPayload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
         }
+
         $signature = $this->base64Encoder->encode(
-            $this->dataSigner->signData($protected.'.'.$payload, $privateKey, $algorithm, $format)
+            $this->dataSigner->signData($encodedProtected.'.'.$encodedPayload, $privateKey, $algorithm, $format)
         );
 
         return [
-            'protected' => $protected,
-            'payload' => $payload,
+            'protected' => $encodedProtected,
+            'payload' => $encodedPayload,
             'signature' => $signature,
         ];
     }
 
-    private function createRequest($method, $endpoint, $data): Request
+    private function createRequest($method, $endpoint, $data)
     {
         $request = new Request($method, $endpoint);
         $request = $request->withHeader('Accept', 'application/json,application/jose+json,');

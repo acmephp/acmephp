@@ -17,7 +17,6 @@ use AcmePhp\Cli\Command\RunCommand;
 use AcmePhp\Cli\Command\SelfUpdateCommand;
 use AcmePhp\Cli\Command\StatusCommand;
 use Symfony\Component\Console\Application as BaseApplication;
-use Symfony\Component\Console\Input\InputOption;
 use Webmozart\PathUtil\Path;
 
 /**
@@ -25,6 +24,12 @@ use Webmozart\PathUtil\Path;
  */
 class Application extends BaseApplication
 {
+    public const PROVIDERS = [
+        'letsencrypt' => 'https://acme-v02.api.letsencrypt.org/directory',
+        'zerossl' => 'https://acme.zerossl.com/v2/DV90',
+        'localhost' => 'https://localhost:14000/dir',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -55,24 +60,6 @@ class Application extends BaseApplication
         $set->set(new DistinguishedNameHelper());
 
         return $set;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDefaultInputDefinition()
-    {
-        $definition = parent::getDefaultInputDefinition();
-
-        $definition->addOption(new InputOption(
-            'server',
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Set the ACME server directory to use',
-            'https://acme-v02.api.letsencrypt.org/directory'
-        ));
-
-        return $definition;
     }
 
     /**

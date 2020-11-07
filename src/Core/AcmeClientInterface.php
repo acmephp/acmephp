@@ -21,6 +21,7 @@ use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Protocol\CertificateOrder;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Core\Protocol\RevocationReason;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
@@ -36,8 +37,8 @@ interface AcmeClientInterface
     /**
      * Register the local account KeyPair in the Certificate Authority.
      *
-     * @param string|null $agreement an optionnal URI referring to a subscriber agreement or terms of service
-     * @param string|null $email     an optionnal e-mail to associate with the account
+     * @param string|null          $email           an optionnal e-mail to associate with the account
+     * @param ExternalAccount|null $externalAccount an optionnal External Account to use for External Account Binding
      *
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      *                                 (the exception will be more specific if detail is provided)
@@ -45,7 +46,7 @@ interface AcmeClientInterface
      *
      * @return array the Certificate Authority response decoded from JSON into an array
      */
-    public function registerAccount(string $agreement = null, string $email = null): array;
+    public function registerAccount(string $email = null, ExternalAccount $externalAccount = null): array;
 
     /**
      * Request authorization challenge data for a list of domains.
