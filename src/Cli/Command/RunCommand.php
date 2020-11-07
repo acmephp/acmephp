@@ -11,8 +11,10 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Cli\Application;
 use AcmePhp\Cli\Command\Helper\KeyOptionCommandTrait;
 use AcmePhp\Cli\Configuration\DomainConfiguration;
+use AcmePhp\Cli\Exception\AcmeCliException;
 use AcmePhp\Core\Challenge\ConfigurableServiceInterface;
 use AcmePhp\Core\Challenge\MultipleChallengesSolverInterface;
 use AcmePhp\Core\Challenge\SolverInterface;
@@ -27,11 +29,13 @@ use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\ParsedCertificate;
+use GuzzleHttp\Client;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\PathUtil\Path;
@@ -124,7 +128,7 @@ class RunCommand extends AbstractCommand
             $repository->storeAccountKeyPair($accountKeyPair);
         }
 
-        $client = $this->getClient(self::PROVIDERS[$this->config['provider']]);
+        $client = $this->getClient(Application::PROVIDERS[$this->config['provider']]);
         $this->output->writeln('<info>Registering on the ACME server...</info>');
 
         try {
@@ -237,7 +241,7 @@ class RunCommand extends AbstractCommand
         $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
 
         $repository = $this->getRepository();
-        $client = $this->getClient(self::PROVIDERS[$this->config['provider']]);
+        $client = $this->getClient(Application::PROVIDERS[$this->config['provider']]);
         $distinguishedName = new DistinguishedName(
             $domainConfig['domain'],
             $domainConfig['distinguished_name']['country'],
@@ -273,7 +277,9 @@ class RunCommand extends AbstractCommand
         $solverConfig = $domainConfig['solver'];
         $domain = $domainConfig['domain'];
 
+        /** @var ServiceLocator $solverLocator */
         $solverLocator = $this->getContainer()->get('acmephp.challenge_solver.locator');
+
         /** @var SolverInterface $solver */
         $solver = $solverLocator->get($solverConfig['name']);
         if ($solver instanceof ConfigurableServiceInterface) {
@@ -283,7 +289,7 @@ class RunCommand extends AbstractCommand
         /** @var ValidatorInterface $validator */
         $validator = $this->getContainer()->get('challenge_validator');
 
-        $client = $this->getClient(self::PROVIDERS[$this->config['provider']]);
+        $client = $this->getClient(Application::PROVIDERS[$this->config['provider']]);
         $domains = array_unique(array_merge([$domain], $domainConfig['subject_alternative_names']));
 
         $this->output->writeln('<comment>Requesting certificate order...</comment>');

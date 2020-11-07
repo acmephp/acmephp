@@ -1,5 +1,6 @@
 contact_email: foo@example.com
 key_type: RSA
+provider: localhost
 
 defaults:
     distinguished_name:
