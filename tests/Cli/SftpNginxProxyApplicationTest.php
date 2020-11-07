@@ -25,9 +25,9 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
         ];
     }
 
-    protected function getConfigFile(): string
+    protected function getConfigDir(): string
     {
-        return __DIR__.'/Fixtures/config_sfpt_nginxproxy.yaml';
+        return __DIR__.'/Fixtures/config/sfpt_nginxproxy';
     }
 
     public function testFullProcess()

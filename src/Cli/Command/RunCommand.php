@@ -142,41 +142,47 @@ class RunCommand extends AbstractCommand
 
     private function resolveEabKid(): ?ExternalAccount
     {
-        if ('zerossl' !== $this->config['provider']) {
-            return null;
+        // If an External Account is provided, use it
+        if ($this->config['eab_kid'] && $this->config['eab_hmac_key']) {
+            return new ExternalAccount($this->config['eab_kid'], $this->config['eab_hmac_key']);
         }
 
-        // If an API is provided, use it
-        if ($this->config['zerossl_api_key']) {
+        // If using ZeroSSL ...
+        if ('zerossl' === $this->config['provider']) {
+            // If an API key is provided, use it
+            if ($this->config['zerossl_api_key']) {
+                $eabCredentials = \GuzzleHttp\json_decode(
+                    (new Client())
+                        ->post('https://api.zerossl.com/acme/eab-credentials/?access_key='.$this->config['zerossl_api_key'])
+                        ->getBody()
+                        ->getContents()
+                );
+
+                if (!isset($eabCredentials->success) || !$eabCredentials->success) {
+                    throw new AcmeCliException('ZeroSSL External account Binding failed: are you sure your API key is valid?');
+                }
+
+                return new ExternalAccount($eabCredentials->eab_kid, $eabCredentials->eab_hmac_key);
+            }
+
+            // Otherwise register on the fly
             $eabCredentials = \GuzzleHttp\json_decode(
                 (new Client())
-                    ->post('https://api.zerossl.com/acme/eab-credentials/?access_key='.$this->config['zerossl_api_key'])
+                    ->post('https://api.zerossl.com/acme/eab-credentials-email', [
+                        'form_params' => ['email' => $this->config['contact_email']],
+                    ])
                     ->getBody()
                     ->getContents()
             );
 
             if (!isset($eabCredentials->success) || !$eabCredentials->success) {
-                throw new AcmeCliException('ZeroSSL External account Binding failed: are you sure your API key is valid?');
+                throw new AcmeCliException('ZeroSSL External account Binding failed: registering your email failed.');
             }
 
             return new ExternalAccount($eabCredentials->eab_kid, $eabCredentials->eab_hmac_key);
         }
 
-        // Otherwise register on the fly
-        $eabCredentials = \GuzzleHttp\json_decode(
-            (new Client())
-                ->post('https://api.zerossl.com/acme/eab-credentials-email', [
-                    'form_params' => ['email' => $this->config['contact_email']],
-                ])
-                ->getBody()
-                ->getContents()
-        );
-
-        if (!isset($eabCredentials->success) || !$eabCredentials->success) {
-            throw new AcmeCliException('ZeroSSL External account Binding failed: registering your email failed.');
-        }
-
-        return new ExternalAccount($eabCredentials->eab_kid, $eabCredentials->eab_hmac_key);
+        return null;
     }
 
     private function installCertificate(CertificateResponse $response, array $actions)

@@ -1,0 +1,16 @@
+contact_email: foo@example.com
+key_type: RSA
+provider: localhost
+eab_kid: kid1
+eab_hmac_key: testing
+
+defaults:
+    distinguished_name:
+        country: FR
+        locality: Paris
+        organization_name: Acme PHP
+
+certificates:
+    - domain: acmephp.com
+      solver:
+          name: mock-server

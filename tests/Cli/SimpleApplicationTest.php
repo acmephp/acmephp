@@ -20,8 +20,8 @@ class SimpleApplicationTest extends AbstractApplicationTest
         ];
     }
 
-    protected function getConfigFile(): string
+    protected function getConfigDir(): string
     {
-        return __DIR__.'/Fixtures/config_simple.yaml';
+        return __DIR__.'/Fixtures/config/simple';
     }
 }

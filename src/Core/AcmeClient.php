@@ -28,7 +28,6 @@ use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Webmozart\Assert\Assert;
 
 /**

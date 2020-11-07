@@ -26,7 +26,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
 
     abstract protected function getFixturesDirectories(): array;
 
-    abstract protected function getConfigFile(): string;
+    abstract protected function getConfigDir(): string;
 
     public function setUp(): void
     {
@@ -45,7 +45,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $runTester = new CommandTester($this->application->find('run'));
         $runTester->execute([
             'command' => 'run',
-            'config' => $this->getConfigFile(),
+            'config' => $this->getConfigDir().'/'.('eab' === getenv('PEBBLE_MODE') ? 'eab' : 'default').'.yaml',
         ]);
 
         $output = $runTester->getDisplay();
