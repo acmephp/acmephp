@@ -15,7 +15,7 @@ jobs:
                   wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.4/php-cs-fixer.phar -q
                   php php-cs-fixer.phar fix --dry-run --diff
 
-    tests-php72-deps-low:
+    tests-php72-deps-low-pebble-default:
         runs-on: ubuntu-latest
         steps:
             - uses: shivammathur/setup-php@v2
@@ -31,7 +31,7 @@ jobs:
             - name: Running tests
               run: ./tests/run.sh
 
-    tests-php73-deps-lock:
+    tests-php73-deps-lock-pebble-default:
         runs-on: ubuntu-latest
         steps:
             - uses: shivammathur/setup-php@v2
@@ -45,8 +45,10 @@ jobs:
             - name: Running tests
               run: ./tests/run.sh
 
-    tests-php74-deps-high:
+    tests-php74-deps-high-pebble-eab:
         runs-on: ubuntu-latest
+        env:
+            PEBBLE_MODE: eab
         steps:
             - uses: shivammathur/setup-php@v2
               with:
