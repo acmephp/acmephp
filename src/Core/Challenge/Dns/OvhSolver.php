@@ -91,8 +91,9 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
         $this->appSecret = $config['app_secret'];
         $this->endPoint = $config['end_point'];
         $this->consumerKey = $config['consumer_key'];
-        if (isset($config['domain_delegation']))
+        if (isset($config['domain_delegation'])) {
             $this->domainDelegation = $config['domain_delegation'];
+        }
     }
 
     /**
@@ -135,7 +136,7 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
                 $this->consumerKey,
                 $client);
 
-            if ($this->domainDelegation != ''){
+            if ('' !== $this->domainDelegation) {
                 $topLevelDomain = $this->domainDelegation;
             }
 
@@ -193,8 +194,8 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
                 $this->endPoint,
                 $this->consumerKey,
                 $client);
-            
-            if ($this->domainDelegation != ''){
+
+            if ('' !== $this->domainDelegation) {
                 $topLevelDomain = $this->domainDelegation;
             }
 
