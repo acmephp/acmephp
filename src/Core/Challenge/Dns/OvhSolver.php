@@ -65,6 +65,11 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
     private $consumerKey;
 
     /**
+     * @var string
+     */
+    private $domainDelegation;
+
+    /**
      * @param DnsDataExtractor $extractor
      * @param ClientInterface  $client
      */
@@ -86,6 +91,8 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
         $this->appSecret = $config['app_secret'];
         $this->endPoint = $config['end_point'];
         $this->consumerKey = $config['consumer_key'];
+        if (isset($config['domain_delegation']))
+            $this->domainDelegation = $config['domain_delegation'];
     }
 
     /**
@@ -127,6 +134,10 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
                 $this->endPoint,
                 $this->consumerKey,
                 $client);
+
+            if ($this->domainDelegation != ''){
+                $topLevelDomain = $this->domainDelegation;
+            }
 
             $result = $ovh->post('/domain/zone/'.$topLevelDomain.'/record', [
             'fieldType' => 'TXT',
@@ -182,6 +193,10 @@ class OvhSolver implements MultipleChallengesSolverInterface, ConfigurableServic
                 $this->endPoint,
                 $this->consumerKey,
                 $client);
+            
+            if ($this->domainDelegation != ''){
+                $topLevelDomain = $this->domainDelegation;
+            }
 
             $result = $ovh->get('/domain/zone/'.$topLevelDomain.'/record', [
             'fieldType' => 'TXT', // Filter the value of fieldType property (like) (type: zone.NamedResolutionFieldTypeEnum)
