@@ -27,7 +27,6 @@ use AcmePhp\Ssl\Generator\EcKey\EcKeyOption;
 use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\Generator\KeyPairGenerator;
 use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
-use AcmePhp\Ssl\Parser\CertificateParser;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
 use GuzzleHttp\Client;

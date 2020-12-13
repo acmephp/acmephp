@@ -44,7 +44,7 @@
         "alibabacloud/cdn": "^1.7",
         "alibabacloud/wafopenapi": "^1.7",
         "aws/aws-sdk-php": "^3.38",
-        "guzzlehttp/guzzle": "^6.0|^7.0",
+        "guzzlehttp/guzzle": "^7.2",
         "guzzlehttp/psr7": "^1.0",
         "lcobucci/jwt": "^3.3",
         "league/flysystem": "^1.0.19",
