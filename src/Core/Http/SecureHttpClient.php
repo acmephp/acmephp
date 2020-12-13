@@ -171,7 +171,7 @@ class SecureHttpClient
         $encodedPayload = $this->base64Encoder->encode(json_encode($this->getJWK(), JSON_UNESCAPED_SLASHES));
 
         $signature = $this->base64Encoder->encode(
-            (string) $signer->sign($encodedProtected.'.'.$encodedPayload, $externalAccount->getHmacKey())
+            (string) $signer->sign($encodedProtected.'.'.$encodedPayload, $this->base64Encoder->decode($externalAccount->getHmacKey()))
         );
 
         return [
