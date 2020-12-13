@@ -1,3 +1,28 @@
+13/12/2020 23:03  1.3.0  v1.3.0
+5d37fb1 Merge pull request #218 from acmephp/do-not-verify-https-http-vaidator
+fe50cf6 Merge pull request #217 from acmephp/openssl-php8
+e849f30 Do not check HTTPS certificate validity in HttpValidator
+38a9a5f Fix openssl_free_key deprecation notice in PHP 8
+cb1eae4 Merge pull request #219 from acmephp/fix-tests
+5514e91 Fix 1.0 CI
+db4d497 Merge pull request #192 from acmephp/handle-processing
+965c6b6 Fix Box config for latest Box version
+6968927 Merge pull request #208 from InfinityFreeHosting/guzzle-7
+6ec9c47 Support both Guzzle 6.x and 7.x
+9565469 Merge pull request #204 from p-seven-v/add-rejected-identifier-exception
+a9ed8ac Fixed quotes
+c0d3f0d Added more exceptions
+3749f96 Reordered alphabetically
+47c2139 Added class comment
+765dd86 Added RejectedIdentifierServerException
+852d90c Handle processing status case
+5b07014 Merge pull request #193 from acmephp/update-ci
+6133be4 Fix coding-style
+252306a Update CI configuration
+312ef14 Merge pull request #190 from philipsharp/response-body-summary
+187ce72 Merge pull request #188 from miranovy/master
+edcb011 Rewind response body before generating summary for server errors
+a156f98 Distinguished name assert update
 15/01/2020 22:42  1.2.0  Release version 1.2.0
 d031223 Merge pull request #185 from miranovy/master
 24b8575 Fix getIssuerCertificate return type
