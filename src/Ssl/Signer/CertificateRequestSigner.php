@@ -86,7 +86,10 @@ EOL;
                 ]
             );
 
-            openssl_free_key($resource);
+            // PHP 8 automatically frees the key instance and deprecates the function
+            if (\PHP_VERSION_ID < 80000) {
+                openssl_free_key($resource);
+            }
 
             if (!$csr) {
                 throw new CSRSigningException(sprintf('OpenSSL CSR signing failed with error: %s', openssl_error_string()));
