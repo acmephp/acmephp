@@ -27,24 +27,26 @@ use AcmePhp\Ssl\Generator\EcKey\EcKeyOption;
 use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\Generator\KeyPairGenerator;
 use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
+use AcmePhp\Ssl\Parser\CertificateParser;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
 use GuzzleHttp\Client;
 
 class AcmeClientTest extends AbstractFunctionnalTest
 {
-    public function provideKeyOptions()
+    public function provideFullProcess()
     {
-        yield 'rsa1024' => [new RsaKeyOption(1024)];
-        yield 'rsa4098' => [new RsaKeyOption(4098)];
-        yield 'ecprime256v1' => [new EcKeyOption('prime256v1')];
-        yield 'ecsecp384r1' => [new EcKeyOption('secp384r1')];
+        yield 'rsa1024' => [new RsaKeyOption(1024), false];
+        yield 'rsa1024-alternate' => [new RsaKeyOption(1024), true];
+        yield 'rsa4098' => [new RsaKeyOption(4098), false];
+        yield 'ecprime256v1' => [new EcKeyOption('prime256v1'), false];
+        yield 'ecsecp384r1' => [new EcKeyOption('secp384r1'), false];
     }
 
     /**
-     * @dataProvider provideKeyOptions
+     * @dataProvider provideFullProcess
      */
-    public function testFullProcess(KeyOption $keyOption)
+    public function testFullProcess(KeyOption $keyOption, bool $useAlternateCertificate)
     {
         $secureHttpClient = new SecureHttpClient(
             (new KeyPairGenerator())->generateKeyPair($keyOption),
@@ -103,7 +105,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * Request certificate
          */
         $csr = new CertificateRequest(new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair($keyOption));
-        $response = $client->finalizeOrder($order, $csr);
+        $response = $client->finalizeOrder($order, $csr, 180, $useAlternateCertificate);
 
         $this->assertInstanceOf(CertificateResponse::class, $response);
         $this->assertEquals($csr, $response->getCertificateRequest());

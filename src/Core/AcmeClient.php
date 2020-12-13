@@ -177,7 +177,7 @@ class AcmeClient implements AcmeClientInterface
 
         if ($returnAlternateCertificateIfAvailable && isset($responseHeaders['Link'][1])) {
             $matches = [];
-            preg_match('/<(http.*acme\/cert\/.*\/\d)>;rel="alternate"/', $responseHeaders['Link'][1], $matches);
+            preg_match('/<(http.*)>;rel="alternate"/', $responseHeaders['Link'][1], $matches);
 
             // If response headers include a valid alternate certificate link, return that certificate instead
             if (isset($matches[1])) {
