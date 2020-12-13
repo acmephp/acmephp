@@ -21,7 +21,7 @@ class CertificateParserTest extends TestCase
     /** @var CertificateParser */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

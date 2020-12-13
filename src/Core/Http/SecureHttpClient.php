@@ -245,7 +245,7 @@ class SecureHttpClient
         $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         if (null === $payload) {
             $payload = '';
-        } elseif ($payload === []) {
+        } elseif ([] === $payload) {
             $payload = $this->base64Encoder->encode('{}');
         } else {
             $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));

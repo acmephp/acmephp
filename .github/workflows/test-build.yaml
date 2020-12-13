@@ -1,0 +1,32 @@
+name: Test and build
+
+on: push
+
+jobs:
+    php-cs:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '7.2'
+            - uses: actions/checkout@master
+            - name: php-cs-fixer
+              run: |
+                  wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.4/php-cs-fixer.phar -q
+                  php php-cs-fixer.phar fix --dry-run --diff
+
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '7.2'
+            - uses: actions/checkout@master
+            - name: Install dependencies
+              run: |
+                  composer require --dev "sebastian/comparator:^2.0"
+                  composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable
+            - name: Preparing tests
+              run: ./tests/setup.sh
+            - name: Running tests
+              run: ./tests/run.sh

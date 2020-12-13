@@ -49,7 +49,7 @@ abstract class AbstractRepositoryTest extends TestCase
      */
     protected $repository;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->serializer = new Serializer(
             [new PemNormalizer(), new GetSetMethodNormalizer()],

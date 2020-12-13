@@ -24,7 +24,7 @@ class KeyPairGeneratorTest extends TestCase
     /** @var KeyPairGenerator */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
