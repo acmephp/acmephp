@@ -23,7 +23,7 @@ class DataSignerTest extends TestCase
     /** @var DataSigner */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

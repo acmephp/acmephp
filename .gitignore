@@ -5,3 +5,4 @@ vendor/
 .php_cs.cache
 doc/.couscous
 .subsplit
+.phpunit.result.cache

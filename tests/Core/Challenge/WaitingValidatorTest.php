@@ -19,7 +19,7 @@ use Symfony\Bridge\PhpUnit\ClockMock;
 
 class WaitingValidatorTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -28,7 +28,7 @@ class WaitingValidatorTest extends TestCase
         ClockMock::withClockMock(true);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

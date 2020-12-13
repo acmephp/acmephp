@@ -36,14 +36,14 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
      */
     abstract protected function createApplication();
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cleanContext();
 
         $this->application = $this->createApplication();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->cleanContext();
     }
