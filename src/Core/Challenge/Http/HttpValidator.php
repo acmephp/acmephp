@@ -56,7 +56,7 @@ class HttpValidator implements ValidatorInterface
         $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
 
         try {
-            return $checkContent === trim($this->client->get($checkUrl)->getBody()->getContents());
+            return $checkContent === trim($this->client->get($checkUrl, ['verify' => false])->getBody()->getContents());
         } catch (ClientException $e) {
             return false;
         }
