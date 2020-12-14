@@ -4,6 +4,9 @@
     "type": "project",
     "license": "MIT",
     "homepage": "https://github.com/acmephp/acmephp",
+    "bin": [
+        "bin/acme"
+    ],
     "keywords": [
         "acme",
         "acmephp",
@@ -31,16 +34,19 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=7.2.5",
+        "ext-filter": "*",
         "ext-hash": "*",
         "ext-json": "*",
-        "ext-filter": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "lib-openssl": ">=0.9.8",
+        "alibabacloud/cdn": "^1.7",
+        "alibabacloud/wafopenapi": "^1.7",
         "aws/aws-sdk-php": "^3.38",
-        "guzzlehttp/guzzle": "^6.0|^7.0",
+        "guzzlehttp/guzzle": "^7.2",
         "guzzlehttp/psr7": "^1.0",
+        "lcobucci/jwt": "^3.3",
         "league/flysystem": "^1.0.19",
         "league/flysystem-memory": "^1.0",
         "league/flysystem-sftp": "^1.0.7",
@@ -50,25 +56,23 @@
         "psr/http-message": "^1.0",
         "psr/log": "^1.0",
         "swiftmailer/swiftmailer": "^5.4|^6.0",
-        "symfony/config": "^3.0|^4.0",
-        "symfony/console": "^3.0|^4.0",
-        "symfony/dependency-injection": "^3.3|^4.0",
-        "symfony/filesystem": "^3.0|^4.0",
-        "symfony/serializer": "^3.0|^4.0",
-        "symfony/yaml": "^3.0|^4.0",
+        "symfony/config": "^5.0",
+        "symfony/console": "^5.0",
+        "symfony/dependency-injection": "^5.0",
+        "symfony/filesystem": "^5.0",
+        "symfony/serializer": "^5.0",
+        "symfony/yaml": "^5.0",
         "webmozart/assert": "^1.0",
-        "webmozart/path-util": "^2.3",
-        "alibabacloud/cdn": "^1.7",
-        "alibabacloud/wafopenapi": "^1.7"
+        "webmozart/path-util": "^2.3"
     },
     "suggest": {
         "daverandom/libdns": "^2.0"
     },
     "require-dev": {
         "phpspec/prophecy": "^1.9",
-        "symfony/finder": "^3.4|^4.0",
+        "symfony/finder": "^5.0",
         "symfony/phpunit-bridge": "^5.0",
-        "symfony/var-dumper": "^3.4|^4.0"
+        "symfony/var-dumper": "^5.0"
     },
     "autoload": {
         "psr-4": {
@@ -80,12 +84,10 @@
             "Tests\\AcmePhp\\": "tests/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "7.2.34"
         }
-    },
-    "bin": [
-        "bin/acme"
-    ]
+    }
 }

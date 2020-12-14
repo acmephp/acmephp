@@ -69,7 +69,7 @@
         </service>
 
         <!-- Repository -->
-        <service id="repository.master_storage" class="League\Flysystem\Filesystem" public="false">
+        <service id="repository.storage" class="League\Flysystem\Filesystem" public="false">
             <argument type="service">
                 <service class="League\Flysystem\Adapter\Local">
                     <argument>%app.storage_directory%</argument>
@@ -77,19 +77,9 @@
             </argument>
         </service>
 
-        <service id="repository.backup_storage" class="League\Flysystem\Filesystem" public="false">
-            <argument type="service">
-                <service class="League\Flysystem\Adapter\Local">
-                    <argument>%app.backup_directory%</argument>
-                </service>
-            </argument>
-        </service>
-
         <service id="repository" class="AcmePhp\Cli\Repository\Repository">
             <argument type="service" id="serializer" />
-            <argument type="service" id="repository.master_storage" />
-            <argument type="service" id="repository.backup_storage" />
-            <argument>%storage.enable_backup%</argument>
+            <argument type="service" id="repository.storage" />
         </service>
 
         <!-- Actions -->
@@ -97,16 +87,8 @@
             <argument type="service" id="repository" />
             <tag name="acmephp.action" alias="build_nginxproxy" />
         </service>
-        <service id="acmephp.action.push_ftp" class="AcmePhp\Cli\Action\PushFtpAction" public="false">
-            <argument type="service" id="acmephp.action.mirror_file" />
-            <tag name="acmephp.action" alias="push_ftp" />
-        </service>
-        <service id="acmephp.action.push_sftp" class="AcmePhp\Cli\Action\PushSftpAction" public="false">
-            <argument type="service" id="acmephp.action.mirror_file" />
-            <tag name="acmephp.action" alias="push_sftp" />
-        </service>
         <service id="acmephp.action.mirror_file" class="AcmePhp\Cli\Action\FilesystemAction" public="false">
-            <argument type="service" id="repository.master_storage" />
+            <argument type="service" id="repository.storage" />
             <argument type="service" id="acmephp.filesystem_factory.locator" />
             <tag name="acmephp.action" alias="mirror_file" />
         </service>
@@ -132,30 +114,6 @@
         <service id="acmephp.action.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection"/>
             <tag name="acmephp.service_locator" tag="acmephp.action"/>
-        </service>
-
-        <service id="acmephp.action_handler" class="AcmePhp\Cli\ActionHandler\ActionHandler">
-            <argument type="service" id="acmephp.action.locator" />
-            <argument type="service" id="cli_logger" />
-            <argument>%storage.post_generate%</argument>
-        </service>
-
-        <!-- Monitoring -->
-        <service id="acmephp.monitoring.email" class="AcmePhp\Cli\Monitoring\EmailHandlerBuilder">
-            <tag name="acmephp.monitoring" alias="email"/>
-        </service>
-        <service id="acmephp.monitoring.slack" class="AcmePhp\Cli\Monitoring\SlackHandlerBuilder">
-            <tag name="acmephp.monitoring" alias="slack"/>
-        </service>
-
-        <service id="acmephp.monitoring.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
-            <argument type="collection"/>
-            <tag name="acmephp.service_locator" tag="acmephp.monitoring"/>
-        </service>
-
-        <service id="acmephp.monitoring_factory" class="AcmePhp\Cli\Monitoring\MonitoringLoggerFactory">
-            <argument type="service" id="acmephp.monitoring.locator" />
-            <argument>%monitoring.handlers%</argument>
         </service>
 
         <!-- Challenge Solving -->
@@ -193,6 +151,9 @@
             <argument type="service" id="http.raw_client" />
             <call method="setLogger"><argument type="service" id="cli_logger"/></call>
             <tag name="acmephp.challenge_solver" alias="gandi" />
+        </service>
+        <service id="acmephp.challenge_solver.mock_server" class="AcmePhp\Core\Challenge\Http\MockServerHttpSolver" public="false">
+            <tag name="acmephp.challenge_solver" alias="mock-server" />
         </service>
         <service id="acmephp.challenge_solver.locator" class="Symfony\Component\DependencyInjection\ServiceLocator">
             <argument type="collection"/>
@@ -240,9 +201,11 @@
         <service id="challenge_validator.dns.resolver.libdns" class="AcmePhp\Core\Challenge\Dns\LibDnsResolver">
             <call method="setLogger"><argument type="service" id="cli_logger"/></call>
         </service>
+        <service id="challenge_validator.mock" class="AcmePhp\Core\Challenge\Http\MockHttpValidator" />
 
         <service id="challenge_validator" class="AcmePhp\Core\Challenge\ChainValidator">
             <argument type="collection">
+                <argument type="service" id="challenge_validator.mock" />
                 <argument type="service" id="challenge_validator.http" />
                 <argument type="service" id="challenge_validator.dns" />
             </argument>

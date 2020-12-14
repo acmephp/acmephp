@@ -25,10 +25,8 @@ by these features, have a look at the [acmephp/core](https://github.com/acmephp/
 
 Acme PHP provides several major improvements over the default clients:
 -   Acme PHP comes by nature as a single binary file: a single download and you are ready to start working ;
--   Acme PHP is based on a configuration file (`~/.acmephp/acmephp.conf`) instead command line arguments.
+-   Acme PHP is based on a configuration file instead command line arguments.
     Thus, the configuration is much more expressive and the same setup is used at every renewal ;
--   Acme PHP can monitor your CRONs and can send you alerts in many differents places:
-    E-mail, Slack, HipChat, Flowdock, Fleep (thanks to [Monolog](https://github.com/Seldaek/monolog)!)
 -   Acme PHP is very extensible it to create the certificate files structure you need for your webserver.
     It brings several default formatters to create classical file structures
     (nginx, nginx-proxy, haproxy, etc.) but you can very easily create your own if you need to ;
@@ -44,14 +42,6 @@ Read the official [Acme PHP documentation](https://acmephp.github.io).
 Acme PHP follows a strict BC policy by sticking carefully to [semantic versioning](http://semver.org). This means
 your scripts, your CRON tasks and your code will keep working properly even when you update Acme PHP (either the CLI
 tool or the library), as long as you keep the same major version (1.X.X, 2.X.X, etc.).
-
-In addition of semantic versioning of stable versions for the CLI and the library, Acme PHP also follows
-certain rules **for the CLI only**:
--   an alpha release can break BC with previous alpha releases of the same version
-    (1.1.0-alpha2 can break BC with features introduced by 1.1.0-alpha1 but can't break BC with 1.0.0 features).
--   a beta release cannot break BC with previous beta releases
-    (1.1.0-beta4 have to be BC with 1.1.0-beta3, 1.1.0-beta2, 1.1.0-beta1 and 1.0.0). New features can be added in beta
-    as long as they don't break BC.
 
 ## Launch the Test suite
 

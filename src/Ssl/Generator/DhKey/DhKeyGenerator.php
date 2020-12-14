@@ -14,6 +14,7 @@ namespace AcmePhp\Ssl\Generator\DhKey;
 use AcmePhp\Ssl\Generator\KeyOption;
 use AcmePhp\Ssl\Generator\OpensslPrivateKeyGeneratorTrait;
 use AcmePhp\Ssl\Generator\PrivateKeyGeneratorInterface;
+use AcmePhp\Ssl\PrivateKey;
 use Webmozart\Assert\Assert;
 
 /**
@@ -25,25 +26,20 @@ class DhKeyGenerator implements PrivateKeyGeneratorInterface
 {
     use OpensslPrivateKeyGeneratorTrait;
 
-    /**
-     * @param DhKeyOption|KeyOption $keyOption
-     */
-    public function generatePrivateKey(KeyOption $keyOption)
+    public function generatePrivateKey(KeyOption $keyOption): PrivateKey
     {
         Assert::isInstanceOf($keyOption, DhKeyOption::class);
 
-        return $this->generatePrivateKeyFromOpensslOptions(
-            [
-                'private_key_type' => OPENSSL_KEYTYPE_DH,
-                'dh' => [
-                    'p' => $keyOption->getPrime(),
-                    'g' => $keyOption->getGenerator(),
-                ],
-            ]
-        );
+        return $this->generatePrivateKeyFromOpensslOptions([
+            'private_key_type' => OPENSSL_KEYTYPE_DH,
+            'dh' => [
+                'p' => $keyOption->getPrime(),
+                'g' => $keyOption->getGenerator(),
+            ],
+        ]);
     }
 
-    public function supportsKeyOption(KeyOption $keyOption)
+    public function supportsKeyOption(KeyOption $keyOption): bool
     {
         return $keyOption instanceof DhKeyOption;
     }

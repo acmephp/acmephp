@@ -27,11 +27,7 @@ class Certificate
     /** @var Certificate */
     private $issuerCertificate;
 
-    /**
-     * @param string           $certificatePEM
-     * @param Certificate|null $issuerCertificate
-     */
-    public function __construct($certificatePEM, self $issuerCertificate = null)
+    public function __construct(string $certificatePEM, self $issuerCertificate = null)
     {
         Assert::stringNotEmpty($certificatePEM, __CLASS__.'::$certificatePEM should not be an empty string. Got %s');
 
@@ -42,7 +38,7 @@ class Certificate
     /**
      * @return Certificate[]
      */
-    public function getIssuerChain()
+    public function getIssuerChain(): array
     {
         $chain = [];
         $issuerCertificate = $this->getIssuerCertificate();
@@ -55,18 +51,12 @@ class Certificate
         return $chain;
     }
 
-    /**
-     * @return string
-     */
-    public function getPEM()
+    public function getPEM(): string
     {
         return $this->certificatePEM;
     }
 
-    /**
-     * @return Certificate|null
-     */
-    public function getIssuerCertificate()
+    public function getIssuerCertificate(): ?self
     {
         return $this->issuerCertificate;
     }
@@ -83,10 +73,7 @@ class Certificate
         return $resource;
     }
 
-    /**
-     * @return PublicKey
-     */
-    public function getPublicKey()
+    public function getPublicKey(): PublicKey
     {
         return new PublicKey(openssl_pkey_get_details($this->getPublicKeyResource())['key']);
     }

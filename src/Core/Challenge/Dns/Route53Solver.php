@@ -27,6 +27,7 @@ use Webmozart\Assert\Assert;
 class Route53Solver implements MultipleChallengesSolverInterface
 {
     use LoggerAwareTrait;
+
     /**
      * @var DnsDataExtractor
      */
@@ -42,23 +43,17 @@ class Route53Solver implements MultipleChallengesSolverInterface
      */
     private $cacheZones;
 
-    /**
-     * @param DnsDataExtractor $extractor
-     * @param Route53Client    $client
-     */
-    public function __construct(
-        DnsDataExtractor $extractor = null,
-        Route53Client $client = null
-    ) {
-        $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
-        $this->client = null === $client ? new Route53Client([]) : $client;
+    public function __construct(DnsDataExtractor $extractor = null, Route53Client $client = null)
+    {
+        $this->extractor = $extractor ?: new DnsDataExtractor();
+        $this->client = $client ?: new Route53Client([]);
         $this->logger = new NullLogger();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge)
+    public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }

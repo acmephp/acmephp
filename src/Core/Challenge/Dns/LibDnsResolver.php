@@ -64,19 +64,18 @@ class LibDnsResolver implements DnsResolverInterface
         Decoder $decoder = null,
         $nameServer = '8.8.8.8'
     ) {
-        $this->questionFactory = null === $questionFactory ? new QuestionFactory() : $questionFactory;
-        $this->messageFactory = null === $messageFactory ? new MessageFactory() : $messageFactory;
-        $this->encoder = null === $encoder ? (new EncoderFactory())->create() : $encoder;
-        $this->decoder = null === $decoder ? (new DecoderFactory())->create() : $decoder;
+        $this->questionFactory = $questionFactory ?: new QuestionFactory();
+        $this->messageFactory = $messageFactory ?: new MessageFactory();
+        $this->encoder = $encoder ?: (new EncoderFactory())->create();
+        $this->decoder = $decoder ?: (new DecoderFactory())->create();
         $this->nameServer = $nameServer;
-
         $this->logger = new NullLogger();
     }
 
     /**
      * @{@inheritdoc}
      */
-    public static function isSupported()
+    public static function isSupported(): bool
     {
         return class_exists(ResourceTypes::class);
     }
@@ -84,7 +83,7 @@ class LibDnsResolver implements DnsResolverInterface
     /**
      * @{@inheritdoc}
      */
-    public function getTxtEntries($domain)
+    public function getTxtEntries($domain): array
     {
         $domain = rtrim($domain, '.');
         $nameServers = $this->getNameServers($domain);

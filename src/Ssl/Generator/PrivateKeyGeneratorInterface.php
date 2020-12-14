@@ -27,17 +27,13 @@ interface PrivateKeyGeneratorInterface
      * @param KeyOption $keyOption configuration of the key to generate
      *
      * @throws KeyGenerationException when OpenSSL failed to generate keys
-     *
-     * @return PrivateKey
      */
-    public function generatePrivateKey(KeyOption $keyOption);
+    public function generatePrivateKey(KeyOption $keyOption): PrivateKey;
 
     /**
      * Returns whether the instance is able to generator a private key from the given option.
      *
      * @param KeyOption $keyOption configuration of the key to generate
-     *
-     * @return bool
      */
-    public function supportsKeyOption(KeyOption $keyOption);
+    public function supportsKeyOption(KeyOption $keyOption): bool;
 }

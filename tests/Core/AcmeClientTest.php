@@ -18,6 +18,7 @@ use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
@@ -32,10 +33,19 @@ use GuzzleHttp\Client;
 
 class AcmeClientTest extends AbstractFunctionnalTest
 {
+    public function provideFullProcess()
+    {
+        yield 'rsa1024' => [new RsaKeyOption(1024), false];
+        yield 'rsa1024-alternate' => [new RsaKeyOption(1024), true];
+        yield 'rsa4098' => [new RsaKeyOption(4098), false];
+        yield 'ecprime256v1' => [new EcKeyOption('prime256v1'), false];
+        yield 'ecsecp384r1' => [new EcKeyOption('secp384r1'), false];
+    }
+
     /**
-     * @dataProvider getKeyOptions
+     * @dataProvider provideFullProcess
      */
-    public function testFullProcess(KeyOption $keyOption)
+    public function testFullProcess(KeyOption $keyOption, bool $useAlternateCertificate)
     {
         $secureHttpClient = new SecureHttpClient(
             (new KeyPairGenerator())->generateKeyPair($keyOption),
@@ -51,7 +61,11 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Register account
          */
-        $data = $client->registerAccount();
+        if ('eab' === getenv('PEBBLE_MODE')) {
+            $data = $client->registerAccount('titouan.galopin@acmephp.com', new ExternalAccount('kid1', 'dGVzdGluZw'));
+        } else {
+            $data = $client->registerAccount('titouan.galopin@acmephp.com');
+        }
 
         $this->assertIsArray($data);
         $this->assertArrayHasKey('key', $data);
@@ -90,7 +104,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * Request certificate
          */
         $csr = new CertificateRequest(new DistinguishedName('acmephp.com'), (new KeyPairGenerator())->generateKeyPair($keyOption));
-        $response = $client->finalizeOrder($order, $csr);
+        $response = $client->finalizeOrder($order, $csr, 180, $useAlternateCertificate);
 
         $this->assertInstanceOf(CertificateResponse::class, $response);
         $this->assertEquals($csr, $response->getCertificateRequest());
@@ -105,16 +119,6 @@ class AcmeClientTest extends AbstractFunctionnalTest
             $client->revokeCertificate($response->getCertificate());
         } catch (CertificateRevocationException $e) {
             $this->assertStringContainsString('Unable to find specified certificate', $e->getPrevious()->getPrevious()->getMessage());
-        }
-    }
-
-    public function getKeyOptions()
-    {
-        yield [new RsaKeyOption(1024)];
-        yield [new RsaKeyOption(4098)];
-        if (\PHP_VERSION_ID >= 70100) {
-            yield [new EcKeyOption('prime256v1')];
-            yield [new EcKeyOption('secp384r1')];
         }
     }
 }

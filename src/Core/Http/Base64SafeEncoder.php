@@ -18,22 +18,12 @@ namespace AcmePhp\Core\Http;
  */
 class Base64SafeEncoder
 {
-    /**
-     * @param string $input
-     *
-     * @return string
-     */
-    public function encode($input)
+    public function encode(string $input): string
     {
         return str_replace('=', '', strtr(base64_encode($input), '+/', '-_'));
     }
 
-    /**
-     * @param string $input
-     *
-     * @return string
-     */
-    public function decode($input)
+    public function decode(string $input): string
     {
         $remainder = \strlen($input) % 4;
 

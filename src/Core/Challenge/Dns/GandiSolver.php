@@ -28,6 +28,7 @@ use Webmozart\Assert\Assert;
 class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServiceInterface
 {
     use LoggerAwareTrait;
+
     /**
      * @var DnsDataExtractor
      */
@@ -48,16 +49,10 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
      */
     private $apiKey;
 
-    /**
-     * @param DnsDataExtractor $extractor
-     * @param ClientInterface  $client
-     */
-    public function __construct(
-        DnsDataExtractor $extractor = null,
-        ClientInterface $client = null
-    ) {
-        $this->extractor = null === $extractor ? new DnsDataExtractor() : $extractor;
-        $this->client = null === $client ? new Client() : $client;
+    public function __construct(DnsDataExtractor $extractor = null, ClientInterface $client = null)
+    {
+        $this->extractor = $extractor ?: new DnsDataExtractor();
+        $this->client = $client ?: new Client();
         $this->logger = new NullLogger();
     }
 
@@ -72,7 +67,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge)
+    public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }
@@ -150,12 +145,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
         }
     }
 
-    /**
-     * @param string $domain
-     *
-     * @return string
-     */
-    protected function getTopLevelDomain($domain)
+    protected function getTopLevelDomain(string $domain): string
     {
         return \implode('.', \array_slice(\explode('.', $domain), -2));
     }

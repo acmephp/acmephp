@@ -18,55 +18,36 @@ use Webmozart\Assert\Assert;
  */
 class RevocationReason
 {
-    const DEFAULT_REASON = self::REASON_UNSPECIFIED;
-    const REASON_UNSPECIFIED = 0;
-    const REASON_KEY_COMPROMISE = 1;
-    const REASON_AFFILLIATION_CHANGED = 3;
-    const REASON_SUPERCEDED = 4;
-    const REASON_CESSATION_OF_OPERATION = 5;
+    public const DEFAULT_REASON = self::REASON_UNSPECIFIED;
+    public const REASON_UNSPECIFIED = 0;
+    public const REASON_KEY_COMPROMISE = 1;
+    public const REASON_AFFILLIATION_CHANGED = 3;
+    public const REASON_SUPERCEDED = 4;
+    public const REASON_CESSATION_OF_OPERATION = 5;
 
-    /**
-     * @var int|null
-     */
-    private $reasonType = null;
+    /** @var int|null */
+    private $reasonType;
 
-    /**
-     * @param int $reasonType
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function __construct($reasonType)
+    public function __construct(int $reasonType)
     {
-        $reasonType = (int) $reasonType;
-
         Assert::oneOf($reasonType, self::getReasons(), 'Revocation reason type "%s" is not supported by the ACME server (supported: %2$s)');
 
         $this->reasonType = $reasonType;
     }
 
-    /**
-     * @return int
-     */
-    public function getReasonType()
+    public function getReasonType(): int
     {
         return $this->reasonType;
     }
 
-    /**
-     * @return static
-     */
-    public static function createDefaultReason()
+    public static function createDefaultReason(): self
     {
         return new static(self::DEFAULT_REASON);
     }
 
-    /**
-     * @return array
-     */
-    public static function getFormattedReasons()
+    public static function getFormattedReasons(): array
     {
         $formatted = [];
-
         foreach (self::getReasonLabelMap() as $reason => $label) {
             $formatted[] = $reason.' - '.$label;
         }
@@ -74,10 +55,7 @@ class RevocationReason
         return $formatted;
     }
 
-    /**
-     * @return array
-     */
-    private static function getReasonLabelMap()
+    private static function getReasonLabelMap(): array
     {
         return [
             self::REASON_UNSPECIFIED => 'unspecified',
@@ -88,10 +66,7 @@ class RevocationReason
         ];
     }
 
-    /**
-     * @return array
-     */
-    public static function getReasons()
+    public static function getReasons(): array
     {
         return [
             self::REASON_UNSPECIFIED,

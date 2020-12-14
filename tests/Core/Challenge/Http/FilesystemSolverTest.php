@@ -14,8 +14,8 @@ namespace Tests\AcmePhp\Core\Challenge\Http;
 use AcmePhp\Core\Challenge\Http\FilesystemSolver;
 use AcmePhp\Core\Challenge\Http\HttpDataExtractor;
 use AcmePhp\Core\Filesystem\FilesystemFactoryInterface;
+use AcmePhp\Core\Filesystem\FilesystemInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
-use League\Flysystem\FilesystemInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Container\ContainerInterface;
@@ -43,20 +43,22 @@ class FilesystemSolverTest extends TestCase
         $checkPath = '/.challenge';
         $checkContent = 'randomPayload';
 
-        $mockExtractor = $this->prophesize(HttpDataExtractor::class);
-        $mockLocator = $this->prophesize(ContainerInterface::class);
-        $mockFlysystemFactory = $this->prophesize(FilesystemFactoryInterface::class);
-        $mockFlysystem = $this->prophesize(FilesystemInterface::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 
-        $solver = new FilesystemSolver($mockLocator->reveal(), $mockExtractor->reveal());
-
-        $mockLocator->get('stub')->willReturn($mockFlysystemFactory->reveal());
-        $mockFlysystemFactory->create(Argument::any())->willReturn($mockFlysystem->reveal());
+        $mockExtractor = $this->prophesize(HttpDataExtractor::class);
         $mockExtractor->getCheckPath($stubChallenge->reveal())->willReturn($checkPath);
         $mockExtractor->getCheckContent($stubChallenge->reveal())->willReturn($checkContent);
 
+        $mockFlysystem = $this->prophesize(FilesystemInterface::class);
         $mockFlysystem->write($checkPath, $checkContent)->shouldBeCalled();
+
+        $mockFlysystemFactory = $this->prophesize(FilesystemFactoryInterface::class);
+        $mockFlysystemFactory->create(Argument::any())->willReturn($mockFlysystem->reveal());
+
+        $mockLocator = $this->prophesize(ContainerInterface::class);
+        $mockLocator->get('stub')->willReturn($mockFlysystemFactory->reveal());
+
+        $solver = new FilesystemSolver($mockLocator->reveal(), $mockExtractor->reveal());
 
         $solver->configure(['adapter' => 'stub']);
         $solver->solve($stubChallenge->reveal());
@@ -66,17 +68,20 @@ class FilesystemSolverTest extends TestCase
     {
         $checkPath = '/.challenge';
 
-        $mockExtractor = $this->prophesize(HttpDataExtractor::class);
-        $mockLocator = $this->prophesize(ContainerInterface::class);
-        $mockFlysystemFactory = $this->prophesize(FilesystemFactoryInterface::class);
-        $mockFlysystem = $this->prophesize(FilesystemInterface::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 
-        $solver = new FilesystemSolver($mockLocator->reveal(), $mockExtractor->reveal());
-
-        $mockLocator->get('stub')->willReturn($mockFlysystemFactory->reveal());
-        $mockFlysystemFactory->create(Argument::any())->willReturn($mockFlysystem->reveal());
+        $mockExtractor = $this->prophesize(HttpDataExtractor::class);
         $mockExtractor->getCheckPath($stubChallenge->reveal())->willReturn($checkPath);
+
+        $mockFlysystem = $this->prophesize(FilesystemInterface::class);
+
+        $mockFlysystemFactory = $this->prophesize(FilesystemFactoryInterface::class);
+        $mockFlysystemFactory->create(Argument::any())->willReturn($mockFlysystem->reveal());
+
+        $mockLocator = $this->prophesize(ContainerInterface::class);
+        $mockLocator->get('stub')->willReturn($mockFlysystemFactory->reveal());
+
+        $solver = new FilesystemSolver($mockLocator->reveal(), $mockExtractor->reveal());
 
         $mockFlysystem->delete($checkPath)->shouldBeCalled();
 

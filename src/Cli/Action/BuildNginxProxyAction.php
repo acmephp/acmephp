@@ -37,7 +37,7 @@ class BuildNginxProxyAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function handle($config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response)
     {
         $domain = $response->getCertificateRequest()->getDistinguishedName()->getCommonName();
         $privateKey = $response->getCertificateRequest()->getKeyPair()->getPrivateKey();

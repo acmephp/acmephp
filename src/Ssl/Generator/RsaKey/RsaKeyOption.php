@@ -12,24 +12,18 @@
 namespace AcmePhp\Ssl\Generator\RsaKey;
 
 use AcmePhp\Ssl\Generator\KeyOption;
-use Webmozart\Assert\Assert;
 
 class RsaKeyOption implements KeyOption
 {
     /** @var int */
     private $bits;
 
-    public function __construct($bits = 4096)
+    public function __construct(int $bits = 4096)
     {
-        Assert::integer($bits);
-
         $this->bits = $bits;
     }
 
-    /**
-     * @return int
-     */
-    public function getBits()
+    public function getBits(): int
     {
         return $this->bits;
     }

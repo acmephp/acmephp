@@ -11,17 +11,13 @@
 
 namespace AcmePhp\Cli\Command;
 
-use AcmePhp\Cli\ActionHandler\ActionHandler;
-use AcmePhp\Cli\Application;
-use AcmePhp\Cli\Configuration\AcmeConfiguration;
 use AcmePhp\Cli\Exception\CommandFlowException;
-use AcmePhp\Cli\Repository\RepositoryV2Interface;
+use AcmePhp\Cli\Repository\RepositoryInterface;
 use AcmePhp\Core\AcmeClient;
 use AcmePhp\Core\Challenge\Dns\LibDnsResolver;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,9 +26,6 @@ use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
@@ -50,11 +43,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
     protected $output;
 
     /**
-     * @var array|null
-     */
-    private $configuration;
-
-    /**
      * @var ContainerBuilder|null
      */
     private $container;
@@ -68,30 +56,14 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->output = $output;
     }
 
-    /**
-     * @return RepositoryV2Interface
-     */
-    protected function getRepository()
+    protected function getRepository(): RepositoryInterface
     {
         $this->debug('Loading repository');
 
         return $this->getContainer()->get('repository');
     }
 
-    /**
-     * @return ActionHandler
-     */
-    protected function getActionHandler()
-    {
-        $this->debug('Loading action handler');
-
-        return $this->getContainer()->get('acmephp.action_handler');
-    }
-
-    /**
-     * @return AcmeClient
-     */
-    protected function getClient()
+    protected function getClient(string $directoryUrl): AcmeClient
     {
         $this->debug('Creating Acme client');
         $this->notice('Loading account key pair...');
@@ -107,21 +79,15 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         /** @var CertificateRequestSigner $csrSigner */
         $csrSigner = $this->getContainer()->get('ssl.csr_signer');
 
-        return new AcmeClient($httpClient, $this->input->getOption('server'), $csrSigner);
+        return new AcmeClient($httpClient, $directoryUrl, $csrSigner);
     }
 
-    /**
-     * @return LoggerInterface
-     */
-    protected function getCliLogger()
+    protected function getCliLogger(): LoggerInterface
     {
         return $this->getContainer()->get('cli_logger');
     }
 
-    /**
-     * @return ContainerBuilder
-     */
-    protected function getContainer()
+    protected function getContainer(): ContainerBuilder
     {
         if (null === $this->container) {
             $this->initializeContainer();
@@ -132,25 +98,12 @@ abstract class AbstractCommand extends Command implements LoggerInterface
 
     private function initializeContainer()
     {
-        if (null === $this->configuration) {
-            $this->initializeConfiguration();
-        }
-
         $this->container = new ContainerBuilder();
 
         // Application services and parameters
         $this->container->set('app', $this->getApplication());
         $this->container->set('container', $this->container);
-        $this->container->setParameter('app.version', Application::VERSION);
         $this->container->setParameter('app.storage_directory', $this->getApplication()->getStorageDirectory());
-        $this->container->setParameter('app.backup_directory', $this->getApplication()->getBackupDirectory());
-
-        // Load configuration
-        $processor = new Processor();
-        $config = $processor->processConfiguration(new AcmeConfiguration(), $this->configuration);
-        $this->container->setParameter('storage.enable_backup', $config['storage']['enable_backup']);
-        $this->container->setParameter('storage.post_generate', $config['storage']['post_generate']);
-        $this->container->setParameter('monitoring.handlers', $config['monitoring']);
 
         // Load services
         $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources'));
@@ -179,25 +132,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         // Inject input and output
         $this->container->set('input', $this->input);
         $this->container->set('output', $this->output);
-    }
-
-    private function initializeConfiguration()
-    {
-        $configFile = $this->getApplication()->getConfigFile();
-        $referenceFile = $this->getApplication()->getConfigReferenceFile();
-
-        if (!file_exists($configFile)) {
-            $filesystem = new Filesystem();
-            $filesystem->dumpFile($configFile, file_get_contents($referenceFile));
-
-            $this->notice('Configuration file '.$configFile.' did not exist and has been created.');
-        }
-
-        if (!is_readable($configFile)) {
-            throw new IOException('Configuration file '.$configFile.' is not readable.');
-        }
-
-        $this->configuration = ['acmephp' => Yaml::parse(file_get_contents($configFile))];
     }
 
     /**

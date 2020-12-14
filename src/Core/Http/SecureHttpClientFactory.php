@@ -64,10 +64,8 @@ class SecureHttpClientFactory
 
     /**
      * Create a SecureHttpClient using a given account KeyPair.
-     *
-     * @return SecureHttpClient
      */
-    public function createSecureHttpClient(KeyPair $accountKeyPair)
+    public function createSecureHttpClient(KeyPair $accountKeyPair): SecureHttpClient
     {
         return new SecureHttpClient(
             $accountKeyPair,

@@ -21,12 +21,14 @@ use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use AcmePhp\Core\Protocol\CertificateOrder;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Core\Protocol\ResourcesDirectory;
 use AcmePhp\Core\Protocol\RevocationReason;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
 use AcmePhp\Ssl\CertificateResponse;
 use AcmePhp\Ssl\Signer\CertificateRequestSigner;
+use GuzzleHttp\Psr7\Utils;
 use Webmozart\Assert\Assert;
 
 /**
@@ -34,7 +36,7 @@ use Webmozart\Assert\Assert;
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class AcmeClient implements AcmeClientV2Interface
+class AcmeClient implements AcmeClientInterface
 {
     /**
      * @var SecureHttpClient
@@ -66,10 +68,7 @@ class AcmeClient implements AcmeClientV2Interface
      */
     private $account;
 
-    /**
-     * @param string $directoryUrl
-     */
-    public function __construct(SecureHttpClient $httpClient, $directoryUrl, CertificateRequestSigner $csrSigner = null)
+    public function __construct(SecureHttpClient $httpClient, string $directoryUrl, CertificateRequestSigner $csrSigner = null)
     {
         $this->uninitializedHttpClient = $httpClient;
         $this->directoryUrl = $directoryUrl;
@@ -79,37 +78,28 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function getHttpClient()
+    public function registerAccount(string $email = null, ExternalAccount $externalAccount = null): array
     {
-        if (!$this->initializedHttpClient) {
-            $this->initializedHttpClient = $this->uninitializedHttpClient;
-
-            $this->initializedHttpClient->setNonceEndpoint($this->getResourceUrl(ResourcesDirectory::NEW_NONCE));
-        }
-
-        return $this->initializedHttpClient;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function registerAccount($agreement = null, $email = null)
-    {
-        Assert::nullOrString($agreement, 'registerAccount::$agreement expected a string or null. Got: %s');
-        Assert::nullOrString($email, 'registerAccount::$email expected a string or null. Got: %s');
+        $client = $this->getHttpClient();
 
         $payload = [
             'termsOfServiceAgreed' => true,
             'contact' => [],
         ];
 
-        if (\is_string($email)) {
+        if ($email) {
             $payload['contact'][] = 'mailto:'.$email;
+        }
+
+        if ($externalAccount) {
+            $payload['externalAccountBinding'] = $client->createExternalAccountPayload(
+                $externalAccount,
+                $this->getResourceUrl(ResourcesDirectory::NEW_ACCOUNT)
+            );
         }
 
         $this->requestResource('POST', ResourcesDirectory::NEW_ACCOUNT, $payload);
         $account = $this->getResourceAccount();
-        $client = $this->getHttpClient();
 
         return $client->request('POST', $account, $client->signKidPayload($account, $account, null));
     }
@@ -117,27 +107,13 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function requestAuthorization($domain)
-    {
-        $order = $this->requestOrder([$domain]);
-
-        try {
-            return $order->getAuthorizationChallenges($domain);
-        } catch (AcmeCoreClientException $e) {
-            throw new ChallengeNotSupportedException();
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function requestOrder(array $domains)
+    public function requestOrder(array $domains): CertificateOrder
     {
         Assert::allStringNotEmpty($domains, 'requestOrder::$domains expected a list of strings. Got: %s');
 
         $payload = [
             'identifiers' => array_map(
-                function ($domain) {
+                static function ($domain) {
                     return [
                         'type' => 'dns',
                         'value' => $domain,
@@ -154,6 +130,7 @@ class AcmeClient implements AcmeClientV2Interface
             throw new ChallengeNotSupportedException();
         }
 
+        $authorizationsChallenges = [];
         $orderEndpoint = $client->getLastLocation();
         foreach ($response['authorizations'] as $authorizationEndpoint) {
             $authorizationsResponse = $client->request('POST', $authorizationEndpoint, $client->signKidPayload($authorizationEndpoint, $this->getResourceAccount(), null));
@@ -169,7 +146,69 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function reloadAuthorization(AuthorizationChallenge $challenge)
+    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse
+    {
+        $endTime = time() + $timeout;
+        $client = $this->getHttpClient();
+        $orderEndpoint = $order->getOrderEndpoint();
+        $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
+        if (\in_array($response['status'], ['pending', 'processing', 'ready'])) {
+            $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
+
+            $csrContent = $this->csrSigner->signCertificateRequest($csr);
+            $csrContent = trim(str_replace($humanText, '', $csrContent));
+            $csrContent = trim($client->getBase64Encoder()->encode(base64_decode($csrContent)));
+
+            $response = $client->request('POST', $response['finalize'], $client->signKidPayload($response['finalize'], $this->getResourceAccount(), ['csr' => $csrContent]));
+        }
+
+        // Waiting loop
+        while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], ['pending', 'processing', 'ready']))) {
+            sleep(1);
+            $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
+        }
+
+        if ('valid' !== $response['status']) {
+            throw new CertificateRequestFailedException('The order has not been validated');
+        }
+
+        $response = $client->rawRequest('POST', $response['certificate'], $client->signKidPayload($response['certificate'], $this->getResourceAccount(), null));
+        $responseHeaders = $response->getHeaders();
+
+        if ($returnAlternateCertificateIfAvailable && isset($responseHeaders['Link'][1])) {
+            $matches = [];
+            preg_match('/<(http.*)>;rel="alternate"/', $responseHeaders['Link'][1], $matches);
+
+            // If response headers include a valid alternate certificate link, return that certificate instead
+            if (isset($matches[1])) {
+                return $this->createCertificateResponse(
+                    $csr,
+                    $client->request('POST', $matches[1], $client->signKidPayload($matches[1], $this->getResourceAccount(), null), false)
+                );
+            }
+        }
+
+        return $this->createCertificateResponse($csr, Utils::copyToString($response->getBody()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function requestAuthorization(string $domain): array
+    {
+        $order = $this->requestOrder([$domain]);
+
+        try {
+            return $order->getAuthorizationChallenges($domain);
+        } catch (AcmeCoreClientException $e) {
+            throw new ChallengeNotSupportedException();
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reloadAuthorization(AuthorizationChallenge $challenge): AuthorizationChallenge
     {
         $client = $this->getHttpClient();
         $challengeUrl = $challenge->getUrl();
@@ -181,10 +220,8 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180)
+    public function challengeAuthorization(AuthorizationChallenge $challenge, int $timeout = 180): array
     {
-        Assert::integer($timeout, 'challengeAuthorization::$timeout expected an integer. Got: %s');
-
         $endTime = time() + $timeout;
         $client = $this->getHttpClient();
         $challengeUrl = $challenge->getUrl();
@@ -212,54 +249,11 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * {@inheritdoc}
      */
-    public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180)
+    public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse
     {
-        Assert::stringNotEmpty($domain, 'requestCertificate::$domain expected a non-empty string. Got: %s');
-        Assert::integer($timeout, 'requestCertificate::$timeout expected an integer. Got: %s');
-
         $order = $this->requestOrder(array_unique(array_merge([$domain], $csr->getDistinguishedName()->getSubjectAlternativeNames())));
 
-        return $this->finalizeOrder($order, $csr, $timeout);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, $timeout = 180)
-    {
-        Assert::integer($timeout, 'finalizeOrder::$timeout expected an integer. Got: %s');
-
-        $endTime = time() + $timeout;
-        $client = $this->getHttpClient();
-        $orderEndpoint = $order->getOrderEndpoint();
-        $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
-        if (\in_array($response['status'], ['pending', 'processing', 'ready'])) {
-            $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
-
-            $csrContent = $this->csrSigner->signCertificateRequest($csr);
-            $csrContent = trim(str_replace($humanText, '', $csrContent));
-            $csrContent = trim($client->getBase64Encoder()->encode(base64_decode($csrContent)));
-
-            $response = $client->request('POST', $response['finalize'], $client->signKidPayload($response['finalize'], $this->getResourceAccount(), ['csr' => $csrContent]));
-        }
-
-        // Waiting loop
-        while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], ['pending', 'processing', 'ready']))) {
-            sleep(1);
-            $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
-        }
-
-        if ('valid' !== $response['status']) {
-            throw new CertificateRequestFailedException('The order has not been validated');
-        }
-
-        $response = $client->request('POST', $response['certificate'], $client->signKidPayload($response['certificate'], $this->getResourceAccount(), null), false);
-        $certificatesChain = null;
-        foreach (array_reverse(explode("\n\n", $response)) as $pem) {
-            $certificatesChain = new Certificate($pem, $certificatesChain);
-        }
-
-        return new CertificateResponse($csr, $certificatesChain);
+        return $this->finalizeOrder($order, $csr, $timeout, $returnAlternateCertificateIfAvailable);
     }
 
     /**
@@ -297,13 +291,9 @@ class AcmeClient implements AcmeClientV2Interface
     }
 
     /**
-     * Find a resource URL.
-     *
-     * @param string $resource
-     *
-     * @return string
+     * Find a resource URL from the Certificate Authority.
      */
-    public function getResourceUrl($resource)
+    public function getResourceUrl(string $resource): string
     {
         if (!$this->directory) {
             $this->directory = new ResourcesDirectory(
@@ -317,16 +307,12 @@ class AcmeClient implements AcmeClientV2Interface
     /**
      * Request a resource (URL is found using ACME server directory).
      *
-     * @param string $method
-     * @param string $resource
-     * @param bool   $returnJson
-     *
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      * @throws AcmeCoreClientException when an error occured during response parsing
      *
      * @return array|string
      */
-    protected function requestResource($method, $resource, array $payload, $returnJson = true)
+    protected function requestResource(string $method, string $resource, array $payload, bool $returnJson = true)
     {
         $client = $this->getHttpClient();
         $endpoint = $this->getResourceUrl($resource);
@@ -339,12 +325,17 @@ class AcmeClient implements AcmeClientV2Interface
         );
     }
 
-    /**
-     * Retrieve the resource account.
-     *
-     * @return string
-     */
-    private function getResourceAccount()
+    private function createCertificateResponse(CertificateRequest $csr, string $certificate): CertificateResponse
+    {
+        $certificatesChain = null;
+        foreach (array_reverse(explode("\n\n", $certificate)) as $pem) {
+            $certificatesChain = new Certificate($pem, $certificatesChain);
+        }
+
+        return new CertificateResponse($csr, $certificatesChain);
+    }
+
+    private function getResourceAccount(): string
     {
         if (!$this->account) {
             $payload = [
@@ -358,7 +349,7 @@ class AcmeClient implements AcmeClientV2Interface
         return $this->account;
     }
 
-    private function createAuthorizationChallenge($domain, array $response)
+    private function createAuthorizationChallenge($domain, array $response): AuthorizationChallenge
     {
         $base64encoder = $this->getHttpClient()->getBase64Encoder();
 
@@ -370,5 +361,15 @@ class AcmeClient implements AcmeClientV2Interface
             $response['token'],
             $response['token'].'.'.$base64encoder->encode($this->getHttpClient()->getJWKThumbprint())
         );
+    }
+
+    private function getHttpClient(): SecureHttpClient
+    {
+        if (!$this->initializedHttpClient) {
+            $this->initializedHttpClient = $this->uninitializedHttpClient;
+            $this->initializedHttpClient->setNonceEndpoint($this->getResourceUrl(ResourcesDirectory::NEW_NONCE));
+        }
+
+        return $this->initializedHttpClient;
     }
 }

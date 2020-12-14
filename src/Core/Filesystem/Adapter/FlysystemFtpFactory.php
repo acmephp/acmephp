@@ -12,6 +12,7 @@
 namespace AcmePhp\Core\Filesystem\Adapter;
 
 use AcmePhp\Core\Filesystem\FilesystemFactoryInterface;
+use AcmePhp\Core\Filesystem\FilesystemInterface;
 use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\Filesystem;
 
@@ -20,7 +21,7 @@ class FlysystemFtpFactory implements FilesystemFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function create(array $config)
+    public function create(array $config): FilesystemInterface
     {
         return new FlysystemAdapter(new Filesystem(new Ftp($config)));
     }

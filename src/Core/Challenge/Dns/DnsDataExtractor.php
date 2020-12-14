@@ -21,35 +21,26 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
  */
 class DnsDataExtractor
 {
-    /**
-     * @var Base64SafeEncoder
-     */
+    /** @var Base64SafeEncoder */
     private $encoder;
 
-    /**
-     * @param Base64SafeEncoder $encoder
-     */
     public function __construct(Base64SafeEncoder $encoder = null)
     {
-        $this->encoder = null === $encoder ? new Base64SafeEncoder() : $encoder;
+        $this->encoder = $encoder ?: new Base64SafeEncoder();
     }
 
     /**
      * Retrieves the name of the TXT record to register.
-     *
-     * @return string
      */
-    public function getRecordName(AuthorizationChallenge $authorizationChallenge)
+    public function getRecordName(AuthorizationChallenge $authorizationChallenge): string
     {
         return sprintf('_acme-challenge.%s.', $authorizationChallenge->getDomain());
     }
 
     /**
      * Retrieves the value of the TXT record to register.
-     *
-     * @return string
      */
-    public function getRecordValue(AuthorizationChallenge $authorizationChallenge)
+    public function getRecordValue(AuthorizationChallenge $authorizationChallenge): string
     {
         return $this->encoder->encode(hash('sha256', $authorizationChallenge->getPayload(), true));
     }

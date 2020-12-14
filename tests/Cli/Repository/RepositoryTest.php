@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-abstract class AbstractRepositoryTest extends TestCase
+class RepositoryTest extends TestCase
 {
     /**
      * @var Serializer
@@ -37,12 +37,7 @@ abstract class AbstractRepositoryTest extends TestCase
     /**
      * @var Filesystem
      */
-    protected $master;
-
-    /**
-     * @var Filesystem
-     */
-    protected $backup;
+    protected $storage;
 
     /**
      * @var Repository
@@ -56,20 +51,16 @@ abstract class AbstractRepositoryTest extends TestCase
             [new PemEncoder(), new JsonEncoder()]
         );
 
-        $this->master = new Filesystem(new MemoryAdapter());
-        $this->backup = new Filesystem(new MemoryAdapter());
-
-        $this->repository = $this->createRepository();
+        $this->storage = new Filesystem(new MemoryAdapter());
+        $this->repository = new Repository($this->serializer, $this->storage);
     }
-
-    abstract protected function createRepository();
 
     public function testStoreAccountKeyPair()
     {
         $this->repository->storeAccountKeyPair(new KeyPair(new PublicKey('public'), new PrivateKey('private')));
 
-        $this->assertEquals("public\n", $this->master->read('account/key.public.pem'));
-        $this->assertEquals("private\n", $this->master->read('account/key.private.pem'));
+        $this->assertEquals("public\n", $this->storage->read('account/key.public.pem'));
+        $this->assertEquals("private\n", $this->storage->read('account/key.private.pem'));
     }
 
     public function testLoadAccountKeyPair()
@@ -92,8 +83,8 @@ abstract class AbstractRepositoryTest extends TestCase
     {
         $this->repository->storeDomainKeyPair('example.com', new KeyPair(new PublicKey('public'), new PrivateKey('private')));
 
-        $this->assertEquals("public\n", $this->master->read('certs/example.com/private/key.public.pem'));
-        $this->assertEquals("private\n", $this->master->read('certs/example.com/private/key.private.pem'));
+        $this->assertEquals("public\n", $this->storage->read('certs/example.com/private/key.public.pem'));
+        $this->assertEquals("private\n", $this->storage->read('certs/example.com/private/key.private.pem'));
     }
 
     public function testLoadDomainKeyPair()
@@ -125,7 +116,7 @@ abstract class AbstractRepositoryTest extends TestCase
 
         $this->repository->storeDomainAuthorizationChallenge('example.com', $challenge);
 
-        $json = $this->master->read('var/example.com/authorization_challenge.json');
+        $json = $this->storage->read('var/example.com/authorization_challenge.json');
         $this->assertJson($json);
 
         $data = json_decode($json, true);
@@ -175,7 +166,7 @@ abstract class AbstractRepositoryTest extends TestCase
 
         $this->repository->storeDomainDistinguishedName('example.com', $dn);
 
-        $json = $this->master->read('var/example.com/distinguished_name.json');
+        $json = $this->storage->read('var/example.com/distinguished_name.json');
         $this->assertJson($json);
 
         $data = json_decode($json, true);
@@ -222,10 +213,10 @@ abstract class AbstractRepositoryTest extends TestCase
         $this->repository->storeDomainKeyPair('example.com', new KeyPair(new PublicKey('public'), new PrivateKey('private')));
         $this->repository->storeDomainCertificate('example.com', $cert);
 
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->master->read('certs/example.com/private/combined.pem'));
-        $this->assertEquals(self::$certPem."\n", $this->master->read('certs/example.com/public/cert.pem'));
-        $this->assertEquals(self::$issuerCertPem."\n", $this->master->read('certs/example.com/public/chain.pem'));
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->master->read('certs/example.com/public/fullchain.pem'));
+        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->storage->read('certs/example.com/private/combined.pem'));
+        $this->assertEquals(self::$certPem."\n", $this->storage->read('certs/example.com/public/cert.pem'));
+        $this->assertEquals(self::$issuerCertPem."\n", $this->storage->read('certs/example.com/public/chain.pem'));
+        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->storage->read('certs/example.com/public/fullchain.pem'));
     }
 
     public function testLoadDomainCertificate()

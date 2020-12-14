@@ -46,7 +46,7 @@ EOF
         $repository = $this->getRepository();
 
         /** @var FilesystemInterface $master */
-        $master = $this->getContainer()->get('repository.master_storage');
+        $master = $this->getContainer()->get('repository.storage');
 
         /** @var CertificateParser $certificateParser */
         $certificateParser = $this->getContainer()->get('ssl.certificate_parser');

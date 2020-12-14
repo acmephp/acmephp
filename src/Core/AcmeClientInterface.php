@@ -19,8 +19,9 @@ use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Exception\Protocol\ChallengeFailedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeNotSupportedException;
 use AcmePhp\Core\Exception\Protocol\ChallengeTimedOutException;
-use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
+use AcmePhp\Core\Protocol\CertificateOrder;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Core\Protocol\RevocationReason;
 use AcmePhp\Ssl\Certificate;
 use AcmePhp\Ssl\CertificateRequest;
@@ -36,8 +37,8 @@ interface AcmeClientInterface
     /**
      * Register the local account KeyPair in the Certificate Authority.
      *
-     * @param string|null $agreement an optionnal URI referring to a subscriber agreement or terms of service
-     * @param string|null $email     an optionnal e-mail to associate with the account
+     * @param string|null          $email           an optionnal e-mail to associate with the account
+     * @param ExternalAccount|null $externalAccount an optionnal External Account to use for External Account Binding
      *
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      *                                 (the exception will be more specific if detail is provided)
@@ -45,7 +46,53 @@ interface AcmeClientInterface
      *
      * @return array the Certificate Authority response decoded from JSON into an array
      */
-    public function registerAccount($agreement = null, $email = null);
+    public function registerAccount(string $email = null, ExternalAccount $externalAccount = null): array;
+
+    /**
+     * Request authorization challenge data for a list of domains.
+     *
+     * An AuthorizationChallenge is an association between a URI, a token and a payload.
+     * The Certificate Authority will create this challenge data and you will then have
+     * to expose the payload for the verification (see challengeAuthorization).
+     *
+     * @param string[] $domains the domains to challenge
+     *
+     * @throws AcmeCoreServerException        when the ACME server returns an error HTTP status code
+     *                                        (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException        when an error occured during response parsing
+     * @throws ChallengeNotSupportedException when the HTTP challenge is not supported by the server
+     *
+     * @return CertificateOrder the Order returned by the Certificate Authority
+     */
+    public function requestOrder(array $domains): CertificateOrder;
+
+    /**
+     * Request a certificate for the given domain.
+     *
+     * This method should be called only if a previous authorization challenge has
+     * been successful for the asked domain.
+     *
+     * WARNING : This method SHOULD NOT BE USED in a web action. It will
+     * wait for the Certificate Authority to validate the certificate and
+     * this operation could be long.
+     *
+     * @param CertificateOrder   $order                                 the Order returned by the Certificate Authority
+     * @param CertificateRequest $csr                                   the Certificate Signing Request (informations for the certificate)
+     * @param int                $timeout                               the timeout period
+     * @param bool               $returnAlternateCertificateIfAvailable whether the alternate certificate provided by
+     *                                                                  the CA should be returned instead of the main one.
+     *                                                                  This is especially useful following
+     *                                                                  https://letsencrypt.org/2019/04/15/transitioning-to-isrg-root.html.
+     *
+     * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
+     *                                             (the exception will be more specific if detail is provided)
+     * @throws AcmeCoreClientException             when an error occured during response parsing
+     * @throws CertificateRequestFailedException   when the certificate request failed
+     * @throws CertificateRequestTimedOutException when the certificate request timed out
+     *
+     * @return CertificateResponse the certificate data to save it somewhere you want
+     */
+    public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse;
 
     /**
      * Request authorization challenge data for a given domain.
@@ -63,7 +110,16 @@ interface AcmeClientInterface
      *
      * @return AuthorizationChallenge[] the list of challenges data returned by the Certificate Authority
      */
-    public function requestAuthorization($domain);
+    public function requestAuthorization(string $domain): array;
+
+    /**
+     * Request the current status of an authorization challenge.
+     *
+     * @param AuthorizationChallenge $challenge The challenge to request
+     *
+     * @return AuthorizationChallenge A new instance of the challenge
+     */
+    public function reloadAuthorization(AuthorizationChallenge $challenge): AuthorizationChallenge;
 
     /**
      * Ask the Certificate Authority to challenge a given authorization.
@@ -87,7 +143,7 @@ interface AcmeClientInterface
      *
      * @return array the validate challenge response
      */
-    public function challengeAuthorization(AuthorizationChallenge $challenge, $timeout = 180);
+    public function challengeAuthorization(AuthorizationChallenge $challenge, int $timeout = 180): array;
 
     /**
      * Request a certificate for the given domain.
@@ -99,9 +155,13 @@ interface AcmeClientInterface
      * wait for the Certificate Authority to validate the certificate and
      * this operation could be long.
      *
-     * @param string             $domain  the domain to request a certificate for
-     * @param CertificateRequest $csr     the Certificate Signing Request (informations for the certificate)
-     * @param int                $timeout the timeout period
+     * @param string             $domain                                the domain to request a certificate for
+     * @param CertificateRequest $csr                                   the Certificate Signing Request (informations for the certificate)
+     * @param int                $timeout                               the timeout period
+     * @param bool               $returnAlternateCertificateIfAvailable whether the alternate certificate provided by
+     *                                                                  the CA should be returned instead of the main one.
+     *                                                                  This is especially useful following
+     *                                                                  https://letsencrypt.org/2019/04/15/transitioning-to-isrg-root.html.
      *
      * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
      *                                             (the exception will be more specific if detail is provided)
@@ -111,17 +171,12 @@ interface AcmeClientInterface
      *
      * @return CertificateResponse the certificate data to save it somewhere you want
      */
-    public function requestCertificate($domain, CertificateRequest $csr, $timeout = 180);
+    public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse;
 
     /**
+     * Revoke a given certificate from the Certificate Authority.
+     *
      * @throws CertificateRevocationException
      */
     public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null);
-
-    /**
-     * Get the HTTP client.
-     *
-     * @return SecureHttpClient
-     */
-    public function getHttpClient();
 }

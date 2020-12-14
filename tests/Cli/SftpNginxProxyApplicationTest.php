@@ -13,15 +13,10 @@ namespace Tests\AcmePhp\Cli;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Sftp\SftpAdapter;
-use Tests\AcmePhp\Cli\Mock\AbstractTestApplication;
-use Tests\AcmePhp\Cli\Mock\SftpNginxProxyApplication;
 
 class SftpNginxProxyApplicationTest extends AbstractApplicationTest
 {
-    /**
-     * @return array
-     */
-    protected function getFixturesDirectories()
+    protected function getFixturesDirectories(): array
     {
         return [
             __DIR__.'/../Cli/Fixtures/local/backup',
@@ -30,12 +25,9 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
         ];
     }
 
-    /**
-     * @return AbstractTestApplication
-     */
-    protected function createApplication()
+    protected function getConfigDir(): string
     {
-        return new SftpNginxProxyApplication();
+        return __DIR__.'/Fixtures/config/sfpt_nginxproxy';
     }
 
     public function testFullProcess()
@@ -59,18 +51,6 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
         // nginxproxy
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/nginxproxy/acmephp.com.crt');
         $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/nginxproxy/acmephp.com.key');
-
-        // Backup
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/private/key.private.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/private/key.public.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/private/combined.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/public/cert.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/public/chain.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/certs/acmephp.com/public/fullchain.pem');
-
-        // Backup nginxproxy
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/nginxproxy/acmephp.com.crt');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/backup/nginxproxy/acmephp.com.key');
 
         // SFTP
         $this->assertTrue($sftpFilesystem->has('account/key.private.pem'));

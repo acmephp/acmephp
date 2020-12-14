@@ -19,22 +19,14 @@ class EcKeyOption implements KeyOption
     /** @var string */
     private $curveName;
 
-    public function __construct($curveName = 'secp384r1')
+    public function __construct(string $curveName = 'secp384r1')
     {
-        if (\PHP_VERSION_ID < 70100) {
-            throw new \LogicException('The generation of ECDSA requires a version of PHP >= 7.1');
-        }
-
-        Assert::stringNotEmpty($curveName);
         Assert::oneOf($curveName, openssl_get_curve_names(), 'The given curve %s is not supported. Available curves are: %s');
 
         $this->curveName = $curveName;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurveName()
+    public function getCurveName(): string
     {
         return $this->curveName;
     }

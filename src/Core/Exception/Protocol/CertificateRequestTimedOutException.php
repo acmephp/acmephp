@@ -16,7 +16,7 @@ namespace AcmePhp\Core\Exception\Protocol;
  */
 class CertificateRequestTimedOutException extends ProtocolException
 {
-    public function __construct($response)
+    public function __construct(string $response)
     {
         parent::__construct(sprintf('Certificate request timed out (response: %s)', $response));
     }

@@ -12,24 +12,18 @@
 namespace AcmePhp\Ssl\Generator\DsaKey;
 
 use AcmePhp\Ssl\Generator\KeyOption;
-use Webmozart\Assert\Assert;
 
 class DsaKeyOption implements KeyOption
 {
     /** @var int */
     private $bits;
 
-    public function __construct($bits = 2048)
+    public function __construct(int $bits = 2048)
     {
-        Assert::integer($bits);
-
         $this->bits = $bits;
     }
 
-    /**
-     * @return int
-     */
-    public function getBits()
+    public function getBits(): int
     {
         return $this->bits;
     }

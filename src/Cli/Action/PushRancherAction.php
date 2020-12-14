@@ -38,7 +38,7 @@ class PushRancherAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function handle($config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response)
     {
         $payload = $this->createRancherPayloadFromResponse($response);
 

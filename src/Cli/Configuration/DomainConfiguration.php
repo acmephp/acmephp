@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Cli\Configuration;
 
+use AcmePhp\Cli\Application;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -55,6 +56,28 @@ class DomainConfiguration implements ConfigurationInterface
                         })
                         ->thenInvalid('The email %s is not valid.')
                     ->end()
+                ->end()
+                ->scalarNode('provider')
+                    ->info('Certificate provider to use (supported: '.implode(', ', Application::PROVIDERS).')')
+                    ->defaultValue('letsencrypt')
+                    ->validate()
+                        ->ifTrue(function ($item) {
+                            return !isset(Application::PROVIDERS[$item]);
+                        })
+                        ->thenInvalid('The certificate provider %s is not valid (supported: '.implode(', ', Application::PROVIDERS).').')
+                    ->end()
+                ->end()
+                ->scalarNode('eab_kid')
+                    ->info('External Account Binding identifier (optional)')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('eab_hmac_key')
+                    ->info('External Account Binding HMAC key (optional)')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('zerossl_api_key')
+                    ->info('ZeroSSL API key to use if you already have one (one will be created automatically otherwise)')
+                    ->defaultNull()
                 ->end()
                 ->scalarNode('key_type')
                     ->info('Type of private key (RSA or EC).')

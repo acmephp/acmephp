@@ -17,7 +17,7 @@ use AcmePhp\Ssl\PrivateKey;
 
 trait OpensslPrivateKeyGeneratorTrait
 {
-    private function generatePrivateKeyFromOpensslOptions(array $opensslOptions)
+    private function generatePrivateKeyFromOpensslOptions(array $opensslOptions): PrivateKey
     {
         $resource = openssl_pkey_new($opensslOptions);
 

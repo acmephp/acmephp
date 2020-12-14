@@ -24,7 +24,7 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         return $object->getPEM();
     }
@@ -32,7 +32,7 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $class, string $format = null, array $context = [])
     {
         return new $class($data);
     }
@@ -40,7 +40,7 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, string $format = null)
     {
         return \is_object($data) && ($data instanceof Certificate || $data instanceof Key);
     }
@@ -48,7 +48,7 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, string $format = null)
     {
         return \is_string($data);
     }

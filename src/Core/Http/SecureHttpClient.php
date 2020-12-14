@@ -15,13 +15,17 @@ use AcmePhp\Core\Exception\AcmeCoreClientException;
 use AcmePhp\Core\Exception\AcmeCoreServerException;
 use AcmePhp\Core\Exception\Protocol\ExpectedJsonException;
 use AcmePhp\Core\Exception\Server\BadNonceServerException;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Core\Util\JsonDecoder;
 use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Header;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Utils;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -87,73 +91,7 @@ class SecureHttpClient
         $this->errorHandler = $errorHandler;
     }
 
-    /**
-     * Send a request encoded in the format defined by the ACME protocol.
-     *
-     * @param string $method
-     * @param string $endpoint
-     * @param bool   $returnJson
-     *
-     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
-     * @throws AcmeCoreClientException when an error occured during response parsing
-     *
-     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
-     */
-    public function signedRequest($method, $endpoint, array $payload = [], $returnJson = true)
-    {
-        @trigger_error('The method signedRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request, signKidPayload instead', E_USER_DEPRECATED);
-
-        return $this->request($method, $endpoint, $this->signJwkPayload($endpoint, $payload), $returnJson);
-    }
-
-    private function getAlg()
-    {
-        $privateKey = $this->accountKeyPair->getPrivateKey();
-        $parsedKey = $this->keyParser->parse($privateKey);
-        switch ($parsedKey->getType()) {
-            case OPENSSL_KEYTYPE_RSA:
-                return 'RS256';
-            case OPENSSL_KEYTYPE_EC:
-                switch ($parsedKey->getBits()) {
-                    case 256:
-                    case 384:
-                        return 'ES'.$parsedKey->getBits();
-                    case 521:
-                        return 'ES512';
-                }
-                // no break to let the default case
-            default:
-                throw new AcmeCoreClientException('Private key type is not supported');
-        }
-    }
-
-    private function extractSignOptionFromJWSAlg($alg)
-    {
-        if (!preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
-            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
-        }
-
-        if (!\defined('OPENSSL_ALGO_SHA'.$match[2])) {
-            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
-        }
-
-        $algorithm = \constant('OPENSSL_ALGO_SHA'.$match[2]);
-
-        switch ($match[1]) {
-            case 'RS':
-                $format = DataSigner::FORMAT_DER;
-                break;
-            case 'ES':
-                $format = DataSigner::FORMAT_ECDSA;
-                break;
-            default:
-                throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
-        }
-
-        return [$algorithm, $format];
-    }
-
-    public function getJWK()
+    public function getJWK(): array
     {
         $privateKey = $this->accountKeyPair->getPrivateKey();
         $parsedKey = $this->keyParser->parse($privateKey);
@@ -166,6 +104,7 @@ class SecureHttpClient
                     'kty' => 'RSA',
                     'n' => $this->base64Encoder->encode($parsedKey->getDetail('n')),
                 ];
+
             case OPENSSL_KEYTYPE_EC:
                 return [
                     // this order matters
@@ -174,12 +113,13 @@ class SecureHttpClient
                     'x' => $this->base64Encoder->encode($parsedKey->getDetail('x')),
                     'y' => $this->base64Encoder->encode($parsedKey->getDetail('y')),
                 ];
+
             default:
                 throw new AcmeCoreClientException('Private key type not supported');
         }
     }
 
-    public function getJWKThumbprint()
+    public function getJWKThumbprint(): string
     {
         return hash('sha256', json_encode($this->getJWK()), true);
     }
@@ -187,107 +127,65 @@ class SecureHttpClient
     /**
      * Generates a payload signed with account's KID.
      *
-     * @param string $endpoint
-     * @param string $account
-     * @param array  $payload
-     *
-     * @return array the signed Pyaload
+     * @param string|array|null $payload
      */
-    public function signKidPayload($endpoint, $account, array $payload = null)
+    public function signKidPayload(string $endpoint, string $account, $payload = null, bool $withNonce = true): array
     {
-        return $this->signPayload(
-            [
-                'alg' => $this->getAlg(),
-                'kid' => $account,
-                'nonce' => $this->getNonce(),
-                'url' => $endpoint,
-            ],
-            $payload
-        );
+        $protected = ['alg' => $this->getAlg(), 'kid' => $account, 'url' => $endpoint];
+        if ($withNonce) {
+            $protected['nonce'] = $this->getNonce();
+        }
+
+        return $this->signPayload($protected, $payload);
     }
 
     /**
      * Generates a payload signed with JWK.
      *
-     * @param string $endpoint
-     * @param array  $payload
-     *
-     * @return array the signed Payload
+     * @param string|array|null $payload
      */
-    public function signJwkPayload($endpoint, array $payload = null)
+    public function signJwkPayload(string $endpoint, $payload = null, bool $withNonce = true): array
     {
-        return $this->signPayload(
-            [
-                'alg' => $this->getAlg(),
-                'jwk' => $this->getJWK(),
-                'nonce' => $this->getNonce(),
-                'url' => $endpoint,
-            ],
-            $payload
-        );
+        $protected = ['alg' => $this->getAlg(), 'jwk' => $this->getJWK(), 'url' => $endpoint];
+        if ($withNonce) {
+            $protected['nonce'] = $this->getNonce();
+        }
+
+        return $this->signPayload($protected, $payload);
     }
 
     /**
-     * Sign the given Payload.
+     * Generates an External Account Binding payload signed with JWS.
      *
-     * @return array
+     * @param string|array|null $payload
      */
-    private function signPayload(array $protected, array $payload = null)
+    public function createExternalAccountPayload(ExternalAccount $externalAccount, string $url): array
     {
-        if (!isset($protected['alg'])) {
-            throw new \InvalidArgumentException('The property "alg" is required in the protected array');
-        }
-        $alg = $protected['alg'];
+        $signer = new Sha256();
 
-        $privateKey = $this->accountKeyPair->getPrivateKey();
-        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
+        $protected = [
+            'alg' => $signer->getAlgorithmId(),
+            'kid' => $externalAccount->getId(),
+            'url' => $url,
+        ];
 
-        $protected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
-        if (null === $payload) {
-            $payload = '';
-        } elseif ([] === $payload) {
-            $payload = $this->base64Encoder->encode('{}');
-        } else {
-            $payload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
-        }
+        $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
+        $encodedPayload = $this->base64Encoder->encode(json_encode($this->getJWK(), JSON_UNESCAPED_SLASHES));
+
         $signature = $this->base64Encoder->encode(
-            $this->dataSigner->signData($protected.'.'.$payload, $privateKey, $algorithm, $format)
+            (string) $signer->sign($encodedProtected.'.'.$encodedPayload, $this->base64Encoder->decode($externalAccount->getHmacKey()))
         );
 
         return [
-            'protected' => $protected,
-            'payload' => $payload,
+            'protected' => $encodedProtected,
+            'payload' => $encodedPayload,
             'signature' => $signature,
         ];
     }
 
     /**
-     * Send a request encoded in the format defined by the ACME protocol.
-     *
-     * @param string $method
-     * @param string $endpoint
-     * @param string $account
-     * @param bool   $returnJson
-     *
-     * @throws AcmeCoreClientException when an error occured during response parsing
-     * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
-     *
-     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
-     */
-    public function signedKidRequest($method, $endpoint, $account, array $payload = [], $returnJson = true)
-    {
-        @trigger_error('The method signedKidRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request, signKidPayload instead.', E_USER_DEPRECATED);
-
-        return $this->request($method, $endpoint, $this->signKidPayload($endpoint, $account, $payload), $returnJson);
-    }
-
-    /**
-     * Send a request encoded in the format defined by the ACME protocol.
-     *
-     * @param string $method
-     * @param string $endpoint
-     * @param array  $data
-     * @param bool   $returnJson
+     * Send a request encoded in the format defined by the ACME protocol
+     * and its content (optionally parsed as JSON).
      *
      * @throws AcmeCoreClientException when an error occured during response parsing
      * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
@@ -295,27 +193,36 @@ class SecureHttpClient
      *
      * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
-    public function unsignedRequest($method, $endpoint, array $data = null, $returnJson = true)
+    public function request(string $method, string $endpoint, array $data = [], bool $returnJson = true)
     {
-        @trigger_error('The method unsignedRequest is deprecated since version 1.1 and will be removed in 2.0. use methods request instead.', E_USER_DEPRECATED);
+        $response = $this->rawRequest($method, $endpoint, $data);
+        $body = Utils::copyToString($response->getBody());
 
-        return $this->request($method, $endpoint, $data, $returnJson);
+        if (!$returnJson) {
+            return $body;
+        }
+
+        try {
+            if ('' === $body) {
+                throw new \InvalidArgumentException('Empty body received.');
+            }
+
+            $data = JsonDecoder::decode($body, true);
+        } catch (\InvalidArgumentException $exception) {
+            throw new ExpectedJsonException(sprintf('ACME client excepted valid JSON as a response to request "%s %s" (given: "%s")', $method, $endpoint, ServerErrorHandler::getResponseBodySummary($response)), $exception);
+        }
+
+        return $data;
     }
 
     /**
-     * Send a request encoded in the format defined by the ACME protocol.
-     *
-     * @param string $method
-     * @param string $endpoint
-     * @param bool   $returnJson
+     * Send a request encoded in the format defined by the ACME protocol and return the response object.
      *
      * @throws AcmeCoreClientException when an error occured during response parsing
      * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
-     *
-     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
-    public function request($method, $endpoint, array $data = [], $returnJson = true)
+    public function rawRequest(string $method, string $endpoint, array $data = []): ResponseInterface
     {
         $call = function () use ($method, $endpoint, $data) {
             $request = $this->createRequest($method, $endpoint, $data);
@@ -329,28 +236,12 @@ class SecureHttpClient
         };
 
         try {
-            $request = $call();
+            $call();
         } catch (BadNonceServerException $e) {
-            $request = $call();
+            $call();
         }
 
-        $body = \GuzzleHttp\Psr7\copy_to_string($this->lastResponse->getBody());
-
-        if (!$returnJson) {
-            return $body;
-        }
-
-        try {
-            if ('' === $body) {
-                throw new \InvalidArgumentException('Empty body received.');
-            }
-
-            $data = JsonDecoder::decode($body, true);
-        } catch (\InvalidArgumentException $exception) {
-            throw new ExpectedJsonException(sprintf('ACME client excepted valid JSON as a response to request "%s %s" (given: "%s")', $request->getMethod(), $request->getUri(), ServerErrorHandler::getResponseBodySummary($this->lastResponse)), $exception);
-        }
-
-        return $data;
+        return $this->lastResponse;
     }
 
     public function setAccountKeyPair(KeyPair $keyPair)
@@ -358,68 +249,79 @@ class SecureHttpClient
         $this->accountKeyPair = $keyPair;
     }
 
-    /**
-     * @return int
-     */
-    public function getLastCode()
+    public function getLastCode(): int
     {
         return $this->lastResponse->getStatusCode();
     }
 
-    /**
-     * @return string
-     */
-    public function getLastLocation()
+    public function getLastLocation(): string
     {
         return $this->lastResponse->getHeaderLine('Location');
     }
 
-    /**
-     * @return array
-     */
-    public function getLastLinks()
+    public function getLastLinks(): array
     {
-        return \GuzzleHttp\Psr7\parse_header($this->lastResponse->getHeader('Link'));
+        return Header::parse($this->lastResponse->getHeader('Link'));
     }
 
-    /**
-     * @return KeyPair
-     */
-    public function getAccountKeyPair()
+    public function getAccountKeyPair(): KeyPair
     {
         return $this->accountKeyPair;
     }
 
-    /**
-     * @return KeyParser
-     */
-    public function getKeyParser()
+    public function getKeyParser(): KeyParser
     {
         return $this->keyParser;
     }
 
-    /**
-     * @return DataSigner
-     */
-    public function getDataSigner()
+    public function getDataSigner(): DataSigner
     {
         return $this->dataSigner;
     }
 
-    /**
-     * @param string $endpoint
-     */
-    public function setNonceEndpoint($endpoint)
+    public function setNonceEndpoint(string $endpoint)
     {
         $this->nonceEndpoint = $endpoint;
     }
 
-    /**
-     * @return Base64SafeEncoder
-     */
-    public function getBase64Encoder()
+    public function getBase64Encoder(): Base64SafeEncoder
     {
         return $this->base64Encoder;
+    }
+
+    /**
+     * Sign the given Payload.
+     */
+    private function signPayload(array $protected, array $payload = null): array
+    {
+        if (!isset($protected['alg'])) {
+            throw new \InvalidArgumentException('The property "alg" is required in the protected array');
+        }
+
+        $alg = $protected['alg'];
+
+        $privateKey = $this->accountKeyPair->getPrivateKey();
+        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
+
+        $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
+
+        if (null === $payload) {
+            $encodedPayload = '';
+        } elseif ([] === $payload) {
+            $encodedPayload = $this->base64Encoder->encode('{}');
+        } else {
+            $encodedPayload = $this->base64Encoder->encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
+        }
+
+        $signature = $this->base64Encoder->encode(
+            $this->dataSigner->signData($encodedProtected.'.'.$encodedPayload, $privateKey, $algorithm, $format)
+        );
+
+        return [
+            'protected' => $encodedProtected,
+            'payload' => $encodedPayload,
+            'signature' => $signature,
+        ];
     }
 
     private function createRequest($method, $endpoint, $data)
@@ -429,7 +331,7 @@ class SecureHttpClient
 
         if ('POST' === $method && \is_array($data)) {
             $request = $request->withHeader('Content-Type', 'application/jose+json');
-            $request = $request->withBody(\GuzzleHttp\Psr7\stream_for(json_encode($data)));
+            $request = $request->withBody(Utils::streamFor(json_encode($data)));
         }
 
         return $request;
@@ -446,7 +348,7 @@ class SecureHttpClient
         throw new AcmeCoreClientException(sprintf('An error occured during request "%s %s"', $request->getMethod(), $request->getUri()), $exception);
     }
 
-    private function getNonce()
+    private function getNonce(): ?string
     {
         if ($this->lastResponse && $this->lastResponse->hasHeader('Replay-Nonce')) {
             return $this->lastResponse->getHeaderLine('Replay-Nonce');
@@ -454,9 +356,64 @@ class SecureHttpClient
 
         if (null !== $this->nonceEndpoint) {
             $this->request('HEAD', $this->nonceEndpoint, [], false);
+
             if ($this->lastResponse->hasHeader('Replay-Nonce')) {
                 return $this->lastResponse->getHeaderLine('Replay-Nonce');
             }
         }
+
+        return null;
+    }
+
+    private function getAlg(): string
+    {
+        $privateKey = $this->accountKeyPair->getPrivateKey();
+        $parsedKey = $this->keyParser->parse($privateKey);
+
+        switch ($parsedKey->getType()) {
+            case OPENSSL_KEYTYPE_RSA:
+                return 'RS256';
+
+            case OPENSSL_KEYTYPE_EC:
+                switch ($parsedKey->getBits()) {
+                    case 256:
+                    case 384:
+                        return 'ES'.$parsedKey->getBits();
+                    case 521:
+                        return 'ES512';
+                }
+
+            // no break to let the default case
+            default:
+                throw new AcmeCoreClientException('Private key type is not supported');
+        }
+    }
+
+    private function extractSignOptionFromJWSAlg($alg): array
+    {
+        if (!preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
+            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
+        }
+
+        if (!\defined('OPENSSL_ALGO_SHA'.$match[2])) {
+            throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
+        }
+
+        $algorithm = \constant('OPENSSL_ALGO_SHA'.$match[2]);
+
+        switch ($match[1]) {
+            case 'RS':
+                $format = DataSigner::FORMAT_DER;
+                break;
+
+            case 'ES':
+                $format = DataSigner::FORMAT_ECDSA;
+                break;
+
+            default:
+                throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
+        }
+
+        return [$algorithm, $format];
     }
 }

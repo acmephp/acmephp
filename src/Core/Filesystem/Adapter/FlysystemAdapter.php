@@ -26,7 +26,7 @@ class FlysystemAdapter implements FilesystemInterface
         $this->filesystem = $filesystem;
     }
 
-    public function write($path, $content)
+    public function write(string $path, string $content)
     {
         $isOnRemote = $this->filesystem->has($path);
         if ($isOnRemote && !$this->filesystem->update($path, $content)) {
@@ -37,7 +37,7 @@ class FlysystemAdapter implements FilesystemInterface
         }
     }
 
-    public function delete($path)
+    public function delete(string $path)
     {
         $isOnRemote = $this->filesystem->has($path);
         if ($isOnRemote && !$this->filesystem->delete($path)) {
@@ -45,7 +45,7 @@ class FlysystemAdapter implements FilesystemInterface
         }
     }
 
-    public function createDir($path)
+    public function createDir(string $path)
     {
         $isOnRemote = $this->filesystem->has($path);
         if (!$isOnRemote && !$this->filesystem->createDir($path)) {
@@ -53,13 +53,7 @@ class FlysystemAdapter implements FilesystemInterface
         }
     }
 
-    /**
-     * @param string $path
-     * @param string $action
-     *
-     * @return \RuntimeException
-     */
-    private function createRuntimeException($path, $action)
+    private function createRuntimeException(string $path, string $action): \RuntimeException
     {
         return new \RuntimeException(
             sprintf(

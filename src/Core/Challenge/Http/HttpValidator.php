@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Core\Challenge\Http;
 
+use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
@@ -35,22 +36,22 @@ class HttpValidator implements ValidatorInterface
 
     public function __construct(HttpDataExtractor $extractor = null, Client $client = null)
     {
-        $this->extractor = null === $extractor ? new HttpDataExtractor() : $extractor;
-        $this->client = null === $client ? new Client() : $client;
+        $this->extractor = $extractor ?: new HttpDataExtractor();
+        $this->client = $client ?: new Client();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge)
+    public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
-        return 'http-01' === $authorizationChallenge->getType();
+        return 'http-01' === $authorizationChallenge->getType() && !$solver instanceof MockServerHttpSolver;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isValid(AuthorizationChallenge $authorizationChallenge)
+    public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
         $checkContent = $this->extractor->getCheckContent($authorizationChallenge);

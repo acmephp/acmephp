@@ -13,7 +13,7 @@ namespace Tests\AcmePhp\Cli\Mock;
 
 use Webmozart\PathUtil\Path;
 
-abstract class AbstractTestApplication extends \AcmePhp\Cli\Application
+class TestApplication extends \AcmePhp\Cli\Application
 {
     /**
      * @return string
@@ -21,13 +21,5 @@ abstract class AbstractTestApplication extends \AcmePhp\Cli\Application
     public function getStorageDirectory()
     {
         return Path::canonicalize(__DIR__.'/../Fixtures/local/master');
-    }
-
-    /**
-     * @return string
-     */
-    public function getBackupDirectory()
-    {
-        return Path::canonicalize(__DIR__.'/../Fixtures/local/backup');
     }
 }

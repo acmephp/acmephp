@@ -25,7 +25,7 @@ interface SolverInterface
      *
      * @return bool The solver supports the given challenge's type
      */
-    public function supports(AuthorizationChallenge $authorizationChallenge);
+    public function supports(AuthorizationChallenge $authorizationChallenge): bool;
 
     /**
      * Solve the given authorization challenge.

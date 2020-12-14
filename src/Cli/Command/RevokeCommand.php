@@ -11,6 +11,7 @@
 
 namespace AcmePhp\Cli\Command;
 
+use AcmePhp\Cli\Application;
 use AcmePhp\Core\Exception\Protocol\CertificateRevocationException;
 use AcmePhp\Core\Protocol\RevocationReason;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,6 +32,13 @@ class RevokeCommand extends AbstractCommand
             ->setDefinition([
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain revoke a certificate for'),
                 new InputArgument('reason-code', InputOption::VALUE_OPTIONAL, 'The reason code for revocation:'.PHP_EOL.$reasons),
+                new InputOption(
+                    'provider',
+                    null,
+                    InputOption::VALUE_REQUIRED,
+                    'Certificate provider to use (supported: '.implode(', ', Application::PROVIDERS).')',
+                    'letsencrypt'
+                ),
             ])
             ->setDescription('Revoke a SSL certificate for a domain')
             ->setHelp('The <info>%command.name%</info> command revoke a previously obtained certificate for a given domain');
@@ -41,8 +49,12 @@ class RevokeCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if (!isset(Application::PROVIDERS[$this->input->getOption('provider')])) {
+            throw new \InvalidArgumentException('Invalid provider, supported: '.implode(', ', Application::PROVIDERS));
+        }
+
         $repository = $this->getRepository();
-        $client = $this->getClient();
+        $client = $this->getClient(Application::PROVIDERS[$this->input->getOption('provider')]);
 
         $domain = (string) $input->getArgument('domain');
         $reasonCode = $input->getArgument('reason-code'); // ok to be null. LE expects 0 as default reason

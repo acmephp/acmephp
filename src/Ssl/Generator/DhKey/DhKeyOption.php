@@ -17,6 +17,7 @@ class DhKeyOption implements KeyOption
 {
     /** @var string */
     private $generator;
+
     /** @var string */
     private $prime;
 
@@ -26,24 +27,18 @@ class DhKeyOption implements KeyOption
      *
      * @see https://tools.ietf.org/html/rfc3526 how to choose a prime and generator numbers
      */
-    public function __construct($prime, $generator = '02')
+    public function __construct(string $prime, string $generator = '02')
     {
         $this->generator = pack('H*', $generator);
         $this->prime = pack('H*', $prime);
     }
 
-    /**
-     * @return string
-     */
-    public function getGenerator()
+    public function getGenerator(): string
     {
         return $this->generator;
     }
 
-    /**
-     * @return string
-     */
-    public function getPrime()
+    public function getPrime(): string
     {
         return $this->prime;
     }

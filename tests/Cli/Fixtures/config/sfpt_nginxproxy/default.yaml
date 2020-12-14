@@ -1,0 +1,23 @@
+contact_email: foo@example.com
+key_type: RSA
+provider: localhost
+
+defaults:
+    distinguished_name:
+        country: FR
+        locality: Paris
+        organization_name: Acme PHP
+
+certificates:
+    - domain: acmephp.com
+      solver:
+          name: mock-server
+      install:
+          - action: build_nginxproxy
+          - action: mirror_file
+            adapter: sftp
+            root: /share
+            host: localhost
+            username: acmephp
+            password: acmephp
+            port: 8022

@@ -23,28 +23,19 @@ abstract class Key
     /** @var string */
     protected $keyPEM;
 
-    /**
-     * @param string $keyPEM
-     */
-    public function __construct($keyPEM)
+    public function __construct(string $keyPEM)
     {
         Assert::stringNotEmpty($keyPEM, __CLASS__.'::$keyPEM should not be an empty string. Got %s');
 
         $this->keyPEM = $keyPEM;
     }
 
-    /**
-     * @return string
-     */
-    public function getPEM()
+    public function getPEM(): string
     {
         return $this->keyPEM;
     }
 
-    /**
-     * @return string
-     */
-    public function getDER()
+    public function getDER(): string
     {
         $lines = explode("\n", trim($this->keyPEM));
         unset($lines[\count($lines) - 1]);
