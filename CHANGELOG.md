@@ -1,3 +1,29 @@
+14/12/2020 20:10  2.0.0  v2.0
+2683496 Fix Box config and bump version
+4f56592 Merge pull request #212 from acmephp/2.0
+65a0ac1 Fix tests and CS
+8dc7923 Add alternate certificate tests
+258ea5c Add option that allows a client to download the alternate certificate link instead of the default one
+7e96853 Fix encoding issue
+e3550c5 Allow to configure directly EAB credentials
+c2bf09b Finalize EAB support
+8f10906 Adapt tests
+12533ba Add EAB structure
+7fa7a2a Add EAB test
+701b864 Bump minimum version of Symfony
+5183019 Remove legacy tests
+5ef6681 Migrate to Github Actions
+3fc8c60 Remove deprecated features
+ccbba76 Fix CS
+2a473a8 Migrate acmephp/cli to use typehints
+7d6b566 Fix tests
+ab68cac Bump PHP-CS-Fixer version
+c061e3a Migrate acmephp/core to use typehints
+b342a86 Migrate acmephp/ssl to use typehints
+be0a5b1 Fix subpackages composer.json
+e51784a Remove deprecated commands, improve tests on Run command and merge v2 interfaces
+e2be9c3 Upgrade dependencies and drop support for PHP <7.2
+2330ef6 Bump version
 13/12/2020 23:03  1.3.0  v1.3.0
 5d37fb1 Merge pull request #218 from acmephp/do-not-verify-https-http-vaidator
 fe50cf6 Merge pull request #217 from acmephp/openssl-php8
