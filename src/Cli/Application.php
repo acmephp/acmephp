@@ -35,7 +35,7 @@ class Application extends BaseApplication
      */
     public function __construct()
     {
-        parent::__construct('Acme PHP - Let\'s Encrypt/ZeroSSL client', '');
+        parent::__construct('Acme PHP - Let\'s Encrypt/ZeroSSL client', '2.0.0');
     }
 
     /**
