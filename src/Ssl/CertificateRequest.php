@@ -24,19 +24,37 @@ class CertificateRequest
     /** @var KeyPair */
     private $keyPair;
 
-    public function __construct(DistinguishedName $distinguishedName, KeyPair $keyPair)
+    /** @var CsrPem */
+    private $csrPem;
+
+    public function __construct(DistinguishedName $distinguishedName, KeyPair $keyPair, string $csr_pem = null)
     {
         $this->distinguishedName = $distinguishedName;
         $this->keyPair = $keyPair;
+        $this->csrPem = $csr_pem;
     }
 
-    public function getDistinguishedName(): DistinguishedName
+    /**
+     * @return DistinguishedName
+     */
+    public function getDistinguishedName()
     {
         return $this->distinguishedName;
     }
 
-    public function getKeyPair(): KeyPair
+    /**
+     * @return KeyPair
+     */
+    public function getKeyPair()
     {
         return $this->keyPair;
+    }
+
+    /**
+     * @return CsrPem
+     */
+    public function getCsrPem()
+    {
+        return $this->csrPem;
     }
 }
