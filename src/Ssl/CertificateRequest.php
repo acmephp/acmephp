@@ -27,11 +27,11 @@ class CertificateRequest
     /** @var CsrPem */
     private $csrPem;
 
-    public function __construct(DistinguishedName $distinguishedName, KeyPair $keyPair, string $csr_pem = null)
+    public function __construct(DistinguishedName $distinguishedName, KeyPair $keyPair, string $csrPem = null)
     {
         $this->distinguishedName = $distinguishedName;
         $this->keyPair = $keyPair;
-        $this->csrPem = $csr_pem;
+        $this->csrPem = $csrPem;
     }
 
     /**
