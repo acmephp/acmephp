@@ -332,6 +332,7 @@ class AcmeClient implements AcmeClientInterface
     private function createCertificateResponse(CertificateRequest $csr, string $certificate): CertificateResponse
     {
         $certificatesChain = null;
+        $certificate = str_replace("-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----", "-----END CERTIFICATE-----\n\n-----BEGIN CERTIFICATE-----", $certificate);
         foreach (array_reverse(explode("\n\n", $certificate)) as $pem) {
             $certificatesChain = new Certificate($pem, $certificatesChain);
         }
