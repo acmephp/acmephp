@@ -31,7 +31,7 @@
         "ext-hash": "*",
         "ext-json": "*",
         "ext-openssl": "*",
-        "acmephp/ssl": "^1.0",
+        "acmephp/ssl": "^2.0",
         "guzzlehttp/guzzle": "^6.0|^7.0",
         "guzzlehttp/psr7": "^1.0",
         "lcobucci/jwt": "^3.3",
