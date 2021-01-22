@@ -110,7 +110,7 @@ interface AcmeClientInterface
      *
      * @return AuthorizationChallenges[] the list of authorization challenge group data per domain as returned by the Certificate Authority
      */
-    public function requestMultipleAuthorization($domains);
+    public function requestMultipleAuthorization(array $domains): array;
 
     /**
      * Request authorization challenge data for a given domain.
