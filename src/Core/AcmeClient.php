@@ -194,6 +194,27 @@ class AcmeClient implements AcmeClientInterface
     /**
      * {@inheritdoc}
      */
+    public function requestMultipleAuthorization(array $domains): array 
+    {
+        if (is_array($domains)) {
+            $order = $this->requestOrder($domains);
+
+            $authorizationChallenges = array();
+
+            try {
+                foreach($domains as $domain) {
+                    $authorizationChallenges[] = $order->getAuthorizationChallenges($domain);
+                }
+                return $authorizationChallenges;
+            } catch (AcmeCoreClientException $e) {
+                throw new ChallengeNotSupportedException();
+            }
+        }
+    }    
+
+    /**
+     * {@inheritdoc}
+     */
     public function requestAuthorization(string $domain): array
     {
         $order = $this->requestOrder([$domain]);
