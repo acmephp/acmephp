@@ -36,7 +36,7 @@ use Webmozart\Assert\Assert;
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class AcmeClient implements AcmeClientInterface
+class AcmeClient implements MultipleAuthorizationClientInterface
 {
     /**
      * @var SecureHttpClient
@@ -196,21 +196,19 @@ class AcmeClient implements AcmeClientInterface
      */
     public function requestMultipleAuthorization(array $domains): array 
     {
-        if (is_array($domains)) {
-            $order = $this->requestOrder($domains);
+        $order = $this->requestOrder($domains);
+        $authorizationChallenges = [];
 
-            $authorizationChallenges = array();
-
-            try {
-                foreach($domains as $domain) {
-                    $authorizationChallenges[] = $order->getAuthorizationChallenges($domain);
-                }
-                return $authorizationChallenges;
-            } catch (AcmeCoreClientException $e) {
-                throw new ChallengeNotSupportedException();
+        try {
+            foreach($domains as $domain) {
+                $authorizationChallenges[] = $order->getAuthorizationChallenges($domain);
             }
+
+            return $authorizationChallenges;
+        } catch (AcmeCoreClientException $e) {
+            throw new ChallengeNotSupportedException();
         }
-    }    
+    }
 
     /**
      * {@inheritdoc}
