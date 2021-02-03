@@ -1,3 +1,9 @@
+03/02/2021 22:29  2.0.1  Fix requirements
+8efc61a Fix CI config
+8b26916 Merge pull request #223 from piotrantosik/patch-1
+f836e0c Merge pull request #224 from jackdpeterson/expand_composer_deps
+b50c730 expand compatibility range for lcobucci/jwt to include both ^3.3 as well as ^4.0.
+f1fbaf1 Require acmephp/ssl 2.0
 14/12/2020 20:10  2.0.0  v2.0
 2683496 Fix Box config and bump version
 4f56592 Merge pull request #212 from acmephp/2.0
