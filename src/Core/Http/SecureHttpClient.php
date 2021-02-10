@@ -256,7 +256,7 @@ class SecureHttpClient
         try {
             $call();
         } catch (BadNonceServerException $e) {
-            if ($this->currentSign === self::SIGN_KID) {
+            if (self::SIGN_KID === $this->currentSign) {
                 $data = $this->signKidPayload($endpoint, $this->currentKid, $this->currentPayload);
             } else {
                 $data = $this->signJwkPayload($endpoint, $this->currentPayload);
