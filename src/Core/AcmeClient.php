@@ -155,7 +155,11 @@ class AcmeClient implements AcmeClientInterface
         if (\in_array($response['status'], ['pending', 'processing', 'ready'])) {
             $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
 
-            $csrContent = $this->csrSigner->signCertificateRequest($csr);
+            $csrContent = $csr->getCsrPem();
+            if ($csrContent === null) {
+                    $csrContent = $this->csrSigner->signCertificateRequest($csr);
+            }
+            
             $csrContent = trim(str_replace($humanText, '', $csrContent));
             $csrContent = trim($client->getBase64Encoder()->encode(base64_decode($csrContent)));
 
@@ -328,6 +332,7 @@ class AcmeClient implements AcmeClientInterface
     private function createCertificateResponse(CertificateRequest $csr, string $certificate): CertificateResponse
     {
         $certificatesChain = null;
+        $certificate = str_replace("-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----", "-----END CERTIFICATE-----\n\n-----BEGIN CERTIFICATE-----", $certificate);
         foreach (array_reverse(explode("\n\n", $certificate)) as $pem) {
             $certificatesChain = new Certificate($pem, $certificatesChain);
         }
