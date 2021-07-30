@@ -81,7 +81,7 @@ jobs:
             - name: Running tests
               run: ./tests/run.sh
 
-    tests-php73-deps-lock-pebble-default:
+    tests-php81-deps-lock-pebble-default:
         runs-on: ubuntu-latest
         steps:
             - uses: shivammathur/setup-php@v2
