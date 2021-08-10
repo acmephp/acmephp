@@ -17,9 +17,10 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Webmozart\Assert\Assert;
 use \Psr\Http\Message\ResponseInterface;
+use \AcmePhp\Core\Challenge\ConfigurableServiceInterface;
 
 
-class DigitalOceanSolver implements MultipleChallengesSolverInterface
+class DigitalOceanSolver implements MultipleChallengesSolverInterface, ConfigurableServiceInterface
 {
     use LoggerAwareTrait;
 
@@ -49,17 +50,24 @@ class DigitalOceanSolver implements MultipleChallengesSolverInterface
     private $m_cachedCreatedRecords;
 
 
-    public function __construct(DnsDataExtractor $extractor = null, \GuzzleHttp\Client $httpClient, string $apiKey)
+    public function __construct(DnsDataExtractor $extractor = null, \GuzzleHttp\Client $httpClient)
     {
-        // @TODO - remove this hardcoding after figuring out how to get it injected.
-        $apiKey = "NeedToFigureOutHowToGetThisPassedInCorrectly.";
-
         $this->extractor = $extractor ?: new DnsDataExtractor();
-
-        $this->m_apiKey = $apiKey;
+        $this->m_apiKey = ""; // this gets set later in the configure public method.
         $this->m_cachedCreatedRecords = array();
         $this->m_httpClient = $httpClient;
         $this->logger = new NullLogger();
+    }
+
+
+    /**
+     * Configure this service from the details in the config file
+     * @param array $config - the array form of the YAML file.
+     */
+    public function configure(array $config)
+    {
+        Assert::keyExists($config, 'api_key', 'configure::$config expected an array with the key %s.');
+        $this->m_apiKey = $config['api_key'];
     }
 
 
@@ -176,12 +184,10 @@ class DigitalOceanSolver implements MultipleChallengesSolverInterface
     {
         $response = $this->sendRequest("DELETE", "/domains/{$domain}/records/{$recordId}");
 
-        die("delete response: " . print_r($response->getBody()));
-
         // check that the request was successful
-        if ($response->getStatusCode() !== 200)
+        if ($response->getStatusCode() !== 204)
         {
-            throw new \Exception("Request to delete record failed.");
+            print "Failed to cleanup TXT challenge record." . PHP_EOL;
         }
     }
 
