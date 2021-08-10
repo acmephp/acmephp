@@ -122,7 +122,14 @@ $ acmephp run path-to-config.yml
 You can also use the docker image to generate certificates.
 Certificates and keys are stored into the volume `/root/.acmephp`
 
+```bash
+$ docker run --rm -ti -v /cache/.acmephp:/root/.acmephp -v $PWD/.config.yml:/etc/acmephp.yml:ro acmephp/acmephp:latest run /etc/acmephp.yml
 ```
-docker run --rm -ti -v /cache/.acmephp:/root/.acmephp -v $PWD/.config.yml:/etc/acmephp.yml:ro acmephp/acmephp:latest run /etc/acmephp.yml
+
+## Building The Docker Image
+You can use the Dockerfile to build your own Docker image.
+
+```bash
+$ docker build . acmephp
 ```
 
