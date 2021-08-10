@@ -149,7 +149,6 @@
         <service id="acmephp.challenge_solver.digitalocean" class="AcmePhp\Core\Challenge\Dns\DigitalOceanSolver" public="false">
             <argument type="service" id="challenge_extractor.dns" />
             <argument type="service" id="http.raw_client" />
-            <argument type="string" id="api_key">apiKey</argument>
             <call method="setLogger"><argument type="service" id="cli_logger"/></call>
             <tag name="acmephp.challenge_solver" alias="digitalocean" />
         </service>
