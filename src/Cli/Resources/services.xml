@@ -96,6 +96,10 @@
             <argument type="service" id="aws.client_factory" />
             <tag name="acmephp.action" alias="install_aws_elb" />
         </service>
+        <service id="acmephp.action.install_cpanel" class="AcmePhp\Cli\Action\InstallCPanelAction" public="false">
+            <argument type="service" id="http.raw_client" />
+            <tag name="acmephp.action" alias="install_cpanel" />
+        </service>
         <service id="acmephp.action.install_aws_elbv2" class="AcmePhp\Cli\Action\InstallAwsElbv2Action" public="false">
             <argument type="service" id="aws.client_factory" />
             <tag name="acmephp.action" alias="install_aws_elbv2" />
