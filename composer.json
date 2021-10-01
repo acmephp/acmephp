@@ -1,5 +1,5 @@
 {
-    "name": "acmephp/acmephp",
+    "name": "callroute/acmephp",
     "description": "Let's Encrypt client written in PHP",
     "type": "project",
     "license": "MIT",
