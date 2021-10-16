@@ -243,9 +243,18 @@ class DigitalOceanSolver implements MultipleChallengesSolverInterface, Configura
      */
     private function getDomainFromFQDN($FQDN) : string
     {
-        $parts = explode(".", $FQDN);
-        $numParts = count($parts);
-        $domain = $parts[$numParts - 2] . '.' . $parts[$numParts - 1];
+        $secondLevelDomainsRegex = '/\.asn\.au$|\.com\.au$|\.net\.au$|\.id\.au$|\.org\.au$|\.edu\.au$|\.gov\.au$|\.csiro\.au$|\.act\.au$|\.nsw\.au$|\.nt\.au$|\.qld\.au$|\.sa\.au$|\.tas\.au$|\.vic\.au$|\.wa\.au$|\.co\.at$|\.or\.at$|\.priv\.at$|\.ac\.at$|\.avocat\.fr$|\.aeroport\.fr$|\.veterinaire\.fr$|\.co\.hu$|\.film\.hu$|\.lakas\.hu$|\.ingatlan\.hu$|\.sport\.hu$|\.hotel\.hu$|\.ac\.nz$|\.co\.nz$|\.geek\.nz$|\.gen\.nz$|\.kiwi\.nz$|\.maori\.nz$|\.net\.nz$|\.org\.nz$|\.school\.nz$|\.cri\.nz$|\.govt\.nz$|\.health\.nz$|\.iwi\.nz$|\.mil\.nz$|\.parliament\.nz$|\.ac\.za$|\.gov\.za$|\.law\.za$|\.mil\.za$|\.nom\.za$|\.school\.za$|\.net\.za$|\.co\.uk$|\.org\.uk$|\.me\.uk$|\.ltd\.uk$|\.plc\.uk$|\.net\.uk$|\.sch\.uk$|\.ac\.uk$|\.gov\.uk$|\.mod\.uk$|\.mil\.uk$|\.nhs\.uk$|\.police\.uk$/';
+        $parts = array_reverse(explode('.', $FQDN));
+
+        if (preg_match($secondLevelDomainsRegex, $FQDN))
+        {
+            $domain = "$parts[2].$parts[1].$parts[0]";
+        }
+        else
+        {
+            $domain = "$parts[1].$parts[0]";
+        }
+
         return $domain;
     }
 
