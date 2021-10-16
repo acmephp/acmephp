@@ -267,12 +267,17 @@ class DigitalOceanSolver implements MultipleChallengesSolverInterface, Configura
      */
     private function getSubdomainForFQDN(string $FQDN) : string
     {
+        $domain = $this->getDomainFromFQDN($FQDN);
+        $numPartsInDomain = count(explode(".", $domain));
+
         $parts = explode(".", $FQDN);
 
         // remove the last two elements which are the domain.
-        array_pop($parts);
-        array_pop($parts);
-
+        for ($i=0; $i<$numPartsInDomain; $i++)
+        {
+            array_pop($parts);
+        }
+        
         $subdomain = implode(".", $parts);
         return $subdomain;
     }
