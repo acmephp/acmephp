@@ -76,6 +76,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * Ask for domain challenge
          */
         $order = $client->requestOrder(['acmephp.com']);
+        $this->assertEquals('pending', $order->getStatus());
         $challenges = $order->getAuthorizationChallenges('acmephp.com');
         foreach ($challenges as $challenge) {
             if ('http-01' === $challenge->getType()) {
@@ -99,6 +100,15 @@ class AcmeClientTest extends AbstractFunctionnalTest
         } finally {
             $this->cleanChallenge($challenge->getToken());
         }
+
+        /**
+         * Reload order, check if challenge was completed.
+         */
+        $updatedOrder = $client->reloadOrder($order);
+        $this->assertEquals('ready', $updatedOrder->getStatus());
+        $this->assertCount(1, $updatedOrder->getAuthorizationChallenges('acmephp.com'));
+        $validatedChallenge = $updatedOrder->getAuthorizationChallenges('acmephp.com')[0];
+        $this->assertEquals('valid', $validatedChallenge->getStatus());
 
         /*
          * Request certificate
