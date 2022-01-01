@@ -11,7 +11,7 @@
 
 namespace Tests\AcmePhp\Cli\Mock;
 
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class TestApplication extends \AcmePhp\Cli\Application
 {

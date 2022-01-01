@@ -61,8 +61,7 @@
         "symfony/filesystem": "^5.0|^6.0",
         "symfony/serializer": "^5.0|^6.0",
         "symfony/yaml": "^5.0|^6.0",
-        "webmozart/assert": "^1.0",
-        "webmozart/path-util": "^2.3"
+        "webmozart/assert": "^1.0"
     },
     "suggest": {
         "daverandom/libdns": "^2.0"
