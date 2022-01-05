@@ -2,7 +2,6 @@ Acme PHP
 ========
 
 [![Build Status](https://img.shields.io/travis/acmephp/acmephp/master.svg?style=flat-square)](https://travis-ci.org/acmephp/acmephp)
-[![StyleCI](https://styleci.io/repos/59910490/shield)](https://styleci.io/repos/59910490)
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
@@ -18,8 +17,7 @@ able to deeply integrate the management of your certificates directly in your ap
 by these features, have a look at the [acmephp/core](https://github.com/acmephp/core) and
 [acmephp/ssl](https://github.com/acmephp/ssl) libraries.
 
-> If you want to chat with us or have questions, ping
-> @tgalopin or @jderusse on the [Symfony Slack](https://symfony.com/support)!
+>  Acme PHP is now maintained by https://zerossl.com.
 
 ## Why should I use Acme PHP when I have an official client?
 
