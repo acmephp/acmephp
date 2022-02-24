@@ -211,7 +211,7 @@ class SecureHttpClient
 
             $data = JsonDecoder::decode($body, true);
         } catch (\InvalidArgumentException $exception) {
-            throw new ExpectedJsonException(sprintf('ACME client excepted valid JSON as a response to request "%s %s" (given: "%s")', $method, $endpoint, ServerErrorHandler::getResponseBodySummary($response)), $exception);
+            throw new ExpectedJsonException(sprintf('ACME client expected valid JSON as a response to request "%s %s" (given: "%s")', $method, $endpoint, ServerErrorHandler::getResponseBodySummary($response)), $exception);
         }
 
         return $data;
