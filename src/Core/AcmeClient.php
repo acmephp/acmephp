@@ -331,8 +331,8 @@ class AcmeClient implements AcmeClientInterface
         $certificatesChain = null;
 
         foreach (array_reverse(explode($certificateHeader, $certificate)) as $pem) {
-            if (\trim($pem) !== '') {
-                $certificatesChain = new Certificate($certificateHeader . $pem, $certificatesChain);
+            if ('' !== \trim($pem)) {
+                $certificatesChain = new Certificate($certificateHeader.$pem, $certificatesChain);
             }
         }
 
