@@ -56,7 +56,7 @@
         "psr/log": "^3.0",
         "swiftmailer/swiftmailer": "^5.4|^6.0",
         "symfony/config": "^5.0",
-        "symfony/console": "^5.0",
+        "symfony/console": "^6.0",
         "symfony/dependency-injection": "^5.0",
         "symfony/filesystem": "^5.0",
         "symfony/serializer": "^5.0",
