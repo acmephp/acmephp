@@ -6,3 +6,4 @@ vendor/
 doc/.couscous
 .subsplit
 .phpunit.result.cache
+/.idea/
