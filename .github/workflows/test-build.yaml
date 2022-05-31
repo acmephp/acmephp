@@ -12,15 +12,16 @@ jobs:
         steps:
             - uses: shivammathur/setup-php@v2
               with:
-                  php-version: '7.2'
+                  php-version: '8.1'
                   coverage: none
 
             - uses: actions/checkout@master
 
-            - name: php-cs-fixer
-              run: |
-                  wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.4/php-cs-fixer.phar -q
-                  php php-cs-fixer.phar fix --dry-run --diff
+            - name: Install php-cs-fixer
+              run: wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.4.0/php-cs-fixer.phar -q
+
+            - name: Check coding style
+              run: php php-cs-fixer.phar fix --dry-run --diff
 
     tests-php72-sf50-low:
         runs-on: ubuntu-latest
