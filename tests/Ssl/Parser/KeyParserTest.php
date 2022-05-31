@@ -30,30 +30,30 @@ class KeyParserTest extends TestCase
         $this->service = new KeyParser();
     }
 
-    public function test_parse_PublicKey_raise_proper_exception()
+    public function testParsePublicKeyRaiseProperException()
     {
         $this->expectException('AcmePhp\Ssl\Exception\KeyParsingException');
         $this->service->parse(new PublicKey('Not a key'));
     }
 
-    public function test_parse_PrivateKey_raise_proper_exception()
+    public function testParsePrivateKeyRaiseProperException()
     {
         $this->expectException('AcmePhp\Ssl\Exception\KeyParsingException');
         $this->service->parse(new PrivateKey('Not a key'));
     }
 
-    public function test_get_PrivateKey_has_invalid_detail()
+    public function testGetPrivateKeyHasInvalidDetail()
     {
         $this->assertFalse($this->service->parse($this->getPrivateKey())->hasDetail('invalid'));
     }
 
-    public function test_get_PrivateKey_get_invalid_detail_raise_proper_exception()
+    public function testGetPrivateKeyGetInvalidDetailRaiseProperException()
     {
         $this->expectException('InvalidArgumentException');
         $this->service->parse($this->getPrivateKey())->getDetail('invalid');
     }
 
-    public function test_parse_PrivateKey_returns_instance_of_ParsedKey()
+    public function testParsePrivateKeyReturnsInstanceOfParsedKey()
     {
         $result = $this->service->parse($this->getPrivateKey());
 
@@ -67,7 +67,7 @@ class KeyParserTest extends TestCase
         $this->assertEquals(trim($this->getPublicKey()->getPEM()), trim($result->getKey()));
     }
 
-    public function test_parse_PublicKey_returns_instance_of_ParsedKey()
+    public function testParsePublicKeyReturnsInstanceOfParsedKey()
     {
         $result = $this->service->parse($this->getPublicKey());
 
