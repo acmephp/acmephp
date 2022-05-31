@@ -165,7 +165,7 @@ class SecureHttpClient
         $signer = new Sha256();
 
         $protected = [
-            'alg' => $signer->getAlgorithmId(),
+            'alg' => method_exists($signer, 'algorithmId') ? $signer->algorithmId() : $signer->getAlgorithmId(),
             'kid' => $externalAccount->getId(),
             'url' => $url,
         ];
@@ -176,7 +176,7 @@ class SecureHttpClient
         $hmacKey = $this->base64Encoder->decode($externalAccount->getHmacKey());
         $hmacKey = class_exists(InMemory::class) ? InMemory::plainText($hmacKey) : $hmacKey;
 
-        $signature = $this->base64Encoder->encode((string) $signer->sign($encodedProtected.'.'.$encodedPayload, $hmacKey));
+        $signature = $this->base64Encoder->encode($signer->sign($encodedProtected.'.'.$encodedPayload, $hmacKey));
 
         return [
             'protected' => $encodedProtected,

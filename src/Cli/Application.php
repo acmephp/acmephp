@@ -17,6 +17,7 @@ use AcmePhp\Cli\Command\RunCommand;
 use AcmePhp\Cli\Command\SelfUpdateCommand;
 use AcmePhp\Cli\Command\StatusCommand;
 use Symfony\Component\Console\Application as BaseApplication;
+use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\PathUtil\Path;
 
 /**
@@ -41,7 +42,7 @@ class Application extends BaseApplication
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultCommands()
+    protected function getDefaultCommands(): array
     {
         return array_merge(parent::getDefaultCommands(), [
             new RunCommand(),
@@ -54,7 +55,7 @@ class Application extends BaseApplication
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultHelperSet()
+    protected function getDefaultHelperSet(): HelperSet
     {
         $set = parent::getDefaultHelperSet();
         $set->set(new DistinguishedNameHelper());

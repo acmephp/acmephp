@@ -13,86 +13,135 @@ jobs:
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: '7.2'
+                  coverage: none
+
             - uses: actions/checkout@master
+
             - name: php-cs-fixer
               run: |
                   wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.4/php-cs-fixer.phar -q
                   php php-cs-fixer.phar fix --dry-run --diff
 
-    tests-php72-deps-low-pebble-default:
+    tests-php72-sf50-low:
         runs-on: ubuntu-latest
+        env:
+            SYMFONY_VERSION: 5.0.*
         steps:
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: '7.2'
+                  coverage: none
+
             - uses: actions/checkout@master
+
             - name: Install dependencies
               run: |
                   composer require --dev "sebastian/comparator:^2.0"
+                  composer require --no-update symfony/config=$SYMFONY_VERSION symfony/console=$SYMFONY_VERSION symfony/dependency-injection=$SYMFONY_VERSION symfony/filesystem=$SYMFONY_VERSION symfony/serializer=$SYMFONY_VERSION symfony/yaml=$SYMFONY_VERSION
+                  composer require --no-update --dev symfony/finder=$SYMFONY_VERSION
                   composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable
+
             - name: Preparing tests
               run: ./tests/setup.sh
+
             - name: Running tests
               run: ./tests/run.sh
 
-    tests-php73-deps-lock-pebble-default:
+    tests-php73-sf54-low:
         runs-on: ubuntu-latest
+        env:
+            SYMFONY_VERSION: 5.4.*
         steps:
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: '7.3'
+                  coverage: none
+
             - uses: actions/checkout@master
+
             - name: Install dependencies
-              run: composer install
+              run: |
+                  composer require --dev "sebastian/comparator:^2.0"
+                  composer require --no-update symfony/config=$SYMFONY_VERSION symfony/console=$SYMFONY_VERSION symfony/dependency-injection=$SYMFONY_VERSION symfony/filesystem=$SYMFONY_VERSION symfony/serializer=$SYMFONY_VERSION symfony/yaml=$SYMFONY_VERSION
+                  composer require --no-update --dev symfony/finder=$SYMFONY_VERSION
+                  composer update --no-interaction --no-progress --ansi --prefer-lowest --prefer-stable
+
             - name: Preparing tests
               run: ./tests/setup.sh
+
             - name: Running tests
               run: ./tests/run.sh
 
-    tests-php74-deps-high-pebble-eab:
+    tests-php74-sf54-high-eab:
         runs-on: ubuntu-latest
         env:
+            SYMFONY_VERSION: 5.4.*
             PEBBLE_MODE: eab
         steps:
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: '7.4'
+                  coverage: none
+
             - uses: actions/checkout@master
+
             - name: Install dependencies
-              run: composer update --no-interaction --no-progress --ansi --prefer-stable
+              run: |
+                  composer require --no-update symfony/config=$SYMFONY_VERSION symfony/console=$SYMFONY_VERSION symfony/dependency-injection=$SYMFONY_VERSION symfony/filesystem=$SYMFONY_VERSION symfony/serializer=$SYMFONY_VERSION symfony/yaml=$SYMFONY_VERSION
+                  composer require --no-update --dev symfony/finder=$SYMFONY_VERSION
+                  composer update --no-interaction --no-progress --ansi --prefer-stable
+
             - name: Preparing tests
               run: ./tests/setup.sh
+
             - name: Running tests
               run: ./tests/run.sh
 
-    tests-php80-deps-high-pebble-eab:
+    tests-php80-sf60-high:
         runs-on: ubuntu-latest
         env:
-            PEBBLE_MODE: eab
+            SYMFONY_VERSION: 6.0.*
         steps:
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: '8.0'
+                  coverage: none
+
             - uses: actions/checkout@master
+
             - name: Install dependencies
-              run: composer update --no-interaction --no-progress --ansi --prefer-stable
+              run: |
+                  composer require --no-update symfony/config=$SYMFONY_VERSION symfony/console=$SYMFONY_VERSION symfony/dependency-injection=$SYMFONY_VERSION symfony/filesystem=$SYMFONY_VERSION symfony/serializer=$SYMFONY_VERSION symfony/yaml=$SYMFONY_VERSION
+                  composer require --no-update --dev symfony/finder=$SYMFONY_VERSION
+                  composer update --no-interaction --no-progress --ansi --prefer-stable
+
             - name: Preparing tests
               run: ./tests/setup.sh
+
             - name: Running tests
               run: ./tests/run.sh
 
-    tests-php81-deps-high-pebble-eab:
+    tests-php81-sf61-high-eab:
         runs-on: ubuntu-latest
         env:
+            SYMFONY_VERSION: 6.1.*
             PEBBLE_MODE: eab
         steps:
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: '8.1'
+                  coverage: none
+
             - uses: actions/checkout@master
+
             - name: Install dependencies
-              run: composer update --no-interaction --no-progress --ansi --prefer-stable
+              run: |
+                  composer require --no-update symfony/config=$SYMFONY_VERSION symfony/console=$SYMFONY_VERSION symfony/dependency-injection=$SYMFONY_VERSION symfony/filesystem=$SYMFONY_VERSION symfony/serializer=$SYMFONY_VERSION symfony/yaml=$SYMFONY_VERSION
+                  composer require --no-update --dev symfony/finder=$SYMFONY_VERSION
+                  composer update --no-interaction --no-progress --ansi --prefer-stable
+
             - name: Preparing tests
               run: ./tests/setup.sh
+
             - name: Running tests
               run: ./tests/run.sh
