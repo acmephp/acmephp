@@ -42,8 +42,20 @@ class CertificateOrder
 
     public function toArray(): array
     {
+        $authorizationsChallenges = array_map(
+            function ($challenges): array {
+                return array_map(
+                    function ($challenge): array {
+                        return $challenge->toArray();
+                    },
+                    $challenges
+                );
+            },
+            $this->getAuthorizationsChallenges()
+        );
+
         return [
-            'authorizationsChallenges' => $this->getAuthorizationsChallenges(),
+            'authorizationsChallenges' => $authorizationsChallenges,
             'orderEndpoint' => $this->getOrderEndpoint(),
         ];
     }
