@@ -24,7 +24,7 @@ class PemEncoder implements EncoderInterface, DecoderInterface
     /**
      * {@inheritdoc}
      */
-    public function encode($data, $format, array $context = [])
+    public function encode($data, $format, array $context = []): string
     {
         return trim($data)."\n";
     }
@@ -40,7 +40,7 @@ class PemEncoder implements EncoderInterface, DecoderInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsEncoding($format)
+    public function supportsEncoding($format): bool
     {
         return self::FORMAT === $format;
     }
