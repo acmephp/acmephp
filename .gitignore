@@ -2,7 +2,7 @@
 /box.json
 composer.lock
 vendor/
-.php_cs.cache
+.php-cs-fixer.cache
 doc/.couscous
 .subsplit
 .phpunit.result.cache

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class PublicKeyTest extends TestCase
 {
-    public function test_fromDER_returns_a_PublicKey()
+    public function testFromDERReturnsAPublicKey()
     {
         $derb64 = 'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAx9yClfLCWWRxnUNL1DfR
 hyQAosYPDdcBaVHu+tx5p1sIsghRyvWIzn8ZA0kSvtpT+9jbPkUwcLTPLGW0SAC8
@@ -37,7 +37,7 @@ zoQL2yWlSN/1pRKChfSu6X8CAwEAAQ==';
         $this->assertEquals('48fa4235a71c704c815363702d7effbb', md5($publicKey->getPEM()));
     }
 
-    public function test_getDER_returns_a_string()
+    public function testGetDERReturnsAString()
     {
         $publicKey = new PublicKey('-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAx9yClfLCWWRxnUNL1DfR
@@ -60,7 +60,7 @@ zoQL2yWlSN/1pRKChfSu6X8CAwEAAQ==
         $this->assertEquals('d2ea173bab74794037c74653b65433af', md5($der));
     }
 
-    public function test_getHPKP_returns_a_string()
+    public function testGetHPKPReturnsAString()
     {
         $publicKey = new PublicKey('-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAx9yClfLCWWRxnUNL1DfR

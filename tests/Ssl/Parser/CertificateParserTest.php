@@ -28,13 +28,13 @@ class CertificateParserTest extends TestCase
         $this->service = new CertificateParser();
     }
 
-    public function test_parse_raise_proper_exception()
+    public function testParseRaiseProperException()
     {
         $this->expectException('AcmePhp\Ssl\Exception\CertificateParsingException');
         $this->service->parse(new Certificate('Not a cert'));
     }
 
-    public function test_parse_returns_instance_of_ParsedCertificate()
+    public function testParseReturnsInstanceOfParsedCertificate()
     {
         $result = $this->service->parse(
             new Certificate(
@@ -88,7 +88,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertFalse($result->isSelfSigned());
     }
 
-    public function test_parse_without_issuer_CN_returns_instance_of_ParsedCertificate()
+    public function testParseWithoutIssuerCNReturnsInstanceOfParsedCertificate()
     {
         $result = $this->service->parse(
             new Certificate(
