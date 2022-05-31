@@ -67,6 +67,11 @@ interface AcmeClientInterface
     public function requestOrder(array $domains): CertificateOrder;
 
     /**
+     * Request the current status of a certificate order.
+     */
+    public function reloadOrder(CertificateOrder $order): CertificateOrder;
+
+    /**
      * Request a certificate for the given domain.
      *
      * This method should be called only if a previous authorization challenge has
