@@ -18,9 +18,12 @@ use AcmePhp\Ssl\Generator\KeyPairGenerator;
 use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
 use AcmePhp\Ssl\KeyPair;
 use PHPUnit\Framework\TestCase;
+use Tests\AcmePhp\Ssl\AssertsOpenSslResource;
 
 class KeyPairGeneratorTest extends TestCase
 {
+    use AssertsOpenSslResource;
+
     /** @var KeyPairGenerator */
     private $service;
 
@@ -36,14 +39,14 @@ class KeyPairGeneratorTest extends TestCase
         $result = $this->service->generateKeyPair(new RsaKeyOption(1024));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertStringContainsString('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertIsResource($result->getPublicKey()->getResource());
-        $this->assertIsResource($result->getPrivateKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPublicKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertEquals(1024, $details['bits']);
         $this->assertArrayHasKey('rsa', $details);
+
+        $this->assertEquals($details['key'], $result->getPublicKey()->getPEM());
     }
 
     public function test_generateKeyPair_generate_random_instance_of_KeyPair_using_DH()
@@ -54,13 +57,13 @@ class KeyPairGeneratorTest extends TestCase
         ));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertStringContainsString('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertIsResource($result->getPublicKey()->getResource());
-        $this->assertIsResource($result->getPrivateKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPublicKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertArrayHasKey('dh', $details);
+
+        $this->assertEquals($details['key'], $result->getPublicKey()->getPEM());
     }
 
     public function test_generateKeyPair_generate_random_instance_of_KeyPair_using_DSA()
@@ -68,14 +71,14 @@ class KeyPairGeneratorTest extends TestCase
         $result = $this->service->generateKeyPair(new DsaKeyOption(1024));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertStringContainsString('-----BEGIN PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertIsResource($result->getPublicKey()->getResource());
-        $this->assertIsResource($result->getPrivateKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPublicKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertEquals(1024, $details['bits']);
         $this->assertArrayHasKey('dsa', $details);
+
+        $this->assertEquals($details['key'], $result->getPublicKey()->getPEM());
     }
 
     /**
@@ -86,14 +89,14 @@ class KeyPairGeneratorTest extends TestCase
         $result = $this->service->generateKeyPair(new EcKeyOption('secp112r1'));
 
         $this->assertInstanceOf(KeyPair::class, $result);
-        $this->assertStringContainsString('-----BEGIN PUBLIC KEY-----', $result->getPublicKey()->getPEM());
-        $this->assertStringContainsString('-----BEGIN EC PRIVATE KEY-----', $result->getPrivateKey()->getPEM());
-        $this->assertIsResource($result->getPublicKey()->getResource());
-        $this->assertIsResource($result->getPrivateKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPublicKey()->getResource());
+        $this->assertIsOpenSslAsymmetricKey($result->getPrivateKey()->getResource());
 
         $details = openssl_pkey_get_details($result->getPrivateKey()->getResource());
         $this->assertEquals(112, $details['bits']);
         $this->assertArrayHasKey('ec', $details);
         $this->assertEquals('secp112r1', $details['ec']['curve_name']);
+
+        $this->assertEquals($details['key'], $result->getPublicKey()->getPEM());
     }
 }

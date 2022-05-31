@@ -64,3 +64,20 @@ jobs:
               run: ./tests/setup.sh
             - name: Running tests
               run: ./tests/run.sh
+
+    tests-php80-deps-high-pebble-eab:
+        runs-on: ubuntu-latest
+        env:
+            PEBBLE_MODE: eab
+        steps:
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.0'
+            - uses: actions/checkout@master
+            - name: Install dependencies
+              run: composer update --no-interaction --no-progress --ansi --prefer-stable
+            - name: Preparing tests
+              run: ./tests/setup.sh
+            - name: Running tests
+              run: ./tests/run.sh
+
