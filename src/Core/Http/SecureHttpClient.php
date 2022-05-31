@@ -26,6 +26,7 @@ use GuzzleHttp\Psr7\Header;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -172,9 +173,10 @@ class SecureHttpClient
         $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         $encodedPayload = $this->base64Encoder->encode(json_encode($this->getJWK(), JSON_UNESCAPED_SLASHES));
 
-        $signature = $this->base64Encoder->encode(
-            (string) $signer->sign($encodedProtected.'.'.$encodedPayload, $this->base64Encoder->decode($externalAccount->getHmacKey()))
-        );
+        $hmacKey = $this->base64Encoder->decode($externalAccount->getHmacKey());
+        $hmacKey = class_exists(InMemory::class) ? InMemory::plainText($hmacKey) : $hmacKey;
+
+        $signature = $this->base64Encoder->encode((string) $signer->sign($encodedProtected.'.'.$encodedPayload, $hmacKey));
 
         return [
             'protected' => $encodedProtected,
