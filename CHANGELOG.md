@@ -1,3 +1,26 @@
+07/06/2022 22:41  2.1.0  Add compatibility for PHP 8.0/8.1, Symfony 6 and other improvements
+8a8a975 Merge pull request #263 from acmephp/core-get-order
+95c17a4 Add Core\AcmeClient::reloadOrder method
+7bac887 Merge pull request #257 from mgriego/core-deps-and-bug-fixes
+371c905 Merge pull request #251 from W0rma/remove-swiftmailer
+09e4bea Serialize embedded authorization challenges when serializing order objects.
+d345ffe Allow for newer dependencies and fix a couple of issues in AcmePhp\Core.
+8be2586 Merge pull request #262 from acmephp/upgrade-phpcs
+03d14b3 Remove unused swiftmailer dependency
+74b71f5 Merge pull request #254 from W0rma/fix-badges
+182d539 Fix CS
+2ae3edf Upgrade PHP-CS-Fixer
+d685b93 Fix badges in README
+c7fb74e Merge pull request #233 from tbickley-mediabowl/issue/197_Monolog2
+043fd6c Allow Monolog version 2
+e23b888 Merge pull request #261 from acmephp/php81
+2cfc866 Allow Symfony 6
+2755d98 Add PHP 8.1 tests and fix deprecations
+22df0d1 feature #250 Fix tests on PHP 8.0/8.1 (HansAdema)
+7621356 Fix tests on PHP 8.0/8.1
+2299602 Update README.md
+2e43e83 Merge pull request #231 from piotrantosik/feature/core-deps
+192872c Allow lcobucci/jwt ^4.0 in core package
 03/02/2021 22:29  2.0.1  Fix requirements
 8efc61a Fix CI config
 8b26916 Merge pull request #223 from piotrantosik/patch-1
