@@ -76,30 +76,26 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
 
     public function solveAll(array $authorizationChallenges)
     {
-        Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
+        $apiData = $this->prepareDataForAPICalls($authorizationChallenges);
 
-        foreach ($authorizationChallenges as $authorizationChallenge) {
-            $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
-            $recordName = $this->extractor->getRecordName($authorizationChallenge);
-            $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
-
-            $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
-
-            $this->client->request(
-                'PUT',
-                'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
-                [
-                    'headers' => [
-                        'X-Api-Key' => $this->apiKey,
-                    ],
-                    'json' => [
-                        'rrset_type' => 'TXT',
-                        'rrset_ttl' => 600,
-                        'rrset_name' => $subDomain,
-                        'rrset_values' => [$recordValue],
-                    ],
-                ]
-            );
+        foreach ($apiData as $topLevelDomain => $subDomains) {
+            foreach ($subDomains as $subDomain => $recordValues) {
+                $this->client->request(
+                    'PUT',
+                    'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
+                    [
+                        'headers' => [
+                            'X-Api-Key' => $this->apiKey,
+                        ],
+                        'json' => [
+                            'rrset_type' => 'TXT',
+                            'rrset_ttl' => 600,
+                            'rrset_name' => $subDomain,
+                            'rrset_values' => $recordValues,
+                        ],
+                    ]
+                );
+            }
         }
     }
 
@@ -110,24 +106,48 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
 
     public function cleanupAll(array $authorizationChallenges)
     {
+        $apiData = $this->prepareDataForAPICalls($authorizationChallenges);
+
+        foreach ($apiData as $topLevelDomain => $subDomains) {
+            foreach (\array_keys($subDomains) as $subDomain) {
+                $this->client->request(
+                    'DELETE',
+                    'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
+                    [
+                        'headers' => [
+                            'X-Api-Key' => $this->apiKey,
+                        ],
+                    ]
+                );
+            }
+        }
+    }
+
+    public function prepareDataForAPICalls(array $authorizationChallenges)
+    {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
+
+        $apiData = [];
 
         foreach ($authorizationChallenges as $authorizationChallenge) {
             $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
             $recordName = $this->extractor->getRecordName($authorizationChallenge);
+            $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
 
             $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
 
-            $this->client->request(
-                'DELETE',
-                'https://dns.api.gandi.net/api/v5/domains/'.$topLevelDomain.'/records/'.$subDomain.'/TXT',
-                [
-                    'headers' => [
-                        'X-Api-Key' => $this->apiKey,
-                    ],
-                ]
-            );
+            if (!\array_key_exists($topLevelDomain, $apiData)) {
+                $apiData[$topLevelDomain] = [];
+            }
+
+            if (!\array_key_exists($subDomain, $apiData[$topLevelDomain])) {
+                $apiData[$topLevelDomain][$subDomain] = [];
+            }
+
+            $apiData[$topLevelDomain][$subDomain][] = $recordValue;
         }
+
+        return $apiData;
     }
 
     protected function getTopLevelDomain(string $domain): string
