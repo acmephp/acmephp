@@ -142,7 +142,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
-        $apiData = array();
+        $apiData = [];
 
         foreach ($authorizationChallenges as $authorizationChallenge) {
             $topLevelDomain = $this->getTopLevelDomain($authorizationChallenge->getDomain());
@@ -152,11 +152,11 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
             $subDomain = \str_replace('.'.$topLevelDomain.'.', '', $recordName);
 
             if (!\array_key_exists($topLevelDomain, $apiData)) {
-                $apiData[$topLevelDomain] = array();
+                $apiData[$topLevelDomain] = [];
             }
 
             if (!\array_key_exists($subDomain, $apiData[$topLevelDomain])) {
-                $apiData[$topLevelDomain][$subDomain] = array();
+                $apiData[$topLevelDomain][$subDomain] = [];
             }
 
             $apiData[$topLevelDomain][$subDomain][] = $recordValue;
