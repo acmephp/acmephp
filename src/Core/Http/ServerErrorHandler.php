@@ -33,6 +33,7 @@ use AcmePhp\Core\Exception\Server\UnsupportedIdentifierServerException;
 use AcmePhp\Core\Exception\Server\UserActionRequiredServerException;
 use AcmePhp\Core\Util\JsonDecoder;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -80,7 +81,7 @@ class ServerErrorHandler
             return RequestException::getResponseBodySummary($response);
         }
 
-        $body = \GuzzleHttp\Psr7\copy_to_string($response->getBody());
+        $body = Utils::copyToString($response->getBody());
 
         if (\strlen($body) > 120) {
             return substr($body, 0, 120).' (truncated...)';
@@ -94,7 +95,7 @@ class ServerErrorHandler
         ResponseInterface $response,
         \Exception $previous = null
     ): AcmeCoreServerException {
-        $body = \GuzzleHttp\Psr7\copy_to_string($response->getBody());
+        $body = Utils::copyToString($response->getBody());
 
         try {
             $data = JsonDecoder::decode($body, true);

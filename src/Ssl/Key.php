@@ -47,7 +47,7 @@ abstract class Key
     }
 
     /**
-     * @return resource
+     * @return resource|\OpenSSLAsymmetricKey
      */
     abstract public function getResource();
 }

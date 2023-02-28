@@ -140,7 +140,32 @@ class AcmeClient implements AcmeClientInterface
             }
         }
 
-        return new CertificateOrder($authorizationsChallenges, $orderEndpoint);
+        return new CertificateOrder($authorizationsChallenges, $orderEndpoint, $response['status']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reloadOrder(CertificateOrder $order): CertificateOrder
+    {
+        $client = $this->getHttpClient();
+        $orderEndpoint = $order->getOrderEndpoint();
+        $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
+
+        if (!isset($response['authorizations']) || !$response['authorizations']) {
+            throw new ChallengeNotSupportedException();
+        }
+
+        $authorizationsChallenges = [];
+        foreach ($response['authorizations'] as $authorizationEndpoint) {
+            $authorizationsResponse = $client->request('POST', $authorizationEndpoint, $client->signKidPayload($authorizationEndpoint, $this->getResourceAccount(), null));
+            $domain = (empty($authorizationsResponse['wildcard']) ? '' : '*.').$authorizationsResponse['identifier']['value'];
+            foreach ($authorizationsResponse['challenges'] as $challenge) {
+                $authorizationsChallenges[$domain][] = $this->createAuthorizationChallenge($authorizationsResponse['identifier']['value'], $challenge);
+            }
+        }
+
+        return new CertificateOrder($authorizationsChallenges, $orderEndpoint, $response['status']);
     }
 
     /**
@@ -327,9 +352,13 @@ class AcmeClient implements AcmeClientInterface
 
     private function createCertificateResponse(CertificateRequest $csr, string $certificate): CertificateResponse
     {
+        $certificateHeader = '-----BEGIN CERTIFICATE-----';
         $certificatesChain = null;
-        foreach (array_reverse(explode("\n\n", $certificate)) as $pem) {
-            $certificatesChain = new Certificate($pem, $certificatesChain);
+
+        foreach (array_reverse(explode($certificateHeader, $certificate)) as $pem) {
+            if ('' !== \trim($pem)) {
+                $certificatesChain = new Certificate($certificateHeader.$pem, $certificatesChain);
+            }
         }
 
         return new CertificateResponse($csr, $certificatesChain);

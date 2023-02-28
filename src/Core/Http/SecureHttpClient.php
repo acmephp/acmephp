@@ -26,6 +26,7 @@ use GuzzleHttp\Psr7\Header;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -164,7 +165,7 @@ class SecureHttpClient
         $signer = new Sha256();
 
         $protected = [
-            'alg' => $signer->getAlgorithmId(),
+            'alg' => method_exists($signer, 'algorithmId') ? $signer->algorithmId() : $signer->getAlgorithmId(),
             'kid' => $externalAccount->getId(),
             'url' => $url,
         ];
@@ -172,9 +173,10 @@ class SecureHttpClient
         $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         $encodedPayload = $this->base64Encoder->encode(json_encode($this->getJWK(), JSON_UNESCAPED_SLASHES));
 
-        $signature = $this->base64Encoder->encode(
-            (string) $signer->sign($encodedProtected.'.'.$encodedPayload, $this->base64Encoder->decode($externalAccount->getHmacKey()))
-        );
+        $hmacKey = $this->base64Encoder->decode($externalAccount->getHmacKey());
+        $hmacKey = class_exists(InMemory::class) ? InMemory::plainText($hmacKey) : $hmacKey;
+
+        $signature = $this->base64Encoder->encode($signer->sign($encodedProtected.'.'.$encodedPayload, $hmacKey));
 
         return [
             'protected' => $encodedProtected,
@@ -209,7 +211,7 @@ class SecureHttpClient
 
             $data = JsonDecoder::decode($body, true);
         } catch (\InvalidArgumentException $exception) {
-            throw new ExpectedJsonException(sprintf('ACME client excepted valid JSON as a response to request "%s %s" (given: "%s")', $method, $endpoint, ServerErrorHandler::getResponseBodySummary($response)), $exception);
+            throw new ExpectedJsonException(sprintf('ACME client expected valid JSON as a response to request "%s %s" (given: "%s")', $method, $endpoint, ServerErrorHandler::getResponseBodySummary($response)), $exception);
         }
 
         return $data;

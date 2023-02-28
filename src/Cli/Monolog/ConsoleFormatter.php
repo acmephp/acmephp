@@ -25,7 +25,7 @@ use Monolog\Logger;
  */
 class ConsoleFormatter extends LineFormatter
 {
-    const SIMPLE_FORMAT = "%start_tag%%message% %context% %extra%%end_tag%\n";
+    public const SIMPLE_FORMAT = "%start_tag%%message% %context% %extra%%end_tag%\n";
 
     /**
      * {@inheritdoc}
@@ -38,7 +38,7 @@ class ConsoleFormatter extends LineFormatter
     /**
      * {@inheritdoc}
      */
-    public function format(array $record)
+    public function format(array $record): string
     {
         if ($record['level'] >= Logger::ERROR) {
             $record['start_tag'] = '<error>';

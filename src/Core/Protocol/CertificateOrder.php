@@ -26,7 +26,10 @@ class CertificateOrder
     /** @var string */
     private $orderEndpoint;
 
-    public function __construct(array $authorizationsChallenges, string $orderEndpoint = null)
+    /** @var string */
+    private $status;
+
+    public function __construct(array $authorizationsChallenges, string $orderEndpoint = null, string $status = null)
     {
         foreach ($authorizationsChallenges as &$authorizationChallenges) {
             foreach ($authorizationChallenges as &$authorizationChallenge) {
@@ -38,13 +41,27 @@ class CertificateOrder
 
         $this->authorizationsChallenges = $authorizationsChallenges;
         $this->orderEndpoint = $orderEndpoint;
+        $this->status = $status;
     }
 
     public function toArray(): array
     {
+        $authorizationsChallenges = array_map(
+            function ($challenges): array {
+                return array_map(
+                    function ($challenge): array {
+                        return $challenge->toArray();
+                    },
+                    $challenges
+                );
+            },
+            $this->getAuthorizationsChallenges()
+        );
+
         return [
-            'authorizationsChallenges' => $this->getAuthorizationsChallenges(),
+            'authorizationsChallenges' => $authorizationsChallenges,
             'orderEndpoint' => $this->getOrderEndpoint(),
+            'status' => $this->getStatus(),
         ];
     }
 
@@ -76,5 +93,10 @@ class CertificateOrder
     public function getOrderEndpoint(): string
     {
         return $this->orderEndpoint;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 }

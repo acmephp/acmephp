@@ -30,7 +30,7 @@ class CertificateRequestSignerTest extends TestCase
         $this->service = new CertificateRequestSigner();
     }
 
-    public function test_signCertificateRequest_returns_a_certificate()
+    public function testSignCertificateRequestReturnsACertificate()
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com',
@@ -59,7 +59,7 @@ class CertificateRequestSignerTest extends TestCase
         );
     }
 
-    public function test_signCertificateRequest_use_default_values()
+    public function testSignCertificateRequestUseDefaultValues()
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com'
@@ -80,7 +80,7 @@ class CertificateRequestSignerTest extends TestCase
         );
     }
 
-    public function test_signCertificateRequest_with_subject_alternative_names()
+    public function testSignCertificateRequestWithSubjectAlternativeNames()
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com',

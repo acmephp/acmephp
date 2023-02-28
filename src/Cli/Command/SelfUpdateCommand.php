@@ -29,10 +29,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SelfUpdateCommand extends Command
 {
-    const PACKAGE_NAME = 'acmephp/acmephp';
-    const FILE_NAME = 'acmephp.phar';
-    const VERSION_URL = 'https://acmephp.github.io/downloads/acmephp.version';
-    const PHAR_URL = 'https://acmephp.github.io/downloads/acmephp.phar';
+    public const PACKAGE_NAME = 'acmephp/acmephp';
+    public const FILE_NAME = 'acmephp.phar';
+    public const VERSION_URL = 'https://acmephp.github.io/downloads/acmephp.version';
+    public const PHAR_URL = 'https://acmephp.github.io/downloads/acmephp.phar';
 
     /**
      * @var string

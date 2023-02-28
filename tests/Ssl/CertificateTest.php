@@ -17,7 +17,9 @@ use PHPUnit\Framework\TestCase;
 
 class CertificateTest extends TestCase
 {
-    public function test_getPublicKey_returns_a_PublicKey()
+    use AssertsOpenSslResource;
+
+    public function testGetPublicKeyReturnsAPublicKey()
     {
         $certificate = new Certificate(
                 '
@@ -61,7 +63,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertEquals('58b94e38ce0088f0ec5a0c38f04bd76c', md5($publicKey->getPEM()));
     }
 
-    public function test_getPublicKeyResource_returns_a_resource()
+    public function testGetPublicKeyResourceReturnsAResource()
     {
         $certificate = new Certificate(
             '
@@ -102,6 +104,6 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
 
         $resource = $certificate->getPublicKeyResource();
 
-        $this->assertIsResource($resource);
+        $this->assertIsOpenSslAsymmetricKey($resource);
     }
 }
