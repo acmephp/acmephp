@@ -29,6 +29,7 @@ RUN apt-get install -y \
   php8.1-xmlwriter \
   php8.1-xml \
   php8.1-zip \
+  php8.1-ftp \
   ca-certificates
 
 RUN echo "opcache.enable_cli=1" > /etc/php/8.1/cli/conf.d/opcache.ini \
