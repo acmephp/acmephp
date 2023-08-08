@@ -36,6 +36,24 @@ use Psr\Http\Message\ResponseInterface;
  */
 class SecureHttpClient
 {
+    private const SIGN_JWK = 'jwk';
+    private const SIGN_KID = 'kid';
+
+    /**
+     * @var string|null
+     */
+    private $currentSign = null;
+
+    /**
+     * @var string|array|null
+     */
+    private $currentPayload = null;
+
+    /**
+     * @var string|null
+     */
+    private $currentKid = null;
+
     /**
      * @var KeyPair
      */
@@ -226,7 +244,7 @@ class SecureHttpClient
      */
     public function rawRequest(string $method, string $endpoint, array $data = []): ResponseInterface
     {
-        $call = function () use ($method, $endpoint, $data) {
+        $call = function () use ($method, $endpoint, &$data) {
             $request = $this->createRequest($method, $endpoint, $data);
             try {
                 $this->lastResponse = $this->httpClient->send($request);
@@ -240,6 +258,12 @@ class SecureHttpClient
         try {
             $call();
         } catch (BadNonceServerException $e) {
+            if (self::SIGN_KID === $this->currentSign) {
+                $data = $this->signKidPayload($endpoint, $this->currentKid, $this->currentPayload);
+            } else {
+                $data = $this->signJwkPayload($endpoint, $this->currentPayload);
+            }
+
             $call();
         }
 
@@ -318,6 +342,10 @@ class SecureHttpClient
         $signature = $this->base64Encoder->encode(
             $this->dataSigner->signData($encodedProtected.'.'.$encodedPayload, $privateKey, $algorithm, $format)
         );
+
+        $this->currentSign = \array_key_exists('kid', $protected) ? self::SIGN_KID : self::SIGN_JWK;
+        $this->currentPayload = $payload;
+        $this->currentKid = $protected['kid'] ?? null;
 
         return [
             'protected' => $encodedProtected,
