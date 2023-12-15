@@ -197,7 +197,7 @@ class SecureHttpClient
      */
     public function request(string $method, string $endpoint, array $data = [], bool $returnJson = true)
     {
-        $response = $this->rawRequest($method, $endpoint, $data);
+        $response = $this->rawRequest($method, $endpoint, $data, $returnJson);
         $body = Utils::copyToString($response->getBody());
 
         if (!$returnJson) {
@@ -224,10 +224,10 @@ class SecureHttpClient
      * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      */
-    public function rawRequest(string $method, string $endpoint, array $data = []): ResponseInterface
+    public function rawRequest(string $method, string $endpoint, array $data = [], bool $acceptJson = false): ResponseInterface
     {
-        $call = function () use ($method, $endpoint, $data) {
-            $request = $this->createRequest($method, $endpoint, $data);
+        $call = function () use ($method, $endpoint, $data, $acceptJson) {
+            $request = $this->createRequest($method, $endpoint, $data, $acceptJson);
             try {
                 $this->lastResponse = $this->httpClient->send($request);
             } catch (\Exception $exception) {
@@ -326,10 +326,15 @@ class SecureHttpClient
         ];
     }
 
-    private function createRequest($method, $endpoint, $data)
+    private function createRequest($method, $endpoint, $data, $acceptJson)
     {
         $request = new Request($method, $endpoint);
-        $request = $request->withHeader('Accept', 'application/json,application/jose+json,');
+        
+        if ($acceptJson) {
+            $request = $request->withHeader('Accept', 'application/json,application/jose+json,');
+        } else {
+            $request = $request->withHeader('Accept', '*/*');
+        }
 
         if ('POST' === $method && \is_array($data)) {
             $request = $request->withHeader('Content-Type', 'application/jose+json');
