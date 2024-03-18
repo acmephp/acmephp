@@ -14,8 +14,8 @@ namespace AcmePhp\Cli;
 use AcmePhp\Cli\Command\Helper\DistinguishedNameHelper;
 use AcmePhp\Cli\Command\RevokeCommand;
 use AcmePhp\Cli\Command\RunCommand;
-use AcmePhp\Cli\Command\SelfUpdateCommand;
 use AcmePhp\Cli\Command\StatusCommand;
+use SelfUpdate\SelfUpdateCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\PathUtil\Path;
@@ -33,7 +33,8 @@ class Application extends BaseApplication
 
     public function __construct()
     {
-        parent::__construct('Acme PHP - Let\'s Encrypt/ZeroSSL client', '3.0.0');
+        // This is replaced by humbug/box with a string that looks like this: x.y.z@tag
+        parent::__construct('Acme PHP - Let\'s Encrypt/ZeroSSL client', '@git@');
     }
 
     protected function getDefaultCommands(): array
@@ -42,7 +43,7 @@ class Application extends BaseApplication
             new RunCommand(),
             new RevokeCommand(),
             new StatusCommand(),
-            new SelfUpdateCommand(),
+            new SelfUpdateCommand($this->getName(),  explode('@', $this->getVersion())[0], 'acmephp/acmephp'),
         ]);
     }
 
