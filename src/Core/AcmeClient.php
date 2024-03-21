@@ -66,7 +66,7 @@ class AcmeClient implements AcmeClientInterface
     /**
      * @var string
      */
-    private $account;
+    public $account;
 
     public function __construct(SecureHttpClient $httpClient, string $directoryUrl, CertificateRequestSigner $csrSigner = null)
     {
