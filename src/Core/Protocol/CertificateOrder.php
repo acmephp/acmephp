@@ -83,6 +83,8 @@ class CertificateOrder
      */
     public function getAuthorizationChallenges(string $domain): array
     {
+        $domain = strtolower($domain);
+
         if (!isset($this->authorizationsChallenges[$domain])) {
             throw new AcmeCoreClientException('The order does not contains any authorization challenge for the domain '.$domain);
         }

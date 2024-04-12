@@ -116,7 +116,7 @@ class AcmeClient implements AcmeClientInterface
                 static function ($domain) {
                     return [
                         'type' => 'dns',
-                        'value' => $domain,
+                        'value' => strtolower($domain),
                     ];
                 },
                 array_values($domains)
