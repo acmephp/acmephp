@@ -131,4 +131,37 @@ class AcmeClientTest extends AbstractFunctionnalTest
             $this->assertStringContainsString('Unable to find specified certificate', $e->getPrevious()->getPrevious()->getMessage());
         }
     }
+
+    /**
+     * @dataProvider provideFullProcess
+     */
+    public function testRequestAuthorizationAllowsCapitalisation(KeyOption $keyOption, bool $useAlternateCertificate)
+    {
+        $secureHttpClient = new SecureHttpClient(
+            (new KeyPairGenerator())->generateKeyPair($keyOption),
+            new Client(),
+            new Base64SafeEncoder(),
+            new KeyParser(),
+            new DataSigner(),
+            new ServerErrorHandler()
+        );
+
+        $client = new AcmeClient($secureHttpClient, 'https://localhost:14000/dir');
+
+        /*
+         * Register account
+         */
+        if ('eab' === getenv('PEBBLE_MODE')) {
+            $client->registerAccount('titouan.galopin@acmephp.com', new ExternalAccount('kid1', 'dGVzdGluZw'));
+        } else {
+            $client->registerAccount('titouan.galopin@acmephp.com');
+        }
+
+        /*
+         * Request authorization challenges using a domain with capital letters
+         */
+        $challenges = $client->requestAuthorization('ACMEPHP.com');
+
+        $this->assertNotEmpty($challenges);
+    }
 }
