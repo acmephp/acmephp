@@ -226,7 +226,7 @@ class AcmeClient implements AcmeClientInterface
         try {
             return $order->getAuthorizationChallenges($domain);
         } catch (AcmeCoreClientException $e) {
-            throw new ChallengeNotSupportedException();
+            throw new ChallengeNotSupportedException($e);
         }
     }
 

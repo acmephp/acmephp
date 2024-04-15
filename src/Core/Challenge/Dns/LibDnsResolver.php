@@ -97,7 +97,7 @@ class LibDnsResolver implements DnsResolverInterface
             try {
                 $response = $this->request($domain, ResourceTypes::TXT, $ipNameServer[0]);
             } catch (\Exception $e) {
-                throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $nameServer));
+                throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $nameServer), $e);
             }
             $entries = [];
             foreach ($response->getAnswerRecords() as $record) {
