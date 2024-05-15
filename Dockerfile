@@ -1,76 +1,57 @@
-FROM alpine:3.8 AS builder
+FROM ubuntu:22.04
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Set timezone
+ENV TZ=UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Update
+RUN apt-get update && apt-get dist-upgrade -y
+
+# Install composer
+RUN apt-get update && apt-get install composer -y
 
 WORKDIR /srv
 
 # Composer dependencies
-RUN apk add --no-cache \
-        php7 \
-        php7-phar \
-        php7-json \
-        php7-iconv \
-        php7-mbstring \
-        php7-curl \
-        php7-ctype \
-        php7-opcache \
-        php7-sockets \
-        php7-openssl
+RUN apt-get install -y \
+  php8.1-phar \
+  php8.1-iconv \
+  php8.1-mbstring \
+  php8.1-curl \
+  php8.1-ctype \
+  php8.1-opcache \
+  php8.1-sockets \
+  php8.1-simplexml \
+  php8.1-dom \
+  php8.1-tokenizer \
+  php8.1-apcu \
+  php8.1-posix \
+  php8.1-xmlwriter \
+  php8.1-xml \
+  php8.1-zip \
+  php8.1-ftp \
+  ca-certificates
 
-RUN composer global require "hirak/prestissimo" "jderusse/composer-warmup"
-
-RUN echo "opcache.enable_cli=1" > /etc/php7/conf.d/opcache.ini \
- && echo "opcache.file_cache='/tmp/opcache'" >> /etc/php7/conf.d/opcache.ini \
- && echo "opcache.file_update_protection=0" >> /etc/php7/conf.d/opcache.ini \
- && mkdir /tmp/opcache
+RUN echo "opcache.enable_cli=1" > /etc/php/8.1/cli/conf.d/opcache.ini \
+  && echo "opcache.file_cache='/tmp/opcache'" >> /etc/php/8.1/cli/conf.d/opcache.ini \
+  && echo "opcache.file_update_protection=0" >> /etc/php/8.1/cli/conf.d/opcache.ini \
+  && mkdir /tmp/opcache
 
 COPY composer.json /srv/
 
-# App dependencies
-RUN apk add --no-cache \
-        php7-simplexml \
-        php7-dom \
-        php7-tokenizer
-
-RUN composer install --no-dev --no-scripts --no-suggest --optimize-autoloader \
- && composer require "daverandom/libdns:^2.0.1" --no-scripts --no-suggest --optimize-autoloader
+RUN composer install --no-dev --no-scripts --optimize-autoloader \
+   && composer require "daverandom/libdns:^2.0.1" --no-scripts --no-suggest --optimize-autoloader
 
 COPY ./src /srv/src
-COPY ./res /srv/res
+#COPY ./res /srv/res
 COPY ./bin /srv/bin
 
-RUN composer warmup-opcode -- /srv
+#RUN composer warmup-opcode -- /srv
 
-# =============================
-
-FROM alpine:3.8
-
-WORKDIR /srv
-
-# PHP
-RUN apk add --no-cache \
-        php7 \
-        php7-opcache \
-        php7-apcu \
-        php7-openssl \
-        php7-dom \
-        php7-mbstring \
-        php7-json \
-        php7-ctype \
-        php7-posix \
-        php7-simplexml \
-        php7-xmlwriter \
-        php7-xml \
-        ca-certificates
-
-RUN echo "date.timezone = UTC" > /etc/php7/conf.d/symfony.ini \
- && echo "opcache.enable_cli=1" > /etc/php7/conf.d/opcache.ini \
- && echo "opcache.file_cache='/tmp/opcache'" >> /etc/php7/conf.d/opcache.ini \
- && echo "opcache.file_update_protection=0" >> /etc/php7/conf.d/opcache.ini \
- && mkdir /tmp/opcache
+RUN echo "date.timezone = UTC" > /etc/php/8.1/cli/conf.d//symfony.ini \
+ && echo "opcache.enable_cli=1" > /etc/php/8.1/cli/conf.d//opcache.ini \
+ && echo "opcache.file_cache='/tmp/opcache'" >> /etc/php/8.1/cli/conf.d/opcache.ini \
+ && echo "opcache.file_update_protection=0" >> /etc/php/8.1/cli/conf.d/opcache.ini
 
 ENTRYPOINT ["/srv/bin/acme"]
 CMD ["list"]
-
-COPY --from=builder /tmp/opcache /tmp/opcache
-COPY --from=builder /srv /srv
