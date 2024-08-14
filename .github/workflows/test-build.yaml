@@ -24,7 +24,7 @@ jobs:
               run: php php-cs-fixer.phar fix --dry-run --diff
 
     ci:
-        name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
+        name: Test PHP ${{ matrix.php-version }} ${{ matrix.pebble_mode }} ${{ matrix.name }}
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
@@ -32,10 +32,20 @@ jobs:
                 php-version: ["8.2", "8.3"]
                 composer-flags: [""]
                 name: [""]
+                pebble_mode: [""]
                 include:
                     - php-version: 8.1
                       composer-flags: "--prefer-lowest"
                       name: "(prefer lowest dependencies)"
+                    - php-version: 8.1
+                      composer-flags: "--prefer-lowest"
+                      name: "(prefer lowest dependencies - EAB)"
+                      pebble_mode: eab
+                    - php-version: 8.3
+                      name: "(EAB)"
+                      pebble_mode: eab
+        env:
+            PEBBLE_MODE: "${{ matrix.pebble_mode }}"
 
         steps:
             - uses: shivammathur/setup-php@v2

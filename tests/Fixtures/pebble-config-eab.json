@@ -9,7 +9,7 @@
         "ocspResponderURL": "",
         "externalAccountBindingRequired": true,
         "externalAccountMACKeys": {
-            "kid1": "dGVzdGluZw"
+            "kid1": "dGVzdGluZ3Rlc3Rpbmd0ZXN0aW5ndGVzdGluZ3Rlc3Rpbmd0ZXN0aW5n"
         }
     }
 }
