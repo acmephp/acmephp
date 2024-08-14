@@ -145,7 +145,7 @@ class RunCommand extends AbstractCommand
         if ('zerossl' === $this->config['provider']) {
             // If an API key is provided, use it
             if ($this->config['zerossl_api_key']) {
-                $eabCredentials = \GuzzleHttp\json_decode(
+                $eabCredentials = json_decode(
                     (new Client())
                         ->post('https://api.zerossl.com/acme/eab-credentials/?access_key='.$this->config['zerossl_api_key'])
                         ->getBody()
@@ -160,7 +160,7 @@ class RunCommand extends AbstractCommand
             }
 
             // Otherwise register on the fly
-            $eabCredentials = \GuzzleHttp\json_decode(
+            $eabCredentials = json_decode(
                 (new Client())
                     ->post('https://api.zerossl.com/acme/eab-credentials-email', [
                         'form_params' => ['email' => $this->config['contact_email']],

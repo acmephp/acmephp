@@ -65,7 +65,7 @@ class PushRancherAction implements ActionInterface
             return $certificate->getPEM();
         }, $certificate->getIssuerChain());
 
-        return \GuzzleHttp\json_encode([
+        return json_encode([
             'name' => $response->getCertificateRequest()->getDistinguishedName()->getCommonName(),
             'description' => 'Generated with Acme PHP',
             'cert' => $certificate->getPEM(),
@@ -123,6 +123,6 @@ class PushRancherAction implements ActionInterface
             'body' => $body ?: '',
         ]);
 
-        return \GuzzleHttp\json_decode(\GuzzleHttp\Psr7\copy_to_string($response->getBody()), true);
+        return json_decode((string) $response->getBody(), true);
     }
 }
