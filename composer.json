@@ -49,26 +49,26 @@
         "lcobucci/jwt": "^3.3|^4.0",
         "league/flysystem": "^1.0.19",
         "league/flysystem-memory": "^1.0",
-        "league/flysystem-sftp": "^1.0.7",
+        "league/flysystem-sftp": "^1.0.22",
         "monolog/monolog": "^1.19|^2.0",
         "padraic/phar-updater": "^1.0",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0",
         "psr/log": "^1.0",
-        "symfony/config": "^5.4 || ^6.4",
-        "symfony/console": "^5.4 || ^6.4",
-        "symfony/dependency-injection": "^5.4 || ^6.4",
-        "symfony/filesystem": "^5.4 || ^6.4",
-        "symfony/serializer": "^5.4 || ^6.4",
-        "symfony/yaml": "^5.4 || ^6.4",
+        "symfony/config": "^5.4.12 || ^6.4",
+        "symfony/console": "^5.4.12 || ^6.4",
+        "symfony/dependency-injection": "^5.4.12 || ^6.4",
+        "symfony/filesystem": "^5.4.12 || ^6.4",
+        "symfony/serializer": "^5.4.12 || ^6.4",
+        "symfony/yaml": "^5.4.12 || ^6.4",
         "webmozart/assert": "^1.0",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
-        "symfony/finder": "^5.4 || ^6.4",
-        "symfony/phpunit-bridge": "^5.4 || ^6.4",
-        "symfony/property-access": "^5.4 || ^6.4",
-        "symfony/var-dumper": "^5.4 || ^6.4"
+        "symfony/finder": "^5.4.12 || ^6.4",
+        "symfony/phpunit-bridge": "^5.4.12 || ^6.4",
+        "symfony/property-access": "^5.4.12 || ^6.4",
+        "symfony/var-dumper": "^5.4.12 || ^6.4"
     },
     "autoload": {
         "psr-4": {

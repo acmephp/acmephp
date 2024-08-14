@@ -27,7 +27,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2.5",
+        "php": ">=8.1",
         "ext-hash": "*",
         "ext-json": "*",
         "ext-openssl": "*",
