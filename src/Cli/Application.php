@@ -43,7 +43,7 @@ class Application extends BaseApplication
             new RunCommand(),
             new RevokeCommand(),
             new StatusCommand(),
-            new SelfUpdateCommand($this->getName(),  explode('@', $this->getVersion())[0], 'acmephp/acmephp'),
+            new SelfUpdateCommand($this->getName(), explode('@', $this->getVersion())[0], 'acmephp/acmephp'),
         ]);
     }
 
