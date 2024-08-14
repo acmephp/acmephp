@@ -18,10 +18,13 @@ use AcmePhp\Core\Filesystem\FilesystemInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 
 class FilesystemSolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSupports()
     {
         $typeDns = 'dns-01';

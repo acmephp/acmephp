@@ -14,9 +14,12 @@ namespace Tests\AcmePhp\Core\Challenge\Http;
 use AcmePhp\Core\Challenge\Http\HttpDataExtractor;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class HttpDataExtractorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testGetCheckUrl()
     {
         $domain = 'foo.com';

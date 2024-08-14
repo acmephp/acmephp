@@ -15,9 +15,12 @@ use AcmePhp\Core\Challenge\Dns\DnsDataExtractor;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DnsDataExtractorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testGetRecordName()
     {
         $domain = 'foo.com';

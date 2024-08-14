@@ -16,10 +16,13 @@ use AcmePhp\Core\Challenge\Dns\SimpleDnsSolver;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SimpleDnsSolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSupports()
     {
         $typeDns = 'dns-01';

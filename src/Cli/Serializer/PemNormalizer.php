@@ -52,4 +52,12 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return \is_string($data);
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Certificate::class => true,
+            Key::class => true,
+        ];
+    }
 }
