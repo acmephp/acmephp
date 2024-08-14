@@ -163,7 +163,7 @@ class SecureHttpClient
         $signer = new Sha256();
 
         $protected = [
-            'alg' => method_exists($signer, 'algorithmId') ? $signer->algorithmId() : $signer->getAlgorithmId(),
+            'alg' => $signer->algorithmId(),
             'kid' => $externalAccount->getId(),
             'url' => $url,
         ];
