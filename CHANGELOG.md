@@ -5,8 +5,16 @@
 > [!NOTE]
 > From now on, a particular attention will be given to provide a nice changelog.
 
+### BC Break
+
 * Drop support for PHP <8.1
 * Drop support for Symfony <5.4, and 6.0, 6.1, 6.2, 6.3
+* Upgrade from FlySystem v1 to v3
+
+### Internal
+
+* Update PHP-CS-Fixer to 3.62.0
+* Analyse code with PHPStan
 
 ## 07/06/2022 22:41  2.1.0  Add compatibility for PHP 8.0/8.1, Symfony 6 and other improvements
 
