@@ -15,12 +15,9 @@ use AcmePhp\Ssl\Generator\KeyOption;
 
 class DsaKeyOption implements KeyOption
 {
-    /** @var int */
-    private $bits;
-
-    public function __construct(int $bits = 2048)
-    {
-        $this->bits = $bits;
+    public function __construct(
+        private readonly int $bits = 2048,
+    ) {
     }
 
     public function getBits(): int

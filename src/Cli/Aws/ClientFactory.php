@@ -36,7 +36,7 @@ class ClientFactory
         );
     }
 
-    private function getClientArgs(array $args = [])
+    private function getClientArgs(array $args = []): array
     {
         if (empty($args['region'])) {
             $args['region'] = getenv('AWS_DEFAULT_REGION');

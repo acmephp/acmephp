@@ -42,10 +42,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
      */
     protected $output;
 
-    /**
-     * @var ContainerBuilder|null
-     */
-    private $container;
+    private ?ContainerBuilder $container = null;
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -93,7 +90,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         return $this->container;
     }
 
-    private function initializeContainer()
+    private function initializeContainer(): void
     {
         $this->container = new ContainerBuilder();
 

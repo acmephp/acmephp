@@ -18,11 +18,8 @@ class Base64SafeEncoderTest extends TestCase
 {
     /**
      * @dataProvider getTestVectors
-     *
-     * @param string $message
-     * @param string $expected
      */
-    public function testEncodeAndDecode($message, $expected)
+    public function testEncodeAndDecode(string $message, string $expected): void
     {
         $encoder = new Base64SafeEncoder();
 
@@ -36,7 +33,7 @@ class Base64SafeEncoderTest extends TestCase
     /**
      * @see https://tools.ietf.org/html/rfc4648#section-10
      */
-    public function getTestVectors()
+    public function getTestVectors(): array
     {
         return [
             [
@@ -74,17 +71,15 @@ class Base64SafeEncoderTest extends TestCase
 
     /**
      * @dataProvider getTestBadVectors
-     *
-     * @param string $input
      */
-    public function testBadInput($input)
+    public function testBadInput(string $input): void
     {
         $encoder = new Base64SafeEncoder();
         $decoded = $encoder->decode($input);
         $this->assertEquals("\00", $decoded);
     }
 
-    public function getTestBadVectors()
+    public function getTestBadVectors(): array
     {
         return [
             [

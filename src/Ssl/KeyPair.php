@@ -18,16 +18,10 @@ namespace AcmePhp\Ssl;
  */
 class KeyPair
 {
-    /** @var PublicKey */
-    private $publicKey;
-
-    /** @var PrivateKey */
-    private $privateKey;
-
-    public function __construct(PublicKey $publicKey, PrivateKey $privateKey)
-    {
-        $this->publicKey = $publicKey;
-        $this->privateKey = $privateKey;
+    public function __construct(
+        private readonly PublicKey $publicKey,
+        private readonly PrivateKey $privateKey,
+    ) {
     }
 
     public function getPublicKey(): PublicKey

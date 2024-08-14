@@ -44,23 +44,13 @@ class Repository implements RepositoryInterface
     public const PATH_CACHE_DISTINGUISHED_NAME = 'var/{domain}/distinguished_name.json';
     public const PATH_CACHE_CERTIFICATE_ORDER = 'var/{domains}/certificate_order.json';
 
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var FilesystemOperator
-     */
-    private $storage;
-
-    public function __construct(SerializerInterface $serializer, FilesystemOperator $storage)
-    {
-        $this->serializer = $serializer;
-        $this->storage = $storage;
+    public function __construct(
+        private readonly SerializerInterface $serializer,
+        private readonly FilesystemOperator $storage,
+    ) {
     }
 
-    public function storeCertificateResponse(CertificateResponse $certificateResponse)
+    public function storeCertificateResponse(CertificateResponse $certificateResponse): void
     {
         $distinguishedName = $certificateResponse->getCertificateRequest()->getDistinguishedName();
         $domain = $distinguishedName->getCommonName();
@@ -70,7 +60,7 @@ class Repository implements RepositoryInterface
         $this->storeDomainCertificate($domain, $certificateResponse->getCertificate());
     }
 
-    public function storeAccountKeyPair(KeyPair $keyPair)
+    public function storeAccountKeyPair(KeyPair $keyPair): void
     {
         try {
             $this->save(
@@ -107,7 +97,7 @@ class Repository implements RepositoryInterface
         }
     }
 
-    public function storeDomainKeyPair(string $domain, KeyPair $keyPair)
+    public function storeDomainKeyPair(string $domain, KeyPair $keyPair): void
     {
         try {
             $this->save(
@@ -144,7 +134,7 @@ class Repository implements RepositoryInterface
         }
     }
 
-    public function storeDomainAuthorizationChallenge(string $domain, AuthorizationChallenge $authorizationChallenge)
+    public function storeDomainAuthorizationChallenge(string $domain, AuthorizationChallenge $authorizationChallenge): void
     {
         try {
             $this->save(
@@ -172,7 +162,7 @@ class Repository implements RepositoryInterface
         }
     }
 
-    public function storeDomainDistinguishedName(string $domain, DistinguishedName $distinguishedName)
+    public function storeDomainDistinguishedName(string $domain, DistinguishedName $distinguishedName): void
     {
         try {
             $this->save(
@@ -200,7 +190,7 @@ class Repository implements RepositoryInterface
         }
     }
 
-    public function storeDomainCertificate(string $domain, Certificate $certificate)
+    public function storeDomainCertificate(string $domain, Certificate $certificate): void
     {
         // Simple certificate
         $certPem = $this->serializer->serialize($certificate, PemEncoder::FORMAT);
@@ -243,9 +233,7 @@ class Repository implements RepositoryInterface
             throw new AcmeCliException(sprintf('Loading of domain %s certificate failed', $domain), $e);
         }
 
-        $pems = array_map(function ($item) {
-            return trim(str_replace('-----END CERTIFICATE-----', '', $item));
-        }, $pems);
+        $pems = array_map(fn ($item): string => trim(str_replace('-----END CERTIFICATE-----', '', $item)), $pems);
         array_shift($pems);
         $pems = array_reverse($pems);
 
@@ -261,7 +249,7 @@ class Repository implements RepositoryInterface
         return $certificate;
     }
 
-    public function storeCertificateOrder(array $domains, CertificateOrder $order)
+    public function storeCertificateOrder(array $domains, CertificateOrder $order): void
     {
         try {
             $this->save(
@@ -289,29 +277,29 @@ class Repository implements RepositoryInterface
         }
     }
 
-    public function save(string $path, string $content, string $visibility = self::VISIBILITY_PRIVATE)
+    public function save(string $path, string $content, string $visibility = self::VISIBILITY_PRIVATE): void
     {
         $this->storage->write($path, $content);
 
         $this->storage->setVisibility($path, $visibility);
     }
 
-    private function getPathForDomain($path, $domain)
+    private function getPathForDomain(string $path, string $domain): string
     {
         return strtr($path, ['{domain}' => $this->normalizeDomain($domain)]);
     }
 
-    private function getPathForDomainList($path, array $domains)
+    private function getPathForDomainList(string $path, array $domains): string
     {
         return strtr($path, ['{domains}' => $this->normalizeDomainList($domains)]);
     }
 
-    private function normalizeDomain($domain)
+    private function normalizeDomain($domain): string
     {
-        return trim($domain);
+        return trim((string) $domain);
     }
 
-    private function normalizeDomainList(array $domains)
+    private function normalizeDomainList(array $domains): string
     {
         $normalizedDomains = array_unique(array_map([$this, 'normalizeDomain'], $domains));
         sort($normalizedDomains);

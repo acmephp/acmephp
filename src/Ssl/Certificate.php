@@ -21,18 +21,11 @@ use Webmozart\Assert\Assert;
  */
 class Certificate
 {
-    /** @var string */
-    private $certificatePEM;
-
-    /** @var Certificate */
-    private $issuerCertificate;
-
-    public function __construct(string $certificatePEM, ?self $issuerCertificate = null)
-    {
-        Assert::stringNotEmpty($certificatePEM, __CLASS__.'::$certificatePEM should not be an empty string. Got %s');
-
-        $this->certificatePEM = $certificatePEM;
-        $this->issuerCertificate = $issuerCertificate;
+    public function __construct(
+        private readonly string $certificatePEM,
+        private readonly ?self $issuerCertificate = null
+    ) {
+        Assert::stringNotEmpty($certificatePEM, self::class.'::$certificatePEM should not be an empty string. Got %s');
     }
 
     /**

@@ -25,12 +25,9 @@ class ResourcesDirectory
     public const NEW_NONCE = 'newNonce';
     public const REVOKE_CERT = 'revokeCert';
 
-    /** @var array */
-    private $serverResources;
-
-    public function __construct(array $serverResources)
-    {
-        $this->serverResources = $serverResources;
+    public function __construct(
+        private array $serverResources
+    ) {
     }
 
     /**

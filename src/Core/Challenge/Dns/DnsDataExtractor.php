@@ -21,12 +21,9 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
  */
 class DnsDataExtractor
 {
-    /** @var Base64SafeEncoder */
-    private $encoder;
-
-    public function __construct(?Base64SafeEncoder $encoder = null)
-    {
-        $this->encoder = $encoder ?: new Base64SafeEncoder();
+    public function __construct(
+        private readonly Base64SafeEncoder $encoder = new Base64SafeEncoder(),
+    ) {
     }
 
     /**

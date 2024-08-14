@@ -28,25 +28,12 @@ class Route53Solver implements MultipleChallengesSolverInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var DnsDataExtractor
-     */
-    private $extractor;
+    private ?array $cacheZones = null;
 
-    /**
-     * @var Route53Client
-     */
-    private $client;
-
-    /**
-     * @var array
-     */
-    private $cacheZones;
-
-    public function __construct(?DnsDataExtractor $extractor = null, ?Route53Client $client = null)
-    {
-        $this->extractor = $extractor ?: new DnsDataExtractor();
-        $this->client = $client ?: new Route53Client([]);
+    public function __construct(
+        private DnsDataExtractor $extractor = new DnsDataExtractor(),
+        private Route53Client $client = new Route53Client([]),
+    ) {
         $this->logger = new NullLogger();
     }
 
@@ -55,12 +42,12 @@ class Route53Solver implements MultipleChallengesSolverInterface
         return 'dns-01' === $authorizationChallenge->getType();
     }
 
-    public function solve(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge): void
     {
-        return $this->solveAll([$authorizationChallenge]);
+        $this->solveAll([$authorizationChallenge]);
     }
 
-    public function solveAll(array $authorizationChallenges)
+    public function solveAll(array $authorizationChallenges): void
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
@@ -71,7 +58,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
 
             $authorizationChallengesPerRecordName = $this->groupAuthorizationChallengesPerRecordName($authorizationChallengesForDomain);
             foreach ($authorizationChallengesPerRecordName as $recordName => $authorizationChallengesForRecordName) {
-                $challengeValues = array_unique(array_map([$this->extractor, 'getRecordValue'], $authorizationChallengesForRecordName));
+                $challengeValues = array_unique(array_map($this->extractor->getRecordValue(...), $authorizationChallengesForRecordName));
                 $recordIndex = $this->getPreviousRecordIndex($zone['Id'], $recordName);
 
                 if (0 === \count(array_diff($challengeValues, array_keys($recordIndex)))) {
@@ -105,12 +92,12 @@ class Route53Solver implements MultipleChallengesSolverInterface
         }
     }
 
-    public function cleanup(AuthorizationChallenge $authorizationChallenge)
+    public function cleanup(AuthorizationChallenge $authorizationChallenge): void
     {
-        return $this->cleanupAll([$authorizationChallenge]);
+        $this->cleanupAll([$authorizationChallenge]);
     }
 
-    public function cleanupAll(array $authorizationChallenges)
+    public function cleanupAll(array $authorizationChallenges): void
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
@@ -121,7 +108,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
 
             $authorizationChallengesPerRecordName = $this->groupAuthorizationChallengesPerRecordName($authorizationChallengesForDomain);
             foreach ($authorizationChallengesPerRecordName as $recordName => $authorizationChallengesForRecordName) {
-                $challengeValues = array_unique(array_map([$this->extractor, 'getRecordValue'], $authorizationChallengesForRecordName));
+                $challengeValues = array_unique(array_map($this->extractor->getRecordValue(...), $authorizationChallengesForRecordName));
                 $recordIndex = $this->getPreviousRecordIndex($zone['Id'], $recordName);
 
                 foreach ($challengeValues as $recordValue) {
@@ -144,7 +131,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
         }
     }
 
-    private function getPreviousRecordIndex($zoneId, $recordName)
+    private function getPreviousRecordIndex($zoneId, int|string $recordName)
     {
         $previousRecordSets = $this->client->listResourceRecordSets([
             'HostedZoneId' => $zoneId,
@@ -153,15 +140,11 @@ class Route53Solver implements MultipleChallengesSolverInterface
         ]);
         $recordSets = array_filter(
             $previousRecordSets['ResourceRecordSets'],
-            function ($recordSet) use ($recordName) {
-                return $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type'];
-            }
+            fn ($recordSet): bool => $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type']
         );
         $recordIndex = [];
         foreach ($recordSets as $previousRecordSet) {
-            $previousTxt = array_map(function ($resourceRecord) {
-                return stripslashes(trim($resourceRecord['Value'], '"'));
-            }, $previousRecordSet['ResourceRecords']);
+            $previousTxt = array_map(fn ($resourceRecord): string => stripslashes(trim((string) $resourceRecord['Value'], '"')), $previousRecordSet['ResourceRecords']);
             // Search the special Index
             foreach ($previousTxt as $index => $recordValue) {
                 if (null !== $previousIndex = json_decode($recordValue, true)) {
@@ -181,7 +164,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
         return $recordIndex;
     }
 
-    private function getSaveRecordQuery($recordName, array $recordIndex)
+    private function getSaveRecordQuery(int|string $recordName, array $recordIndex): array
     {
         // remove old indexes
         $limitTime = time() - 86400;
@@ -198,11 +181,9 @@ class Route53Solver implements MultipleChallengesSolverInterface
             'Action' => 'UPSERT',
             'ResourceRecordSet' => [
                 'Name' => $recordName,
-                'ResourceRecords' => array_map(function ($recordValue) {
-                    return [
-                        'Value' => sprintf('"%s"', addslashes($recordValue)),
-                    ];
-                }, $recordValues),
+                'ResourceRecords' => array_map(fn ($recordValue): array => [
+                    'Value' => sprintf('"%s"', addslashes((string) $recordValue)),
+                ], $recordValues),
                 'TTL' => 5,
                 'Type' => 'TXT',
             ],
@@ -214,7 +195,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
      *
      * @return AuthorizationChallenge[][]
      */
-    private function groupAuthorizationChallengesPerDomain(array $authorizationChallenges)
+    private function groupAuthorizationChallengesPerDomain(array $authorizationChallenges): array
     {
         $groups = [];
         foreach ($authorizationChallenges as $authorizationChallenge) {
@@ -229,7 +210,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
      *
      * @return AuthorizationChallenge[][]
      */
-    private function groupAuthorizationChallengesPerRecordName(array $authorizationChallenges)
+    private function groupAuthorizationChallengesPerRecordName(array $authorizationChallenges): array
     {
         $groups = [];
         foreach ($authorizationChallenges as $authorizationChallenge) {
@@ -241,11 +222,9 @@ class Route53Solver implements MultipleChallengesSolverInterface
 
     private function getZone($domain)
     {
-        $domainParts = explode('.', $domain);
+        $domainParts = explode('.', (string) $domain);
         $domains = array_reverse(array_map(
-            function ($index) use ($domainParts) {
-                return implode('.', \array_slice($domainParts, \count($domainParts) - $index));
-            },
+            fn ($index): string => implode('.', \array_slice($domainParts, \count($domainParts) - $index)),
             range(0, \count($domainParts))
         ));
 
@@ -259,7 +238,10 @@ class Route53Solver implements MultipleChallengesSolverInterface
         throw new ChallengeFailedException(sprintf('Unable to find a zone for the domain "%s"', $domain));
     }
 
-    private function getZones()
+    /**
+     * @return mixed[]
+     */
+    private function getZones(): array
     {
         if (null !== $this->cacheZones) {
             return $this->cacheZones;

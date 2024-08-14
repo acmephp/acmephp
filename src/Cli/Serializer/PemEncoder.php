@@ -23,7 +23,7 @@ class PemEncoder implements EncoderInterface, DecoderInterface
 
     public function encode($data, $format, array $context = []): string
     {
-        return trim($data)."\n";
+        return trim((string) $data)."\n";
     }
 
     public function decode($data, $format, array $context = [])

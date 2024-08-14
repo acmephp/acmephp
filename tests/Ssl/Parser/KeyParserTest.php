@@ -11,6 +11,7 @@
 
 namespace Tests\AcmePhp\Ssl\Parser;
 
+use AcmePhp\Ssl\Exception\KeyParsingException;
 use AcmePhp\Ssl\Key;
 use AcmePhp\Ssl\ParsedKey;
 use AcmePhp\Ssl\Parser\KeyParser;
@@ -20,40 +21,37 @@ use PHPUnit\Framework\TestCase;
 
 class KeyParserTest extends TestCase
 {
-    /** @var KeyParser */
-    private $service;
+    private KeyParser $service;
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->service = new KeyParser();
     }
 
-    public function testParsePublicKeyRaiseProperException()
+    public function testParsePublicKeyRaiseProperException(): void
     {
-        $this->expectException('AcmePhp\Ssl\Exception\KeyParsingException');
+        $this->expectException(KeyParsingException::class);
         $this->service->parse(new PublicKey('Not a key'));
     }
 
-    public function testParsePrivateKeyRaiseProperException()
+    public function testParsePrivateKeyRaiseProperException(): void
     {
-        $this->expectException('AcmePhp\Ssl\Exception\KeyParsingException');
+        $this->expectException(KeyParsingException::class);
         $this->service->parse(new PrivateKey('Not a key'));
     }
 
-    public function testGetPrivateKeyHasInvalidDetail()
+    public function testGetPrivateKeyHasInvalidDetail(): void
     {
         $this->assertFalse($this->service->parse($this->getPrivateKey())->hasDetail('invalid'));
     }
 
-    public function testGetPrivateKeyGetInvalidDetailRaiseProperException()
+    public function testGetPrivateKeyGetInvalidDetailRaiseProperException(): void
     {
         $this->expectException('InvalidArgumentException');
         $this->service->parse($this->getPrivateKey())->getDetail('invalid');
     }
 
-    public function testParsePrivateKeyReturnsInstanceOfParsedKey()
+    public function testParsePrivateKeyReturnsInstanceOfParsedKey(): void
     {
         $result = $this->service->parse($this->getPrivateKey());
 
@@ -62,12 +60,12 @@ class KeyParserTest extends TestCase
         $this->assertEquals(OPENSSL_KEYTYPE_RSA, $result->getType());
         $this->assertEquals(4096, $result->getBits());
         $this->assertIsArray($result->getDetails());
-        $this->assertEquals(256, \strlen($result->getDetail('p')));
-        $this->assertEquals(256, \strlen($result->getDetail('q')));
+        $this->assertEquals(256, \strlen((string) $result->getDetail('p')));
+        $this->assertEquals(256, \strlen((string) $result->getDetail('q')));
         $this->assertEquals(trim($this->getPublicKey()->getPEM()), trim($result->getKey()));
     }
 
-    public function testParsePublicKeyReturnsInstanceOfParsedKey()
+    public function testParsePublicKeyReturnsInstanceOfParsedKey(): void
     {
         $result = $this->service->parse($this->getPublicKey());
 
@@ -79,10 +77,7 @@ class KeyParserTest extends TestCase
         $this->assertEquals(trim($this->getPublicKey()->getPEM()), trim($result->getKey()));
     }
 
-    /**
-     * @return PrivateKey
-     */
-    private function getPrivateKey()
+    private function getPrivateKey(): PrivateKey
     {
         return new PrivateKey(
             '
@@ -141,10 +136,7 @@ jIsyJPXjdAhzAparBWwYzxywy+8PMA==
 ');
     }
 
-    /**
-     * @return PublicKey
-     */
-    private function getPublicKey()
+    private function getPublicKey(): PublicKey
     {
         return new PublicKey(
             '

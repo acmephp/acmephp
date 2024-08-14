@@ -18,16 +18,10 @@ namespace AcmePhp\Ssl;
  */
 class CertificateRequest
 {
-    /** @var DistinguishedName */
-    private $distinguishedName;
-
-    /** @var KeyPair */
-    private $keyPair;
-
-    public function __construct(DistinguishedName $distinguishedName, KeyPair $keyPair)
-    {
-        $this->distinguishedName = $distinguishedName;
-        $this->keyPair = $keyPair;
+    public function __construct(
+        private readonly DistinguishedName $distinguishedName,
+        private readonly KeyPair $keyPair,
+    ) {
     }
 
     public function getDistinguishedName(): DistinguishedName

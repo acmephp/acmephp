@@ -20,16 +20,10 @@ use AcmePhp\Core\Exception\AcmeCoreClientException;
  */
 class CertificateOrder
 {
-    /** @var AuthorizationChallenge[][] */
-    private $authorizationsChallenges;
-
-    /** @var string */
-    private $orderEndpoint;
-
-    /** @var string */
-    private $status;
-
-    public function __construct(array $authorizationsChallenges, ?string $orderEndpoint = null, ?string $status = null)
+    public function __construct(
+        private array $authorizationsChallenges,
+        private readonly ?string $orderEndpoint = null,
+        private readonly ?string $status = null)
     {
         foreach ($authorizationsChallenges as &$authorizationChallenges) {
             foreach ($authorizationChallenges as &$authorizationChallenge) {
@@ -38,23 +32,15 @@ class CertificateOrder
                 }
             }
         }
-
-        $this->authorizationsChallenges = $authorizationsChallenges;
-        $this->orderEndpoint = $orderEndpoint;
-        $this->status = $status;
     }
 
     public function toArray(): array
     {
         $authorizationsChallenges = array_map(
-            function ($challenges): array {
-                return array_map(
-                    function ($challenge): array {
-                        return $challenge->toArray();
-                    },
-                    $challenges
-                );
-            },
+            fn ($challenges): array => array_map(
+                fn ($challenge): array => $challenge->toArray(),
+                $challenges
+            ),
             $this->getAuthorizationsChallenges()
         );
 
@@ -73,7 +59,7 @@ class CertificateOrder
     /**
      * @return AuthorizationChallenge[][]
      */
-    public function getAuthorizationsChallenges()
+    public function getAuthorizationsChallenges(): array
     {
         return $this->authorizationsChallenges;
     }

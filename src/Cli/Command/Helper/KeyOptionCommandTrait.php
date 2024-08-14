@@ -19,15 +19,12 @@ use AcmePhp\Ssl\Generator\RsaKey\RsaKeyOption;
  */
 trait KeyOptionCommandTrait
 {
-    private function createKeyOption($keyType)
+    private function createKeyOption($keyType): RsaKeyOption|EcKeyOption
     {
-        switch (strtoupper($keyType)) {
-            case 'RSA':
-                return new RsaKeyOption();
-            case 'EC':
-                return new EcKeyOption();
-            default:
-                throw new \InvalidArgumentException(sprintf('The keyType "%s" is not valid. Supported types are: RSA, EC', strtoupper($keyType)));
-        }
+        return match (strtoupper((string) $keyType)) {
+            'RSA' => new RsaKeyOption(),
+            'EC' => new EcKeyOption(),
+            default => throw new \InvalidArgumentException(sprintf('The keyType "%s" is not valid. Supported types are: RSA, EC', strtoupper((string) $keyType))),
+        };
     }
 }

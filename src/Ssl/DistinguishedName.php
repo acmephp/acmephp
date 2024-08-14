@@ -20,53 +20,24 @@ use Webmozart\Assert\Assert;
  */
 class DistinguishedName
 {
-    /** @var string */
-    private $commonName;
-
-    /** @var string */
-    private $countryName;
-
-    /** @var string */
-    private $stateOrProvinceName;
-
-    /** @var string */
-    private $localityName;
-
-    /** @var string */
-    private $organizationName;
-
-    /** @var string */
-    private $organizationalUnitName;
-
-    /** @var string */
-    private $emailAddress;
-
-    /** @var array */
-    private $subjectAlternativeNames;
+    private readonly array $subjectAlternativeNames;
 
     public function __construct(
-        string $commonName,
-        ?string $countryName = null,
-        ?string $stateOrProvinceName = null,
-        ?string $localityName = null,
-        ?string $organizationName = null,
-        ?string $organizationalUnitName = null,
-        ?string $emailAddress = null,
+        private readonly string $commonName,
+        private readonly ?string $countryName = null,
+        private readonly ?string $stateOrProvinceName = null,
+        private readonly ?string $localityName = null,
+        private readonly ?string $organizationName = null,
+        private readonly ?string $organizationalUnitName = null,
+        private readonly ?string $emailAddress = null,
         array $subjectAlternativeNames = []
     ) {
-        Assert::stringNotEmpty($commonName, __CLASS__.'::$commonName expected a non empty string. Got: %s');
+        Assert::stringNotEmpty($commonName, self::class.'::$commonName expected a non empty string. Got: %s');
         Assert::allStringNotEmpty(
             $subjectAlternativeNames,
-            __CLASS__.'::$subjectAlternativeNames expected an array of non empty string. Got: %s'
+            self::class.'::$subjectAlternativeNames expected an array of non empty string. Got: %s'
         );
 
-        $this->commonName = $commonName;
-        $this->countryName = $countryName;
-        $this->stateOrProvinceName = $stateOrProvinceName;
-        $this->localityName = $localityName;
-        $this->organizationName = $organizationName;
-        $this->organizationalUnitName = $organizationalUnitName;
-        $this->emailAddress = $emailAddress;
         $this->subjectAlternativeNames = array_diff(array_unique($subjectAlternativeNames), [$commonName]);
     }
 

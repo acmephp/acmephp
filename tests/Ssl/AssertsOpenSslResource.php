@@ -22,7 +22,7 @@ trait AssertsOpenSslResource
      *
      * @param resource|\OpenSSLAsymmetricKey $resource
      */
-    public function assertIsOpenSslAsymmetricKey($resource)
+    public function assertIsOpenSslAsymmetricKey($resource): void
     {
         if (PHP_MAJOR_VERSION >= 8) {
             Assert::assertInstanceOf(\OpenSSLAsymmetricKey::class, $resource);

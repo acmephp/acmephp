@@ -23,43 +23,13 @@ use GuzzleHttp\ClientInterface;
  */
 class SecureHttpClientFactory
 {
-    /**
-     * @var ClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var Base64SafeEncoder
-     */
-    private $base64Encoder;
-
-    /**
-     * @var KeyParser
-     */
-    private $keyParser;
-
-    /**
-     * @var DataSigner
-     */
-    private $dataSigner;
-
-    /**
-     * @var ServerErrorHandler
-     */
-    private $errorHandler;
-
     public function __construct(
-        ClientInterface $httpClient,
-        Base64SafeEncoder $base64Encoder,
-        KeyParser $keyParser,
-        DataSigner $dataSigner,
-        ServerErrorHandler $errorHandler
+        private readonly ClientInterface $httpClient,
+        private readonly Base64SafeEncoder $base64Encoder,
+        private readonly KeyParser $keyParser,
+        private readonly DataSigner $dataSigner,
+        private readonly ServerErrorHandler $errorHandler,
     ) {
-        $this->httpClient = $httpClient;
-        $this->base64Encoder = $base64Encoder;
-        $this->keyParser = $keyParser;
-        $this->dataSigner = $dataSigner;
-        $this->errorHandler = $errorHandler;
     }
 
     /**

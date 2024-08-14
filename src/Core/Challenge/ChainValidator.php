@@ -21,15 +21,12 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
  */
 class ChainValidator implements ValidatorInterface
 {
-    /** @var ValidatorInterface[] */
-    private $validators;
-
     /**
      * @param ValidatorInterface[] $validators
      */
-    public function __construct(array $validators)
-    {
-        $this->validators = $validators;
+    public function __construct(
+        private readonly array $validators,
+    ) {
     }
 
     public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool

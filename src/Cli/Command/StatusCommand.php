@@ -29,9 +29,9 @@ class StatusCommand extends AbstractCommand
             ->setDescription('List all the certificates handled by Acme PHP')
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'include expired certificates too')
             ->setHelp(<<<'EOF'
-The <info>%command.name%</info> command list all the certificates stored in the Acme PHP storage.
-It also displays useful informations about these such as the certificate validity and issuer.
-EOF
+                The <info>%command.name%</info> command list all the certificates stored in the Acme PHP storage.
+                It also displays useful informations about these such as the certificate validity and issuer.
+                EOF
             );
     }
 

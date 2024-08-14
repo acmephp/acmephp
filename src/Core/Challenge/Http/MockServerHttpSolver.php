@@ -28,7 +28,7 @@ class MockServerHttpSolver implements SolverInterface
         return 'http-01' === $authorizationChallenge->getType();
     }
 
-    public function solve(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge): void
     {
         (new Client())->post('http://localhost:8055/add-http01', [
             RequestOptions::JSON => [
@@ -38,7 +38,7 @@ class MockServerHttpSolver implements SolverInterface
         ]);
     }
 
-    public function cleanup(AuthorizationChallenge $authorizationChallenge)
+    public function cleanup(AuthorizationChallenge $authorizationChallenge): void
     {
         (new Client())->post('http://localhost:8055/del-http01', [
             RequestOptions::JSON => [

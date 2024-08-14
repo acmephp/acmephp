@@ -29,37 +29,19 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var DnsDataExtractor
-     */
-    private $extractor;
+    private string $apiKey;
 
-    /**
-     * @var ClientInterface
-     */
-    private $client;
-
-    /**
-     * @var array
-     */
-    private $cacheZones;
-
-    /**
-     * @var string
-     */
-    private $apiKey;
-
-    public function __construct(?DnsDataExtractor $extractor = null, ?ClientInterface $client = null)
-    {
-        $this->extractor = $extractor ?: new DnsDataExtractor();
-        $this->client = $client ?: new Client();
+    public function __construct(
+        private DnsDataExtractor $extractor = new DnsDataExtractor(),
+        private ClientInterface $client = new Client(),
+    ) {
         $this->logger = new NullLogger();
     }
 
     /**
      * Configure the service with a set of configuration.
      */
-    public function configure(array $config)
+    public function configure(array $config): void
     {
         $this->apiKey = $config['api_key'];
     }
@@ -69,12 +51,12 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
         return 'dns-01' === $authorizationChallenge->getType();
     }
 
-    public function solve(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge): void
     {
-        return $this->solveAll([$authorizationChallenge]);
+        $this->solveAll([$authorizationChallenge]);
     }
 
-    public function solveAll(array $authorizationChallenges)
+    public function solveAll(array $authorizationChallenges): void
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 
@@ -103,12 +85,12 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
         }
     }
 
-    public function cleanup(AuthorizationChallenge $authorizationChallenge)
+    public function cleanup(AuthorizationChallenge $authorizationChallenge): void
     {
-        return $this->cleanupAll([$authorizationChallenge]);
+        $this->cleanupAll([$authorizationChallenge]);
     }
 
-    public function cleanupAll(array $authorizationChallenges)
+    public function cleanupAll(array $authorizationChallenges): void
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
 

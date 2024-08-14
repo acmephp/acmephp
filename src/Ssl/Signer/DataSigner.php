@@ -47,22 +47,16 @@ class DataSigner
             openssl_free_key($resource);
         }
 
-        switch ($format) {
-            case self::FORMAT_DER:
-                return $signature;
-            case self::FORMAT_ECDSA:
-                switch ($algorithm) {
-                    case OPENSSL_ALGO_SHA256:
-                        return $this->DERtoECDSA($signature, 64);
-                    case OPENSSL_ALGO_SHA384:
-                        return $this->DERtoECDSA($signature, 96);
-                    case OPENSSL_ALGO_SHA512:
-                        return $this->DERtoECDSA($signature, 132);
-                }
-                throw new DataSigningException('Unable to generate a ECDSA signature with the given algorithm');
-            default:
-                throw new DataSigningException('The given format does exists');
-        }
+        return match ($format) {
+            self::FORMAT_DER => $signature,
+            self::FORMAT_ECDSA => match ($algorithm) {
+                OPENSSL_ALGO_SHA256 => $this->DERtoECDSA($signature, 64),
+                OPENSSL_ALGO_SHA384 => $this->DERtoECDSA($signature, 96),
+                OPENSSL_ALGO_SHA512 => $this->DERtoECDSA($signature, 132),
+                default => throw new DataSigningException('Unable to generate a ECDSA signature with the given algorithm'),
+            },
+            default => throw new DataSigningException('The given format does exists'),
+        };
     }
 
     /**
@@ -72,16 +66,16 @@ class DataSigner
      *
      * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
      */
-    private function DERtoECDSA($der, $partLength): string
+    private function DERtoECDSA($der, int $partLength): string
     {
-        $hex = unpack('H*', $der)[1];
-        if ('30' !== mb_substr($hex, 0, 2, '8bit')) { // SEQUENCE
+        $hex = unpack('H*', (string) $der)[1];
+        if ('30' !== mb_substr((string) $hex, 0, 2, '8bit')) { // SEQUENCE
             throw new DataSigningException('Invalid signature provided');
         }
-        if ('81' === mb_substr($hex, 2, 2, '8bit')) { // LENGTH > 128
-            $hex = mb_substr($hex, 6, null, '8bit');
+        if ('81' === mb_substr((string) $hex, 2, 2, '8bit')) { // LENGTH > 128
+            $hex = mb_substr((string) $hex, 6, null, '8bit');
         } else {
-            $hex = mb_substr($hex, 4, null, '8bit');
+            $hex = mb_substr((string) $hex, 4, null, '8bit');
         }
         if ('02' !== mb_substr($hex, 0, 2, '8bit')) { // INTEGER
             throw new DataSigningException('Invalid signature provided');
@@ -89,7 +83,7 @@ class DataSigner
 
         $Rl = hexdec(mb_substr($hex, 2, 2, '8bit'));
         $R = $this->retrievePositiveInteger(mb_substr($hex, 4, $Rl * 2, '8bit'));
-        $R = str_pad($R, $partLength, '0', STR_PAD_LEFT);
+        $R = str_pad((string) $R, $partLength, '0', STR_PAD_LEFT);
 
         $hex = mb_substr($hex, 4 + $Rl * 2, null, '8bit');
         if ('02' !== mb_substr($hex, 0, 2, '8bit')) { // INTEGER
@@ -97,7 +91,7 @@ class DataSigner
         }
         $Sl = hexdec(mb_substr($hex, 2, 2, '8bit'));
         $S = $this->retrievePositiveInteger(mb_substr($hex, 4, $Sl * 2, '8bit'));
-        $S = str_pad($S, $partLength, '0', STR_PAD_LEFT);
+        $S = str_pad((string) $S, $partLength, '0', STR_PAD_LEFT);
 
         return pack('H*', $R.$S);
     }
@@ -107,10 +101,10 @@ class DataSigner
      *
      * @see https://github.com/web-token/jwt-core/blob/master/Util/ECSignature.php
      */
-    private function retrievePositiveInteger($data)
+    private function retrievePositiveInteger(string $data): string
     {
-        while ('00' === mb_substr($data, 0, 2, '8bit') && mb_substr($data, 2, 2, '8bit') > '7f') {
-            $data = mb_substr($data, 2, null, '8bit');
+        while ('00' === mb_substr((string) $data, 0, 2, '8bit') && mb_substr((string) $data, 2, 2, '8bit') > '7f') {
+            $data = mb_substr((string) $data, 2, null, '8bit');
         }
 
         return $data;

@@ -23,20 +23,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SimpleHttpSolver implements SolverInterface
 {
-    /**
-     * @var HttpDataExtractor
-     */
-    private $extractor;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    public function __construct(?HttpDataExtractor $extractor = null, ?OutputInterface $output = null)
-    {
-        $this->extractor = $extractor ?: new HttpDataExtractor();
-        $this->output = $output ?: new NullOutput();
+    public function __construct(
+        private readonly HttpDataExtractor $extractor = new HttpDataExtractor(),
+        private readonly OutputInterface $output = new NullOutput(),
+    ) {
     }
 
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
@@ -44,7 +34,7 @@ class SimpleHttpSolver implements SolverInterface
         return 'http-01' === $authorizationChallenge->getType();
     }
 
-    public function solve(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge): void
     {
         $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
         $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
@@ -52,15 +42,15 @@ class SimpleHttpSolver implements SolverInterface
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-    Create a text file accessible on URL %s
-    containing the following content:
+                        Create a text file accessible on URL %s
+                        containing the following content:
 
-    %s
-    
-    Check in your browser that the URL %s returns
-    the authorization token above.
+                        %s
 
-EOF
+                        Check in your browser that the URL %s returns
+                        the authorization token above.
+
+                    EOF
                 ,
                 $checkUrl,
                 $checkContent,
@@ -69,16 +59,16 @@ EOF
         );
     }
 
-    public function cleanup(AuthorizationChallenge $authorizationChallenge)
+    public function cleanup(AuthorizationChallenge $authorizationChallenge): void
     {
         $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
 
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-                    You can now safely remove the challenge's file at %s
+                                        You can now safely remove the challenge's file at %s
 
-EOF
+                    EOF
                 ,
                 $checkUrl
             )

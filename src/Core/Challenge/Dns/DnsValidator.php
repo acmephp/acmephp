@@ -23,21 +23,10 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
  */
 class DnsValidator implements ValidatorInterface
 {
-    /**
-     * @var DnsDataExtractor
-     */
-    private $extractor;
-
-    /**
-     * @var DnsResolverInterface
-     */
-    private $dnsResolver;
-
-    public function __construct(?DnsDataExtractor $extractor = null, ?DnsResolverInterface $dnsResolver = null)
-    {
-        $this->extractor = $extractor ?: new DnsDataExtractor();
-
-        $this->dnsResolver = $dnsResolver;
+    public function __construct(
+        private readonly DnsDataExtractor $extractor = new DnsDataExtractor(),
+        private ?DnsResolverInterface $dnsResolver = null
+    ) {
         if (!$this->dnsResolver) {
             $this->dnsResolver = LibDnsResolver::isSupported() ? new LibDnsResolver() : new SimpleDnsResolver();
         }
@@ -55,7 +44,7 @@ class DnsValidator implements ValidatorInterface
 
         try {
             return \in_array($recordValue, $this->dnsResolver->getTxtEntries($recordName), false);
-        } catch (AcmeDnsResolutionException $e) {
+        } catch (AcmeDnsResolutionException) {
             return false;
         }
     }

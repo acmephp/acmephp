@@ -31,7 +31,7 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
         return __DIR__.'/Fixtures/config/sfpt_nginxproxy';
     }
 
-    public function testFullProcess()
+    public function testFullProcess(): void
     {
         $sftpFilesystem = new Filesystem(new SftpAdapter(
             new SftpConnectionProvider(

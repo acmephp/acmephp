@@ -25,14 +25,10 @@ class RevocationReason
     public const REASON_SUPERCEDED = 4;
     public const REASON_CESSATION_OF_OPERATION = 5;
 
-    /** @var int|null */
-    private $reasonType;
-
-    public function __construct(int $reasonType)
-    {
+    public function __construct(
+        private readonly int $reasonType,
+    ) {
         Assert::oneOf($reasonType, self::getReasons(), 'Revocation reason type "%s" is not supported by the ACME server (supported: %2$s)');
-
-        $this->reasonType = $reasonType;
     }
 
     public function getReasonType(): int

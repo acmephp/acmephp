@@ -20,54 +20,21 @@ use Webmozart\Assert\Assert;
  */
 class ParsedCertificate
 {
-    /** @var Certificate */
-    private $source;
-
-    /** @var string */
-    private $subject;
-
-    /** @var string */
-    private $issuer;
-
-    /** @var bool */
-    private $selfSigned;
-
-    /** @var \DateTime */
-    private $validFrom;
-
-    /** @var \DateTime */
-    private $validTo;
-
-    /** @var string */
-    private $serialNumber;
-
-    /** @var array */
-    private $subjectAlternativeNames;
-
     public function __construct(
-        Certificate $source,
-        string $subject,
-        ?string $issuer = null,
-        bool $selfSigned = true,
-        ?\DateTime $validFrom = null,
-        ?\DateTime $validTo = null,
-        ?string $serialNumber = null,
-        array $subjectAlternativeNames = []
+        private readonly Certificate $source,
+        private readonly string $subject,
+        private readonly ?string $issuer = null,
+        private readonly bool $selfSigned = true,
+        private readonly ?\DateTime $validFrom = null,
+        private readonly ?\DateTime $validTo = null,
+        private readonly ?string $serialNumber = null,
+        private readonly array $subjectAlternativeNames = [],
     ) {
-        Assert::stringNotEmpty($subject, __CLASS__.'::$subject expected a non empty string. Got: %s');
+        Assert::stringNotEmpty($subject, self::class.'::$subject expected a non empty string. Got: %s');
         Assert::allStringNotEmpty(
             $subjectAlternativeNames,
-            __CLASS__.'::$subjectAlternativeNames expected a array of non empty string. Got: %s'
+            self::class.'::$subjectAlternativeNames expected a array of non empty string. Got: %s'
         );
-
-        $this->source = $source;
-        $this->subject = $subject;
-        $this->issuer = $issuer;
-        $this->selfSigned = $selfSigned;
-        $this->validFrom = $validFrom;
-        $this->validTo = $validTo;
-        $this->serialNumber = $serialNumber;
-        $this->subjectAlternativeNames = $subjectAlternativeNames;
     }
 
     public function getSource(): Certificate

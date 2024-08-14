@@ -22,7 +22,7 @@ use AlibabaCloud\Client\AlibabaCloud;
  */
 class InstallAliyunCdnAction extends AbstractAction
 {
-    public function handle(array $config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response): void
     {
         $issuerChain = [];
         $issuerChain[] = $response->getCertificate()->getPEM();

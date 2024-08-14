@@ -40,7 +40,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         $this->cleanContext();
     }
 
-    public function testFullProcess()
+    public function testFullProcess(): void
     {
         $runTester = new CommandTester($this->application->find('run'));
         $runTester->execute([
@@ -76,7 +76,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
     /**
      * Remove fixtures files and directories to have a clean context.
      */
-    private function cleanContext()
+    private function cleanContext(): void
     {
         $filesystem = new Filesystem();
         $finder = new Finder();

@@ -24,23 +24,13 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
  */
 class FilesystemAction extends AbstractAction
 {
-    /**
-     * @var FilesystemOperator
-     */
-    protected $storage;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $filesystemFactoryLocator;
-
-    public function __construct(FilesystemOperator $storage, ?ContainerInterface $locator = null)
-    {
-        $this->storage = $storage;
-        $this->filesystemFactoryLocator = $locator ?: new ServiceLocator([]);
+    public function __construct(
+        protected FilesystemOperator $storage,
+        protected ContainerInterface $filesystemFactoryLocator = new ServiceLocator([]),
+    ) {
     }
 
-    public function handle(array $config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response): void
     {
         $this->assertConfiguration($config, ['adapter']);
 
@@ -59,7 +49,7 @@ class FilesystemAction extends AbstractAction
         }
     }
 
-    private function mirror(string $type, string $path, FilesystemInterface $filesystem)
+    private function mirror(string $type, string $path, FilesystemInterface $filesystem): void
     {
         if ('dir' === $type) {
             $this->mirrorDirectory($path, $filesystem);
@@ -70,12 +60,12 @@ class FilesystemAction extends AbstractAction
         $this->mirrorFile($path, $filesystem);
     }
 
-    private function mirrorDirectory(string $path, FilesystemInterface $filesystem)
+    private function mirrorDirectory(string $path, FilesystemInterface $filesystem): void
     {
         $filesystem->createDir($path);
     }
 
-    private function mirrorFile(string $path, FilesystemInterface $filesystem)
+    private function mirrorFile(string $path, FilesystemInterface $filesystem): void
     {
         $storageContent = $this->storage->read($path);
 

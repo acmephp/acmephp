@@ -18,7 +18,7 @@ use Symfony\Bridge\PhpUnit\DnsMock;
 
 class SimpleDnsResolverTest extends TestCase
 {
-    public function testGetTxtEntries()
+    public function testGetTxtEntries(): void
     {
         DnsMock::register(DnsValidator::class);
         DnsMock::withMockedHosts(

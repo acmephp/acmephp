@@ -28,10 +28,7 @@ class DistinguishedNameHelper extends Helper
         return 'distinguished_name';
     }
 
-    /**
-     * @return bool
-     */
-    public function isReadyForRequest(DistinguishedName $distinguishedName)
+    public function isReadyForRequest(DistinguishedName $distinguishedName): bool
     {
         return $distinguishedName->getCountryName()
             && $distinguishedName->getStateOrProvinceName()
@@ -42,10 +39,7 @@ class DistinguishedNameHelper extends Helper
             && $distinguishedName->getCommonName();
     }
 
-    /**
-     * @return DistinguishedName
-     */
-    public function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, DistinguishedName $distinguishedName)
+    public function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, DistinguishedName $distinguishedName): DistinguishedName
     {
         $countryName = $distinguishedName->getCountryName() ?: $helper->ask($input, $output, new Question(
             'What is your country two-letters code (field "C" of the distinguished name, for instance: "US")? : ',

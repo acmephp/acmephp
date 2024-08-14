@@ -27,7 +27,7 @@ class HttpValidatorTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $typeDns = 'dns-01';
         $typeHttp = 'http-01';
@@ -45,7 +45,7 @@ class HttpValidatorTest extends TestCase
         $this->assertTrue($validator->supports($stubChallenge->reveal(), $this->prophesize(SolverInterface::class)->reveal()));
     }
 
-    public function testIsValid()
+    public function testIsValid(): void
     {
         $checkUrl = 'http://foo.bar/.challenge';
         $checkContent = 'randomPayload';
@@ -68,7 +68,7 @@ class HttpValidatorTest extends TestCase
         $this->assertTrue($validator->isValid($stubChallenge->reveal(), $this->prophesize(SolverInterface::class)->reveal()));
     }
 
-    public function testIsValidCatchExceptions()
+    public function testIsValidCatchExceptions(): void
     {
         $checkUrl = 'http://foo.bar/.challenge';
         $checkContent = 'randomPayload';

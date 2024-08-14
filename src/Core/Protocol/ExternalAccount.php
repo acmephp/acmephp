@@ -18,16 +18,10 @@ namespace AcmePhp\Core\Protocol;
  */
 class ExternalAccount
 {
-    /** @var string */
-    private $id;
-
-    /** @var string */
-    private $hmacKey;
-
-    public function __construct(string $id, string $hmacKey)
-    {
-        $this->id = $id;
-        $this->hmacKey = $hmacKey;
+    public function __construct(
+        private readonly string $id,
+        private readonly string $hmacKey,
+    ) {
     }
 
     public function getId(): string

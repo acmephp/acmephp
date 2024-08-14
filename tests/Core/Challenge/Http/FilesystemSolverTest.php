@@ -25,7 +25,7 @@ class FilesystemSolverTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $typeDns = 'dns-01';
         $typeHttp = 'http-01';
@@ -41,7 +41,7 @@ class FilesystemSolverTest extends TestCase
         $this->assertTrue($solver->supports($stubChallenge->reveal()));
     }
 
-    public function testSolve()
+    public function testSolve(): void
     {
         $checkPath = '/.challenge';
         $checkContent = 'randomPayload';
@@ -67,7 +67,7 @@ class FilesystemSolverTest extends TestCase
         $solver->solve($stubChallenge->reveal());
     }
 
-    public function testCleanup()
+    public function testCleanup(): void
     {
         $checkPath = '/.challenge';
 

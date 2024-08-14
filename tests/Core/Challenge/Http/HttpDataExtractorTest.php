@@ -20,7 +20,7 @@ class HttpDataExtractorTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testGetCheckUrl()
+    public function testGetCheckUrl(): void
     {
         $domain = 'foo.com';
         $token = 'randomToken';
@@ -38,7 +38,7 @@ class HttpDataExtractorTest extends TestCase
         );
     }
 
-    public function testGetCheckContent()
+    public function testGetCheckContent(): void
     {
         $payload = 'randomPayload';
 

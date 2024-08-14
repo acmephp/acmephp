@@ -43,7 +43,7 @@ class InstallAwsElbv2Action extends AbstractAwsAction
         }
 
         $this->retryCall(
-            function () use ($elbv2Client, $listenerArn, $certificateArn) {
+            function () use ($elbv2Client, $listenerArn, $certificateArn): void {
                 $elbv2Client->modifyListener([
                     'Certificates' => [
                         [

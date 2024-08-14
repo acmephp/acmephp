@@ -12,6 +12,7 @@
 namespace Tests\AcmePhp\Core\Http;
 
 use AcmePhp\Core\Exception\AcmeCoreException;
+use AcmePhp\Core\Exception\Protocol\ExpectedJsonException;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;
@@ -27,14 +28,11 @@ use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
+use function GuzzleHttp\Psr7\copy_to_string;
+
 class SecureHttpClientTest extends TestCase
 {
-    /**
-     * @param bool $willThrow
-     *
-     * @return SecureHttpClient
-     */
-    private function createMockedClient(array $responses, $willThrow = false)
+    private function createMockedClient(array $responses, bool $willThrow = false): SecureHttpClient
     {
         $keyPairGenerator = new KeyPairGenerator();
         $httpClient = new Client(['handler' => HandlerStack::create(new MockHandler($responses))]);
@@ -57,7 +55,7 @@ class SecureHttpClientTest extends TestCase
         );
     }
 
-    public function testSignKidPayload()
+    public function testSignKidPayload(): void
     {
         $client = $this->createMockedClient([]);
         $payload = $client->signKidPayload('/foo', 'account', ['foo' => 'bar']);
@@ -66,30 +64,30 @@ class SecureHttpClientTest extends TestCase
         $this->assertArrayHasKey('protected', $payload);
         $this->assertArrayHasKey('payload', $payload);
         $this->assertArrayHasKey('signature', $payload);
-        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload']));
+        $this->assertSame('{"foo":"bar"}', \base64_decode((string) $payload['payload']));
     }
 
-    public function testSignKidPayloadWithEmptyPayload()
+    public function testSignKidPayloadWithEmptyPayload(): void
     {
         $client = $this->createMockedClient([]);
         $payload = $client->signKidPayload('/foo', 'account', []);
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('{}', \base64_decode($payload['payload']));
+        $this->assertSame('{}', \base64_decode((string) $payload['payload']));
     }
 
-    public function testSignKidPayloadWithNullPayload()
+    public function testSignKidPayloadWithNullPayload(): void
     {
         $client = $this->createMockedClient([]);
         $payload = $client->signKidPayload('/foo', 'account');
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('', \base64_decode($payload['payload']));
+        $this->assertSame('', \base64_decode((string) $payload['payload']));
     }
 
-    public function testSignJwkPayload()
+    public function testSignJwkPayload(): void
     {
         $client = $this->createMockedClient([]);
         $payload = $client->signJwkPayload('/foo', ['foo' => 'bar']);
@@ -98,51 +96,51 @@ class SecureHttpClientTest extends TestCase
         $this->assertArrayHasKey('protected', $payload);
         $this->assertArrayHasKey('payload', $payload);
         $this->assertArrayHasKey('signature', $payload);
-        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload']));
+        $this->assertSame('{"foo":"bar"}', \base64_decode((string) $payload['payload']));
     }
 
-    public function testSignJwkPayloadWithEmptyPayload()
+    public function testSignJwkPayloadWithEmptyPayload(): void
     {
         $client = $this->createMockedClient([]);
         $payload = $client->signJwkPayload('/foo', []);
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('{}', \base64_decode($payload['payload']));
+        $this->assertSame('{}', \base64_decode((string) $payload['payload']));
     }
 
-    public function testSignJwkPayloadWithNullPayload()
+    public function testSignJwkPayloadWithNullPayload(): void
     {
         $client = $this->createMockedClient([]);
         $payload = $client->signJwkPayload('/foo');
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('', \base64_decode($payload['payload']));
+        $this->assertSame('', \base64_decode((string) $payload['payload']));
     }
 
-    public function testValidStringRequest()
+    public function testValidStringRequest(): void
     {
         $client = $this->createMockedClient([new Response(200, [], 'foo')], false);
         $body = $client->request('GET', '/foo', ['foo' => 'bar'], false);
         $this->assertEquals('foo', $body);
     }
 
-    public function testValidJsonRequest()
+    public function testValidJsonRequest(): void
     {
         $client = $this->createMockedClient([new Response(200, [], json_encode(['test' => 'ok']))], false);
         $data = $client->request('GET', '/foo', ['foo' => 'bar'], true);
         $this->assertEquals(['test' => 'ok'], $data);
     }
 
-    public function testInvalidJsonRequest()
+    public function testInvalidJsonRequest(): void
     {
-        $this->expectException('AcmePhp\Core\Exception\Protocol\ExpectedJsonException');
+        $this->expectException(ExpectedJsonException::class);
         $client = $this->createMockedClient([new Response(200, [], 'invalid json')], false);
         $client->request('GET', '/foo', ['foo' => 'bar'], true);
     }
 
-    public function testRequestPayload()
+    public function testRequestPayload(): void
     {
         $container = [];
 
@@ -177,7 +175,7 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals('/acme/new-reg', ($request->getUri() instanceof Uri) ? $request->getUri()->getPath() : $request->getUri());
 
-        $body = \GuzzleHttp\Psr7\copy_to_string($request->getBody());
+        $body = copy_to_string($request->getBody());
         $payload = @json_decode($body, true);
 
         $this->assertIsArray($payload);

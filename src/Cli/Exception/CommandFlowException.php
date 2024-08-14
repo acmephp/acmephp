@@ -16,28 +16,24 @@ namespace AcmePhp\Cli\Exception;
  */
 class CommandFlowException extends AcmeCliException
 {
-    private $missing;
-    private $command;
-    private $arguments;
-
     /**
      * @param string $missing   Missing requirement to fix the flow
      * @param string $command   Name of the command to run in order to fix the flow
      * @param array  $arguments Optional list of missing arguments
      */
-    public function __construct(string $missing, string $command, array $arguments = [], ?\Exception $previous = null)
-    {
-        $this->missing = $missing;
-        $this->command = $command;
-        $this->arguments = $arguments;
-
+    public function __construct(
+        private readonly string $missing,
+        private readonly string $command,
+        private readonly array $arguments = [],
+        ?\Exception $previous = null
+    ) {
         $message = trim(sprintf(
             'You have to %s first. Run the command%sphp %s %s %s',
-            $missing,
+            $this->missing,
             PHP_EOL.PHP_EOL,
             $_SERVER['PHP_SELF'],
-            $command,
-            implode(' ', $arguments)
+            $this->command,
+            implode(' ', $this->arguments)
         ));
 
         parent::__construct($message, $previous);

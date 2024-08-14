@@ -16,6 +16,10 @@ use AcmePhp\Ssl\CertificateResponse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Uri;
 
+use function GuzzleHttp\json_decode;
+use function GuzzleHttp\json_encode;
+use function GuzzleHttp\Psr7\copy_to_string;
+
 /**
  * Action to upload SSL certificates to Rancher using its API.
  *
@@ -25,17 +29,12 @@ use GuzzleHttp\Psr7\Uri;
  */
 class PushRancherAction implements ActionInterface
 {
-    /**
-     * @var Client
-     */
-    private $httpClient;
-
-    public function __construct(Client $httpClient)
-    {
-        $this->httpClient = $httpClient;
+    public function __construct(
+        private readonly Client $httpClient,
+    ) {
     }
 
-    public function handle(array $config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response): void
     {
         $payload = $this->createRancherPayloadFromResponse($response);
 
@@ -56,16 +55,14 @@ class PushRancherAction implements ActionInterface
         }
     }
 
-    private function createRancherPayloadFromResponse(CertificateResponse $response)
+    private function createRancherPayloadFromResponse(CertificateResponse $response): string
     {
         $certificate = $response->getCertificate();
         $privateKey = $response->getCertificateRequest()->getKeyPair()->getPrivateKey();
 
-        $issuerChain = array_map(function (Certificate $certificate) {
-            return $certificate->getPEM();
-        }, $certificate->getIssuerChain());
+        $issuerChain = array_map(fn (Certificate $certificate): string => $certificate->getPEM(), $certificate->getIssuerChain());
 
-        return \GuzzleHttp\json_encode([
+        return json_encode([
             'name' => $response->getCertificateRequest()->getDistinguishedName()->getCommonName(),
             'description' => 'Generated with Acme PHP',
             'cert' => $certificate->getPEM(),
@@ -74,7 +71,10 @@ class PushRancherAction implements ActionInterface
         ]);
     }
 
-    private function getRancherCertificates($config)
+    /**
+     * @return mixed[]
+     */
+    private function getRancherCertificates(array $config): array
     {
         $nextPage = $this->createUrl($config, '/v1/certificates');
         $certificates = [];
@@ -92,17 +92,17 @@ class PushRancherAction implements ActionInterface
         return $certificates;
     }
 
-    private function updateRancherCertificate($config, $previousCertificateId, $newPayload)
+    private function updateRancherCertificate(array $config, string $previousCertificateId, string $newPayload): void
     {
         $this->request('PUT', $this->createUrl($config, '/v1/certificates/'.$previousCertificateId), $newPayload);
     }
 
-    private function createRancherCertificate($config, $payload)
+    private function createRancherCertificate(array $config, string $payload): void
     {
         $this->request('POST', $this->createUrl($config, '/v1/certificates'), $payload);
     }
 
-    private function createUrl($config, $endpoint)
+    private function createUrl(array $config, string $endpoint): string
     {
         $url = (new Uri())
             ->withScheme($config['ssl'] ? 'https' : 'http')
@@ -114,7 +114,7 @@ class PushRancherAction implements ActionInterface
         return (string) $url;
     }
 
-    private function request($method, $url, $body = null)
+    private function request(string $method, string $url, $body = null)
     {
         $response = $this->httpClient->request($method, $url, [
             'headers' => [
@@ -123,6 +123,6 @@ class PushRancherAction implements ActionInterface
             'body' => $body ?: '',
         ]);
 
-        return \GuzzleHttp\json_decode(\GuzzleHttp\Psr7\copy_to_string($response->getBody()), true);
+        return json_decode(copy_to_string($response->getBody()), true);
     }
 }

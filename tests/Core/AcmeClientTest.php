@@ -33,7 +33,7 @@ use GuzzleHttp\Client;
 
 class AcmeClientTest extends AbstractFunctionnalTest
 {
-    public function provideFullProcess()
+    public function provideFullProcess(): \Generator
     {
         yield 'rsa1024' => [new RsaKeyOption(1024), false];
         yield 'rsa1024-alternate' => [new RsaKeyOption(1024), true];
@@ -45,7 +45,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
     /**
      * @dataProvider provideFullProcess
      */
-    public function testFullProcess(KeyOption $keyOption, bool $useAlternateCertificate)
+    public function testFullProcess(KeyOption $keyOption, bool $useAlternateCertificate): void
     {
         $secureHttpClient = new SecureHttpClient(
             (new KeyPairGenerator())->generateKeyPair($keyOption),
@@ -135,7 +135,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
     /**
      * @dataProvider provideFullProcess
      */
-    public function testRequestAuthorizationAllowsCapitalisation(KeyOption $keyOption, bool $useAlternateCertificate)
+    public function testRequestAuthorizationAllowsCapitalisation(KeyOption $keyOption, bool $useAlternateCertificate): void
     {
         $secureHttpClient = new SecureHttpClient(
             (new KeyPairGenerator())->generateKeyPair($keyOption),

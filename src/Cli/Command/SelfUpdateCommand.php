@@ -154,7 +154,7 @@ class SelfUpdateCommand extends Command
         return 0;
     }
 
-    protected function getStableUpdater()
+    protected function getStableUpdater(): Updater
     {
         $updater = new Updater();
         $updater->setStrategy(Updater::STRATEGY_GITHUB);
@@ -162,7 +162,7 @@ class SelfUpdateCommand extends Command
         return $this->getGithubReleasesUpdater($updater);
     }
 
-    protected function getPreReleaseUpdater()
+    protected function getPreReleaseUpdater(): Updater
     {
         $updater = new Updater();
         $updater->setStrategy(Updater::STRATEGY_GITHUB);
@@ -171,7 +171,7 @@ class SelfUpdateCommand extends Command
         return $this->getGithubReleasesUpdater($updater);
     }
 
-    protected function getMostRecentNonDevUpdater()
+    protected function getMostRecentNonDevUpdater(): Updater
     {
         $updater = new Updater();
         $updater->setStrategy(Updater::STRATEGY_GITHUB);
@@ -180,7 +180,7 @@ class SelfUpdateCommand extends Command
         return $this->getGithubReleasesUpdater($updater);
     }
 
-    protected function getGithubReleasesUpdater(Updater $updater)
+    protected function getGithubReleasesUpdater(Updater $updater): Updater
     {
         $updater->getStrategy()->setPackageName(self::PACKAGE_NAME);
         $updater->getStrategy()->setPharName(self::FILE_NAME);
@@ -189,7 +189,7 @@ class SelfUpdateCommand extends Command
         return $updater;
     }
 
-    protected function getDevelopmentUpdater()
+    protected function getDevelopmentUpdater(): Updater
     {
         $updater = new Updater();
         $updater->getStrategy()->setPharUrl(self::PHAR_URL);
@@ -227,10 +227,10 @@ class SelfUpdateCommand extends Command
 
             $newVersion = $updater->getNewVersion();
             $oldVersion = $updater->getOldVersion();
-            if (40 === \strlen($newVersion)) {
+            if (40 === \strlen((string) $newVersion)) {
                 $newVersion = 'dev-'.$newVersion;
             }
-            if (40 === \strlen($oldVersion)) {
+            if (40 === \strlen((string) $oldVersion)) {
                 $oldVersion = 'dev-'.$oldVersion;
             }
 

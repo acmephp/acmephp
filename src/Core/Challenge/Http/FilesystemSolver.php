@@ -28,29 +28,16 @@ use Webmozart\Assert\Assert;
  */
 class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $filesystemFactoryLocator;
+    private FilesystemInterface $filesystem;
 
-    /**
-     * @var FilesystemInterface
-     */
-    private $filesystem;
-
-    /**
-     * @var HttpDataExtractor
-     */
-    private $extractor;
-
-    public function __construct(?ContainerInterface $filesystemFactoryLocator = null, ?HttpDataExtractor $extractor = null)
-    {
-        $this->filesystemFactoryLocator = $filesystemFactoryLocator ?: new ServiceLocator([]);
-        $this->extractor = $extractor ?: new HttpDataExtractor();
+    public function __construct(
+        private readonly ContainerInterface $filesystemFactoryLocator = new ServiceLocator([]),
+        private readonly HttpDataExtractor $extractor = new HttpDataExtractor(),
+    ) {
         $this->filesystem = new NullAdapter();
     }
 
-    public function configure(array $config)
+    public function configure(array $config): void
     {
         Assert::keyExists($config, 'adapter', 'configure::$config expected an array with the key %s.');
 
@@ -64,7 +51,7 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
         return 'http-01' === $authorizationChallenge->getType();
     }
 
-    public function solve(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge): void
     {
         $checkPath = $this->extractor->getCheckPath($authorizationChallenge);
         $checkContent = $this->extractor->getCheckContent($authorizationChallenge);
@@ -72,7 +59,7 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
         $this->filesystem->write($checkPath, $checkContent);
     }
 
-    public function cleanup(AuthorizationChallenge $authorizationChallenge)
+    public function cleanup(AuthorizationChallenge $authorizationChallenge): void
     {
         $checkPath = $this->extractor->getCheckPath($authorizationChallenge);
 

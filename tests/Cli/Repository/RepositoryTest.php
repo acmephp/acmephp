@@ -11,6 +11,7 @@
 
 namespace Tests\AcmePhp\Cli\Repository;
 
+use AcmePhp\Cli\Exception\AcmeCliException;
 use AcmePhp\Cli\Repository\Repository;
 use AcmePhp\Cli\Serializer\PemEncoder;
 use AcmePhp\Cli\Serializer\PemNormalizer;
@@ -55,7 +56,7 @@ class RepositoryTest extends TestCase
         $this->repository = new Repository($this->serializer, $this->storage);
     }
 
-    public function testStoreAccountKeyPair()
+    public function testStoreAccountKeyPair(): void
     {
         $this->repository->storeAccountKeyPair(new KeyPair(new PublicKey('public'), new PrivateKey('private')));
 
@@ -63,7 +64,7 @@ class RepositoryTest extends TestCase
         $this->assertEquals("private\n", $this->storage->read('account/key.private.pem'));
     }
 
-    public function testLoadAccountKeyPair()
+    public function testLoadAccountKeyPair(): void
     {
         $keyPair = new KeyPair(new PublicKey("public\n"), new PrivateKey("private\n"));
 
@@ -73,13 +74,13 @@ class RepositoryTest extends TestCase
         $this->assertEquals($keyPair, $this->repository->loadAccountKeyPair());
     }
 
-    public function testLoadAccountKeyPairFail()
+    public function testLoadAccountKeyPairFail(): void
     {
-        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
+        $this->expectException(AcmeCliException::class);
         $this->repository->loadAccountKeyPair();
     }
 
-    public function testStoreDomainKeyPair()
+    public function testStoreDomainKeyPair(): void
     {
         $this->repository->storeDomainKeyPair('example.com', new KeyPair(new PublicKey('public'), new PrivateKey('private')));
 
@@ -87,7 +88,7 @@ class RepositoryTest extends TestCase
         $this->assertEquals("private\n", $this->storage->read('certs/example.com/private/key.private.pem'));
     }
 
-    public function testLoadDomainKeyPair()
+    public function testLoadDomainKeyPair(): void
     {
         $keyPair = new KeyPair(new PublicKey("public\n"), new PrivateKey("private\n"));
 
@@ -97,13 +98,13 @@ class RepositoryTest extends TestCase
         $this->assertEquals($keyPair, $this->repository->loadDomainKeyPair('example.com'));
     }
 
-    public function testLoadDomainKeyPairFail()
+    public function testLoadDomainKeyPairFail(): void
     {
-        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
+        $this->expectException(AcmeCliException::class);
         $this->repository->loadDomainKeyPair('example.com');
     }
 
-    public function testStoreDomainAuthorizationChallenge()
+    public function testStoreDomainAuthorizationChallenge(): void
     {
         $challenge = new AuthorizationChallenge(
             'example.org',
@@ -128,7 +129,7 @@ class RepositoryTest extends TestCase
         $this->assertEquals('wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY', $data['payload']);
     }
 
-    public function testLoadDomainAuthorizationChallenge()
+    public function testLoadDomainAuthorizationChallenge(): void
     {
         $challenge = new AuthorizationChallenge(
             'example.org',
@@ -145,13 +146,13 @@ class RepositoryTest extends TestCase
         $this->assertEquals($challenge, $this->repository->loadDomainAuthorizationChallenge('example.com'));
     }
 
-    public function testLoadDomainAuthorizationChallengeFail()
+    public function testLoadDomainAuthorizationChallengeFail(): void
     {
-        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
+        $this->expectException(AcmeCliException::class);
         $this->repository->loadDomainAuthorizationChallenge('example.com');
     }
 
-    public function testStoreDomainDistinguishedName()
+    public function testStoreDomainDistinguishedName(): void
     {
         $dn = new DistinguishedName(
             'example.org',
@@ -181,7 +182,7 @@ class RepositoryTest extends TestCase
         $this->assertEquals(['sub.example.org', 'sub.example.com'], $data['subjectAlternativeNames']);
     }
 
-    public function testLoadDomainDistinguishedName()
+    public function testLoadDomainDistinguishedName(): void
     {
         $dn = new DistinguishedName(
             'example.org',
@@ -200,13 +201,13 @@ class RepositoryTest extends TestCase
         $this->assertEquals($dn, $this->repository->loadDomainDistinguishedName('example.com'));
     }
 
-    public function testLoadDomainDistinguishedNameFail()
+    public function testLoadDomainDistinguishedNameFail(): void
     {
-        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
+        $this->expectException(AcmeCliException::class);
         $this->repository->loadDomainDistinguishedName('example.com');
     }
 
-    public function testStoreDomainCertificate()
+    public function testStoreDomainCertificate(): void
     {
         $cert = new Certificate(self::$certPem, new Certificate(self::$issuerCertPem));
 
@@ -219,7 +220,7 @@ class RepositoryTest extends TestCase
         $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->storage->read('certs/example.com/public/fullchain.pem'));
     }
 
-    public function testLoadDomainCertificate()
+    public function testLoadDomainCertificate(): void
     {
         $cert = new Certificate(self::$certPem, new Certificate(self::$issuerCertPem));
 
@@ -230,9 +231,9 @@ class RepositoryTest extends TestCase
         $this->assertEquals($cert, $this->repository->loadDomainCertificate('example.com'));
     }
 
-    public function testLoadDomainCertificateFail()
+    public function testLoadDomainCertificateFail(): void
     {
-        $this->expectException('AcmePhp\Cli\Exception\AcmeCliException');
+        $this->expectException(AcmeCliException::class);
         $this->repository->loadDomainCertificate('example.com');
     }
 

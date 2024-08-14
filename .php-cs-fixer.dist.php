@@ -18,6 +18,7 @@ $finder = PhpCsFixer\Finder::create()
 return (new PhpCsFixer\Config())
     ->setFinder($finder)
     ->setRules([
+        '@PHP81Migration' => true,
         '@Symfony' => true,
         'array_syntax' => ['syntax' => 'short'],
         'phpdoc_annotation_without_dot' => false,

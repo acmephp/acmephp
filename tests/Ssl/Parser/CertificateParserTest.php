@@ -12,29 +12,27 @@
 namespace Tests\AcmePhp\Ssl\Parser;
 
 use AcmePhp\Ssl\Certificate;
+use AcmePhp\Ssl\Exception\CertificateParsingException;
 use AcmePhp\Ssl\ParsedCertificate;
 use AcmePhp\Ssl\Parser\CertificateParser;
 use PHPUnit\Framework\TestCase;
 
 class CertificateParserTest extends TestCase
 {
-    /** @var CertificateParser */
-    private $service;
+    private CertificateParser $service;
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->service = new CertificateParser();
     }
 
-    public function testParseRaiseProperException()
+    public function testParseRaiseProperException(): void
     {
-        $this->expectException('AcmePhp\Ssl\Exception\CertificateParsingException');
+        $this->expectException(CertificateParsingException::class);
         $this->service->parse(new Certificate('Not a cert'));
     }
 
-    public function testParseReturnsInstanceOfParsedCertificate()
+    public function testParseReturnsInstanceOfParsedCertificate(): void
     {
         $result = $this->service->parse(
             new Certificate(
@@ -88,7 +86,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertFalse($result->isSelfSigned());
     }
 
-    public function testParseWithoutIssuerCNReturnsInstanceOfParsedCertificate()
+    public function testParseWithoutIssuerCNReturnsInstanceOfParsedCertificate(): void
     {
         $result = $this->service->parse(
             new Certificate(

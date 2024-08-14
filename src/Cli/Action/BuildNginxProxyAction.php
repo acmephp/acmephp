@@ -24,17 +24,12 @@ use AcmePhp\Ssl\CertificateResponse;
  */
 class BuildNginxProxyAction implements ActionInterface
 {
-    /**
-     * @var RepositoryInterface
-     */
-    private $repository;
-
-    public function __construct(RepositoryInterface $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly RepositoryInterface $repository
+    ) {
     }
 
-    public function handle(array $config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response): void
     {
         $domain = $response->getCertificateRequest()->getDistinguishedName()->getCommonName();
         $privateKey = $response->getCertificateRequest()->getKeyPair()->getPrivateKey();
@@ -46,9 +41,7 @@ class BuildNginxProxyAction implements ActionInterface
         $this->repository->save('nginxproxy/'.$domain.'.key', $privateKey->getPEM());
 
         // Issuer chain
-        $issuerChain = array_map(function (Certificate $certificate) {
-            return $certificate->getPEM();
-        }, $certificate->getIssuerChain());
+        $issuerChain = array_map(fn (Certificate $certificate): string => $certificate->getPEM(), $certificate->getIssuerChain());
 
         // Full chain
         $fullChainPem = $certificate->getPEM()."\n".implode("\n", $issuerChain);

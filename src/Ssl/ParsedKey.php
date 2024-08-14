@@ -22,35 +22,19 @@ use Webmozart\Assert\Assert;
  */
 class ParsedKey
 {
-    /** @var Key */
-    private $source;
-
-    /** @var string */
-    private $key;
-
-    /** @var int */
-    private $bits;
-
-    /** @var int */
-    private $type;
-
-    /** @var array */
-    private $details;
-
-    public function __construct(Key $source, string $key, int $bits, int $type, array $details = [])
-    {
-        Assert::stringNotEmpty($key, __CLASS__.'::$key expected a non empty string. Got: %s');
+    public function __construct(
+        private readonly Key $source,
+        private readonly string $key,
+        private readonly int $bits,
+        private readonly int $type,
+        private readonly array $details = [],
+    ) {
+        Assert::stringNotEmpty($key, self::class.'::$key expected a non empty string. Got: %s');
         Assert::oneOf(
             $type,
             [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_DSA, OPENSSL_KEYTYPE_DH, OPENSSL_KEYTYPE_EC],
-            __CLASS__.'::$type expected one of: %2$s. Got: %s'
+            self::class.'::$type expected one of: %2$s. Got: %s'
         );
-
-        $this->source = $source;
-        $this->key = $key;
-        $this->bits = $bits;
-        $this->type = $type;
-        $this->details = $details;
     }
 
     public function getSource(): Key

@@ -41,6 +41,8 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\PathUtil\Path;
 
+use function GuzzleHttp\json_decode;
+
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
@@ -48,7 +50,7 @@ class RunCommand extends AbstractCommand
 {
     use KeyOptionCommandTrait;
 
-    private $config;
+    private ?array $config = null;
 
     protected function configure()
     {
@@ -104,7 +106,7 @@ class RunCommand extends AbstractCommand
         return 0;
     }
 
-    private function register($email, KeyOption $keyOption)
+    private function register(?string $email, KeyOption $keyOption): void
     {
         $this->output->writeln(
             sprintf(
@@ -129,7 +131,7 @@ class RunCommand extends AbstractCommand
         try {
             $client->registerAccount($email, $this->resolveEabKid());
             $this->output->writeln('<info>Account registered successfully!</info>');
-        } catch (MalformedServerException $e) {
+        } catch (MalformedServerException) {
             $this->output->writeln('<info>Account already registered!</info>');
         }
     }
@@ -145,7 +147,7 @@ class RunCommand extends AbstractCommand
         if ('zerossl' === $this->config['provider']) {
             // If an API key is provided, use it
             if ($this->config['zerossl_api_key']) {
-                $eabCredentials = \GuzzleHttp\json_decode(
+                $eabCredentials = json_decode(
                     (new Client())
                         ->post('https://api.zerossl.com/acme/eab-credentials/?access_key='.$this->config['zerossl_api_key'])
                         ->getBody()
@@ -160,7 +162,7 @@ class RunCommand extends AbstractCommand
             }
 
             // Otherwise register on the fly
-            $eabCredentials = \GuzzleHttp\json_decode(
+            $eabCredentials = json_decode(
                 (new Client())
                     ->post('https://api.zerossl.com/acme/eab-credentials-email', [
                         'form_params' => ['email' => $this->config['contact_email']],
@@ -179,7 +181,7 @@ class RunCommand extends AbstractCommand
         return null;
     }
 
-    private function installCertificate(CertificateResponse $response, array $actions)
+    private function installCertificate(CertificateResponse $response, array $actions): void
     {
         $this->output->writeln(
             sprintf(
@@ -201,7 +203,7 @@ class RunCommand extends AbstractCommand
         }
     }
 
-    private function isUpToDate($domain, $domainConfig, $delay)
+    private function isUpToDate($domain, array $domainConfig, int $delay): bool
     {
         $repository = $this->getRepository();
 
@@ -236,7 +238,7 @@ class RunCommand extends AbstractCommand
         return true;
     }
 
-    private function requestCertificate(CertificateOrder $order, $domainConfig, KeyOption $keyOption)
+    private function requestCertificate(CertificateOrder $order, array $domainConfig, KeyOption $keyOption)
     {
         $domain = $domainConfig['domain'];
         $this->output->writeln(sprintf('<comment>Requesting certificate for domain %s...</comment>', $domain));
@@ -356,12 +358,12 @@ class RunCommand extends AbstractCommand
         return $order;
     }
 
-    private function getConfig($configFile)
+    private function getConfig(string $configFile): array
     {
         return $this->resolveConfig($this->loadConfig($configFile));
     }
 
-    private function loadConfig($configFile)
+    private function loadConfig(string $configFile)
     {
         if (!file_exists($configFile)) {
             throw new IOException('Configuration file '.$configFile.' does not exists.');
@@ -374,7 +376,7 @@ class RunCommand extends AbstractCommand
         return Yaml::parse(file_get_contents($configFile));
     }
 
-    private function resolveConfig($config)
+    private function resolveConfig($config): array
     {
         $processor = new Processor();
 

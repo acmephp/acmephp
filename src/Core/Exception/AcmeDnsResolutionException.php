@@ -18,6 +18,6 @@ class AcmeDnsResolutionException extends AcmeCoreException
 {
     public function __construct($message, ?\Exception $previous = null)
     {
-        parent::__construct(null === $message ? 'An exception was thrown during resolution of DNS' : $message, 0, $previous);
+        parent::__construct($message ?? 'An exception was thrown during resolution of DNS', 0, $previous);
     }
 }

@@ -44,7 +44,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ServerErrorHandler
 {
-    private static $exceptions = [
+    private static array $exceptions = [
         'badCSR' => BadCsrServerException::class,
         'badNonce' => BadNonceServerException::class,
         'caa' => CaaServerException::class,
@@ -99,7 +99,7 @@ class ServerErrorHandler
 
         try {
             $data = JsonDecoder::decode($body, true);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
             $data = null;
         }
 
@@ -108,14 +108,14 @@ class ServerErrorHandler
             return $this->createDefaultExceptionForResponse($request, $response, $previous);
         }
 
-        $type = preg_replace('/^urn:(ietf:params:)?acme:error:/i', '', $data['type']);
+        $type = (string) preg_replace('/^urn:(ietf:params:)?acme:error:/i', '', $data['type']);
 
-        if (!isset(self::$exceptions[$type])) {
+        $exceptionClass = self::$exceptions[$type] ?? null;
+
+        if (!$exceptionClass) {
             // Unknown type: not an ACME error response
             return $this->createDefaultExceptionForResponse($request, $response, $previous);
         }
-
-        $exceptionClass = self::$exceptions[$type];
 
         return new $exceptionClass(
             $request,

@@ -17,17 +17,12 @@ use GuzzleHttp\Client;
 
 class InstallCPanelAction extends AbstractAction
 {
-    /**
-     * @var Client
-     */
-    private $httpClient;
-
-    public function __construct(Client $httpClient)
-    {
-        $this->httpClient = $httpClient;
+    public function __construct(
+        private readonly Client $httpClient
+    ) {
     }
 
-    public function handle(array $config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response): void
     {
         $this->assertConfiguration($config, ['host', 'username', 'token']);
 
@@ -35,9 +30,7 @@ class InstallCPanelAction extends AbstractAction
         $certificate = $response->getCertificate();
         $privateKey = $response->getCertificateRequest()->getKeyPair()->getPrivateKey();
 
-        $issuerChain = array_map(function (Certificate $certificate) {
-            return $certificate->getPEM();
-        }, $certificate->getIssuerChain());
+        $issuerChain = array_map(fn (Certificate $certificate): string => $certificate->getPEM(), $certificate->getIssuerChain());
 
         $this->installCertificate(
             $config,
@@ -48,16 +41,16 @@ class InstallCPanelAction extends AbstractAction
         );
     }
 
-    private function installCertificate($config, $domain, $crt, $caBundle, $key)
+    private function installCertificate(array $config, string $domain, string $crt, string $caBundle, string $key): void
     {
         $this->httpClient->request('POST', $config['host'].'json-api/cpanel?'.
             'cpanel_jsonapi_apiversion=2&'.
             'cpanel_jsonapi_module=SSL&'.
             'cpanel_jsonapi_func=installssl&'.
             'domain='.$domain.'&'.
-            'crt='.urlencode($crt).'&'.
-            'key='.urlencode($key).'&'.
-            'cabundle='.urlencode($caBundle),
+            'crt='.urlencode((string) $crt).'&'.
+            'key='.urlencode((string) $key).'&'.
+            'cabundle='.urlencode((string) $caBundle),
             ['headers' => ['Authorization' => 'cpanel '.$config['username'].':'.$config['token']],
             ]);
     }

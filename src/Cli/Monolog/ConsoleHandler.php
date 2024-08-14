@@ -27,15 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ConsoleHandler extends AbstractProcessingHandler
 {
-    /**
-     * @var OutputInterface|null
-     */
-    private $output;
-
-    /**
-     * @var array
-     */
-    private $verbosityLevelMap = [
+    private array $verbosityLevelMap = [
         OutputInterface::VERBOSITY_QUIET => Logger::ERROR,
         OutputInterface::VERBOSITY_NORMAL => Logger::INFO,
         OutputInterface::VERBOSITY_VERBOSE => Logger::INFO,
@@ -52,11 +44,12 @@ class ConsoleHandler extends AbstractProcessingHandler
      * @param array                $verbosityLevelMap Array that maps the OutputInterface verbosity to a minimum logging
      *                                                level (leave empty to use the default mapping)
      */
-    public function __construct(?OutputInterface $output = null, bool $bubble = true, array $verbosityLevelMap = [])
-    {
+    public function __construct(
+        private ?OutputInterface $output = null,
+        bool $bubble = true,
+        array $verbosityLevelMap = [],
+    ) {
         parent::__construct(Logger::DEBUG, $bubble);
-
-        $this->output = $output;
 
         if ($verbosityLevelMap) {
             $this->verbosityLevelMap = $verbosityLevelMap;
@@ -80,7 +73,7 @@ class ConsoleHandler extends AbstractProcessingHandler
      *
      * @param OutputInterface $output The console output to use
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
@@ -113,7 +106,7 @@ class ConsoleHandler extends AbstractProcessingHandler
      *
      * @return bool Whether the handler is enabled and verbosity is not set to quiet
      */
-    private function updateLevel()
+    private function updateLevel(): bool
     {
         if (null === $this->output) {
             return false;

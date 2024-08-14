@@ -22,7 +22,7 @@ use AlibabaCloud\WafOpenapi\WafOpenapi;
  */
 class InstallAliyunWafAction extends AbstractAction
 {
-    public function handle(array $config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response): void
     {
         $issuerChain = [];
         $issuerChain[] = $response->getCertificate()->getPEM();

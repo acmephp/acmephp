@@ -23,20 +23,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SimpleDnsSolver implements SolverInterface
 {
-    /**
-     * @var DnsDataExtractor
-     */
-    private $extractor;
-
-    /**
-     * @var OutputInterface
-     */
-    protected $output;
-
-    public function __construct(?DnsDataExtractor $extractor = null, ?OutputInterface $output = null)
-    {
-        $this->extractor = $extractor ?: new DnsDataExtractor();
-        $this->output = $output ?: new NullOutput();
+    public function __construct(
+        private readonly DnsDataExtractor $extractor = new DnsDataExtractor(),
+        private readonly OutputInterface $output = new NullOutput(),
+    ) {
     }
 
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
@@ -44,7 +34,7 @@ class SimpleDnsSolver implements SolverInterface
         return 'dns-01' === $authorizationChallenge->getType();
     }
 
-    public function solve(AuthorizationChallenge $authorizationChallenge)
+    public function solve(AuthorizationChallenge $authorizationChallenge): void
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
         $recordValue = $this->extractor->getRecordValue($authorizationChallenge);
@@ -52,16 +42,16 @@ class SimpleDnsSolver implements SolverInterface
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-    Add the following TXT record to your DNS zone
-        Domain: %s
-        TXT value: %s
-        
-    <comment>Wait for the propagation before moving to the next step</comment>
-    Tips: Use the following command to check the propagation
+                        Add the following TXT record to your DNS zone
+                            Domain: %s
+                            TXT value: %s
 
-        host -t TXT %s
+                        <comment>Wait for the propagation before moving to the next step</comment>
+                        Tips: Use the following command to check the propagation
 
-EOF
+                            host -t TXT %s
+
+                    EOF
                 ,
                 $recordName,
                 $recordValue,
@@ -70,15 +60,15 @@ EOF
         );
     }
 
-    public function cleanup(AuthorizationChallenge $authorizationChallenge)
+    public function cleanup(AuthorizationChallenge $authorizationChallenge): void
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
 
         $this->output->writeln(
             sprintf(
                 <<<'EOF'
-You can now cleanup your DNS by removing the domain <comment>_acme-challenge.%s.</comment>
-EOF
+                    You can now cleanup your DNS by removing the domain <comment>_acme-challenge.%s.</comment>
+                    EOF
                 ,
                 $recordName
             )

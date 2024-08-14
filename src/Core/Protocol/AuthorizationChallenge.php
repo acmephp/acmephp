@@ -18,32 +18,14 @@ namespace AcmePhp\Core\Protocol;
  */
 class AuthorizationChallenge
 {
-    /** @var string */
-    private $domain;
-
-    /** @var string */
-    private $status;
-
-    /** @var string */
-    private $type;
-
-    /** @var string */
-    private $url;
-
-    /** @var string */
-    private $token;
-
-    /** @var string */
-    private $payload;
-
-    public function __construct(string $domain, string $status, string $type, string $url, string $token, string $payload)
-    {
-        $this->domain = $domain;
-        $this->status = $status;
-        $this->type = $type;
-        $this->url = $url;
-        $this->token = $token;
-        $this->payload = $payload;
+    public function __construct(
+        private readonly string $domain,
+        private readonly string $status,
+        private readonly string $type,
+        private readonly string $url,
+        private readonly string $token,
+        private readonly string $payload,
+    ) {
     }
 
     public function toArray(): array

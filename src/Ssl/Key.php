@@ -20,14 +20,10 @@ use Webmozart\Assert\Assert;
  */
 abstract class Key
 {
-    /** @var string */
-    protected $keyPEM;
-
-    public function __construct(string $keyPEM)
-    {
-        Assert::stringNotEmpty($keyPEM, __CLASS__.'::$keyPEM should not be an empty string. Got %s');
-
-        $this->keyPEM = $keyPEM;
+    public function __construct(
+        protected string $keyPEM,
+    ) {
+        Assert::stringNotEmpty($keyPEM, self::class.'::$keyPEM should not be an empty string. Got %s');
     }
 
     public function getPEM(): string

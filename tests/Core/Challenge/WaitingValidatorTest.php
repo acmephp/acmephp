@@ -25,8 +25,6 @@ class WaitingValidatorTest extends TestCase
 
     public function setUp(): void
     {
-        parent::setUp();
-
         ClockMock::register(WaitingValidator::class);
         ClockMock::register(static::class);
         ClockMock::withClockMock(true);
@@ -34,12 +32,10 @@ class WaitingValidatorTest extends TestCase
 
     public function tearDown(): void
     {
-        parent::tearDown();
-
         ClockMock::withClockMock(false);
     }
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $mockDecorated = $this->prophesize(ValidatorInterface::class);
         $dummyChallenge = $this->prophesize(AuthorizationChallenge::class)->reveal();
@@ -54,7 +50,7 @@ class WaitingValidatorTest extends TestCase
         $this->assertFalse($validator->supports($dummyChallenge, $solver));
     }
 
-    public function testIsValid()
+    public function testIsValid(): void
     {
         $mockDecorated = $this->prophesize(ValidatorInterface::class);
         $dummyChallenge = $this->prophesize(AuthorizationChallenge::class)->reveal();
@@ -68,7 +64,7 @@ class WaitingValidatorTest extends TestCase
         $this->assertLessThan(1, time() - $start);
     }
 
-    public function testIsValidWaitBetweenTests()
+    public function testIsValidWaitBetweenTests(): void
     {
         $mockDecorated = $this->prophesize(ValidatorInterface::class);
         $dummyChallenge = $this->prophesize(AuthorizationChallenge::class)->reveal();
@@ -82,7 +78,7 @@ class WaitingValidatorTest extends TestCase
         $this->assertGreaterThanOrEqual(180, time() - $start);
     }
 
-    public function testIsValidRetryTillOk()
+    public function testIsValidRetryTillOk(): void
     {
         $mockDecorated = $this->prophesize(ValidatorInterface::class);
         $dummyChallenge = $this->prophesize(AuthorizationChallenge::class)->reveal();

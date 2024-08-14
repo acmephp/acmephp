@@ -42,17 +42,17 @@ class CertificateRequestSigner
     protected function createCsrWithSANsObject(CertificateRequest $certificateRequest)
     {
         $sslConfigTemplate = <<<'EOL'
-[ req ]
-distinguished_name = req_distinguished_name
-req_extensions = v3_req
-[ req_distinguished_name ]
-[ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-subjectAltName = @req_subject_alt_name
-[ req_subject_alt_name ]
-%s
-EOL;
+            [ req ]
+            distinguished_name = req_distinguished_name
+            req_extensions = v3_req
+            [ req_distinguished_name ]
+            [ v3_req ]
+            basicConstraints = CA:FALSE
+            keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+            subjectAltName = @req_subject_alt_name
+            [ req_subject_alt_name ]
+            %s
+            EOL;
         $sslConfigDomains = [];
 
         $distinguishedName = $certificateRequest->getDistinguishedName();

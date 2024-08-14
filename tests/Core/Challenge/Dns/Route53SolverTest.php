@@ -23,7 +23,7 @@ class Route53SolverTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $typeDns = 'dns-01';
         $typeHttp = 'http-01';
@@ -41,7 +41,7 @@ class Route53SolverTest extends TestCase
         $this->assertFalse($solver->supports($stubChallenge->reveal()));
     }
 
-    public function testSolve()
+    public function testSolve(): void
     {
         $domain = 'bar.com';
         $recordName = '_acme-challenge.bar.com.';
@@ -83,7 +83,7 @@ class Route53SolverTest extends TestCase
         $solver->solve($stubChallenge->reveal());
     }
 
-    public function testCleanup()
+    public function testCleanup(): void
     {
         $domain = 'bar.com';
         $recordName = '_acme-challenge.bar.com.';

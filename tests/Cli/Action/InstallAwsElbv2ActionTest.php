@@ -30,7 +30,7 @@ class InstallAwsElbv2ActionTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testHandle()
+    public function testHandle(): void
     {
         $domain = 'foo.bar';
         $region = 'eu-west-1';

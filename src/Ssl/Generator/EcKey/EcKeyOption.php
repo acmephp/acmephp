@@ -16,14 +16,10 @@ use Webmozart\Assert\Assert;
 
 class EcKeyOption implements KeyOption
 {
-    /** @var string */
-    private $curveName;
-
-    public function __construct(string $curveName = 'secp384r1')
-    {
+    public function __construct(
+        private readonly string $curveName = 'secp384r1'
+    ) {
         Assert::oneOf($curveName, openssl_get_curve_names(), 'The given curve %s is not supported. Available curves are: %s');
-
-        $this->curveName = $curveName;
     }
 
     public function getCurveName(): string

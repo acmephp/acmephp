@@ -18,16 +18,10 @@ namespace AcmePhp\Ssl;
  */
 class CertificateResponse
 {
-    /** @var CertificateRequest */
-    private $certificateRequest;
-
-    /** @var Certificate */
-    private $certificate;
-
-    public function __construct(CertificateRequest $certificateRequest, Certificate $certificate)
-    {
-        $this->certificateRequest = $certificateRequest;
-        $this->certificate = $certificate;
+    public function __construct(
+        private readonly CertificateRequest $certificateRequest,
+        private readonly Certificate $certificate,
+    ) {
     }
 
     public function getCertificateRequest(): CertificateRequest

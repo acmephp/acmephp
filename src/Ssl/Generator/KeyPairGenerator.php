@@ -27,18 +27,16 @@ use AcmePhp\Ssl\KeyPair;
  */
 class KeyPairGenerator
 {
-    private $generator;
-
-    public function __construct(?PrivateKeyGeneratorInterface $generator = null)
-    {
-        $this->generator = $generator ?: new ChainPrivateKeyGenerator(
+    public function __construct(
+        private readonly PrivateKeyGeneratorInterface $generator = new ChainPrivateKeyGenerator(
             [
                 new RsaKeyGenerator(),
                 new EcKeyGenerator(),
                 new DhKeyGenerator(),
                 new DsaKeyGenerator(),
             ]
-        );
+        ),
+    ) {
     }
 
     /**

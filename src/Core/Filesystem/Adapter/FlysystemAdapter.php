@@ -17,17 +17,12 @@ use League\Flysystem\FilesystemOperator as FlysystemFilesystemInterface;
 
 class FlysystemAdapter implements FilesystemInterface
 {
-    /**
-     * @var FlysystemFilesystemInterface
-     */
-    private $filesystem;
-
-    public function __construct(FlysystemFilesystemInterface $filesystem)
-    {
-        $this->filesystem = $filesystem;
+    public function __construct(
+        private readonly FlysystemFilesystemInterface $filesystem,
+    ) {
     }
 
-    public function write(string $path, string $content)
+    public function write(string $path, string $content): void
     {
         try {
             $this->filesystem->write($path, $content);
@@ -36,7 +31,7 @@ class FlysystemAdapter implements FilesystemInterface
         }
     }
 
-    public function delete(string $path)
+    public function delete(string $path): void
     {
         $isOnRemote = $this->filesystem->has($path);
         try {
@@ -48,7 +43,7 @@ class FlysystemAdapter implements FilesystemInterface
         }
     }
 
-    public function createDir(string $path)
+    public function createDir(string $path): void
     {
         try {
             $this->filesystem->createDirectory($path);

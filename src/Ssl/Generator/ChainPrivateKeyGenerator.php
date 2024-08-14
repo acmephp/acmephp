@@ -20,15 +20,12 @@ use AcmePhp\Ssl\PrivateKey;
  */
 class ChainPrivateKeyGenerator implements PrivateKeyGeneratorInterface
 {
-    /** @var PrivateKeyGeneratorInterface[] */
-    private $generators;
-
     /**
      * @param PrivateKeyGeneratorInterface[] $generators
      */
-    public function __construct(iterable $generators)
-    {
-        $this->generators = $generators;
+    public function __construct(
+        private readonly iterable $generators
+    ) {
     }
 
     public function generatePrivateKey(KeyOption $keyOption): PrivateKey
@@ -39,7 +36,7 @@ class ChainPrivateKeyGenerator implements PrivateKeyGeneratorInterface
             }
         }
 
-        throw new \LogicException(sprintf('Unable to find a generator for a key option of type %s', \get_class($keyOption)));
+        throw new \LogicException(sprintf('Unable to find a generator for a key option of type %s', $keyOption::class));
     }
 
     public function supportsKeyOption(KeyOption $keyOption): bool

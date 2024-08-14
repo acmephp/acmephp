@@ -21,7 +21,7 @@ class DnsDataExtractorTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testGetRecordName()
+    public function testGetRecordName(): void
     {
         $domain = 'foo.com';
 
@@ -35,7 +35,7 @@ class DnsDataExtractorTest extends TestCase
         $this->assertEquals('_acme-challenge.'.$domain.'.', $extractor->getRecordName($stubChallenge->reveal()));
     }
 
-    public function testGetRecordValue()
+    public function testGetRecordValue(): void
     {
         $payload = 'randomPayload';
         $encodedPayload = 'encodedSHA256Payload';

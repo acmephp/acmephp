@@ -20,17 +20,14 @@ use PHPUnit\Framework\TestCase;
 
 class DataSignerTest extends TestCase
 {
-    /** @var DataSigner */
-    private $service;
+    private DataSigner $service;
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->service = new DataSigner();
     }
 
-    public function testSignDataReturnsASignature()
+    public function testSignDataReturnsASignature(): void
     {
         $privateRsaKey = (new RsaKeyGenerator())->generatePrivateKey(new RsaKeyOption());
 
@@ -51,7 +48,7 @@ class DataSignerTest extends TestCase
     /**
      * @requires PHP 7.1
      */
-    public function testSignDataReturnsASignatureForEcKeys()
+    public function testSignDataReturnsASignatureForEcKeys(): void
     {
         $this->assertEquals(64, \strlen($this->service->signData('foo', (new EcKeyGenerator())->generatePrivateKey(new EcKeyOption('prime256v1')), OPENSSL_ALGO_SHA256, DataSigner::FORMAT_ECDSA)));
         $this->assertEquals(96, \strlen($this->service->signData('foo', (new EcKeyGenerator())->generatePrivateKey(new EcKeyOption('secp384r1')), OPENSSL_ALGO_SHA384, DataSigner::FORMAT_ECDSA)));

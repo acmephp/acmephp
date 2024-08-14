@@ -24,20 +24,10 @@ use GuzzleHttp\Exception\ClientException;
  */
 class HttpValidator implements ValidatorInterface
 {
-    /**
-     * @var HttpDataExtractor
-     */
-    private $extractor;
-
-    /**
-     * @var Client
-     */
-    private $client;
-
-    public function __construct(?HttpDataExtractor $extractor = null, ?Client $client = null)
-    {
-        $this->extractor = $extractor ?: new HttpDataExtractor();
-        $this->client = $client ?: new Client();
+    public function __construct(
+        private readonly HttpDataExtractor $extractor = new HttpDataExtractor(),
+        private readonly Client $client = new Client()
+    ) {
     }
 
     public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
@@ -52,7 +42,7 @@ class HttpValidator implements ValidatorInterface
 
         try {
             return $checkContent === trim($this->client->get($checkUrl, ['verify' => false])->getBody()->getContents());
-        } catch (ClientException $e) {
+        } catch (ClientException) {
             return false;
         }
     }

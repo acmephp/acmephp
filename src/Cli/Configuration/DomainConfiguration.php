@@ -31,10 +31,8 @@ class DomainConfiguration implements ConfigurationInterface
 
         $rootNode
             ->beforeNormalization()
-                ->ifTrue(function ($conf) {
-                    return isset($conf['defaults']);
-                })
-                ->then(function ($conf) {
+                ->ifTrue(fn ($conf): bool => isset($conf['defaults']))
+                ->then(function (array $conf): array {
                     foreach ($conf['certificates'] as &$domainConf) {
                         $domainConf = $this->mergeArray((array) $domainConf, $conf['defaults']);
                     }
@@ -48,9 +46,7 @@ class DomainConfiguration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                     ->validate()
-                        ->ifTrue(function ($item) {
-                            return !filter_var($item, FILTER_VALIDATE_EMAIL);
-                        })
+                        ->ifTrue(fn ($item): bool => !filter_var($item, FILTER_VALIDATE_EMAIL))
                         ->thenInvalid('The email %s is not valid.')
                     ->end()
                 ->end()
@@ -58,9 +54,7 @@ class DomainConfiguration implements ConfigurationInterface
                     ->info('Certificate provider to use (supported: '.implode(', ', Application::PROVIDERS).')')
                     ->defaultValue('letsencrypt')
                     ->validate()
-                        ->ifTrue(function ($item) {
-                            return !isset(Application::PROVIDERS[$item]);
-                        })
+                        ->ifTrue(fn ($item): bool => !isset(Application::PROVIDERS[$item]))
                         ->thenInvalid('The certificate provider %s is not valid (supported: '.implode(', ', Application::PROVIDERS).').')
                     ->end()
                 ->end()
@@ -81,14 +75,10 @@ class DomainConfiguration implements ConfigurationInterface
                     ->defaultValue('RSA')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($conf) {
-                            return strtoupper($conf);
-                        })
+                        ->then(fn ($conf): string => strtoupper((string) $conf))
                     ->end()
                     ->validate()
-                        ->ifTrue(function ($item) {
-                            return !\in_array($item, ['RSA', 'EC']);
-                        })
+                        ->ifTrue(fn ($item): bool => !\in_array($item, ['RSA', 'EC']))
                         ->thenInvalid('The keyType %s is not valid. Supported types are: RSA, EC')
                     ->end()
                 ->end()
@@ -111,10 +101,8 @@ class DomainConfiguration implements ConfigurationInterface
             ->info('Default configurations overridable by each certificate section.')
             ->addDefaultsIfNotSet()
             ->beforeNormalization()
-                ->ifTrue(function ($conf) {
-                    return isset($conf['solver']) && !\is_array($conf['solver']);
-                })
-                ->then(function ($conf) {
+                ->ifTrue(fn ($conf): bool => isset($conf['solver']) && !\is_array($conf['solver']))
+                ->then(function (array $conf) {
                     $conf['solver'] = ['name' => $conf['solver']];
 
                     return $conf;
@@ -139,9 +127,7 @@ class DomainConfiguration implements ConfigurationInterface
             ->prototype('scalar')->end()
             ->requiresAtLeastOneElement()
             ->validate()
-                ->ifTrue(function ($item) {
-                    return !isset($item['name']);
-                })
+                ->ifTrue(fn ($item): bool => !isset($item['name']))
                 ->thenInvalid('The name attribute %s is required in install property.')
             ->end();
     }
@@ -162,9 +148,7 @@ class DomainConfiguration implements ConfigurationInterface
                     ->info('Country Name (2 letter code).')
                     ->defaultValue(null)
                     ->validate()
-                        ->ifTrue(function ($item) {
-                            return 2 !== \strlen($item);
-                        })
+                        ->ifTrue(fn ($item): bool => 2 !== \strlen((string) $item))
                         ->thenInvalid('The country code %s is not valid.')
                     ->end()
                 ->end()
@@ -188,9 +172,7 @@ class DomainConfiguration implements ConfigurationInterface
                     ->info('Email Address (eg, it@company.com).')
                     ->defaultValue(null)
                     ->validate()
-                        ->ifTrue(function ($item) {
-                            return !filter_var($item, FILTER_VALIDATE_EMAIL);
-                        })
+                        ->ifTrue(fn ($item): bool => !filter_var($item, FILTER_VALIDATE_EMAIL))
                         ->thenInvalid('The email %s is not valid.')
                     ->end()
                 ->end()
@@ -227,19 +209,15 @@ class DomainConfiguration implements ConfigurationInterface
                             ->prototype('scalar')->end()
                             ->requiresAtLeastOneElement()
                             ->validate()
-                                ->ifTrue(function ($item) {
-                                    return !isset($item['action']);
-                                })
+                                ->ifTrue(fn ($item): bool => !isset($item['action']))
                                 ->thenInvalid('The action attribute %s is required in install property.')
                             ->end()
                         ->end()
                     ->end()
                 ->end()
                 ->beforeNormalization()
-                    ->ifTrue(function ($conf) {
-                        return isset($conf['solver']) && !\is_array($conf['solver']);
-                    })
-                    ->then(function ($conf) {
+                    ->ifTrue(fn ($conf): bool => isset($conf['solver']) && !\is_array($conf['solver']))
+                    ->then(function (array $conf) {
                         $conf['solver'] = ['name' => $conf['solver']];
 
                         return $conf;
@@ -250,7 +228,7 @@ class DomainConfiguration implements ConfigurationInterface
             ->end();
     }
 
-    private function mergeArray(array $array1, $array2)
+    private function mergeArray(array $array1, $array2): array
     {
         foreach ($array2 as $key => $value) {
             if (!isset($array1[$key])) {

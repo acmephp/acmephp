@@ -19,7 +19,7 @@ class CertificateTest extends TestCase
 {
     use AssertsOpenSslResource;
 
-    public function testGetPublicKeyReturnsAPublicKey()
+    public function testGetPublicKeyReturnsAPublicKey(): void
     {
         $certificate = new Certificate(
             '
@@ -63,7 +63,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertEquals('58b94e38ce0088f0ec5a0c38f04bd76c', md5($publicKey->getPEM()));
     }
 
-    public function testGetPublicKeyResourceReturnsAResource()
+    public function testGetPublicKeyResourceReturnsAResource(): void
     {
         $certificate = new Certificate(
             '

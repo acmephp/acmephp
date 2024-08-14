@@ -20,17 +20,14 @@ use PHPUnit\Framework\TestCase;
 
 class CertificateRequestSignerTest extends TestCase
 {
-    /** @var CertificateRequestSigner */
-    private $service;
+    private CertificateRequestSigner $service;
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->service = new CertificateRequestSigner();
     }
 
-    public function testSignCertificateRequestReturnsACertificate()
+    public function testSignCertificateRequestReturnsACertificate(): void
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com',
@@ -59,7 +56,7 @@ class CertificateRequestSignerTest extends TestCase
         );
     }
 
-    public function testSignCertificateRequestUseDefaultValues()
+    public function testSignCertificateRequestUseDefaultValues(): void
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com'
@@ -80,7 +77,7 @@ class CertificateRequestSignerTest extends TestCase
         );
     }
 
-    public function testSignCertificateRequestWithSubjectAlternativeNames()
+    public function testSignCertificateRequestWithSubjectAlternativeNames(): void
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com',

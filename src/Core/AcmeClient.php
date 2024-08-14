@@ -38,41 +38,17 @@ use Webmozart\Assert\Assert;
  */
 class AcmeClient implements AcmeClientInterface
 {
-    /**
-     * @var SecureHttpClient
-     */
-    private $uninitializedHttpClient;
+    private ?SecureHttpClient $initializedHttpClient = null;
 
-    /**
-     * @var SecureHttpClient
-     */
-    private $initializedHttpClient;
+    private ?ResourcesDirectory $directory = null;
 
-    /**
-     * @var CertificateRequestSigner
-     */
-    private $csrSigner;
+    private ?string $account = null;
 
-    /**
-     * @var string
-     */
-    private $directoryUrl;
-
-    /**
-     * @var ResourcesDirectory
-     */
-    private $directory;
-
-    /**
-     * @var string
-     */
-    private $account;
-
-    public function __construct(SecureHttpClient $httpClient, string $directoryUrl, ?CertificateRequestSigner $csrSigner = null)
-    {
-        $this->uninitializedHttpClient = $httpClient;
-        $this->directoryUrl = $directoryUrl;
-        $this->csrSigner = $csrSigner ?: new CertificateRequestSigner();
+    public function __construct(
+        private SecureHttpClient $uninitializedHttpClient,
+        private readonly string $directoryUrl,
+        private readonly CertificateRequestSigner $csrSigner = new CertificateRequestSigner(),
+    ) {
     }
 
     public function registerAccount(?string $email = null, ?ExternalAccount $externalAccount = null): array
@@ -107,12 +83,10 @@ class AcmeClient implements AcmeClientInterface
 
         $payload = [
             'identifiers' => array_map(
-                static function ($domain) {
-                    return [
-                        'type' => 'dns',
-                        'value' => strtolower($domain),
-                    ];
-                },
+                static fn ($domain): array => [
+                    'type' => 'dns',
+                    'value' => strtolower((string) $domain),
+                ],
                 array_values($domains)
             ),
         ];
@@ -190,7 +164,7 @@ class AcmeClient implements AcmeClientInterface
 
         if ($returnAlternateCertificateIfAvailable && isset($responseHeaders['Link'][1])) {
             $matches = [];
-            preg_match('/<(http.*)>;rel="alternate"/', $responseHeaders['Link'][1], $matches);
+            preg_match('/<(http.*)>;rel="alternate"/', (string) $responseHeaders['Link'][1], $matches);
 
             // If response headers include a valid alternate certificate link, return that certificate instead
             if (isset($matches[1])) {
@@ -257,7 +231,7 @@ class AcmeClient implements AcmeClientInterface
         return $this->finalizeOrder($order, $csr, $timeout, $returnAlternateCertificateIfAvailable);
     }
 
-    public function revokeCertificate(Certificate $certificate, ?RevocationReason $revocationReason = null)
+    public function revokeCertificate(Certificate $certificate, ?RevocationReason $revocationReason = null): void
     {
         if (!$endpoint = $this->getResourceUrl(ResourcesDirectory::REVOKE_CERT)) {
             throw new CertificateRevocationException('This ACME server does not support certificate revocation.');
@@ -281,9 +255,7 @@ class AcmeClient implements AcmeClientInterface
                 $client->signKidPayload($endpoint, $this->getResourceAccount(), ['certificate' => $formattedPem, 'reason' => $revocationReason->getReasonType()]),
                 false
             );
-        } catch (AcmeCoreServerException $e) {
-            throw new CertificateRevocationException($e->getMessage(), $e);
-        } catch (AcmeCoreClientException $e) {
+        } catch (AcmeCoreServerException|AcmeCoreClientException $e) {
             throw new CertificateRevocationException($e->getMessage(), $e);
         }
     }

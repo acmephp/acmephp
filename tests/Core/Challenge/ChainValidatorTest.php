@@ -22,7 +22,7 @@ class ChainValidatorTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $mockValidator1 = $this->prophesize(ValidatorInterface::class);
         $mockValidator2 = $this->prophesize(ValidatorInterface::class);
@@ -40,7 +40,7 @@ class ChainValidatorTest extends TestCase
         $this->assertFalse($validator->supports($dummyChallenge, $solver));
     }
 
-    public function testIsValid()
+    public function testIsValid(): void
     {
         $mockValidator1 = $this->prophesize(ValidatorInterface::class);
         $mockValidator2 = $this->prophesize(ValidatorInterface::class);

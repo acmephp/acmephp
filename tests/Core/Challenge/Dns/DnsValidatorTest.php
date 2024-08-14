@@ -23,7 +23,7 @@ class DnsValidatorTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $typeDns = 'dns-01';
         $typeHttp = 'http-01';
@@ -40,7 +40,7 @@ class DnsValidatorTest extends TestCase
         $this->assertFalse($validator->supports($stubChallenge->reveal(), $this->prophesize(SolverInterface::class)->reveal()));
     }
 
-    public function testIsValid()
+    public function testIsValid(): void
     {
         $recordName = '_acme-challenge.bar.com.';
         $recordValue = 'record_value';
@@ -58,7 +58,7 @@ class DnsValidatorTest extends TestCase
         $this->assertTrue($validator->isValid($stubChallenge->reveal(), $this->prophesize(SolverInterface::class)->reveal()));
     }
 
-    public function testIsValidCheckRecordValue()
+    public function testIsValidCheckRecordValue(): void
     {
         $recordName = '_acme-challenge.bar.com.';
         $recordValue = 'record_value';

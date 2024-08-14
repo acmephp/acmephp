@@ -36,60 +36,18 @@ use Psr\Http\Message\ResponseInterface;
  */
 class SecureHttpClient
 {
-    /**
-     * @var KeyPair
-     */
-    private $accountKeyPair;
+    private ?ResponseInterface $lastResponse = null;
 
-    /**
-     * @var ClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var Base64SafeEncoder
-     */
-    private $base64Encoder;
-
-    /**
-     * @var KeyParser
-     */
-    private $keyParser;
-
-    /**
-     * @var DataSigner
-     */
-    private $dataSigner;
-
-    /**
-     * @var ServerErrorHandler
-     */
-    private $errorHandler;
-
-    /**
-     * @var ResponseInterface
-     */
-    private $lastResponse;
-
-    /**
-     * @var string
-     */
-    private $nonceEndpoint;
+    private ?string $nonceEndpoint = null;
 
     public function __construct(
-        KeyPair $accountKeyPair,
-        ClientInterface $httpClient,
-        Base64SafeEncoder $base64Encoder,
-        KeyParser $keyParser,
-        DataSigner $dataSigner,
-        ServerErrorHandler $errorHandler
+        private KeyPair $accountKeyPair,
+        private readonly ClientInterface $httpClient,
+        private readonly Base64SafeEncoder $base64Encoder,
+        private readonly KeyParser $keyParser,
+        private readonly DataSigner $dataSigner,
+        private readonly ServerErrorHandler $errorHandler,
     ) {
-        $this->accountKeyPair = $accountKeyPair;
-        $this->httpClient = $httpClient;
-        $this->base64Encoder = $base64Encoder;
-        $this->keyParser = $keyParser;
-        $this->dataSigner = $dataSigner;
-        $this->errorHandler = $errorHandler;
     }
 
     public function getJWK(): array
@@ -97,27 +55,22 @@ class SecureHttpClient
         $privateKey = $this->accountKeyPair->getPrivateKey();
         $parsedKey = $this->keyParser->parse($privateKey);
 
-        switch ($parsedKey->getType()) {
-            case OPENSSL_KEYTYPE_RSA:
-                return [
-                    // this order matters
-                    'e' => $this->base64Encoder->encode($parsedKey->getDetail('e')),
-                    'kty' => 'RSA',
-                    'n' => $this->base64Encoder->encode($parsedKey->getDetail('n')),
-                ];
-
-            case OPENSSL_KEYTYPE_EC:
-                return [
-                    // this order matters
-                    'crv' => 'P-'.$parsedKey->getBits(),
-                    'kty' => 'EC',
-                    'x' => $this->base64Encoder->encode($parsedKey->getDetail('x')),
-                    'y' => $this->base64Encoder->encode($parsedKey->getDetail('y')),
-                ];
-
-            default:
-                throw new AcmeCoreClientException('Private key type not supported');
-        }
+        return match ($parsedKey->getType()) {
+            OPENSSL_KEYTYPE_RSA => [
+                // this order matters
+                'e' => $this->base64Encoder->encode($parsedKey->getDetail('e')),
+                'kty' => 'RSA',
+                'n' => $this->base64Encoder->encode($parsedKey->getDetail('n')),
+            ],
+            OPENSSL_KEYTYPE_EC => [
+                // this order matters
+                'crv' => 'P-'.$parsedKey->getBits(),
+                'kty' => 'EC',
+                'x' => $this->base64Encoder->encode($parsedKey->getDetail('x')),
+                'y' => $this->base64Encoder->encode($parsedKey->getDetail('y')),
+            ],
+            default => throw new AcmeCoreClientException('Private key type not supported'),
+        };
     }
 
     public function getJWKThumbprint(): string
@@ -127,10 +80,8 @@ class SecureHttpClient
 
     /**
      * Generates a payload signed with account's KID.
-     *
-     * @param string|array|null $payload
      */
-    public function signKidPayload(string $endpoint, string $account, $payload = null, bool $withNonce = true): array
+    public function signKidPayload(string $endpoint, string $account, ?array $payload = null, bool $withNonce = true): array
     {
         $protected = ['alg' => $this->getAlg(), 'kid' => $account, 'url' => $endpoint];
         if ($withNonce) {
@@ -142,10 +93,8 @@ class SecureHttpClient
 
     /**
      * Generates a payload signed with JWK.
-     *
-     * @param string|array|null $payload
      */
-    public function signJwkPayload(string $endpoint, $payload = null, bool $withNonce = true): array
+    public function signJwkPayload(string $endpoint, ?array $payload = null, bool $withNonce = true): array
     {
         $protected = ['alg' => $this->getAlg(), 'jwk' => $this->getJWK(), 'url' => $endpoint];
         if ($withNonce) {
@@ -237,14 +186,14 @@ class SecureHttpClient
 
         try {
             $call();
-        } catch (BadNonceServerException $e) {
+        } catch (BadNonceServerException) {
             $call();
         }
 
         return $this->lastResponse;
     }
 
-    public function setAccountKeyPair(KeyPair $keyPair)
+    public function setAccountKeyPair(KeyPair $keyPair): void
     {
         $this->accountKeyPair = $keyPair;
     }
@@ -279,7 +228,7 @@ class SecureHttpClient
         return $this->dataSigner;
     }
 
-    public function setNonceEndpoint(string $endpoint)
+    public function setNonceEndpoint(string $endpoint): void
     {
         $this->nonceEndpoint = $endpoint;
     }
@@ -301,7 +250,7 @@ class SecureHttpClient
         $alg = $protected['alg'];
 
         $privateKey = $this->accountKeyPair->getPrivateKey();
-        list($algorithm, $format) = $this->extractSignOptionFromJWSAlg($alg);
+        [$algorithm, $format] = $this->extractSignOptionFromJWSAlg($alg);
 
         $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
 
@@ -324,7 +273,7 @@ class SecureHttpClient
         ];
     }
 
-    private function createRequest($method, $endpoint, $data, $acceptJson)
+    private function createRequest(string $method, string $endpoint, array $data, bool $acceptJson)
     {
         $request = new Request($method, $endpoint);
 
@@ -342,7 +291,7 @@ class SecureHttpClient
         return $request;
     }
 
-    private function handleClientException(Request $request, \Exception $exception)
+    private function handleClientException(Request $request, \Exception $exception): void
     {
         if ($exception instanceof RequestException && $exception->getResponse() instanceof ResponseInterface) {
             $this->lastResponse = $exception->getResponse();
@@ -396,7 +345,7 @@ class SecureHttpClient
 
     private function extractSignOptionFromJWSAlg($alg): array
     {
-        if (!preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
+        if (!preg_match('/^([A-Z]+)(\d+)$/', (string) $alg, $match)) {
             throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
         }
 
@@ -406,18 +355,11 @@ class SecureHttpClient
 
         $algorithm = \constant('OPENSSL_ALGO_SHA'.$match[2]);
 
-        switch ($match[1]) {
-            case 'RS':
-                $format = DataSigner::FORMAT_DER;
-                break;
-
-            case 'ES':
-                $format = DataSigner::FORMAT_ECDSA;
-                break;
-
-            default:
-                throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
-        }
+        $format = match ($match[1]) {
+            'RS' => DataSigner::FORMAT_DER,
+            'ES' => DataSigner::FORMAT_ECDSA,
+            default => throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg)),
+        };
 
         return [$algorithm, $format];
     }

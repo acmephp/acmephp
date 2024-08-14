@@ -22,17 +22,12 @@ use Aws\Iam\Exception\IamException;
  */
 abstract class AbstractAwsAction extends AbstractAction
 {
-    /**
-     * @var ClientFactory
-     */
-    protected $clientFactory;
-
-    public function __construct(ClientFactory $clientFactory)
-    {
-        $this->clientFactory = $clientFactory;
+    public function __construct(
+        protected ClientFactory $clientFactory,
+    ) {
     }
 
-    public function handle(array $config, CertificateResponse $response)
+    public function handle(array $config, CertificateResponse $response): void
     {
         $this->assertConfiguration($config, ['loadbalancer', 'region']);
 
@@ -51,7 +46,7 @@ abstract class AbstractAwsAction extends AbstractAction
         }
     }
 
-    private function uploadCertificate(CertificateResponse $response, $region, $certificateName)
+    private function uploadCertificate(CertificateResponse $response, $region, string $certificateName)
     {
         $iamClient = $this->clientFactory->getIamClient($region);
 
@@ -73,19 +68,19 @@ abstract class AbstractAwsAction extends AbstractAction
         return $response['ServerCertificateMetadata']['Arn'];
     }
 
-    private function cleanupOldCertificates($region, $certificatePrefix, $certificateName)
+    private function cleanupOldCertificates($region, $certificatePrefix, string $certificateName): void
     {
         $iamClient = $this->clientFactory->getIamClient($region);
 
         $certificates = $iamClient->listServerCertificates()['ServerCertificateMetadataList'];
         foreach ($certificates as $certificate) {
-            if (0 === strpos($certificate['ServerCertificateName'], $certificatePrefix)
+            if (str_starts_with((string) $certificate['ServerCertificateName'], (string) $certificatePrefix)
                 && $certificateName !== $certificate['ServerCertificateName']
             ) {
                 try {
                     $this->retryCall(
                         // Try several time to delete certificate given AWS takes time to uninstall previous one
-                        function () use ($iamClient, $certificate) {
+                        function () use ($iamClient, $certificate): void {
                             $iamClient->deleteServerCertificate(
                                 ['ServerCertificateName' => $certificate['ServerCertificateName']]
                             );

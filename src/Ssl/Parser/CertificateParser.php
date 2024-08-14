@@ -47,17 +47,13 @@ class CertificateParser
 
         if (isset($rawData['extensions']['subjectAltName'])) {
             $subjectAlternativeName = array_map(
-                function ($item) {
-                    return explode(':', trim($item), 2)[1];
-                },
+                fn ($item): string => explode(':', trim((string) $item), 2)[1],
                 array_filter(
                     explode(
                         ',',
-                        $rawData['extensions']['subjectAltName']
+                        (string) $rawData['extensions']['subjectAltName']
                     ),
-                    function ($item) {
-                        return false !== strpos($item, ':');
-                    }
+                    fn ($item): bool => str_contains((string) $item, ':')
                 )
             );
         }
@@ -65,7 +61,7 @@ class CertificateParser
         return new ParsedCertificate(
             $certificate,
             $rawData['subject']['CN'],
-            isset($rawData['issuer']['CN']) ? $rawData['issuer']['CN'] : null,
+            $rawData['issuer']['CN'] ?? null,
             $rawData['subject'] === $rawData['issuer'],
             new \DateTime('@'.$rawData['validFrom_time_t']),
             new \DateTime('@'.$rawData['validTo_time_t']),

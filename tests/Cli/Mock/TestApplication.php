@@ -11,9 +11,10 @@
 
 namespace Tests\AcmePhp\Cli\Mock;
 
+use AcmePhp\Cli\Application;
 use Webmozart\PathUtil\Path;
 
-class TestApplication extends \AcmePhp\Cli\Application
+class TestApplication extends Application
 {
     /**
      * @return string

@@ -23,7 +23,7 @@ class SimpleHttpSolverTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $typeDns = 'dns-01';
         $typeHttp = 'http-01';
@@ -39,7 +39,7 @@ class SimpleHttpSolverTest extends TestCase
         $this->assertTrue($solver->supports($stubChallenge->reveal()));
     }
 
-    public function testSolve()
+    public function testSolve(): void
     {
         $checkUrl = 'http://foo.bar/.challenge';
         $checkContent = 'randomPayload';
@@ -58,7 +58,7 @@ class SimpleHttpSolverTest extends TestCase
         $solver->solve($stubChallenge->reveal());
     }
 
-    public function testCleanup()
+    public function testCleanup(): void
     {
         $checkUrl = 'http://foo.bar/.challenge';
         $checkContent = 'randomPayload';

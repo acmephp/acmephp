@@ -15,11 +15,9 @@ use AcmePhp\Ssl\Generator\KeyOption;
 
 class DhKeyOption implements KeyOption
 {
-    /** @var string */
-    private $generator;
+    private readonly string $generator;
 
-    /** @var string */
-    private $prime;
+    private readonly string $prime;
 
     /**
      * @param string $prime     Hexadecimal representation of the prime

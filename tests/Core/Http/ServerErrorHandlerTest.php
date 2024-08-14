@@ -38,7 +38,7 @@ use PHPUnit\Framework\TestCase;
 
 class ServerErrorHandlerTest extends TestCase
 {
-    public function getErrorTypes()
+    public function getErrorTypes(): array
     {
         return [
             ['badCSR', BadCsrServerException::class],
@@ -66,7 +66,7 @@ class ServerErrorHandlerTest extends TestCase
     /**
      * @dataProvider getErrorTypes
      */
-    public function testAcmeExceptionThrown($type, $exceptionClass)
+    public function testAcmeExceptionThrown(string $type, string $exceptionClass): void
     {
         $errorHandler = new ServerErrorHandler();
 
@@ -83,7 +83,7 @@ class ServerErrorHandlerTest extends TestCase
         $this->assertStringContainsString('/foo/bar', $exception->getMessage());
     }
 
-    public function testDefaultExceptionThrownWithInvalidJson()
+    public function testDefaultExceptionThrownWithInvalidJson(): void
     {
         $errorHandler = new ServerErrorHandler();
 
@@ -98,7 +98,7 @@ class ServerErrorHandlerTest extends TestCase
         $this->assertStringContainsString('Invalid JSON', $exception->getMessage());
     }
 
-    public function testDefaultExceptionThrownNonAcmeJson()
+    public function testDefaultExceptionThrownNonAcmeJson(): void
     {
         $errorHandler = new ServerErrorHandler();
 

@@ -32,43 +32,21 @@ class LibDnsResolver implements DnsResolverInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var QuestionFactory
-     */
-    private $questionFactory;
+    private Encoder $encoder;
+    private Decoder $decoder;
 
     /**
-     * @var MessageFactory
+     * @param string $nameServer
      */
-    private $messageFactory;
-
-    /**
-     * @var Encoder
-     */
-    private $encoder;
-
-    /**
-     * @var Decoder
-     */
-    private $decoder;
-
-    /**
-     * @var string
-     */
-    private $nameServer;
-
     public function __construct(
-        ?QuestionFactory $questionFactory = null,
-        ?MessageFactory $messageFactory = null,
+        private QuestionFactory $questionFactory = new QuestionFactory(),
+        private MessageFactory $messageFactory = new MessageFactory(),
         ?Encoder $encoder = null,
         ?Decoder $decoder = null,
-        $nameServer = '8.8.8.8'
+        private $nameServer = '8.8.8.8'
     ) {
-        $this->questionFactory = $questionFactory ?: new QuestionFactory();
-        $this->messageFactory = $messageFactory ?: new MessageFactory();
-        $this->encoder = $encoder ?: (new EncoderFactory())->create();
-        $this->decoder = $decoder ?: (new DecoderFactory())->create();
-        $this->nameServer = $nameServer;
+        $this->encoder = $encoder ?? (new EncoderFactory())->create();
+        $this->decoder = $decoder ?? (new DecoderFactory())->create();
         $this->logger = new NullLogger();
     }
 
@@ -85,7 +63,7 @@ class LibDnsResolver implements DnsResolverInterface
      */
     public function getTxtEntries($domain): array
     {
-        $domain = rtrim($domain, '.');
+        $domain = rtrim((string) $domain, '.');
         $nameServers = $this->getNameServers($domain);
         $this->logger->debug('Fetched TXT records for domain', ['nsDomain' => $domain, 'servers' => $nameServers]);
         $identicalEntries = [];
@@ -117,13 +95,13 @@ class LibDnsResolver implements DnsResolverInterface
         return json_decode(key($identicalEntries));
     }
 
-    private function getNameServers($domain)
+    private function getNameServers(string $domain)
     {
         if ('' === $domain) {
             return [$this->nameServer];
         }
 
-        $parentNameServers = $this->getNameServers(implode('.', \array_slice(explode('.', $domain), 1)));
+        $parentNameServers = $this->getNameServers(implode('.', \array_slice(explode('.', (string) $domain), 1)));
         $itemNameServers = [];
         $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $domain, 'servers' => $parentNameServers]);
         foreach ($parentNameServers as $parentNameServer) {
@@ -137,7 +115,7 @@ class LibDnsResolver implements DnsResolverInterface
                     ResourceTypes::NS,
                     $ipNameServer[0]
                 );
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // ignore errors
                 continue;
             }
@@ -146,14 +124,14 @@ class LibDnsResolver implements DnsResolverInterface
                 try {
                     $field = $record->getData()->getFieldByName('nsdname');
                     $itemNameServers[] = $field->getValue();
-                } catch (\OutOfBoundsException $e) {
+                } catch (\OutOfBoundsException) {
                 }
             }
             foreach ($response->getAuthorityRecords() as $record) {
                 try {
                     $field = $record->getData()->getFieldByName('nsdname');
                     $itemNameServers[] = $field->getValue();
-                } catch (\OutOfBoundsException $e) {
+                } catch (\OutOfBoundsException) {
                 }
             }
         }
@@ -165,7 +143,7 @@ class LibDnsResolver implements DnsResolverInterface
         return $itemNameServers;
     }
 
-    private function request($domain, $type, $nameServer)
+    private function request(string $domain, $type, string $nameServer)
     {
         $question = $this->questionFactory->create($type);
         $question->setName($domain);
@@ -177,7 +155,7 @@ class LibDnsResolver implements DnsResolverInterface
 
         // Send request
         $socket = stream_socket_client(sprintf('udp://'.$nameServer.':53'));
-        stream_socket_sendto($socket, $this->encoder->encode($request));
+        stream_socket_sendto($socket, (string) $this->encoder->encode($request));
 
         $r = [$socket];
         $w = $e = [];

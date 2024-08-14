@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 class SecureHttpClientFactoryTest extends TestCase
 {
-    public function testCreateClient()
+    public function testCreateClient(): void
     {
         $keyPair = (new KeyPairGenerator())->generateKeyPair();
         $base64Encoder = new Base64SafeEncoder();
