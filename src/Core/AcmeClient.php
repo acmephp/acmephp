@@ -68,17 +68,14 @@ class AcmeClient implements AcmeClientInterface
      */
     private $account;
 
-    public function __construct(SecureHttpClient $httpClient, string $directoryUrl, CertificateRequestSigner $csrSigner = null)
+    public function __construct(SecureHttpClient $httpClient, string $directoryUrl, ?CertificateRequestSigner $csrSigner = null)
     {
         $this->uninitializedHttpClient = $httpClient;
         $this->directoryUrl = $directoryUrl;
         $this->csrSigner = $csrSigner ?: new CertificateRequestSigner();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerAccount(string $email = null, ExternalAccount $externalAccount = null): array
+    public function registerAccount(?string $email = null, ?ExternalAccount $externalAccount = null): array
     {
         $client = $this->getHttpClient();
 
@@ -104,9 +101,6 @@ class AcmeClient implements AcmeClientInterface
         return $client->request('POST', $account, $client->signKidPayload($account, $account, null));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestOrder(array $domains): CertificateOrder
     {
         Assert::allStringNotEmpty($domains, 'requestOrder::$domains expected a list of strings. Got: %s');
@@ -143,9 +137,6 @@ class AcmeClient implements AcmeClientInterface
         return new CertificateOrder($authorizationsChallenges, $orderEndpoint, $response['status']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reloadOrder(CertificateOrder $order): CertificateOrder
     {
         $client = $this->getHttpClient();
@@ -168,9 +159,6 @@ class AcmeClient implements AcmeClientInterface
         return new CertificateOrder($authorizationsChallenges, $orderEndpoint, $response['status']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse
     {
         $endTime = time() + $timeout;
@@ -216,9 +204,6 @@ class AcmeClient implements AcmeClientInterface
         return $this->createCertificateResponse($csr, Utils::copyToString($response->getBody()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestAuthorization(string $domain): array
     {
         $order = $this->requestOrder([$domain]);
@@ -230,9 +215,6 @@ class AcmeClient implements AcmeClientInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reloadAuthorization(AuthorizationChallenge $challenge): AuthorizationChallenge
     {
         $client = $this->getHttpClient();
@@ -242,9 +224,6 @@ class AcmeClient implements AcmeClientInterface
         return $this->createAuthorizationChallenge($challenge->getDomain(), $response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function challengeAuthorization(AuthorizationChallenge $challenge, int $timeout = 180): array
     {
         $endTime = time() + $timeout;
@@ -271,9 +250,6 @@ class AcmeClient implements AcmeClientInterface
         return $response;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse
     {
         $order = $this->requestOrder(array_unique(array_merge([$domain], $csr->getDistinguishedName()->getSubjectAlternativeNames())));
@@ -281,10 +257,7 @@ class AcmeClient implements AcmeClientInterface
         return $this->finalizeOrder($order, $csr, $timeout, $returnAlternateCertificateIfAvailable);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null)
+    public function revokeCertificate(Certificate $certificate, ?RevocationReason $revocationReason = null)
     {
         if (!$endpoint = $this->getResourceUrl(ResourcesDirectory::REVOKE_CERT)) {
             throw new CertificateRevocationException('This ACME server does not support certificate revocation.');
@@ -332,10 +305,10 @@ class AcmeClient implements AcmeClientInterface
     /**
      * Request a resource (URL is found using ACME server directory).
      *
+     * @return array|string
+     *
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      * @throws AcmeCoreClientException when an error occured during response parsing
-     *
-     * @return array|string
      */
     protected function requestResource(string $method, string $resource, array $payload, bool $returnJson = true)
     {

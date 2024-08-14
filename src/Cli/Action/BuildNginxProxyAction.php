@@ -34,9 +34,6 @@ class BuildNginxProxyAction implements ActionInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(array $config, CertificateResponse $response)
     {
         $domain = $response->getCertificateRequest()->getDistinguishedName()->getCommonName();

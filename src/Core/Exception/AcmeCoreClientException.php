@@ -18,7 +18,7 @@ namespace AcmePhp\Core\Exception;
  */
 class AcmeCoreClientException extends AcmeCoreException
 {
-    public function __construct($message, \Exception $previous = null)
+    public function __construct($message, ?\Exception $previous = null)
     {
         parent::__construct($message, 0, $previous);
     }

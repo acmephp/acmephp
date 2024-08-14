@@ -21,9 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RevokeCommand extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $reasons = implode(PHP_EOL, RevocationReason::getFormattedReasons());
@@ -44,9 +41,6 @@ class RevokeCommand extends AbstractCommand
             ->setHelp('The <info>%command.name%</info> command revoke a previously obtained certificate for a given domain');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if (!isset(Application::PROVIDERS[$this->input->getOption('provider')])) {

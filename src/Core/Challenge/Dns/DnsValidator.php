@@ -33,7 +33,7 @@ class DnsValidator implements ValidatorInterface
      */
     private $dnsResolver;
 
-    public function __construct(DnsDataExtractor $extractor = null, DnsResolverInterface $dnsResolver = null)
+    public function __construct(?DnsDataExtractor $extractor = null, ?DnsResolverInterface $dnsResolver = null)
     {
         $this->extractor = $extractor ?: new DnsDataExtractor();
 
@@ -43,17 +43,11 @@ class DnsValidator implements ValidatorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);

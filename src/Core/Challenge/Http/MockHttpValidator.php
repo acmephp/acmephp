@@ -22,17 +22,11 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
  */
 class MockHttpValidator implements ValidatorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return 'http-01' === $authorizationChallenge->getType() && $solver instanceof MockServerHttpSolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return true;

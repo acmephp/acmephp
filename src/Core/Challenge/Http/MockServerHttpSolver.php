@@ -23,17 +23,11 @@ use GuzzleHttp\RequestOptions;
  */
 class MockServerHttpSolver implements SolverInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'http-01' === $authorizationChallenge->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         (new Client())->post('http://localhost:8055/add-http01', [
@@ -44,9 +38,6 @@ class MockServerHttpSolver implements SolverInterface
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         (new Client())->post('http://localhost:8055/del-http01', [

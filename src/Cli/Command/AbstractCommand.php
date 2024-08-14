@@ -47,9 +47,6 @@ abstract class AbstractCommand extends Command implements LoggerInterface
      */
     private $container;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -134,73 +131,46 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->container->set('output', $this->output);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function emergency($message, array $context = [])
     {
         return $this->getCliLogger()->emergency($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function alert($message, array $context = [])
     {
         return $this->getCliLogger()->alert($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function critical($message, array $context = [])
     {
         return $this->getCliLogger()->critical($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function error($message, array $context = [])
     {
         return $this->getCliLogger()->error($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function warning($message, array $context = [])
     {
         return $this->getCliLogger()->warning($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function notice($message, array $context = [])
     {
         return $this->getCliLogger()->notice($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function info($message, array $context = [])
     {
         return $this->getCliLogger()->info($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function debug($message, array $context = [])
     {
         return $this->getCliLogger()->debug($message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function log($level, $message, array $context = [])
     {
         return $this->getCliLogger()->log($level, $message, $context);

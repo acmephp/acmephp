@@ -27,17 +27,11 @@ class ConsoleFormatter extends LineFormatter
 {
     public const SIMPLE_FORMAT = "%start_tag%%message% %context% %extra%%end_tag%\n";
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($format = null, $dateFormat = null, $allowInlineLineBreaks = false, $ignoreEmptyContextAndExtra = true)
     {
         parent::__construct($format, $dateFormat, $allowInlineLineBreaks, $ignoreEmptyContextAndExtra);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function format(array $record): string
     {
         if ($record['level'] >= Logger::ERROR) {

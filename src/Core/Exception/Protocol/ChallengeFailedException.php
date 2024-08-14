@@ -18,7 +18,7 @@ class ChallengeFailedException extends ProtocolException
 {
     private $response;
 
-    public function __construct($response, \Exception $previous = null)
+    public function __construct($response, ?\Exception $previous = null)
     {
         parent::__construct(
             sprintf('Challenge failed (response: %s).', json_encode($response)),

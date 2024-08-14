@@ -49,7 +49,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
      */
     private $apiKey;
 
-    public function __construct(DnsDataExtractor $extractor = null, ClientInterface $client = null)
+    public function __construct(?DnsDataExtractor $extractor = null, ?ClientInterface $client = null)
     {
         $this->extractor = $extractor ?: new DnsDataExtractor();
         $this->client = $client ?: new Client();
@@ -64,25 +64,16 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
         $this->apiKey = $config['api_key'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         return $this->solveAll([$authorizationChallenge]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solveAll(array $authorizationChallenges)
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
@@ -112,17 +103,11 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         return $this->cleanupAll([$authorizationChallenge]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanupAll(array $authorizationChallenges)
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);

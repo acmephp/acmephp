@@ -33,17 +33,11 @@ class WaitingValidator implements ValidatorInterface
         $this->timeout = $timeout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return $this->validator->supports($authorizationChallenge, $solver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         $limitEndTime = time() + $this->timeout;

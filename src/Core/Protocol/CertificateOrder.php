@@ -29,7 +29,7 @@ class CertificateOrder
     /** @var string */
     private $status;
 
-    public function __construct(array $authorizationsChallenges, string $orderEndpoint = null, string $status = null)
+    public function __construct(array $authorizationsChallenges, ?string $orderEndpoint = null, ?string $status = null)
     {
         foreach ($authorizationsChallenges as &$authorizationChallenges) {
             foreach ($authorizationChallenges as &$authorizationChallenge) {

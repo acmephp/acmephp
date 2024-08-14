@@ -43,7 +43,7 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
      */
     private $extractor;
 
-    public function __construct(ContainerInterface $filesystemFactoryLocator = null, HttpDataExtractor $extractor = null)
+    public function __construct(?ContainerInterface $filesystemFactoryLocator = null, ?HttpDataExtractor $extractor = null)
     {
         $this->filesystemFactoryLocator = $filesystemFactoryLocator ?: new ServiceLocator([]);
         $this->extractor = $extractor ?: new HttpDataExtractor();
@@ -59,17 +59,11 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
         $this->filesystem = $factory->create($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'http-01' === $authorizationChallenge->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         $checkPath = $this->extractor->getCheckPath($authorizationChallenge);
@@ -78,9 +72,6 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
         $this->filesystem->write($checkPath, $checkContent);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         $checkPath = $this->extractor->getCheckPath($authorizationChallenge);

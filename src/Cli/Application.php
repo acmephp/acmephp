@@ -31,17 +31,11 @@ class Application extends BaseApplication
         'localhost' => 'https://localhost:14000/dir',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         parent::__construct('Acme PHP - Let\'s Encrypt/ZeroSSL client', '2.0.0');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getDefaultCommands(): array
     {
         return array_merge(parent::getDefaultCommands(), [
@@ -52,9 +46,6 @@ class Application extends BaseApplication
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getDefaultHelperSet(): HelperSet
     {
         $set = parent::getDefaultHelperSet();

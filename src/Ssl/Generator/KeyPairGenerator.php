@@ -29,7 +29,7 @@ class KeyPairGenerator
 {
     private $generator;
 
-    public function __construct(PrivateKeyGeneratorInterface $generator = null)
+    public function __construct(?PrivateKeyGeneratorInterface $generator = null)
     {
         $this->generator = $generator ?: new ChainPrivateKeyGenerator(
             [
@@ -46,7 +46,7 @@ class KeyPairGenerator
      *
      * @throws KeyPairGenerationException when OpenSSL failed to generate keys
      */
-    public function generateKeyPair(KeyOption $keyOption = null): KeyPair
+    public function generateKeyPair(?KeyOption $keyOption = null): KeyPair
     {
         if (null === $keyOption) {
             $keyOption = new RsaKeyOption();

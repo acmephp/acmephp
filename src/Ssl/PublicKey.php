@@ -21,9 +21,6 @@ use Webmozart\Assert\Assert;
  */
 class PublicKey extends Key
 {
-    /**
-     *  {@inheritdoc}
-     */
     public function getResource()
     {
         if (!$resource = openssl_pkey_get_public($this->keyPEM)) {

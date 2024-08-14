@@ -24,7 +24,7 @@ class DnsDataExtractor
     /** @var Base64SafeEncoder */
     private $encoder;
 
-    public function __construct(Base64SafeEncoder $encoder = null)
+    public function __construct(?Base64SafeEncoder $encoder = null)
     {
         $this->encoder = $encoder ?: new Base64SafeEncoder();
     }

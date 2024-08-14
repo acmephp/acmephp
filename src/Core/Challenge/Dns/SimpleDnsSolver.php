@@ -33,27 +33,17 @@ class SimpleDnsSolver implements SolverInterface
      */
     protected $output;
 
-    /**
-     * @param DnsDataExtractor $extractor
-     * @param OutputInterface  $output
-     */
-    public function __construct(DnsDataExtractor $extractor = null, OutputInterface $output = null)
+    public function __construct(?DnsDataExtractor $extractor = null, ?OutputInterface $output = null)
     {
         $this->extractor = $extractor ?: new DnsDataExtractor();
         $this->output = $output ?: new NullOutput();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);
@@ -80,9 +70,6 @@ EOF
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         $recordName = $this->extractor->getRecordName($authorizationChallenge);

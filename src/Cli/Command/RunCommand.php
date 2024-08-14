@@ -50,9 +50,6 @@ class RunCommand extends AbstractCommand
 
     private $config;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this->setName('run')
@@ -72,9 +69,6 @@ class RunCommand extends AbstractCommand
             ->setHelp('The <info>%command.name%</info> challenge the domains, request the certificates and install them following a given configuration.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), getcwd()));

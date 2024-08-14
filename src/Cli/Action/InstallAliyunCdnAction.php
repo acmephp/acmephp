@@ -22,9 +22,6 @@ use AlibabaCloud\Client\AlibabaCloud;
  */
 class InstallAliyunCdnAction extends AbstractAction
 {
-    /**
-     * {@inheritdoc}
-     */
     public function handle(array $config, CertificateResponse $response)
     {
         $issuerChain = [];

@@ -18,7 +18,7 @@ jobs:
             - uses: actions/checkout@master
 
             - name: Install php-cs-fixer
-              run: wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.4.0/php-cs-fixer.phar -q
+              run: wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.62.0/php-cs-fixer.phar -q
 
             - name: Check coding style
               run: php php-cs-fixer.phar fix --dry-run --diff

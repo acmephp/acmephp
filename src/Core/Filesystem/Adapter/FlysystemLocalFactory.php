@@ -19,9 +19,6 @@ use Webmozart\Assert\Assert;
 
 class FlysystemLocalFactory implements FilesystemFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $config): FilesystemInterface
     {
         Assert::keyExists($config, 'root', 'create::$config expected an array with the key %s.');
