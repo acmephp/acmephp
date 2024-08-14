@@ -12,7 +12,8 @@
 namespace AcmePhp\Core\Filesystem\Adapter;
 
 use AcmePhp\Core\Filesystem\FilesystemInterface;
-use League\Flysystem\FilesystemInterface as FlysystemFilesystemInterface;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator as FlysystemFilesystemInterface;
 
 class FlysystemAdapter implements FilesystemInterface
 {
@@ -28,39 +29,42 @@ class FlysystemAdapter implements FilesystemInterface
 
     public function write(string $path, string $content)
     {
-        $isOnRemote = $this->filesystem->has($path);
-        if ($isOnRemote && !$this->filesystem->update($path, $content)) {
-            throw $this->createRuntimeException($path, 'updated');
-        }
-        if (!$isOnRemote && !$this->filesystem->write($path, $content)) {
-            throw $this->createRuntimeException($path, 'created');
+        try {
+            $this->filesystem->write($path, $content);
+        } catch (FilesystemException $e) {
+            throw $this->createRuntimeException($path, 'created', $e);
         }
     }
 
     public function delete(string $path)
     {
         $isOnRemote = $this->filesystem->has($path);
-        if ($isOnRemote && !$this->filesystem->delete($path)) {
-            throw $this->createRuntimeException($path, 'delete');
+        try {
+            if ($isOnRemote) {
+                $this->filesystem->delete($path);
+            }
+        } catch (FilesystemException $e) {
+            throw $this->createRuntimeException($path, 'deleted', $e);
         }
     }
 
     public function createDir(string $path)
     {
-        $isOnRemote = $this->filesystem->has($path);
-        if (!$isOnRemote && !$this->filesystem->createDir($path)) {
-            throw $this->createRuntimeException($path, 'created');
+        try {
+            $this->filesystem->createDirectory($path);
+        } catch (FilesystemException $e) {
+            throw $this->createRuntimeException($path, 'created', $e);
         }
     }
 
-    private function createRuntimeException(string $path, string $action): \RuntimeException
+    private function createRuntimeException(string $path, string $action, FilesystemException $e): \RuntimeException
     {
         return new \RuntimeException(
             sprintf(
                 'File %s could not be %s because: %s',
                 $path,
                 $action,
-                error_get_last()
+                $e->getMessage(),
             )
         );
     }

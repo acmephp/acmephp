@@ -12,7 +12,8 @@
 namespace Tests\AcmePhp\Cli;
 
 use League\Flysystem\Filesystem;
-use League\Flysystem\Sftp\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 
 class SftpNginxProxyApplicationTest extends AbstractApplicationTest
 {
@@ -32,18 +33,20 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
 
     public function testFullProcess()
     {
-        $sftpFilesystem = new Filesystem(new SftpAdapter([
-            'host' => 'localhost',
-            'port' => 8022,
-            'username' => 'acmephp',
-            'password' => 'acmephp',
-            'root' => '/share',
-        ]));
+        $sftpFilesystem = new Filesystem(new SftpAdapter(
+            new SftpConnectionProvider(
+                host: 'localhost',
+                port: 8022,
+                username: 'acmephp',
+                password: 'acmephp',
+            ),
+            '/share',
+        ));
 
         // Remove any old version of the files
-        $sftpFilesystem->has('private') && $sftpFilesystem->deleteDir('private');
-        $sftpFilesystem->has('certs') && $sftpFilesystem->deleteDir('certs');
-        $sftpFilesystem->has('nginxproxy') && $sftpFilesystem->deleteDir('nginxproxy');
+        $sftpFilesystem->has('private') && $sftpFilesystem->deleteDirectory('private');
+        $sftpFilesystem->has('certs') && $sftpFilesystem->deleteDirectory('certs');
+        $sftpFilesystem->has('nginxproxy') && $sftpFilesystem->deleteDirectory('nginxproxy');
 
         // Run the original full process
         parent::testFullProcess();

@@ -12,7 +12,7 @@
 namespace AcmePhp\Cli\Command;
 
 use AcmePhp\Ssl\Parser\CertificateParser;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -39,7 +39,7 @@ EOF
     {
         $repository = $this->getRepository();
 
-        /** @var FilesystemInterface $master */
+        /** @var FilesystemOperator $master */
         $master = $this->getContainer()->get('repository.storage');
 
         /** @var CertificateParser $certificateParser */
