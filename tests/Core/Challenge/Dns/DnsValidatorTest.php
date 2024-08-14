@@ -17,9 +17,12 @@ use AcmePhp\Core\Challenge\Dns\DnsValidator;
 use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DnsValidatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSupports()
     {
         $typeDns = 'dns-01';

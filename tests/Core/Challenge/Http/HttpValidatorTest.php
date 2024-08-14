@@ -18,12 +18,15 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 class HttpValidatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSupports()
     {
         $typeDns = 'dns-01';

@@ -16,10 +16,13 @@ use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Challenge\WaitingValidator;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bridge\PhpUnit\ClockMock;
 
 class WaitingValidatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function setUp(): void
     {
         parent::setUp();

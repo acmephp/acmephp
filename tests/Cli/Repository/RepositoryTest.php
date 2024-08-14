@@ -25,6 +25,7 @@ use League\Flysystem\Memory\MemoryAdapter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 class RepositoryTest extends TestCase
@@ -47,7 +48,7 @@ class RepositoryTest extends TestCase
     public function setUp(): void
     {
         $this->serializer = new Serializer(
-            [new PemNormalizer(), new GetSetMethodNormalizer()],
+            [new PemNormalizer(), new ObjectNormalizer()],
             [new PemEncoder(), new JsonEncoder()]
         );
 

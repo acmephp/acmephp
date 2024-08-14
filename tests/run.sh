@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+set -o pipefail
+
 # Root directory
-cd $( dirname "${BASH_SOURCE[0]}" )
-cd ..
+cd $( dirname "${BASH_SOURCE[0]}" )/..
 
 tempfile=$(mktemp)
 cert='-----BEGIN CERTIFICATE-----

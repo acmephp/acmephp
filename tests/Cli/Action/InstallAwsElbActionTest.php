@@ -24,9 +24,12 @@ use Aws\ElasticLoadBalancing\ElasticLoadBalancingClient;
 use Aws\Iam\IamClient;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class InstallAwsElbActionTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testHandle()
     {
         $domain = 'foo.bar';

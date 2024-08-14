@@ -16,9 +16,12 @@ use AcmePhp\Core\Challenge\SolverInterface;
 use AcmePhp\Core\Challenge\ValidatorInterface;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ChainValidatorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSupports()
     {
         $mockValidator1 = $this->prophesize(ValidatorInterface::class);

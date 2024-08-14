@@ -16,9 +16,12 @@ use AcmePhp\Core\Challenge\Dns\GandiSolver;
 use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class GandiSolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSupports()
     {
         $typeDns = 'dns-01';

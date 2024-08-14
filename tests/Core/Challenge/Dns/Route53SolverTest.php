@@ -17,9 +17,12 @@ use AcmePhp\Core\Protocol\AuthorizationChallenge;
 use Aws\Route53\Route53Client;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class Route53SolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSupports()
     {
         $typeDns = 'dns-01';
