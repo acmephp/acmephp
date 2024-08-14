@@ -12,12 +12,12 @@
 namespace AcmePhp\Core\Filesystem\Adapter;
 
 use League\Flysystem\Filesystem;
-use League\Flysystem\Memory\MemoryAdapter;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 
 class NullAdapter extends FlysystemAdapter
 {
     public function __construct()
     {
-        parent::__construct(new Filesystem(new MemoryAdapter()));
+        parent::__construct(new Filesystem(new InMemoryFilesystemAdapter()));
     }
 }

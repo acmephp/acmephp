@@ -14,12 +14,25 @@ namespace AcmePhp\Core\Filesystem\Adapter;
 use AcmePhp\Core\Filesystem\FilesystemFactoryInterface;
 use AcmePhp\Core\Filesystem\FilesystemInterface;
 use League\Flysystem\Filesystem;
-use League\Flysystem\Sftp\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 
 class FlysystemSftpFactory implements FilesystemFactoryInterface
 {
     public function create(array $config): FilesystemInterface
     {
-        return new FlysystemAdapter(new Filesystem(new SftpAdapter($config)));
+        return new FlysystemAdapter(
+            new Filesystem(
+                new SftpAdapter(
+                    new SftpConnectionProvider(
+                        $config['host'],
+                        $config['username'],
+                        password: $config['password'] ?? null,
+                        port: $config['port'] ?? 22,
+                    ),
+                    $config['root'] ?? '/',
+                )
+            )
+        );
     }
 }

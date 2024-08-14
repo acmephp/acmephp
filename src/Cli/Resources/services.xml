@@ -71,7 +71,7 @@
         <!-- Repository -->
         <service id="repository.storage" class="League\Flysystem\Filesystem" public="false">
             <argument type="service">
-                <service class="League\Flysystem\Adapter\Local">
+                <service class="League\Flysystem\Local\LocalFilesystemAdapter">
                     <argument>%app.storage_directory%</argument>
                 </service>
             </argument>

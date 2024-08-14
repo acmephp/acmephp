@@ -21,7 +21,7 @@ use AcmePhp\Ssl\DistinguishedName;
 use AcmePhp\Ssl\KeyPair;
 use AcmePhp\Ssl\PrivateKey;
 use AcmePhp\Ssl\PublicKey;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -50,11 +50,11 @@ class Repository implements RepositoryInterface
     private $serializer;
 
     /**
-     * @var FilesystemInterface
+     * @var FilesystemOperator
      */
     private $storage;
 
-    public function __construct(SerializerInterface $serializer, FilesystemInterface $storage)
+    public function __construct(SerializerInterface $serializer, FilesystemOperator $storage)
     {
         $this->serializer = $serializer;
         $this->storage = $storage;
@@ -291,11 +291,7 @@ class Repository implements RepositoryInterface
 
     public function save(string $path, string $content, string $visibility = self::VISIBILITY_PRIVATE)
     {
-        if (!$this->storage->has($path)) {
-            $this->storage->write($path, $content);
-        } else {
-            $this->storage->update($path, $content);
-        }
+        $this->storage->write($path, $content);
 
         $this->storage->setVisibility($path, $visibility);
     }

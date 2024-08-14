@@ -14,7 +14,8 @@ namespace AcmePhp\Cli\Action;
 use AcmePhp\Core\Filesystem\FilesystemFactoryInterface;
 use AcmePhp\Core\Filesystem\FilesystemInterface;
 use AcmePhp\Ssl\CertificateResponse;
-use League\Flysystem\FilesystemInterface as FlysystemFilesystemInterface;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemOperator;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
@@ -24,7 +25,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 class FilesystemAction extends AbstractAction
 {
     /**
-     * @var FlysystemFilesystemInterface
+     * @var FilesystemOperator
      */
     protected $storage;
 
@@ -33,7 +34,7 @@ class FilesystemAction extends AbstractAction
      */
     protected $filesystemFactoryLocator;
 
-    public function __construct(FlysystemFilesystemInterface $storage, ?ContainerInterface $locator = null)
+    public function __construct(FilesystemOperator $storage, ?ContainerInterface $locator = null)
     {
         $this->storage = $storage;
         $this->filesystemFactoryLocator = $locator ?: new ServiceLocator([]);
@@ -48,12 +49,13 @@ class FilesystemAction extends AbstractAction
         $filesystem = $factory->create($config);
 
         $files = $this->storage->listContents('.', true);
+        /** @var FileAttributes $file */
         foreach ($files as $file) {
-            if (0 === strpos($file['basename'], '.')) {
+            if (str_starts_with(basename($file->path()), '.')) {
                 continue;
             }
 
-            $this->mirror($file['type'], $file['path'], $filesystem);
+            $this->mirror($file->type(), $file->path(), $filesystem);
         }
     }
 
