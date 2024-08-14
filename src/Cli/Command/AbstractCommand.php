@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-abstract class AbstractCommand extends Command implements LoggerInterface
+abstract class AbstractCommand extends Command
 {
     /**
      * @var InputInterface

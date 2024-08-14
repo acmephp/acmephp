@@ -63,12 +63,18 @@ class ConsoleHandler extends AbstractProcessingHandler
         }
     }
 
-    public function isHandling(array $record): bool
+    /**
+     * @param LogRecord|array $record
+     */
+    public function isHandling($record): bool
     {
         return $this->updateLevel() && parent::isHandling($record);
     }
 
-    public function handle(array $record): bool
+    /**
+     * @param LogRecord|array $record
+     */
+    public function handle($record): bool
     {
         // we have to update the logging level each time because the verbosity of the
         // console output might have changed in the meantime (it is not immutable)
@@ -95,7 +101,10 @@ class ConsoleHandler extends AbstractProcessingHandler
         parent::close();
     }
 
-    protected function write(array $record): void
+    /**
+     * @param LogRecord|array $record
+     */
+    protected function write($record): void
     {
         $this->output->write((string) $record['formatted']);
     }
