@@ -39,11 +39,12 @@ class Application extends BaseApplication
 
     protected function getDefaultCommands(): array
     {
+        $version = explode('@', $this->getVersion())[0];
         return array_merge(parent::getDefaultCommands(), [
             new RunCommand(),
             new RevokeCommand(),
             new StatusCommand(),
-            new SelfUpdateCommand($this->getName(), explode('@', $this->getVersion())[0], 'acmephp/acmephp'),
+            new SelfUpdateCommand($this->getName(), $version === '' ? '0.0.0' : $version, 'acmephp/acmephp'),
         ]);
     }
 
