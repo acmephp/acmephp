@@ -60,9 +60,6 @@ class Repository implements RepositoryInterface
         $this->storage = $storage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeCertificateResponse(CertificateResponse $certificateResponse)
     {
         $distinguishedName = $certificateResponse->getCertificateRequest()->getDistinguishedName();
@@ -73,9 +70,6 @@ class Repository implements RepositoryInterface
         $this->storeDomainCertificate($domain, $certificateResponse->getCertificate());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeAccountKeyPair(KeyPair $keyPair)
     {
         try {
@@ -93,17 +87,11 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasAccountKeyPair(): bool
     {
         return $this->storage->has(self::PATH_ACCOUNT_KEY_PRIVATE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadAccountKeyPair(): KeyPair
     {
         try {
@@ -119,9 +107,6 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeDomainKeyPair(string $domain, KeyPair $keyPair)
     {
         try {
@@ -139,17 +124,11 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasDomainKeyPair(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_DOMAIN_KEY_PRIVATE, $domain));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadDomainKeyPair(string $domain): KeyPair
     {
         try {
@@ -165,9 +144,6 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeDomainAuthorizationChallenge(string $domain, AuthorizationChallenge $authorizationChallenge)
     {
         try {
@@ -180,17 +156,11 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasDomainAuthorizationChallenge(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadDomainAuthorizationChallenge(string $domain): AuthorizationChallenge
     {
         try {
@@ -202,9 +172,6 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeDomainDistinguishedName(string $domain, DistinguishedName $distinguishedName)
     {
         try {
@@ -217,17 +184,11 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasDomainDistinguishedName(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadDomainDistinguishedName(string $domain): DistinguishedName
     {
         try {
@@ -239,9 +200,6 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeDomainCertificate(string $domain, Certificate $certificate)
     {
         // Simple certificate
@@ -272,17 +230,11 @@ class Repository implements RepositoryInterface
         $this->save($this->getPathForDomain(self::PATH_DOMAIN_CERT_COMBINED, $domain), $combinedPem);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasDomainCertificate(string $domain): bool
     {
         return $this->storage->has($this->getPathForDomain(self::PATH_DOMAIN_CERT_FULLCHAIN, $domain));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadDomainCertificate(string $domain): Certificate
     {
         try {
@@ -309,9 +261,6 @@ class Repository implements RepositoryInterface
         return $certificate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function storeCertificateOrder(array $domains, CertificateOrder $order)
     {
         try {
@@ -324,17 +273,11 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasCertificateOrder(array $domains): bool
     {
         return $this->storage->has($this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadCertificateOrder(array $domains): CertificateOrder
     {
         try {
@@ -346,9 +289,6 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(string $path, string $content, string $visibility = self::VISIBILITY_PRIVATE)
     {
         if (!$this->storage->has($path)) {

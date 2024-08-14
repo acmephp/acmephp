@@ -157,8 +157,6 @@ class SecureHttpClient
 
     /**
      * Generates an External Account Binding payload signed with JWS.
-     *
-     * @param string|array|null $payload
      */
     public function createExternalAccountPayload(ExternalAccount $externalAccount, string $url): array
     {
@@ -189,11 +187,11 @@ class SecureHttpClient
      * Send a request encoded in the format defined by the ACME protocol
      * and its content (optionally parsed as JSON).
      *
+     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
+     *
      * @throws AcmeCoreClientException when an error occured during response parsing
      * @throws ExpectedJsonException   when $returnJson = true and the response is not valid JSON
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
-     *
-     * @return array|string Array of parsed JSON if $returnJson = true, string otherwise
      */
     public function request(string $method, string $endpoint, array $data = [], bool $returnJson = true)
     {
@@ -294,7 +292,7 @@ class SecureHttpClient
     /**
      * Sign the given Payload.
      */
-    private function signPayload(array $protected, array $payload = null): array
+    private function signPayload(array $protected, ?array $payload = null): array
     {
         if (!isset($protected['alg'])) {
             throw new \InvalidArgumentException('The property "alg" is required in the protected array');
@@ -329,7 +327,7 @@ class SecureHttpClient
     private function createRequest($method, $endpoint, $data, $acceptJson)
     {
         $request = new Request($method, $endpoint);
-        
+
         if ($acceptJson) {
             $request = $request->withHeader('Accept', 'application/json,application/jose+json,');
         } else {
@@ -390,7 +388,7 @@ class SecureHttpClient
                         return 'ES512';
                 }
 
-            // no break to let the default case
+                // no break to let the default case
             default:
                 throw new AcmeCoreClientException('Private key type is not supported');
         }

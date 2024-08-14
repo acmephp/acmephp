@@ -33,23 +33,17 @@ class SimpleHttpSolver implements SolverInterface
      */
     private $output;
 
-    public function __construct(HttpDataExtractor $extractor = null, OutputInterface $output = null)
+    public function __construct(?HttpDataExtractor $extractor = null, ?OutputInterface $output = null)
     {
         $this->extractor = $extractor ?: new HttpDataExtractor();
         $this->output = $output ?: new NullOutput();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'http-01' === $authorizationChallenge->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);
@@ -75,9 +69,6 @@ EOF
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);

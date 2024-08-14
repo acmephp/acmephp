@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Acme PHP project.
+ *
+ * (c) Titouan Galopin <galopintitouan@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace AcmePhp\Cli\Action;
 
 use AcmePhp\Ssl\Certificate;
@@ -18,9 +27,6 @@ class InstallCPanelAction extends AbstractAction
         $this->httpClient = $httpClient;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(array $config, CertificateResponse $response)
     {
         $this->assertConfiguration($config, ['host', 'username', 'token']);
@@ -44,15 +50,15 @@ class InstallCPanelAction extends AbstractAction
 
     private function installCertificate($config, $domain, $crt, $caBundle, $key)
     {
-        $this->httpClient->request('POST', $config['host'] . 'json-api/cpanel?' .
-            'cpanel_jsonapi_apiversion=2&' .
-            'cpanel_jsonapi_module=SSL&' .
-            'cpanel_jsonapi_func=installssl&' .
-            'domain=' . $domain . '&' .
-            'crt=' . urlencode($crt) . '&' .
-            'key=' . urlencode($key) . '&' .
-            'cabundle=' . urlencode($caBundle),
-            ['headers' => ['Authorization' => 'cpanel ' . $config['username'] . ':' . $config['token']],
-        ]);
+        $this->httpClient->request('POST', $config['host'].'json-api/cpanel?'.
+            'cpanel_jsonapi_apiversion=2&'.
+            'cpanel_jsonapi_module=SSL&'.
+            'cpanel_jsonapi_func=installssl&'.
+            'domain='.$domain.'&'.
+            'crt='.urlencode($crt).'&'.
+            'key='.urlencode($key).'&'.
+            'cabundle='.urlencode($caBundle),
+            ['headers' => ['Authorization' => 'cpanel '.$config['username'].':'.$config['token']],
+            ]);
     }
 }

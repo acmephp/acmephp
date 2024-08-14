@@ -46,12 +46,12 @@ class DistinguishedName
 
     public function __construct(
         string $commonName,
-        string $countryName = null,
-        string $stateOrProvinceName = null,
-        string $localityName = null,
-        string $organizationName = null,
-        string $organizationalUnitName = null,
-        string $emailAddress = null,
+        ?string $countryName = null,
+        ?string $stateOrProvinceName = null,
+        ?string $localityName = null,
+        ?string $organizationName = null,
+        ?string $organizationalUnitName = null,
+        ?string $emailAddress = null,
         array $subjectAlternativeNames = []
     ) {
         Assert::stringNotEmpty($commonName, __CLASS__.'::$commonName expected a non empty string. Got: %s');

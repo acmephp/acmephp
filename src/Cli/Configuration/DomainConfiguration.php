@@ -20,9 +20,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class DomainConfiguration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('acmephp');

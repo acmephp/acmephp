@@ -52,7 +52,7 @@ class ConsoleHandler extends AbstractProcessingHandler
      * @param array                $verbosityLevelMap Array that maps the OutputInterface verbosity to a minimum logging
      *                                                level (leave empty to use the default mapping)
      */
-    public function __construct(OutputInterface $output = null, bool $bubble = true, array $verbosityLevelMap = [])
+    public function __construct(?OutputInterface $output = null, bool $bubble = true, array $verbosityLevelMap = [])
     {
         parent::__construct(Logger::DEBUG, $bubble);
 
@@ -63,17 +63,11 @@ class ConsoleHandler extends AbstractProcessingHandler
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isHandling(array $record): bool
     {
         return $this->updateLevel() && parent::isHandling($record);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(array $record): bool
     {
         // we have to update the logging level each time because the verbosity of the
@@ -101,17 +95,11 @@ class ConsoleHandler extends AbstractProcessingHandler
         parent::close();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function write(array $record): void
     {
         $this->output->write((string) $record['formatted']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getDefaultFormatter(): FormatterInterface
     {
         $formatter = new ConsoleFormatter();

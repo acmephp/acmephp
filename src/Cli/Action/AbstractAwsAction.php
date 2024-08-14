@@ -32,9 +32,6 @@ abstract class AbstractAwsAction extends AbstractAction
         $this->clientFactory = $clientFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(array $config, CertificateResponse $response)
     {
         $this->assertConfiguration($config, ['loadbalancer', 'region']);
@@ -87,7 +84,7 @@ abstract class AbstractAwsAction extends AbstractAction
             ) {
                 try {
                     $this->retryCall(
-                    // Try several time to delete certificate given AWS takes time to uninstall previous one
+                        // Try several time to delete certificate given AWS takes time to uninstall previous one
                         function () use ($iamClient, $certificate) {
                             $iamClient->deleteServerCertificate(
                                 ['ServerCertificateName' => $certificate['ServerCertificateName']]

@@ -22,7 +22,7 @@ class CertificateTest extends TestCase
     public function testGetPublicKeyReturnsAPublicKey()
     {
         $certificate = new Certificate(
-                '
+            '
 -----BEGIN CERTIFICATE-----
 MIIFkTCCBHmgAwIBAgITAP/g3ErooCmPSlx2kAVx9abKkTANBgkqhkiG9w0BAQsF
 ADAfMR0wGwYDVQQDExRoYXBweSBoYWNrZXIgZmFrZSBDQTAeFw0xNjAzMjUyMjI3

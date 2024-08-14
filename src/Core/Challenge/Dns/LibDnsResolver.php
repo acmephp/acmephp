@@ -58,10 +58,10 @@ class LibDnsResolver implements DnsResolverInterface
     private $nameServer;
 
     public function __construct(
-        QuestionFactory $questionFactory = null,
-        MessageFactory $messageFactory = null,
-        Encoder $encoder = null,
-        Decoder $decoder = null,
+        ?QuestionFactory $questionFactory = null,
+        ?MessageFactory $messageFactory = null,
+        ?Encoder $encoder = null,
+        ?Decoder $decoder = null,
         $nameServer = '8.8.8.8'
     ) {
         $this->questionFactory = $questionFactory ?: new QuestionFactory();

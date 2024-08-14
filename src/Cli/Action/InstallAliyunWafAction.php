@@ -22,9 +22,6 @@ use AlibabaCloud\WafOpenapi\WafOpenapi;
  */
 class InstallAliyunWafAction extends AbstractAction
 {
-    /**
-     * {@inheritdoc}
-     */
     public function handle(array $config, CertificateResponse $response)
     {
         $issuerChain = [];

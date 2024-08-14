@@ -18,9 +18,6 @@ use League\Flysystem\Filesystem;
 
 class FlysystemFtpFactory implements FilesystemFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $config): FilesystemInterface
     {
         return new FlysystemAdapter(new Filesystem(new Ftp($config)));

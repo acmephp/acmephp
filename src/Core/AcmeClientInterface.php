@@ -40,13 +40,13 @@ interface AcmeClientInterface
      * @param string|null          $email           an optionnal e-mail to associate with the account
      * @param ExternalAccount|null $externalAccount an optionnal External Account to use for External Account Binding
      *
+     * @return array the Certificate Authority response decoded from JSON into an array
+     *
      * @throws AcmeCoreServerException when the ACME server returns an error HTTP status code
      *                                 (the exception will be more specific if detail is provided)
      * @throws AcmeCoreClientException when an error occured during response parsing
-     *
-     * @return array the Certificate Authority response decoded from JSON into an array
      */
-    public function registerAccount(string $email = null, ExternalAccount $externalAccount = null): array;
+    public function registerAccount(?string $email = null, ?ExternalAccount $externalAccount = null): array;
 
     /**
      * Request authorization challenge data for a list of domains.
@@ -57,12 +57,12 @@ interface AcmeClientInterface
      *
      * @param string[] $domains the domains to challenge
      *
+     * @return CertificateOrder the Order returned by the Certificate Authority
+     *
      * @throws AcmeCoreServerException        when the ACME server returns an error HTTP status code
      *                                        (the exception will be more specific if detail is provided)
      * @throws AcmeCoreClientException        when an error occured during response parsing
      * @throws ChallengeNotSupportedException when the HTTP challenge is not supported by the server
-     *
-     * @return CertificateOrder the Order returned by the Certificate Authority
      */
     public function requestOrder(array $domains): CertificateOrder;
 
@@ -89,13 +89,13 @@ interface AcmeClientInterface
      *                                                                  This is especially useful following
      *                                                                  https://letsencrypt.org/2019/04/15/transitioning-to-isrg-root.html.
      *
+     * @return CertificateResponse the certificate data to save it somewhere you want
+     *
      * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
      *                                             (the exception will be more specific if detail is provided)
      * @throws AcmeCoreClientException             when an error occured during response parsing
      * @throws CertificateRequestFailedException   when the certificate request failed
      * @throws CertificateRequestTimedOutException when the certificate request timed out
-     *
-     * @return CertificateResponse the certificate data to save it somewhere you want
      */
     public function finalizeOrder(CertificateOrder $order, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse;
 
@@ -108,12 +108,12 @@ interface AcmeClientInterface
      *
      * @param string $domain the domain to challenge
      *
+     * @return AuthorizationChallenge[] the list of challenges data returned by the Certificate Authority
+     *
      * @throws AcmeCoreServerException        when the ACME server returns an error HTTP status code
      *                                        (the exception will be more specific if detail is provided)
      * @throws AcmeCoreClientException        when an error occured during response parsing
      * @throws ChallengeNotSupportedException when the HTTP challenge is not supported by the server
-     *
-     * @return AuthorizationChallenge[] the list of challenges data returned by the Certificate Authority
      */
     public function requestAuthorization(string $domain): array;
 
@@ -140,13 +140,13 @@ interface AcmeClientInterface
      * @param AuthorizationChallenge $challenge the challenge data to check
      * @param int                    $timeout   the timeout period
      *
+     * @return array the validate challenge response
+     *
      * @throws AcmeCoreServerException    when the ACME server returns an error HTTP status code
      *                                    (the exception will be more specific if detail is provided)
      * @throws AcmeCoreClientException    when an error occured during response parsing
      * @throws ChallengeTimedOutException when the challenge timed out
      * @throws ChallengeFailedException   when the challenge failed
-     *
-     * @return array the validate challenge response
      */
     public function challengeAuthorization(AuthorizationChallenge $challenge, int $timeout = 180): array;
 
@@ -168,13 +168,13 @@ interface AcmeClientInterface
      *                                                                  This is especially useful following
      *                                                                  https://letsencrypt.org/2019/04/15/transitioning-to-isrg-root.html.
      *
+     * @return CertificateResponse the certificate data to save it somewhere you want
+     *
      * @throws AcmeCoreServerException             when the ACME server returns an error HTTP status code
      *                                             (the exception will be more specific if detail is provided)
      * @throws AcmeCoreClientException             when an error occured during response parsing
      * @throws CertificateRequestFailedException   when the certificate request failed
      * @throws CertificateRequestTimedOutException when the certificate request timed out
-     *
-     * @return CertificateResponse the certificate data to save it somewhere you want
      */
     public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse;
 
@@ -183,5 +183,5 @@ interface AcmeClientInterface
      *
      * @throws CertificateRevocationException
      */
-    public function revokeCertificate(Certificate $certificate, RevocationReason $revocationReason = null);
+    public function revokeCertificate(Certificate $certificate, ?RevocationReason $revocationReason = null);
 }

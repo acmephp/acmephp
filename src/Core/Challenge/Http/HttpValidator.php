@@ -34,23 +34,17 @@ class HttpValidator implements ValidatorInterface
      */
     private $client;
 
-    public function __construct(HttpDataExtractor $extractor = null, Client $client = null)
+    public function __construct(?HttpDataExtractor $extractor = null, ?Client $client = null)
     {
         $this->extractor = $extractor ?: new HttpDataExtractor();
         $this->client = $client ?: new Client();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         return 'http-01' === $authorizationChallenge->getType() && !$solver instanceof MockServerHttpSolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
         $checkUrl = $this->extractor->getCheckUrl($authorizationChallenge);

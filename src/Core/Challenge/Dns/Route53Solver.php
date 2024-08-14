@@ -43,32 +43,23 @@ class Route53Solver implements MultipleChallengesSolverInterface
      */
     private $cacheZones;
 
-    public function __construct(DnsDataExtractor $extractor = null, Route53Client $client = null)
+    public function __construct(?DnsDataExtractor $extractor = null, ?Route53Client $client = null)
     {
         $this->extractor = $extractor ?: new DnsDataExtractor();
         $this->client = $client ?: new Route53Client([]);
         $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(AuthorizationChallenge $authorizationChallenge): bool
     {
         return 'dns-01' === $authorizationChallenge->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
         return $this->solveAll([$authorizationChallenge]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function solveAll(array $authorizationChallenges)
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
@@ -114,17 +105,11 @@ class Route53Solver implements MultipleChallengesSolverInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
         return $this->cleanupAll([$authorizationChallenge]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function cleanupAll(array $authorizationChallenges)
     {
         Assert::allIsInstanceOf($authorizationChallenges, AuthorizationChallenge::class);
@@ -198,7 +183,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
 
     private function getSaveRecordQuery($recordName, array $recordIndex)
     {
-        //remove old indexes
+        // remove old indexes
         $limitTime = time() - 86400;
         foreach ($recordIndex as $recordValue => $time) {
             if ($time < $limitTime) {

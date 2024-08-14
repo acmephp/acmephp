@@ -33,15 +33,12 @@ class FilesystemAction extends AbstractAction
      */
     protected $filesystemFactoryLocator;
 
-    public function __construct(FlysystemFilesystemInterface $storage, ContainerInterface $locator = null)
+    public function __construct(FlysystemFilesystemInterface $storage, ?ContainerInterface $locator = null)
     {
         $this->storage = $storage;
         $this->filesystemFactoryLocator = $locator ?: new ServiceLocator([]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(array $config, CertificateResponse $response)
     {
         $this->assertConfiguration($config, ['adapter']);

@@ -18,9 +18,6 @@ use League\Flysystem\Sftp\SftpAdapter;
 
 class FlysystemSftpFactory implements FilesystemFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function create(array $config): FilesystemInterface
     {
         return new FlysystemAdapter(new Filesystem(new SftpAdapter($config)));

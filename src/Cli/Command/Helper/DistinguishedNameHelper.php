@@ -23,9 +23,6 @@ use Symfony\Component\Console\Question\Question;
  */
 class DistinguishedNameHelper extends Helper
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return 'distinguished_name';

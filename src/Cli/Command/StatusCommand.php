@@ -23,9 +23,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class StatusCommand extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this->setName('status')
@@ -38,9 +35,6 @@ EOF
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $repository = $this->getRepository();

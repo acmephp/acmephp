@@ -44,20 +44,14 @@ class ParsedCertificate
     /** @var array */
     private $subjectAlternativeNames;
 
-    /**
-     * @param string    $issuer
-     * @param \DateTime $validFrom
-     * @param \DateTime $validTo
-     * @param string    $serialNumber
-     */
     public function __construct(
         Certificate $source,
         string $subject,
-        string $issuer = null,
+        ?string $issuer = null,
         bool $selfSigned = true,
-        \DateTime $validFrom = null,
-        \DateTime $validTo = null,
-        string $serialNumber = null,
+        ?\DateTime $validFrom = null,
+        ?\DateTime $validTo = null,
+        ?string $serialNumber = null,
         array $subjectAlternativeNames = []
     ) {
         Assert::stringNotEmpty($subject, __CLASS__.'::$subject expected a non empty string. Got: %s');

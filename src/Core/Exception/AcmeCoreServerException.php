@@ -20,7 +20,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class AcmeCoreServerException extends AcmeCoreException
 {
-    public function __construct(RequestInterface $request, $message, \Exception $previous = null)
+    public function __construct(RequestInterface $request, $message, ?\Exception $previous = null)
     {
         parent::__construct($message, $previous ? $previous->getCode() : 0, $previous);
     }

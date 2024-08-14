@@ -21,33 +21,21 @@ class PemEncoder implements EncoderInterface, DecoderInterface
 {
     public const FORMAT = 'pem';
 
-    /**
-     * {@inheritdoc}
-     */
     public function encode($data, $format, array $context = []): string
     {
         return trim($data)."\n";
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function decode($data, $format, array $context = [])
     {
         return trim($data)."\n";
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsEncoding($format): bool
     {
         return self::FORMAT === $format;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsDecoding($format)
     {
         return self::FORMAT === $format;

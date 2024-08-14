@@ -32,8 +32,6 @@ class JsonDecoder
      *
      * @throws \InvalidArgumentException if the JSON cannot be decoded
      *
-     * @return mixed
-     *
      * @see http://www.php.net/manual/en/function.json-decode.php
      */
     public static function decode(string $json, bool $assoc = false, int $depth = 512, int $options = 0)

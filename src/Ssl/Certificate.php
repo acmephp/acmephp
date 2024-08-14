@@ -27,7 +27,7 @@ class Certificate
     /** @var Certificate */
     private $issuerCertificate;
 
-    public function __construct(string $certificatePEM, self $issuerCertificate = null)
+    public function __construct(string $certificatePEM, ?self $issuerCertificate = null)
     {
         Assert::stringNotEmpty($certificatePEM, __CLASS__.'::$certificatePEM should not be an empty string. Got %s');
 
