@@ -14,7 +14,6 @@ namespace AcmePhp\Cli\Monolog;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
-use Monolog\Logger;
 use Monolog\LogRecord;
 use Symfony\Component\Console\Output\OutputInterface;
 
