@@ -406,11 +406,6 @@ parameters:
 			path: src/Core/Filesystem/Adapter/FlysystemLocalFactory.php
 
 		-
-			message: "#^Call to an undefined method Lcobucci\\\\JWT\\\\Signer\\\\Hmac\\\\Sha256\\:\\:getAlgorithmId\\(\\)\\.$#"
-			count: 1
-			path: src/Core/Http/SecureHttpClient.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: src/Core/Http/SecureHttpClient.php
