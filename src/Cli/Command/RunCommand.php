@@ -38,8 +38,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Yaml\Yaml;
-use Webmozart\PathUtil\Path;
 
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
@@ -71,7 +71,12 @@ class RunCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), getcwd()));
+        $cwd = getcwd();
+        if (false === $cwd) {
+            throw new \RuntimeException('Failed to get current working directory');
+        }
+
+        $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), $cwd));
 
         $keyOption = $this->createKeyOption($this->config['key_type']);
         $this->register($this->config['contact_email'], $keyOption);

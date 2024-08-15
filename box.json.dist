@@ -3,7 +3,7 @@
     "files": [ "LICENSE" ],
     "finder": [
         {
-            "name": "*.php",
+            "name": "{\\.(php|bash|fish|zsh)}",
             "exclude": [
                 "Tester",
                 "Tests",
@@ -16,12 +16,8 @@
             "in": "vendor"
         }
     ],
-    "compactors": [ "KevinGH\\Box\\Compactor\\Php" ],
-    "check-requirements": false,
+    "git": "git",
     "compression": "GZ",
     "git-version": "package_version",
-    "main": "bin/acme",
-    "output": "build/acmephp.phar",
-    "algorithm": "OPENSSL",
-    "key": "../private.key"
+    "output": "build/acmephp.phar"
 }
