@@ -71,9 +71,8 @@ class RunCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $cwd = getcwd();
-        if ($cwd === false) {
+        if (false === $cwd) {
             throw new \RuntimeException('Failed to get current working directory');
         }
 
