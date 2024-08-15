@@ -13,7 +13,6 @@ namespace AcmePhp\Cli\Monolog;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Level;
-use Monolog\Logger;
 use Monolog\LogRecord;
 
 /**
