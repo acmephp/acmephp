@@ -38,8 +38,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Yaml\Yaml;
-use Webmozart\PathUtil\Path;
 
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
@@ -71,7 +71,12 @@ class RunCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), getcwd()));
+        $cwd = getcwd();
+        if (false === $cwd) {
+            throw new \RuntimeException('Failed to get current working directory');
+        }
+
+        $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), $cwd));
 
         $keyOption = $this->createKeyOption($this->config['key_type']);
         $this->register($this->config['contact_email'], $keyOption);
@@ -145,7 +150,7 @@ class RunCommand extends AbstractCommand
         if ('zerossl' === $this->config['provider']) {
             // If an API key is provided, use it
             if ($this->config['zerossl_api_key']) {
-                $eabCredentials = \GuzzleHttp\json_decode(
+                $eabCredentials = json_decode(
                     (new Client())
                         ->post('https://api.zerossl.com/acme/eab-credentials/?access_key='.$this->config['zerossl_api_key'])
                         ->getBody()
@@ -160,7 +165,7 @@ class RunCommand extends AbstractCommand
             }
 
             // Otherwise register on the fly
-            $eabCredentials = \GuzzleHttp\json_decode(
+            $eabCredentials = json_decode(
                 (new Client())
                     ->post('https://api.zerossl.com/acme/eab-credentials-email', [
                         'form_params' => ['email' => $this->config['contact_email']],

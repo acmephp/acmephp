@@ -2,7 +2,7 @@ contact_email: foo@example.com
 key_type: RSA
 provider: localhost
 eab_kid: kid1
-eab_hmac_key: dGVzdGluZw
+eab_hmac_key: dGVzdGluZ3Rlc3Rpbmd0ZXN0aW5ndGVzdGluZ3Rlc3Rpbmd0ZXN0aW5n
 
 defaults:
     distinguished_name:
