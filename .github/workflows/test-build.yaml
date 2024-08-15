@@ -28,6 +28,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
+        - run: git tag ci
         - name: Setup PHP
           uses: shivammathur/setup-php@v2
           with:
