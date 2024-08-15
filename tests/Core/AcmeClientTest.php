@@ -62,7 +62,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * Register account
          */
         if ('eab' === getenv('PEBBLE_MODE')) {
-            $data = $client->registerAccount('titouan.galopin@acmephp.com', new ExternalAccount('kid1', 'dGVzdGluZw'));
+            $data = $client->registerAccount('titouan.galopin@acmephp.com', new ExternalAccount('kid1', 'dGVzdGluZ3Rlc3Rpbmd0ZXN0aW5ndGVzdGluZ3Rlc3Rpbmd0ZXN0aW5n'));
         } else {
             $data = $client->registerAccount('titouan.galopin@acmephp.com');
         }
@@ -152,7 +152,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
          * Register account
          */
         if ('eab' === getenv('PEBBLE_MODE')) {
-            $client->registerAccount('titouan.galopin@acmephp.com', new ExternalAccount('kid1', 'dGVzdGluZw'));
+            $client->registerAccount('titouan.galopin@acmephp.com', new ExternalAccount('kid1', 'dGVzdGluZ3Rlc3Rpbmd0ZXN0aW5ndGVzdGluZ3Rlc3Rpbmd0ZXN0aW5n'));
         } else {
             $client->registerAccount('titouan.galopin@acmephp.com');
         }

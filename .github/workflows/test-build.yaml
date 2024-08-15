@@ -8,12 +8,12 @@ on:
 
 jobs:
     php-cs:
+        name: PHP-CS-Fixer
         runs-on: ubuntu-latest
         steps:
             - uses: shivammathur/setup-php@v2
               with:
-                  php-version: '8.1'
-                  coverage: none
+                  php-version: '8.3'
 
             - uses: actions/checkout@master
 
@@ -23,19 +23,46 @@ jobs:
             - name: Check coding style
               run: php php-cs-fixer.phar fix --dry-run --diff
 
-    ci:
+    phpstan:
         name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+
+            - uses: actions/checkout@v4
+
+            - name: Install Composer dependencies
+              run: |
+                  composer update --prefer-dist --no-interaction
+
+            - name: Run PHPStan
+              run: vendor/bin/phpstan analyse
+
+    ci:
+        name: Test PHP ${{ matrix.php-version }} ${{ matrix.pebble_mode }} ${{ matrix.name }}
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
-                php-version: ["8.2", "8.3"]
+                php-version: ["8.3"]
                 composer-flags: [""]
                 name: [""]
+                pebble_mode: [""]
                 include:
-                    - php-version: 8.1
+                    - php-version: 8.3
                       composer-flags: "--prefer-lowest"
                       name: "(prefer lowest dependencies)"
+                    - php-version: 8.1
+                      composer-flags: "--prefer-lowest"
+                      name: "(prefer lowest dependencies - EAB)"
+                      pebble_mode: eab
+                    - php-version: 8.3
+                      name: "(EAB)"
+                      pebble_mode: eab
+        env:
+            PEBBLE_MODE: "${{ matrix.pebble_mode }}"
 
         steps:
             - uses: shivammathur/setup-php@v2

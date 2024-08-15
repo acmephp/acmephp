@@ -27,7 +27,7 @@
         }
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "ext-hash": "*",
         "ext-json": "*",
         "ext-openssl": "*",
@@ -35,6 +35,7 @@
         "guzzlehttp/guzzle": "^6.0|^7.0",
         "guzzlehttp/psr7": "^1.7|^2.1",
         "lcobucci/jwt": "^3.3|^4.0",
+        "psr/http-client": "^1.0",
         "psr/http-message": "^1.0",
         "psr/log": "^1.0|^2.0|^3.0",
         "webmozart/assert": "^1.0"

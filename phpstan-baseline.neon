@@ -1,0 +1,531 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method AlibabaCloud\\\\WafOpenapi\\\\V20161111\\\\UpgradeInstance\\:\\:withCert\\(\\)\\.$#"
+			count: 1
+			path: src/Cli/Action/InstallAliyunWafAction.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Console\\\\Application\\:\\:getStorageDirectory\\(\\)\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:createSecureHttpClient\\(\\)\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:alert\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:critical\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:debug\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:emergency\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:error\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:getCliLogger\\(\\) should return Psr\\\\Log\\\\LoggerInterface but returns object\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:getRepository\\(\\) should return AcmePhp\\\\Cli\\\\Repository\\\\RepositoryInterface but returns object\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:info\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:log\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:notice\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:warning\\(\\) with return type void returns null but should not return anything\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:alert\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:critical\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:debug\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:emergency\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:error\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:info\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:log\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:notice\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:warning\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/Cli/Command/AbstractCommand.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\RevokeCommand\\:\\:execute\\(\\) should return int but empty return statement found\\.$#"
+			count: 3
+			path: src/Cli/Command/RevokeCommand.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$eab_hmac_key\\.$#"
+			count: 2
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$eab_kid\\.$#"
+			count: 2
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:generateKeyPair\\(\\)\\.$#"
+			count: 2
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:get\\(\\)\\.$#"
+			count: 1
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:parse\\(\\)\\.$#"
+			count: 2
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$solverLocator contains generic class Symfony\\\\Component\\\\DependencyInjection\\\\ServiceLocator but does not specify its types\\: T$#"
+			count: 1
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^Property AcmePhp\\\\Cli\\\\Command\\\\RunCommand\\:\\:\\$config has no type specified\\.$#"
+			count: 1
+			path: src/Cli/Command/RunCommand.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\TreeBuilder\\:\\:root\\(\\)\\.$#"
+			count: 5
+			path: src/Cli/Configuration/DomainConfiguration.php
+
+		-
+			message: "#^Class Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\TreeBuilder constructor invoked with 0 parameters, 1\\-3 required\\.$#"
+			count: 4
+			path: src/Cli/Configuration/DomainConfiguration.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function sha1 expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Cli/Repository/Repository.php
+
+		-
+			message: "#^Method AcmePhp\\\\Cli\\\\Serializer\\\\PemNormalizer\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Cli/Serializer/PemNormalizer.php
+
+		-
+			message: "#^Method AcmePhp\\\\Core\\\\AcmeClient\\:\\:registerAccount\\(\\) should return array but returns array\\|string\\.$#"
+			count: 1
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 2
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Offset 'challenges' does not exist on array\\|string\\.$#"
+			count: 2
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Offset 'finalize' does not exist on array\\|string\\.$#"
+			count: 2
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Offset 'identifier' does not exist on array\\|string\\.$#"
+			count: 2
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Offset 'status' does not exist on array\\|string\\.$#"
+			count: 2
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$certificate of function openssl_x509_export expects OpenSSLCertificate\\|string, OpenSSLCertificate\\|false given\\.$#"
+			count: 1
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$serverResources of class AcmePhp\\\\Core\\\\Protocol\\\\ResourcesDirectory constructor expects array, array\\|string given\\.$#"
+			count: 1
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, array\\<int, string\\>\\|string given\\.$#"
+			count: 1
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$certificate of method AcmePhp\\\\Core\\\\AcmeClient\\:\\:createCertificateResponse\\(\\) expects string, array\\|string given\\.$#"
+			count: 1
+			path: src/Core/AcmeClient.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\GandiSolver\\:\\:\\$cacheZones is unused\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/GandiSolver.php
+
+		-
+			message: "#^Access to constant NS on an unknown class LibDNS\\\\Records\\\\ResourceTypes\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Access to constant QUERY on an unknown class LibDNS\\\\Messages\\\\MessageTypes\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Access to constant TXT on an unknown class LibDNS\\\\Records\\\\ResourceTypes\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Call to method create\\(\\) on an unknown class LibDNS\\\\Decoder\\\\DecoderFactory\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Call to method create\\(\\) on an unknown class LibDNS\\\\Encoder\\\\EncoderFactory\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Call to method create\\(\\) on an unknown class LibDNS\\\\Messages\\\\MessageFactory\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Call to method create\\(\\) on an unknown class LibDNS\\\\Records\\\\QuestionFactory\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Call to method decode\\(\\) on an unknown class LibDNS\\\\Decoder\\\\Decoder\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Call to method encode\\(\\) on an unknown class LibDNS\\\\Encoder\\\\Encoder\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Instantiated class LibDNS\\\\Decoder\\\\DecoderFactory not found\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Instantiated class LibDNS\\\\Encoder\\\\EncoderFactory not found\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Instantiated class LibDNS\\\\Messages\\\\MessageFactory not found\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Instantiated class LibDNS\\\\Records\\\\QuestionFactory not found\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, int\\|string given\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\#1 \\$read of function stream_select expects TRead of array\\<resource\\>\\|null, array\\<int, resource\\|false\\> given\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\#1 \\$socket of function stream_socket_sendto expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fread expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\$decoder of method AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:__construct\\(\\) has invalid type LibDNS\\\\Decoder\\\\Decoder\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\$encoder of method AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:__construct\\(\\) has invalid type LibDNS\\\\Encoder\\\\Encoder\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\$messageFactory of method AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:__construct\\(\\) has invalid type LibDNS\\\\Messages\\\\MessageFactory\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\$questionFactory of method AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:__construct\\(\\) has invalid type LibDNS\\\\Records\\\\QuestionFactory\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:\\$decoder has unknown class LibDNS\\\\Decoder\\\\Decoder as its type\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:\\$encoder has unknown class LibDNS\\\\Encoder\\\\Encoder as its type\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:\\$messageFactory has unknown class LibDNS\\\\Messages\\\\MessageFactory as its type\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Challenge\\\\Dns\\\\LibDnsResolver\\:\\:\\$questionFactory has unknown class LibDNS\\\\Records\\\\QuestionFactory as its type\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/LibDnsResolver.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function addslashes expects string, int\\|string\\|false given\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/Route53Solver.php
+
+		-
+			message: "#^Argument of an invalid type array\\<int, array\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: src/Core/Challenge/Dns/SimpleDnsResolver.php
+
+		-
+			message: "#^Constructor of class AcmePhp\\\\Core\\\\Exception\\\\AcmeCoreServerException has an unused parameter \\$request\\.$#"
+			count: 1
+			path: src/Core/Exception/AcmeCoreServerException.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Exception\\\\Protocol\\\\ChallengeFailedException\\:\\:\\$response has no type specified\\.$#"
+			count: 1
+			path: src/Core/Exception/Protocol/ChallengeFailedException.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Exception\\\\Protocol\\\\ChallengeTimedOutException\\:\\:\\$response has no type specified\\.$#"
+			count: 1
+			path: src/Core/Exception/Protocol/ChallengeTimedOutException.php
+
+		-
+			message: "#^Instantiated class League\\\\Flysystem\\\\Adapter\\\\Ftp not found\\.$#"
+			count: 1
+			path: src/Core/Filesystem/Adapter/FlysystemFtpFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$adapter of class League\\\\Flysystem\\\\Filesystem constructor expects League\\\\Flysystem\\\\FilesystemAdapter, League\\\\Flysystem\\\\Adapter\\\\Ftp given\\.$#"
+			count: 1
+			path: src/Core/Filesystem/Adapter/FlysystemFtpFactory.php
+
+		-
+			message: "#^Instantiated class League\\\\Flysystem\\\\Adapter\\\\Local not found\\.$#"
+			count: 1
+			path: src/Core/Filesystem/Adapter/FlysystemLocalFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$adapter of class League\\\\Flysystem\\\\Filesystem constructor expects League\\\\Flysystem\\\\FilesystemAdapter, League\\\\Flysystem\\\\Adapter\\\\Local given\\.$#"
+			count: 1
+			path: src/Core/Filesystem/Adapter/FlysystemLocalFactory.php
+
+		-
+			message: "#^Call to an undefined method Lcobucci\\\\JWT\\\\Signer\\\\Hmac\\\\Sha256\\:\\:getAlgorithmId\\(\\)\\.$#"
+			count: 1
+			path: src/Core/Http/SecureHttpClient.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: src/Core/Http/SecureHttpClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$contents of static method Lcobucci\\\\JWT\\\\Signer\\\\Key\\\\InMemory\\:\\:plainText\\(\\) expects non\\-empty\\-string, string given\\.$#"
+			count: 1
+			path: src/Core/Http/SecureHttpClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$input of method AcmePhp\\\\Core\\\\Http\\\\Base64SafeEncoder\\:\\:encode\\(\\) expects string, string\\|false given\\.$#"
+			count: 4
+			path: src/Core/Http/SecureHttpClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$data of function hash expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Core/Http/SecureHttpClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$key of method Lcobucci\\\\JWT\\\\Signer\\\\Hmac\\:\\:sign\\(\\) expects Lcobucci\\\\JWT\\\\Signer\\\\Key, Lcobucci\\\\JWT\\\\Signer\\\\Key\\\\InMemory\\|string given\\.$#"
+			count: 1
+			path: src/Core/Http/SecureHttpClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$payload of method AcmePhp\\\\Core\\\\Http\\\\SecureHttpClient\\:\\:signPayload\\(\\) expects array\\|null, array\\|string\\|null given\\.$#"
+			count: 2
+			path: src/Core/Http/SecureHttpClient.php
+
+		-
+			message: "#^Method AcmePhp\\\\Core\\\\Http\\\\ServerErrorHandler\\:\\:createAcmeExceptionForResponse\\(\\) should return AcmePhp\\\\Core\\\\Exception\\\\AcmeCoreServerException but returns object\\.$#"
+			count: 1
+			path: src/Core/Http/ServerErrorHandler.php
+
+		-
+			message: "#^Property AcmePhp\\\\Core\\\\Http\\\\ServerErrorHandler\\:\\:\\$exceptions has no type specified\\.$#"
+			count: 1
+			path: src/Core/Http/ServerErrorHandler.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Core/Protocol/RevocationReason.php
+
+		-
+			message: "#^Parameter \\#3 \\$depth of function json_decode expects int\\<1, max\\>, int given\\.$#"
+			count: 1
+			path: src/Core/Util/JsonDecoder.php
+
+		-
+			message: "#^Cannot access offset 'key' on array\\|false\\.$#"
+			count: 1
+			path: src/Ssl/Certificate.php
+
+		-
+			message: "#^Method AcmePhp\\\\Ssl\\\\Certificate\\:\\:getPublicKeyResource\\(\\) should return resource but returns OpenSSLAsymmetricKey\\.$#"
+			count: 1
+			path: src/Ssl/Certificate.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function openssl_pkey_get_details expects OpenSSLAsymmetricKey, resource given\\.$#"
+			count: 1
+			path: src/Ssl/Certificate.php
+
+		-
+			message: "#^Property AcmePhp\\\\Ssl\\\\Generator\\\\ChainPrivateKeyGenerator\\:\\:\\$generators \\(array\\<AcmePhp\\\\Ssl\\\\Generator\\\\PrivateKeyGeneratorInterface\\>\\) does not accept iterable\\<AcmePhp\\\\Ssl\\\\Generator\\\\PrivateKeyGeneratorInterface\\>\\.$#"
+			count: 1
+			path: src/Ssl/Generator/ChainPrivateKeyGenerator.php
+
+		-
+			message: "#^Parameter \\#2 \\$values of static method Webmozart\\\\Assert\\\\Assert\\:\\:oneOf\\(\\) expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: src/Ssl/Generator/EcKey/EcKeyOption.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function openssl_free_key expects OpenSSLAsymmetricKey, OpenSSLAsymmetricKey\\|resource given\\.$#"
+			count: 1
+			path: src/Ssl/Parser/KeyParser.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function openssl_pkey_get_details expects OpenSSLAsymmetricKey, OpenSSLAsymmetricKey\\|resource given\\.$#"
+			count: 1
+			path: src/Ssl/Parser/KeyParser.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function openssl_free_key expects OpenSSLAsymmetricKey, OpenSSLAsymmetricKey\\|resource given\\.$#"
+			count: 1
+			path: src/Ssl/PrivateKey.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function openssl_pkey_get_details expects OpenSSLAsymmetricKey, OpenSSLAsymmetricKey\\|resource given\\.$#"
+			count: 1
+			path: src/Ssl/PrivateKey.php
+
+		-
+			message: "#^Cannot access offset 1 on array\\|false\\.$#"
+			count: 1
+			path: src/Ssl/Signer/DataSigner.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of function openssl_free_key expects OpenSSLAsymmetricKey, OpenSSLAsymmetricKey\\|resource given\\.$#"
+			count: 1
+			path: src/Ssl/Signer/DataSigner.php
+
+		-
+			message: "#^Parameter \\#2 \\$start of function mb_substr expects int, float\\|int given\\.$#"
+			count: 1
+			path: src/Ssl/Signer/DataSigner.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function mb_substr expects int\\|null, float\\|int given\\.$#"
+			count: 2
+			path: src/Ssl/Signer/DataSigner.php
+
+		-
+			message: "#^Parameter \\#3 \\$private_key of function openssl_sign expects array\\|OpenSSLAsymmetricKey\\|OpenSSLCertificate\\|string, OpenSSLAsymmetricKey\\|resource given\\.$#"
+			count: 1
+			path: src/Ssl/Signer/DataSigner.php
