@@ -34,7 +34,7 @@
         }
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "ext-filter": "*",
         "ext-hash": "*",
         "ext-json": "*",
