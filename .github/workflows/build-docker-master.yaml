@@ -31,6 +31,7 @@ jobs:
         context: build/
         file: Dockerfile
         push: true
+        load: true
         tags: "ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}"
     - name: Confirm that we can run ACME php via docker
       run: docker run --rm -it ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}
