@@ -12,7 +12,7 @@
 
 ### Internal
 
-* Update PHP-CS-Fixer to 3.62.0
+* Analyse code with PHPStan
 
 ## 07/06/2022 22:41  2.1.0  Add compatibility for PHP 8.0/8.1, Symfony 6 and other improvements
 
