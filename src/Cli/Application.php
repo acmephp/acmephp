@@ -18,7 +18,7 @@ use AcmePhp\Cli\Command\StatusCommand;
 use SelfUpdate\SelfUpdateCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Helper\HelperSet;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
