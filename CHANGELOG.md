@@ -5,10 +5,20 @@
 > [!NOTE]
 > From now on, a particular attention will be given to provide a nice changelog.
 
+### Features
+
+* Add support for guzzlehttp/psr7 ^2.4
+
 ### BC Break
 
-* Drop support for PHP <8.1
+* Drop support for PHP <8.3
 * Drop support for Symfony <5.4, and 6.0, 6.1, 6.2, 6.3
+* Drop support for guzzlehttp/psr7 < 2
+* Upgrade from FlySystem v1 to v3
+
+### Internal
+
+* Analyse code with PHPStan
 
 ### Internal
 
