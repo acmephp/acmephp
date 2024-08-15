@@ -71,7 +71,12 @@ class RunCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), getcwd()));
+        $cwd = getcwd();
+        if (false === $cwd) {
+            throw new \RuntimeException('Failed to get current working directory');
+        }
+
+        $this->config = $this->getConfig(Path::makeAbsolute($input->getArgument('config'), $cwd));
 
         $keyOption = $this->createKeyOption($this->config['key_type']);
         $this->register($this->config['contact_email'], $keyOption);
