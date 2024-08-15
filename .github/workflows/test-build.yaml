@@ -51,9 +51,9 @@ jobs:
             context: build/
             file: Dockerfile
             push: false
-            tags: "ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}"
+            tags: acmephp
         - name: Confirm that we can run ACME php via docker
-          run: docker run --rm ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}
+          run: docker run --rm acmephp
     phpstan:
         name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
         runs-on: ubuntu-latest
