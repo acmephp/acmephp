@@ -23,7 +23,7 @@ class UnsupportedContactServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[unsupportedContact] A contact URL for an account used an unsupported protocol scheme: '.$detail,
+            '[unsupportedContact] A contact URL for an account used an unsupported protocol scheme: ' . $detail,
             $previous
         );
     }

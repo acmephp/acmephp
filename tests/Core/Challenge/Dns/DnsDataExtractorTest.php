@@ -32,7 +32,7 @@ class DnsDataExtractorTest extends TestCase
 
         $stubChallenge->getDomain()->willReturn($domain);
 
-        $this->assertEquals('_acme-challenge.'.$domain.'.', $extractor->getRecordName($stubChallenge->reveal()));
+        $this->assertEquals('_acme-challenge.' . $domain . '.', $extractor->getRecordName($stubChallenge->reveal()));
     }
 
     public function testGetRecordValue()

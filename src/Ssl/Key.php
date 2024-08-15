@@ -25,7 +25,7 @@ abstract class Key
 
     public function __construct(string $keyPEM)
     {
-        Assert::stringNotEmpty($keyPEM, __CLASS__.'::$keyPEM should not be an empty string. Got %s');
+        Assert::stringNotEmpty($keyPEM, __CLASS__ . '::$keyPEM should not be an empty string. Got %s');
 
         $this->keyPEM = $keyPEM;
     }

@@ -23,7 +23,7 @@ class TlsServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[tls] The server experienced a TLS error during DV: '.$detail,
+            '[tls] The server experienced a TLS error during DV: ' . $detail,
             $previous
         );
     }

@@ -42,13 +42,13 @@ class KeyParser
             throw new KeyParsingException(sprintf('Fail to parse key with error: %s', openssl_error_string()));
         }
 
-        foreach (['type', 'key', 'bits'] as $requiredKey) {
+        foreach (array('type', 'key', 'bits') as $requiredKey) {
             if (!isset($rawData[$requiredKey])) {
                 throw new KeyParsingException(sprintf('Missing expected key "%s" in OpenSSL key', $requiredKey));
             }
         }
 
-        $details = [];
+        $details = array();
 
         if (OPENSSL_KEYTYPE_RSA === $rawData['type']) {
             $details = $rawData['rsa'];

@@ -56,28 +56,28 @@ class Route53SolverTest extends TestCase
         $mockExtractor->getRecordName($stubChallenge->reveal())->willReturn($recordName);
         $mockExtractor->getRecordValue($stubChallenge->reveal())->willReturn($recordValue);
         $stubChallenge->getDomain()->willReturn($domain);
-        $mockClient->listHostedZones([])->willReturn(
-            [
-                'HostedZones' => [
-                    ['Id' => 1, 'Name' => 'foo.fr.'],
-                    ['Id' => 2, 'Name' => 'bar.com.'],
-                ],
+        $mockClient->listHostedZones(array())->willReturn(
+            array(
+                'HostedZones' => array(
+                    array('Id' => 1, 'Name' => 'foo.fr.'),
+                    array('Id' => 2, 'Name' => 'bar.com.'),
+                ),
                 'NextMarker' => null,
                 'IsTruncated' => false,
-            ]
+            )
         );
-        $mockClient->listResourceRecordSets([
+        $mockClient->listResourceRecordSets(array(
             'HostedZoneId' => 2,
             'StartRecordName' => '_acme-challenge.bar.com.',
             'StartRecordType' => 'TXT',
-        ])->willReturn(
-            [
-                'ResourceRecordSets' => [
-                    ['Name' => '_acme-challenge.bar.com.', 'Type' => 'TXT', 'ResourceRecords' => [['Value' => '"foo"']]],
-                ],
-            ]
+        ))->willReturn(
+            array(
+                'ResourceRecordSets' => array(
+                    array('Name' => '_acme-challenge.bar.com.', 'Type' => 'TXT', 'ResourceRecords' => array(array('Value' => '"foo"'))),
+                ),
+            )
         );
-        $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled()->willReturn(['ChangeInfo' => ['Id' => 'foo']]);
+        $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled()->willReturn(array('ChangeInfo' => array('Id' => 'foo')));
         $mockClient->waitUntil('ResourceRecordSetsChanged', Argument::any())->shouldBeCalled();
 
         $solver->solve($stubChallenge->reveal());
@@ -98,26 +98,26 @@ class Route53SolverTest extends TestCase
         $mockExtractor->getRecordName($stubChallenge->reveal())->willReturn($recordName);
         $mockExtractor->getRecordValue($stubChallenge->reveal())->willReturn($recordValue);
         $stubChallenge->getDomain()->willReturn($domain);
-        $mockClient->listHostedZones([])->willReturn(
-            [
-                'HostedZones' => [
-                    ['Id' => 1, 'Name' => 'foo.fr.'],
-                    ['Id' => 2, 'Name' => 'bar.com.'],
-                ],
+        $mockClient->listHostedZones(array())->willReturn(
+            array(
+                'HostedZones' => array(
+                    array('Id' => 1, 'Name' => 'foo.fr.'),
+                    array('Id' => 2, 'Name' => 'bar.com.'),
+                ),
                 'NextMarker' => null,
                 'IsTruncated' => false,
-            ]
+            )
         );
-        $mockClient->listResourceRecordSets([
+        $mockClient->listResourceRecordSets(array(
             'HostedZoneId' => 2,
             'StartRecordName' => '_acme-challenge.bar.com.',
             'StartRecordType' => 'TXT',
-        ])->willReturn(
-            [
-                'ResourceRecordSets' => [
-                    ['Name' => '_acme-challenge.bar.com.', 'Type' => 'TXT', 'ResourceRecords' => [['Value' => '"foo"']]],
-                ],
-            ]
+        ))->willReturn(
+            array(
+                'ResourceRecordSets' => array(
+                    array('Name' => '_acme-challenge.bar.com.', 'Type' => 'TXT', 'ResourceRecords' => array(array('Value' => '"foo"'))),
+                ),
+            )
         );
         $mockClient->changeResourceRecordSets(Argument::any())->shouldBeCalled();
 

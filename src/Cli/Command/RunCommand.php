@@ -54,7 +54,7 @@ class RunCommand extends AbstractCommand
     {
         $this->setName('run')
             ->setDefinition(
-                [
+                array(
                     new InputArgument('config', InputArgument::REQUIRED, 'path to the config file'),
                     new InputOption(
                         'delay',
@@ -63,7 +63,7 @@ class RunCommand extends AbstractCommand
                         'Time to live of certificate (in days) before forcing the renewal',
                         30
                     ),
-                ]
+                )
             )
             ->setDescription('Automatically challenge domains and request certificates configured in the given file')
             ->setHelp('The <info>%command.name%</info> challenge the domains, request the certificates and install them following a given configuration.');
@@ -147,7 +147,7 @@ class RunCommand extends AbstractCommand
             if ($this->config['zerossl_api_key']) {
                 $eabCredentials = \GuzzleHttp\json_decode(
                     (new Client())
-                        ->post('https://api.zerossl.com/acme/eab-credentials/?access_key='.$this->config['zerossl_api_key'])
+                        ->post('https://api.zerossl.com/acme/eab-credentials/?access_key=' . $this->config['zerossl_api_key'])
                         ->getBody()
                         ->getContents()
                 );
@@ -162,9 +162,9 @@ class RunCommand extends AbstractCommand
             // Otherwise register on the fly
             $eabCredentials = \GuzzleHttp\json_decode(
                 (new Client())
-                    ->post('https://api.zerossl.com/acme/eab-credentials-email', [
-                        'form_params' => ['email' => $this->config['contact_email']],
-                    ])
+                    ->post('https://api.zerossl.com/acme/eab-credentials-email', array(
+                        'form_params' => array('email' => $this->config['contact_email']),
+                    ))
                     ->getBody()
                     ->getContents()
             );
@@ -211,11 +211,11 @@ class RunCommand extends AbstractCommand
 
         $distinguishedName = $repository->loadDomainDistinguishedName($domain);
         $wantedCertificates = array_values(
-            array_unique(array_merge([$domain], $domainConfig['subject_alternative_names']))
+            array_unique(array_merge(array($domain), $domainConfig['subject_alternative_names']))
         );
         $requestedCertificates = array_values(
             array_unique(
-                array_merge([$distinguishedName->getCommonName()], $distinguishedName->getSubjectAlternativeNames())
+                array_merge(array($distinguishedName->getCommonName()), $distinguishedName->getSubjectAlternativeNames())
             )
         );
         if ($wantedCertificates !== $requestedCertificates) {
@@ -291,12 +291,12 @@ class RunCommand extends AbstractCommand
         $validator = $this->getContainer()->get('challenge_validator');
 
         $client = $this->getClient(Application::PROVIDERS[$this->config['provider']]);
-        $domains = array_unique(array_merge([$domain], $domainConfig['subject_alternative_names']));
+        $domains = array_unique(array_merge(array($domain), $domainConfig['subject_alternative_names']));
 
         $this->output->writeln('<comment>Requesting certificate order...</comment>');
         $order = $client->requestOrder($domains);
 
-        $authorizationChallengesToSolve = [];
+        $authorizationChallengesToSolve = array();
         foreach ($order->getAuthorizationsChallenges() as $domain => $authorizationChallenges) {
             /* @var AuthorizationChallenge $candidate */
             foreach ($authorizationChallenges as $authorizationChallenge) {
@@ -364,11 +364,11 @@ class RunCommand extends AbstractCommand
     private function loadConfig($configFile)
     {
         if (!file_exists($configFile)) {
-            throw new IOException('Configuration file '.$configFile.' does not exists.');
+            throw new IOException('Configuration file ' . $configFile . ' does not exists.');
         }
 
         if (!is_readable($configFile)) {
-            throw new IOException('Configuration file '.$configFile.' is not readable.');
+            throw new IOException('Configuration file ' . $configFile . ' is not readable.');
         }
 
         return Yaml::parse(file_get_contents($configFile));
@@ -378,6 +378,6 @@ class RunCommand extends AbstractCommand
     {
         $processor = new Processor();
 
-        return $processor->processConfiguration(new DomainConfiguration(), ['acmephp' => $config]);
+        return $processor->processConfiguration(new DomainConfiguration(), array('acmephp' => $config));
     }
 }

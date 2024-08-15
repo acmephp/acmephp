@@ -58,11 +58,11 @@ class CertificateOrder
             $this->getAuthorizationsChallenges()
         );
 
-        return [
+        return array(
             'authorizationsChallenges' => $authorizationsChallenges,
             'orderEndpoint' => $this->getOrderEndpoint(),
             'status' => $this->getStatus(),
-        ];
+        );
     }
 
     public static function fromArray(array $data): self
@@ -86,7 +86,7 @@ class CertificateOrder
         $domain = strtolower($domain);
 
         if (!isset($this->authorizationsChallenges[$domain])) {
-            throw new AcmeCoreClientException('The order does not contains any authorization challenge for the domain '.$domain);
+            throw new AcmeCoreClientException('The order does not contains any authorization challenge for the domain ' . $domain);
         }
 
         return $this->authorizationsChallenges[$domain];

@@ -55,13 +55,13 @@ class DomainConfiguration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('provider')
-                    ->info('Certificate provider to use (supported: '.implode(', ', Application::PROVIDERS).')')
+                    ->info('Certificate provider to use (supported: ' . implode(', ', Application::PROVIDERS) . ')')
                     ->defaultValue('letsencrypt')
                     ->validate()
                         ->ifTrue(function ($item) {
                             return !isset(Application::PROVIDERS[$item]);
                         })
-                        ->thenInvalid('The certificate provider %s is not valid (supported: '.implode(', ', Application::PROVIDERS).').')
+                        ->thenInvalid('The certificate provider %s is not valid (supported: ' . implode(', ', Application::PROVIDERS) . ').')
                     ->end()
                 ->end()
                 ->scalarNode('eab_kid')
@@ -87,7 +87,7 @@ class DomainConfiguration implements ConfigurationInterface
                     ->end()
                     ->validate()
                         ->ifTrue(function ($item) {
-                            return !\in_array($item, ['RSA', 'EC']);
+                            return !\in_array($item, array('RSA', 'EC'));
                         })
                         ->thenInvalid('The keyType %s is not valid. Supported types are: RSA, EC')
                     ->end()
@@ -115,7 +115,7 @@ class DomainConfiguration implements ConfigurationInterface
                     return isset($conf['solver']) && !\is_array($conf['solver']);
                 })
                 ->then(function ($conf) {
-                    $conf['solver'] = ['name' => $conf['solver']];
+                    $conf['solver'] = array('name' => $conf['solver']);
 
                     return $conf;
                 })
@@ -240,7 +240,7 @@ class DomainConfiguration implements ConfigurationInterface
                         return isset($conf['solver']) && !\is_array($conf['solver']);
                     })
                     ->then(function ($conf) {
-                        $conf['solver'] = ['name' => $conf['solver']];
+                        $conf['solver'] = array('name' => $conf['solver']);
 
                         return $conf;
                     })

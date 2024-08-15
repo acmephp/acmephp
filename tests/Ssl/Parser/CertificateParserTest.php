@@ -83,7 +83,7 @@ oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
         $this->assertSame('20160623', $result->getValidTo()->format('Ymd'));
         $this->assertNotEmpty($result->getSerialNumber());
         $this->assertSame('acmephp.com', $result->getSubject());
-        $this->assertSame(['acmephp.com', 'www.acmephp.com'], $result->getSubjectAlternativeNames());
+        $this->assertSame(array('acmephp.com', 'www.acmephp.com'), $result->getSubjectAlternativeNames());
         $this->assertSame('happy hacker fake CA', $result->getIssuer());
         $this->assertFalse($result->isSelfSigned());
     }

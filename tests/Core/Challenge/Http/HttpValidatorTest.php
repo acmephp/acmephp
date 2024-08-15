@@ -61,7 +61,7 @@ class HttpValidatorTest extends TestCase
         $mockExtractor->getCheckUrl($stubChallenge->reveal())->willReturn($checkUrl);
         $mockExtractor->getCheckContent($stubChallenge->reveal())->willReturn($checkContent);
 
-        $mockHttpClient->get($checkUrl, ['verify' => false])->willReturn($stubResponse->reveal());
+        $mockHttpClient->get($checkUrl, array('verify' => false))->willReturn($stubResponse->reveal());
         $stubResponse->getBody()->willReturn($stubStream->reveal());
         $stubStream->getContents()->willReturn($checkContent);
 
@@ -85,7 +85,7 @@ class HttpValidatorTest extends TestCase
         $mockResponse = $this->prophesize(ResponseInterface::class);
         $mockResponse->getStatusCode()->willReturn(400);
 
-        $mockHttpClient->get($checkUrl, ['verify' => false])->willThrow(new ClientException(
+        $mockHttpClient->get($checkUrl, array('verify' => false))->willThrow(new ClientException(
             'boom',
             $this->prophesize(RequestInterface::class)->reveal(),
             $mockResponse->reveal()

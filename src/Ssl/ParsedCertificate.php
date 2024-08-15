@@ -52,12 +52,12 @@ class ParsedCertificate
         ?\DateTime $validFrom = null,
         ?\DateTime $validTo = null,
         ?string $serialNumber = null,
-        array $subjectAlternativeNames = []
+        array $subjectAlternativeNames = array()
     ) {
-        Assert::stringNotEmpty($subject, __CLASS__.'::$subject expected a non empty string. Got: %s');
+        Assert::stringNotEmpty($subject, __CLASS__ . '::$subject expected a non empty string. Got: %s');
         Assert::allStringNotEmpty(
             $subjectAlternativeNames,
-            __CLASS__.'::$subjectAlternativeNames expected a array of non empty string. Got: %s'
+            __CLASS__ . '::$subjectAlternativeNames expected a array of non empty string. Got: %s'
         );
 
         $this->source = $source;

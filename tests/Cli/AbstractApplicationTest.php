@@ -43,18 +43,18 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
     public function testFullProcess()
     {
         $runTester = new CommandTester($this->application->find('run'));
-        $runTester->execute([
+        $runTester->execute(array(
             'command' => 'run',
-            'config' => $this->getConfigDir().'/'.('eab' === getenv('PEBBLE_MODE') ? 'eab' : 'default').'.yaml',
-        ]);
+            'config' => $this->getConfigDir() . '/' . ('eab' === getenv('PEBBLE_MODE') ? 'eab' : 'default') . '.yaml',
+        ));
 
         $output = $runTester->getDisplay();
 
         // Register
         $this->assertStringContainsString('No account key pair was found, generating one', $output);
         $this->assertStringContainsString('Account registered successfully', $output);
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/account/key.private.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/account/key.public.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/account/key.private.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/account/key.public.pem');
 
         // Challenge
         $this->assertStringContainsString('Requesting certificate order', $output);
@@ -65,12 +65,12 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
         // Certificate
         $this->assertStringContainsString('Requesting certificate for domain acmephp.com', $output);
         $this->assertStringContainsString('Certificate requested successfully!', $output);
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.private.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.public.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/cert.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/private/combined.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/chain.pem');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/certs/acmephp.com/public/fullchain.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.private.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/certs/acmephp.com/private/key.public.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/certs/acmephp.com/public/cert.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/certs/acmephp.com/private/combined.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/certs/acmephp.com/public/chain.pem');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/certs/acmephp.com/public/fullchain.pem');
     }
 
     /**

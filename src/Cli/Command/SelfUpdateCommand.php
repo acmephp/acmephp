@@ -220,7 +220,7 @@ class SelfUpdateCommand extends Command
 
     protected function update(Updater $updater)
     {
-        $this->output->writeln('Updating...'.PHP_EOL);
+        $this->output->writeln('Updating...' . PHP_EOL);
 
         try {
             $result = $updater->update();
@@ -228,10 +228,10 @@ class SelfUpdateCommand extends Command
             $newVersion = $updater->getNewVersion();
             $oldVersion = $updater->getOldVersion();
             if (40 === \strlen($newVersion)) {
-                $newVersion = 'dev-'.$newVersion;
+                $newVersion = 'dev-' . $newVersion;
             }
             if (40 === \strlen($oldVersion)) {
-                $oldVersion = 'dev-'.$oldVersion;
+                $oldVersion = 'dev-' . $oldVersion;
             }
 
             if ($result) {

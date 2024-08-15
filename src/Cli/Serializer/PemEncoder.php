@@ -21,14 +21,14 @@ class PemEncoder implements EncoderInterface, DecoderInterface
 {
     public const FORMAT = 'pem';
 
-    public function encode($data, $format, array $context = []): string
+    public function encode($data, $format, array $context = array()): string
     {
-        return trim($data)."\n";
+        return trim($data) . "\n";
     }
 
-    public function decode($data, $format, array $context = [])
+    public function decode($data, $format, array $context = array())
     {
-        return trim($data)."\n";
+        return trim($data) . "\n";
     }
 
     public function supportsEncoding($format): bool

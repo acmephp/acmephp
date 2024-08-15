@@ -30,10 +30,10 @@ class DsaKeyGenerator implements PrivateKeyGeneratorInterface
     {
         Assert::isInstanceOf($keyOption, DsaKeyOption::class);
 
-        return $this->generatePrivateKeyFromOpensslOptions([
+        return $this->generatePrivateKeyFromOpensslOptions(array(
             'private_key_type' => OPENSSL_KEYTYPE_DSA,
             'private_key_bits' => $keyOption->getBits(),
-        ]);
+        ));
     }
 
     public function supportsKeyOption(KeyOption $keyOption): bool

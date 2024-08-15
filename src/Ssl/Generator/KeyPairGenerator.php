@@ -32,12 +32,12 @@ class KeyPairGenerator
     public function __construct(?PrivateKeyGeneratorInterface $generator = null)
     {
         $this->generator = $generator ?: new ChainPrivateKeyGenerator(
-            [
+            array(
                 new RsaKeyGenerator(),
                 new EcKeyGenerator(),
                 new DhKeyGenerator(),
                 new DsaKeyGenerator(),
-            ]
+            )
         );
     }
 

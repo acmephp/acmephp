@@ -30,10 +30,10 @@ class RsaKeyGenerator implements PrivateKeyGeneratorInterface
     {
         Assert::isInstanceOf($keyOption, RsaKeyOption::class);
 
-        return $this->generatePrivateKeyFromOpensslOptions([
+        return $this->generatePrivateKeyFromOpensslOptions(array(
             'private_key_type' => OPENSSL_KEYTYPE_RSA,
             'private_key_bits' => $keyOption->getBits(),
-        ]);
+        ));
     }
 
     public function supportsKeyOption(KeyOption $keyOption): bool

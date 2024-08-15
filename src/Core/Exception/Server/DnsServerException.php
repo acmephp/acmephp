@@ -23,7 +23,7 @@ class DnsServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[dns] There was a problem with a DNS query during identifier validation: '.$detail,
+            '[dns] There was a problem with a DNS query during identifier validation: ' . $detail,
             $previous
         );
     }

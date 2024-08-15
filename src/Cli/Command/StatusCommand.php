@@ -28,7 +28,8 @@ class StatusCommand extends AbstractCommand
         $this->setName('status')
             ->setDescription('List all the certificates handled by Acme PHP')
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'include expired certificates too')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
 The <info>%command.name%</info> command list all the certificates stored in the Acme PHP storage.
 It also displays useful informations about these such as the certificate validity and issuer.
 EOF
@@ -46,7 +47,7 @@ EOF
         $certificateParser = $this->getContainer()->get('ssl.certificate_parser');
 
         $table = new Table($output);
-        $table->setHeaders(['Domain', 'Issuer', 'Valid from', 'Valid to', 'Needs renewal?']);
+        $table->setHeaders(array('Domain', 'Issuer', 'Valid from', 'Valid to', 'Needs renewal?'));
 
         $directories = $master->listContents('certs');
 
@@ -61,23 +62,23 @@ EOF
             }
             $domainString = $parsedCertificate->getSubject();
 
-            $alternativeNames = array_diff($parsedCertificate->getSubjectAlternativeNames(), [$parsedCertificate->getSubject()]);
+            $alternativeNames = array_diff($parsedCertificate->getSubjectAlternativeNames(), array($parsedCertificate->getSubject()));
             if (\count($alternativeNames)) {
                 sort($alternativeNames);
                 $last = array_pop($alternativeNames);
                 foreach ($alternativeNames as $alternativeName) {
-                    $domainString .= "\n ├── ".$alternativeName;
+                    $domainString .= "\n ├── " . $alternativeName;
                 }
-                $domainString .= "\n └── ".$last;
+                $domainString .= "\n └── " . $last;
             }
 
-            $table->addRow([
+            $table->addRow(array(
                 $domainString,
                 $parsedCertificate->getIssuer(),
                 $parsedCertificate->getValidFrom()->format('Y-m-d H:i:s'),
                 $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
                 ($parsedCertificate->getValidTo()->format('U') - time() < 604800) ? '<comment>Yes</comment>' : 'No',
-            ]);
+            ));
         }
 
         $table->render();

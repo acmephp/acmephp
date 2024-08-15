@@ -29,7 +29,7 @@ class Certificate
 
     public function __construct(string $certificatePEM, ?self $issuerCertificate = null)
     {
-        Assert::stringNotEmpty($certificatePEM, __CLASS__.'::$certificatePEM should not be an empty string. Got %s');
+        Assert::stringNotEmpty($certificatePEM, __CLASS__ . '::$certificatePEM should not be an empty string. Got %s');
 
         $this->certificatePEM = $certificatePEM;
         $this->issuerCertificate = $issuerCertificate;
@@ -40,7 +40,7 @@ class Certificate
      */
     public function getIssuerChain(): array
     {
-        $chain = [];
+        $chain = array();
         $issuerCertificate = $this->getIssuerCertificate();
 
         while (null !== $issuerCertificate) {

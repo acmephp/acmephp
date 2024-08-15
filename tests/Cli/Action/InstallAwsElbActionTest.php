@@ -35,11 +35,11 @@ class InstallAwsElbActionTest extends TestCase
         $domain = 'foo.bar';
         $region = 'eu-west-1';
         $loadBalancer = 'myElb';
-        $config = [
+        $config = array(
             'region' => $region,
             'loadbalancer' => $loadBalancer,
             'certificate_prefix' => 'foo_',
-        ];
+        );
         $response = new CertificateResponse(
             new CertificateRequest(
                 new DistinguishedName($domain),
@@ -56,22 +56,22 @@ class InstallAwsElbActionTest extends TestCase
 
         $mockFactory->getIamClient($region)->willReturn($mockIam->reveal());
         $mockFactory->getElbClient($region)->willReturn($mockElb->reveal());
-        $mockIam->uploadServerCertificate(Argument::any())->shouldBeCalled()->willReturn([
-            'ServerCertificateMetadata' => [
+        $mockIam->uploadServerCertificate(Argument::any())->shouldBeCalled()->willReturn(array(
+            'ServerCertificateMetadata' => array(
                 'Arn' => 'certificate_arn',
-            ],
-        ]);
+            ),
+        ));
         $mockIam->deleteServerCertificate(Argument::any())->shouldBeCalled();
-        $mockIam->listServerCertificates(Argument::any())->willReturn([
-            'ServerCertificateMetadataList' => [
-                ['ServerCertificateName' => 'foo_123'],
-            ],
-        ]);
-        $mockElb->setLoadBalancerListenerSSLCertificate([
+        $mockIam->listServerCertificates(Argument::any())->willReturn(array(
+            'ServerCertificateMetadataList' => array(
+                array('ServerCertificateName' => 'foo_123'),
+            ),
+        ));
+        $mockElb->setLoadBalancerListenerSSLCertificate(array(
             'LoadBalancerName' => $loadBalancer,
             'LoadBalancerPort' => 443,
             'SSLCertificateId' => 'certificate_arn',
-        ])->shouldBeCalled();
+        ))->shouldBeCalled();
 
         $action->handle($config, $response);
     }

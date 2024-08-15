@@ -23,7 +23,7 @@ class MalformedServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[malformed] The request message was malformed: '.$detail,
+            '[malformed] The request message was malformed: ' . $detail,
             $previous
         );
     }

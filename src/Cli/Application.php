@@ -25,11 +25,11 @@ use Webmozart\PathUtil\Path;
  */
 class Application extends BaseApplication
 {
-    public const PROVIDERS = [
+    public const PROVIDERS = array(
         'letsencrypt' => 'https://acme-v02.api.letsencrypt.org/directory',
         'zerossl' => 'https://acme.zerossl.com/v2/DV90',
         'localhost' => 'https://localhost:14000/dir',
-    ];
+    );
 
     public function __construct()
     {
@@ -38,12 +38,12 @@ class Application extends BaseApplication
 
     protected function getDefaultCommands(): array
     {
-        return array_merge(parent::getDefaultCommands(), [
+        return array_merge(parent::getDefaultCommands(), array(
             new RunCommand(),
             new RevokeCommand(),
             new StatusCommand(),
             new SelfUpdateCommand(),
-        ]);
+        ));
     }
 
     protected function getDefaultHelperSet(): HelperSet

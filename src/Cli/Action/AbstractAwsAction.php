@@ -34,14 +34,14 @@ abstract class AbstractAwsAction extends AbstractAction
 
     public function handle(array $config, CertificateResponse $response)
     {
-        $this->assertConfiguration($config, ['loadbalancer', 'region']);
+        $this->assertConfiguration($config, array('loadbalancer', 'region'));
 
         $region = $config['region'];
         $loadBalancerName = $config['loadbalancer'];
         $loadBalancerPort = empty($config['listener']) ? 443 : $config['listener'];
         $certificatePrefix = empty($config['certificate_prefix']) ? 'acmephp_' : $config['certificate_prefix'];
         $cleanup = !isset($config['cleanup_old_certificate']) ? true : (bool) $config['cleanup_old_certificate'];
-        $certificateName = $certificatePrefix.date('Ymd-His');
+        $certificateName = $certificatePrefix . date('Ymd-His');
 
         $certificateArn = $this->uploadCertificate($response, $region, $certificateName);
         $this->installCertificate($certificateArn, $region, $loadBalancerName, $loadBalancerPort);
@@ -55,7 +55,7 @@ abstract class AbstractAwsAction extends AbstractAction
     {
         $iamClient = $this->clientFactory->getIamClient($region);
 
-        $issuerChain = [];
+        $issuerChain = array();
         $issuerCertificate = $response->getCertificate()->getIssuerCertificate();
         while (null !== $issuerCertificate) {
             $issuerChain[] = $issuerCertificate->getPEM();
@@ -63,12 +63,12 @@ abstract class AbstractAwsAction extends AbstractAction
         }
         $chainPem = implode("\n", $issuerChain);
 
-        $response = $iamClient->uploadServerCertificate([
+        $response = $iamClient->uploadServerCertificate(array(
             'ServerCertificateName' => $certificateName,
             'CertificateBody' => $response->getCertificate()->getPEM(),
             'PrivateKey' => $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM(),
             'CertificateChain' => $chainPem,
-        ]);
+        ));
 
         return $response['ServerCertificateMetadata']['Arn'];
     }
@@ -87,7 +87,7 @@ abstract class AbstractAwsAction extends AbstractAction
                         // Try several time to delete certificate given AWS takes time to uninstall previous one
                         function () use ($iamClient, $certificate) {
                             $iamClient->deleteServerCertificate(
-                                ['ServerCertificateName' => $certificate['ServerCertificateName']]
+                                array('ServerCertificateName' => $certificate['ServerCertificateName'])
                             );
                         },
                         5

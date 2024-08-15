@@ -33,7 +33,7 @@ class HttpDataExtractorTest extends TestCase
         $stubChallenge->getToken()->willReturn($token);
 
         $this->assertEquals(
-            'http://'.$domain.'/.well-known/acme-challenge/'.$token,
+            'http://' . $domain . '/.well-known/acme-challenge/' . $token,
             $extractor->getCheckUrl($stubChallenge->reveal())
         );
     }

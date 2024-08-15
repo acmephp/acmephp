@@ -19,16 +19,16 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
 {
     protected function getFixturesDirectories(): array
     {
-        return [
-            __DIR__.'/../Cli/Fixtures/local/backup',
-            __DIR__.'/../Cli/Fixtures/local/master',
-            __DIR__.'/../Cli/Fixtures/sftp',
-        ];
+        return array(
+            __DIR__ . '/../Cli/Fixtures/local/backup',
+            __DIR__ . '/../Cli/Fixtures/local/master',
+            __DIR__ . '/../Cli/Fixtures/sftp',
+        );
     }
 
     protected function getConfigDir(): string
     {
-        return __DIR__.'/Fixtures/config/sfpt_nginxproxy';
+        return __DIR__ . '/Fixtures/config/sfpt_nginxproxy';
     }
 
     public function testFullProcess()
@@ -52,8 +52,8 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
         parent::testFullProcess();
 
         // nginxproxy
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/nginxproxy/acmephp.com.crt');
-        $this->assertFileExists(__DIR__.'/../Cli/Fixtures/local/master/nginxproxy/acmephp.com.key');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/nginxproxy/acmephp.com.crt');
+        $this->assertFileExists(__DIR__ . '/../Cli/Fixtures/local/master/nginxproxy/acmephp.com.key');
 
         // SFTP
         $this->assertTrue($sftpFilesystem->has('account/key.private.pem'));

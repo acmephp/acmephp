@@ -47,8 +47,8 @@ class RepositoryTest extends TestCase
     public function setUp(): void
     {
         $this->serializer = new Serializer(
-            [new PemNormalizer(), new ObjectNormalizer()],
-            [new PemEncoder(), new JsonEncoder()]
+            array(new PemNormalizer(), new ObjectNormalizer()),
+            array(new PemEncoder(), new JsonEncoder())
         );
 
         $this->storage = new Filesystem(new InMemoryFilesystemAdapter());
@@ -161,7 +161,7 @@ class RepositoryTest extends TestCase
             'Acme',
             'PHP',
             'acmephp@example.org',
-            ['sub.example.org', 'sub.example.com']
+            array('sub.example.org', 'sub.example.com')
         );
 
         $this->repository->storeDomainDistinguishedName('example.com', $dn);
@@ -178,7 +178,7 @@ class RepositoryTest extends TestCase
         $this->assertEquals('Acme', $data['organizationName']);
         $this->assertEquals('PHP', $data['organizationalUnitName']);
         $this->assertEquals('acmephp@example.org', $data['emailAddress']);
-        $this->assertEquals(['sub.example.org', 'sub.example.com'], $data['subjectAlternativeNames']);
+        $this->assertEquals(array('sub.example.org', 'sub.example.com'), $data['subjectAlternativeNames']);
     }
 
     public function testLoadDomainDistinguishedName()
@@ -191,7 +191,7 @@ class RepositoryTest extends TestCase
             'Acme',
             'PHP',
             'acmephp@example.org',
-            ['sub.example.org', 'sub.example.com']
+            array('sub.example.org', 'sub.example.com')
         );
 
         $this->assertFalse($this->repository->hasDomainDistinguishedName('example.com'));
@@ -213,10 +213,10 @@ class RepositoryTest extends TestCase
         $this->repository->storeDomainKeyPair('example.com', new KeyPair(new PublicKey('public'), new PrivateKey('private')));
         $this->repository->storeDomainCertificate('example.com', $cert);
 
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\nprivate\n", $this->storage->read('certs/example.com/private/combined.pem'));
-        $this->assertEquals(self::$certPem."\n", $this->storage->read('certs/example.com/public/cert.pem'));
-        $this->assertEquals(self::$issuerCertPem."\n", $this->storage->read('certs/example.com/public/chain.pem'));
-        $this->assertEquals(self::$certPem."\n".self::$issuerCertPem."\n", $this->storage->read('certs/example.com/public/fullchain.pem'));
+        $this->assertEquals(self::$certPem . "\n" . self::$issuerCertPem . "\nprivate\n", $this->storage->read('certs/example.com/private/combined.pem'));
+        $this->assertEquals(self::$certPem . "\n", $this->storage->read('certs/example.com/public/cert.pem'));
+        $this->assertEquals(self::$issuerCertPem . "\n", $this->storage->read('certs/example.com/public/chain.pem'));
+        $this->assertEquals(self::$certPem . "\n" . self::$issuerCertPem . "\n", $this->storage->read('certs/example.com/public/fullchain.pem'));
     }
 
     public function testLoadDomainCertificate()

@@ -103,7 +103,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->container->setParameter('app.storage_directory', $this->getApplication()->getStorageDirectory());
 
         // Load services
-        $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__.'/../Resources'));
+        $loader = new XmlFileLoader($this->container, new FileLocator(__DIR__ . '/../Resources'));
         $loader->load('services.xml');
 
         foreach ($this->container->findTaggedServiceIds('acmephp.service_locator') as $locatorId => $locatorTags) {
@@ -111,7 +111,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
                 throw new \InvalidArgumentException(sprintf('The tagged service "%s" must define have an alias', $locatorId));
             }
             $locatorTags = $locatorTags[0]['tag'];
-            $factories = [];
+            $factories = array();
             foreach ($this->container->findTaggedServiceIds($locatorTags) as $serviceId => $tags) {
                 foreach ($tags as $tag) {
                     if (!isset($tag['alias'])) {
@@ -124,54 +124,54 @@ abstract class AbstractCommand extends Command implements LoggerInterface
             $this->container->findDefinition($locatorId)->replaceArgument(0, $factories);
         }
 
-        $this->container->setAlias('challenge_validator.dns.resolver', 'challenge_validator.dns.resolver.'.(LibDnsResolver::isSupported() ? 'libdns' : 'simple'));
+        $this->container->setAlias('challenge_validator.dns.resolver', 'challenge_validator.dns.resolver.' . (LibDnsResolver::isSupported() ? 'libdns' : 'simple'));
 
         // Inject input and output
         $this->container->set('input', $this->input);
         $this->container->set('output', $this->output);
     }
 
-    public function emergency($message, array $context = [])
+    public function emergency($message, array $context = array())
     {
         return $this->getCliLogger()->emergency($message, $context);
     }
 
-    public function alert($message, array $context = [])
+    public function alert($message, array $context = array())
     {
         return $this->getCliLogger()->alert($message, $context);
     }
 
-    public function critical($message, array $context = [])
+    public function critical($message, array $context = array())
     {
         return $this->getCliLogger()->critical($message, $context);
     }
 
-    public function error($message, array $context = [])
+    public function error($message, array $context = array())
     {
         return $this->getCliLogger()->error($message, $context);
     }
 
-    public function warning($message, array $context = [])
+    public function warning($message, array $context = array())
     {
         return $this->getCliLogger()->warning($message, $context);
     }
 
-    public function notice($message, array $context = [])
+    public function notice($message, array $context = array())
     {
         return $this->getCliLogger()->notice($message, $context);
     }
 
-    public function info($message, array $context = [])
+    public function info($message, array $context = array())
     {
         return $this->getCliLogger()->info($message, $context);
     }
 
-    public function debug($message, array $context = [])
+    public function debug($message, array $context = array())
     {
         return $this->getCliLogger()->debug($message, $context);
     }
 
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = array())
     {
         return $this->getCliLogger()->log($level, $message, $context);
     }

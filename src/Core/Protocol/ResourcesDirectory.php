@@ -38,12 +38,12 @@ class ResourcesDirectory
      */
     public static function getResourcesNames(): array
     {
-        return [
+        return array(
             self::NEW_ACCOUNT,
             self::NEW_ORDER,
             self::NEW_NONCE,
             self::REVOKE_CERT,
-        ];
+        );
     }
 
     /**

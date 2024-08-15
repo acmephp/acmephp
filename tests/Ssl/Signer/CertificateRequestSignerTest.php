@@ -34,7 +34,13 @@ class CertificateRequestSignerTest extends TestCase
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com',
-            'FR', 'france', 'Paris', 'acme', 'IT', 'qa@acmephp.com', []
+            'FR',
+            'france',
+            'Paris',
+            'acme',
+            'IT',
+            'qa@acmephp.com',
+            array()
         );
         $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
@@ -46,7 +52,7 @@ class CertificateRequestSignerTest extends TestCase
 
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
-            [
+            array(
                 'countryName' => 'FR',
                 'stateOrProvinceName' => 'france',
                 'localityName' => 'Paris',
@@ -54,7 +60,7 @@ class CertificateRequestSignerTest extends TestCase
                 'organizationalUnitName' => 'IT',
                 'commonName' => 'acmephp.com',
                 'emailAddress' => 'qa@acmephp.com',
-            ],
+            ),
             $csrResult
         );
     }
@@ -73,9 +79,9 @@ class CertificateRequestSignerTest extends TestCase
         $this->assertStringContainsString('-----BEGIN CERTIFICATE REQUEST-----', $result);
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
-            [
+            array(
                 'commonName' => 'acmephp.com',
-            ],
+            ),
             $csrResult
         );
     }
@@ -84,7 +90,13 @@ class CertificateRequestSignerTest extends TestCase
     {
         $dummyDistinguishedName = new DistinguishedName(
             'acmephp.com',
-            'FR', 'france', 'Paris', 'acme', 'IT', 'qa@acmephp.com', ['www.acmephp.com']
+            'FR',
+            'france',
+            'Paris',
+            'acme',
+            'IT',
+            'qa@acmephp.com',
+            array('www.acmephp.com')
         );
         $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
@@ -96,7 +108,7 @@ class CertificateRequestSignerTest extends TestCase
 
         $csrResult = openssl_csr_get_subject($result, false);
         $this->assertSame(
-            [
+            array(
                 'countryName' => 'FR',
                 'stateOrProvinceName' => 'france',
                 'localityName' => 'Paris',
@@ -104,7 +116,7 @@ class CertificateRequestSignerTest extends TestCase
                 'organizationalUnitName' => 'IT',
                 'commonName' => 'acmephp.com',
                 'emailAddress' => 'qa@acmephp.com',
-            ],
+            ),
             $csrResult
         );
     }

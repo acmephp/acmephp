@@ -23,7 +23,7 @@ class UserActionRequiredServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[userActionRequired] Visit the “instance” URL and take actions specified there: '.$detail,
+            '[userActionRequired] Visit the “instance” URL and take actions specified there: ' . $detail,
             $previous
         );
     }

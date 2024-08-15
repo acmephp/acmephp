@@ -21,14 +21,14 @@ class InstallAwsElbv2Action extends AbstractAwsAction
     protected function installCertificate($certificateArn, $region, $loadBalancerName, $loadBalancerPort)
     {
         $elbv2Client = $this->clientFactory->getElbv2Client($region);
-        $elb = $elbv2Client->describeLoadBalancers(['Names' => [$loadBalancerName]]);
+        $elb = $elbv2Client->describeLoadBalancers(array('Names' => array($loadBalancerName)));
         if (1 !== \count($elb['LoadBalancers'])) {
             throw new \Exception(sprintf('Unable to find Load balancer "%s"', $loadBalancerName));
         }
         $loadBalancerArn = $elb['LoadBalancers'][0]['LoadBalancerArn'];
-        $listeners = $elbv2Client->describeListeners([
+        $listeners = $elbv2Client->describeListeners(array(
             'LoadBalancerArn' => $loadBalancerArn,
-        ]);
+        ));
 
         $listenerArn = null;
         foreach ($listeners['Listeners'] as $listener) {
@@ -44,14 +44,14 @@ class InstallAwsElbv2Action extends AbstractAwsAction
 
         $this->retryCall(
             function () use ($elbv2Client, $listenerArn, $certificateArn) {
-                $elbv2Client->modifyListener([
-                    'Certificates' => [
-                        [
+                $elbv2Client->modifyListener(array(
+                    'Certificates' => array(
+                        array(
                             'CertificateArn' => $certificateArn,
-                        ],
-                    ],
+                        ),
+                    ),
                     'ListenerArn' => $listenerArn,
-                ]);
+                ));
             },
             30
         );

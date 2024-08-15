@@ -37,13 +37,13 @@ class ParsedKey
     /** @var array */
     private $details;
 
-    public function __construct(Key $source, string $key, int $bits, int $type, array $details = [])
+    public function __construct(Key $source, string $key, int $bits, int $type, array $details = array())
     {
-        Assert::stringNotEmpty($key, __CLASS__.'::$key expected a non empty string. Got: %s');
+        Assert::stringNotEmpty($key, __CLASS__ . '::$key expected a non empty string. Got: %s');
         Assert::oneOf(
             $type,
-            [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_DSA, OPENSSL_KEYTYPE_DH, OPENSSL_KEYTYPE_EC],
-            __CLASS__.'::$type expected one of: %2$s. Got: %s'
+            array(OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_DSA, OPENSSL_KEYTYPE_DH, OPENSSL_KEYTYPE_EC),
+            __CLASS__ . '::$type expected one of: %2$s. Got: %s'
         );
 
         $this->source = $source;

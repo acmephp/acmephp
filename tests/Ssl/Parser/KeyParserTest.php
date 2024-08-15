@@ -138,7 +138,8 @@ iGK6mZDSwgi3zAKkSK5jaRqPtztIwcHLPXLIiSKI6Dc3IuGYU1lf1n9RWPi39EdV
 khMBuAxgunyQC+UcviTry1OlOI95e/bZNgVvyTyg4/TbFyn1+1QLNeMtqJE5n5GJ
 jIsyJPXjdAhzAparBWwYzxywy+8PMA==
 -----END PRIVATE KEY-----
-');
+'
+        );
     }
 
     /**
@@ -162,6 +163,7 @@ U+DPwrEOIOFBs6lO6dZZ5yXrYfEyU3ROA2m5pGGI9ks7YPeqrJjrw324uUwRPchi
 GkttboODHjBs7w/064iCNSh9nEurJjHaBONtuIGNXdtvF0C/iIvBv+gB7tvm/PK5
 zoQL2yWlSN/1pRKChfSu6X8CAwEAAQ==
 -----END PUBLIC KEY-----
-');
+'
+        );
     }
 }

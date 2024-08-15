@@ -39,7 +39,7 @@ class JsonDecoder
         $data = json_decode($json, $assoc, $depth, $options);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException('json_decode error: '.json_last_error_msg());
+            throw new \InvalidArgumentException('json_decode error: ' . json_last_error_msg());
         }
 
         return $data;

@@ -7,29 +7,29 @@ on:
             - master
 
 jobs:
-    php-cs:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: shivammathur/setup-php@v2
-              with:
-                  php-version: '8.1'
-                  coverage: none
-
-            - uses: actions/checkout@master
-
-            - name: Install php-cs-fixer
-              run: wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.62.0/php-cs-fixer.phar -q
-
-            - name: Check coding style
-              run: php php-cs-fixer.phar fix --dry-run --diff
-
+    cs:
+      name: Check code style
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: Setup PHP with PECL extension
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '8.3'
+        - uses: ramsey/composer-install@v3
+        - name: Initialize cache
+          uses: actions/cache@v4
+          with:
+            key: ecs
+            path: .ecs-cache
+        - run: vendor/bin/ecs
     ci:
         name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
-                php-version: ["8.2", "8.3"]
+                php-version: ["8.2", "8.3", "8.4"]
                 composer-flags: [""]
                 name: [""]
                 include:

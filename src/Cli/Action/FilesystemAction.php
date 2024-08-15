@@ -37,12 +37,12 @@ class FilesystemAction extends AbstractAction
     public function __construct(FilesystemOperator $storage, ?ContainerInterface $locator = null)
     {
         $this->storage = $storage;
-        $this->filesystemFactoryLocator = $locator ?: new ServiceLocator([]);
+        $this->filesystemFactoryLocator = $locator ?: new ServiceLocator(array());
     }
 
     public function handle(array $config, CertificateResponse $response)
     {
-        $this->assertConfiguration($config, ['adapter']);
+        $this->assertConfiguration($config, array('adapter'));
 
         /** @var FilesystemFactoryInterface $factory */
         $factory = $this->filesystemFactoryLocator->get($config['adapter']);

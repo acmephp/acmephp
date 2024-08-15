@@ -206,7 +206,7 @@ class Repository implements RepositoryInterface
         $certPem = $this->serializer->serialize($certificate, PemEncoder::FORMAT);
 
         // Issuer chain
-        $issuerChain = [];
+        $issuerChain = array();
         $issuerCertificate = $certificate->getIssuerCertificate();
 
         while (null !== $issuerCertificate) {
@@ -217,11 +217,11 @@ class Repository implements RepositoryInterface
         $chainPem = implode("\n", $issuerChain);
 
         // Full chain
-        $fullChainPem = $certPem.$chainPem;
+        $fullChainPem = $certPem . $chainPem;
 
         // Combined
         $keyPair = $this->loadDomainKeyPair($domain);
-        $combinedPem = $fullChainPem.$this->serializer->serialize($keyPair->getPrivateKey(), PemEncoder::FORMAT);
+        $combinedPem = $fullChainPem . $this->serializer->serialize($keyPair->getPrivateKey(), PemEncoder::FORMAT);
 
         // Save
         $this->save($this->getPathForDomain(self::PATH_DOMAIN_CERT_CERT, $domain), $certPem);
@@ -253,7 +253,7 @@ class Repository implements RepositoryInterface
 
         foreach ($pems as $pem) {
             $certificate = new Certificate(
-                "-----BEGIN CERTIFICATE-----\n".$pem."\n-----END CERTIFICATE-----",
+                "-----BEGIN CERTIFICATE-----\n" . $pem . "\n-----END CERTIFICATE-----",
                 $certificate
             );
         }
@@ -298,12 +298,12 @@ class Repository implements RepositoryInterface
 
     private function getPathForDomain($path, $domain)
     {
-        return strtr($path, ['{domain}' => $this->normalizeDomain($domain)]);
+        return strtr($path, array('{domain}' => $this->normalizeDomain($domain)));
     }
 
     private function getPathForDomainList($path, array $domains)
     {
-        return strtr($path, ['{domains}' => $this->normalizeDomainList($domains)]);
+        return strtr($path, array('{domains}' => $this->normalizeDomainList($domains)));
     }
 
     private function normalizeDomain($domain)
@@ -313,9 +313,9 @@ class Repository implements RepositoryInterface
 
     private function normalizeDomainList(array $domains)
     {
-        $normalizedDomains = array_unique(array_map([$this, 'normalizeDomain'], $domains));
+        $normalizedDomains = array_unique(array_map(array($this, 'normalizeDomain'), $domains));
         sort($normalizedDomains);
 
-        return (isset($domains[0]) ? $this->normalizeDomain($domains[0]) : '-').'/'.sha1(json_encode($normalizedDomains));
+        return (isset($domains[0]) ? $this->normalizeDomain($domains[0]) : '-') . '/' . sha1(json_encode($normalizedDomains));
     }
 }

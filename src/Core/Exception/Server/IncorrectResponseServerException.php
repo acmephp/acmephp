@@ -23,7 +23,7 @@ class IncorrectResponseServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            "[incorrectResponse] Response received didn’t match the challenge's requirements: ".$detail,
+            "[incorrectResponse] Response received didn’t match the challenge's requirements: " . $detail,
             $previous
         );
     }

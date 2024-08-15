@@ -30,10 +30,10 @@ class EcKeyGenerator implements PrivateKeyGeneratorInterface
     {
         Assert::isInstanceOf($keyOption, EcKeyOption::class);
 
-        return $this->generatePrivateKeyFromOpensslOptions([
+        return $this->generatePrivateKeyFromOpensslOptions(array(
             'private_key_type' => OPENSSL_KEYTYPE_EC,
             'curve_name' => $keyOption->getCurveName(),
-        ]);
+        ));
     }
 
     public function supportsKeyOption(KeyOption $keyOption): bool

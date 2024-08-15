@@ -24,11 +24,11 @@ class InstallAwsElbAction extends AbstractAwsAction
         $this->retryCall(
             function () use ($elbClient, $loadBalancerName, $loadBalancerPort, $certificateArn) {
                 $elbClient->setLoadBalancerListenerSSLCertificate(
-                    [
+                    array(
                         'LoadBalancerName' => $loadBalancerName,
                         'LoadBalancerPort' => $loadBalancerPort,
                         'SSLCertificateId' => $certificateArn,
-                    ]
+                    )
                 );
             },
             30

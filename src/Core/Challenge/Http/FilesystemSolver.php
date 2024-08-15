@@ -45,7 +45,7 @@ class FilesystemSolver implements SolverInterface, ConfigurableServiceInterface
 
     public function __construct(?ContainerInterface $filesystemFactoryLocator = null, ?HttpDataExtractor $extractor = null)
     {
-        $this->filesystemFactoryLocator = $filesystemFactoryLocator ?: new ServiceLocator([]);
+        $this->filesystemFactoryLocator = $filesystemFactoryLocator ?: new ServiceLocator(array());
         $this->extractor = $extractor ?: new HttpDataExtractor();
         $this->filesystem = new NullAdapter();
     }

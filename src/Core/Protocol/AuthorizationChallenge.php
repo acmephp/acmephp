@@ -48,14 +48,14 @@ class AuthorizationChallenge
 
     public function toArray(): array
     {
-        return [
+        return array(
             'domain' => $this->getDomain(),
             'status' => $this->getStatus(),
             'type' => $this->getType(),
             'url' => $this->getUrl(),
             'token' => $this->getToken(),
             'payload' => $this->getPayload(),
-        ];
+        );
     }
 
     public static function fromArray(array $data): self

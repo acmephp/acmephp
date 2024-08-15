@@ -68,7 +68,8 @@
         "symfony/finder": "^5.4.12 || ^6.4",
         "symfony/phpunit-bridge": "^5.4.12 || ^6.4",
         "symfony/property-access": "^5.4.12 || ^6.4",
-        "symfony/var-dumper": "^5.4.12 || ^6.4"
+        "symfony/var-dumper": "^5.4.12 || ^6.4",
+        "symplify/easy-coding-standard": "^12.3"
     },
     "autoload": {
         "psr-4": {

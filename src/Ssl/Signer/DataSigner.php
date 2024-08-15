@@ -35,7 +35,7 @@ class DataSigner
      */
     public function signData(string $data, PrivateKey $privateKey, int $algorithm = OPENSSL_ALGO_SHA256, string $format = self::FORMAT_DER): string
     {
-        Assert::oneOf($format, [self::FORMAT_ECDSA, self::FORMAT_DER], 'The format %s to sign request does not exists. Available format: %s');
+        Assert::oneOf($format, array(self::FORMAT_ECDSA, self::FORMAT_DER), 'The format %s to sign request does not exists. Available format: %s');
 
         $resource = $privateKey->getResource();
         if (!openssl_sign($data, $signature, $resource, $algorithm)) {
@@ -99,7 +99,7 @@ class DataSigner
         $S = $this->retrievePositiveInteger(mb_substr($hex, 4, $Sl * 2, '8bit'));
         $S = str_pad($S, $partLength, '0', STR_PAD_LEFT);
 
-        return pack('H*', $R.$S);
+        return pack('H*', $R . $S);
     }
 
     /**

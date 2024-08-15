@@ -20,6 +20,6 @@ class TestApplication extends \AcmePhp\Cli\Application
      */
     public function getStorageDirectory()
     {
-        return Path::canonicalize(__DIR__.'/../Fixtures/local/master');
+        return Path::canonicalize(__DIR__ . '/../Fixtures/local/master');
     }
 }

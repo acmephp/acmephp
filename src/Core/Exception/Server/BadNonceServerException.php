@@ -23,7 +23,7 @@ class BadNonceServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[badNonce] The client sent an unacceptable anti-replay nonce: '.$detail,
+            '[badNonce] The client sent an unacceptable anti-replay nonce: ' . $detail,
             $previous
         );
     }

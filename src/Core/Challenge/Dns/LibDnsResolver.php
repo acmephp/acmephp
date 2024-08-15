@@ -87,8 +87,8 @@ class LibDnsResolver implements DnsResolverInterface
     {
         $domain = rtrim($domain, '.');
         $nameServers = $this->getNameServers($domain);
-        $this->logger->debug('Fetched TXT records for domain', ['nsDomain' => $domain, 'servers' => $nameServers]);
-        $identicalEntries = [];
+        $this->logger->debug('Fetched TXT records for domain', array('nsDomain' => $domain, 'servers' => $nameServers));
+        $identicalEntries = array();
         foreach ($nameServers as $nameServer) {
             $ipNameServer = gethostbynamel($nameServer);
             if (empty($ipNameServer)) {
@@ -99,7 +99,7 @@ class LibDnsResolver implements DnsResolverInterface
             } catch (\Exception $e) {
                 throw new AcmeDnsResolutionException(sprintf('Unable to find domain %s on nameserver %s', $domain, $nameServer), $e);
             }
-            $entries = [];
+            $entries = array();
             foreach ($response->getAnswerRecords() as $record) {
                 foreach ($record->getData() as $recordData) {
                     $entries[] = (string) $recordData;
@@ -109,7 +109,7 @@ class LibDnsResolver implements DnsResolverInterface
             $identicalEntries[json_encode($entries)][] = $nameServer;
         }
 
-        $this->logger->info('DNS records fetched', ['mapping' => $identicalEntries]);
+        $this->logger->info('DNS records fetched', array('mapping' => $identicalEntries));
         if (1 !== \count($identicalEntries)) {
             throw new AcmeDnsResolutionException('Dns not fully propagated');
         }
@@ -120,12 +120,12 @@ class LibDnsResolver implements DnsResolverInterface
     private function getNameServers($domain)
     {
         if ('' === $domain) {
-            return [$this->nameServer];
+            return array($this->nameServer);
         }
 
         $parentNameServers = $this->getNameServers(implode('.', \array_slice(explode('.', $domain), 1)));
-        $itemNameServers = [];
-        $this->logger->debug('Fetched NS in charge of domain', ['nsDomain' => $domain, 'servers' => $parentNameServers]);
+        $itemNameServers = array();
+        $this->logger->debug('Fetched NS in charge of domain', array('nsDomain' => $domain, 'servers' => $parentNameServers));
         foreach ($parentNameServers as $parentNameServer) {
             $ipNameServer = gethostbynamel($parentNameServer);
             if (empty($ipNameServer)) {
@@ -176,11 +176,11 @@ class LibDnsResolver implements DnsResolverInterface
         $request->isRecursionDesired(true);
 
         // Send request
-        $socket = stream_socket_client(sprintf('udp://'.$nameServer.':53'));
+        $socket = stream_socket_client(sprintf('udp://' . $nameServer . ':53'));
         stream_socket_sendto($socket, $this->encoder->encode($request));
 
-        $r = [$socket];
-        $w = $e = [];
+        $r = array($socket);
+        $w = $e = array();
         if (!stream_select($r, $w, $e, 3)) {
             throw new AcmeDnsResolutionException(sprintf('Timeout reached when requesting ServerName %s', $nameServer));
         }

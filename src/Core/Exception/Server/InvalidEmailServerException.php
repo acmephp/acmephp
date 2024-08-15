@@ -23,7 +23,7 @@ class InvalidEmailServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[invalidEmail] This email is unacceptable (e.g., it is invalid): '.$detail,
+            '[invalidEmail] This email is unacceptable (e.g., it is invalid): ' . $detail,
             $previous
         );
     }

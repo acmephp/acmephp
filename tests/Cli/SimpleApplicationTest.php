@@ -15,13 +15,13 @@ class SimpleApplicationTest extends AbstractApplicationTest
 {
     protected function getFixturesDirectories(): array
     {
-        return [
-            __DIR__.'/../Cli/Fixtures/local/master',
-        ];
+        return array(
+            __DIR__ . '/../Cli/Fixtures/local/master',
+        );
     }
 
     protected function getConfigDir(): string
     {
-        return __DIR__.'/Fixtures/config/simple';
+        return __DIR__ . '/Fixtures/config/simple';
     }
 }

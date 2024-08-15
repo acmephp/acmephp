@@ -26,17 +26,17 @@ class RevokeCommand extends AbstractCommand
         $reasons = implode(PHP_EOL, RevocationReason::getFormattedReasons());
 
         $this->setName('revoke')
-            ->setDefinition([
+            ->setDefinition(array(
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain revoke a certificate for'),
-                new InputArgument('reason-code', InputOption::VALUE_OPTIONAL, 'The reason code for revocation:'.PHP_EOL.$reasons),
+                new InputArgument('reason-code', InputOption::VALUE_OPTIONAL, 'The reason code for revocation:' . PHP_EOL . $reasons),
                 new InputOption(
                     'provider',
                     null,
                     InputOption::VALUE_REQUIRED,
-                    'Certificate provider to use (supported: '.implode(', ', Application::PROVIDERS).')',
+                    'Certificate provider to use (supported: ' . implode(', ', Application::PROVIDERS) . ')',
                     'letsencrypt'
                 ),
-            ])
+            ))
             ->setDescription('Revoke a SSL certificate for a domain')
             ->setHelp('The <info>%command.name%</info> command revoke a previously obtained certificate for a given domain');
     }
@@ -44,7 +44,7 @@ class RevokeCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if (!isset(Application::PROVIDERS[$this->input->getOption('provider')])) {
-            throw new \InvalidArgumentException('Invalid provider, supported: '.implode(', ', Application::PROVIDERS));
+            throw new \InvalidArgumentException('Invalid provider, supported: ' . implode(', ', Application::PROVIDERS));
         }
 
         $repository = $this->getRepository();
@@ -56,13 +56,13 @@ class RevokeCommand extends AbstractCommand
         try {
             $revocationReason = isset($reasonCode[0]) ? new RevocationReason($reasonCode[0]) : RevocationReason::createDefaultReason();
         } catch (\InvalidArgumentException $e) {
-            $this->error('Reason code must be one of: '.PHP_EOL.implode(PHP_EOL, RevocationReason::getFormattedReasons()));
+            $this->error('Reason code must be one of: ' . PHP_EOL . implode(PHP_EOL, RevocationReason::getFormattedReasons()));
 
             return;
         }
 
         if (!$repository->hasDomainCertificate($domain)) {
-            $this->error('Certificate for '.$domain.' not found locally');
+            $this->error('Certificate for ' . $domain . ' not found locally');
 
             return;
         }

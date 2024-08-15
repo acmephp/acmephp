@@ -43,7 +43,7 @@ class CertificateParser
             throw new CertificateParsingException('Missing expected key "validTo_time_t" in certificate');
         }
 
-        $subjectAlternativeName = [];
+        $subjectAlternativeName = array();
 
         if (isset($rawData['extensions']['subjectAltName'])) {
             $subjectAlternativeName = array_map(
@@ -67,8 +67,8 @@ class CertificateParser
             $rawData['subject']['CN'],
             isset($rawData['issuer']['CN']) ? $rawData['issuer']['CN'] : null,
             $rawData['subject'] === $rawData['issuer'],
-            new \DateTime('@'.$rawData['validFrom_time_t']),
-            new \DateTime('@'.$rawData['validTo_time_t']),
+            new \DateTime('@' . $rawData['validFrom_time_t']),
+            new \DateTime('@' . $rawData['validTo_time_t']),
             $rawData['serialNumber'],
             $subjectAlternativeName
         );

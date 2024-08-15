@@ -23,7 +23,7 @@ class InternalServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[serverInternal] The server experienced an internal error: '.$detail,
+            '[serverInternal] The server experienced an internal error: ' . $detail,
             $previous
         );
     }

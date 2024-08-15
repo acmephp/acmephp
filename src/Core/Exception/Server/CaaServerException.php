@@ -23,7 +23,7 @@ class CaaServerException extends AcmeCoreServerException
     {
         parent::__construct(
             $request,
-            '[caa] Certification Authority Authorization (CAA) records forbid the CA from issuing a certificate: '.$detail,
+            '[caa] Certification Authority Authorization (CAA) records forbid the CA from issuing a certificate: ' . $detail,
             $previous
         );
     }

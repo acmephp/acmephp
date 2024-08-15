@@ -47,9 +47,9 @@ class RevocationReason
 
     public static function getFormattedReasons(): array
     {
-        $formatted = [];
+        $formatted = array();
         foreach (self::getReasonLabelMap() as $reason => $label) {
-            $formatted[] = $reason.' - '.$label;
+            $formatted[] = $reason . ' - ' . $label;
         }
 
         return $formatted;
@@ -57,23 +57,23 @@ class RevocationReason
 
     private static function getReasonLabelMap(): array
     {
-        return [
+        return array(
             self::REASON_UNSPECIFIED => 'unspecified',
             self::REASON_KEY_COMPROMISE => 'key compromise',
             self::REASON_AFFILLIATION_CHANGED => 'affiliation changed',
             self::REASON_SUPERCEDED => 'superceded',
             self::REASON_CESSATION_OF_OPERATION => 'cessation of operation',
-        ];
+        );
     }
 
     public static function getReasons(): array
     {
-        return [
+        return array(
             self::REASON_UNSPECIFIED,
             self::REASON_KEY_COMPROMISE,
             self::REASON_AFFILLIATION_CHANGED,
             self::REASON_SUPERCEDED,
             self::REASON_CESSATION_OF_OPERATION,
-        ];
+        );
     }
 }
