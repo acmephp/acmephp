@@ -51,7 +51,7 @@
         "league/flysystem": "^3.10",
         "league/flysystem-memory": "^3.10",
         "league/flysystem-sftp-v3": "^3.10",
-        "monolog/monolog": "^2.0 || ^3",
+        "monolog/monolog": "^3",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0",
         "psr/log": "^2 || ^3",

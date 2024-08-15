@@ -16,102 +16,12 @@ parameters:
 			path: src/Cli/Command/AbstractCommand.php
 
 		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:alert\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:critical\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:debug\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:emergency\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:error\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
 			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:getCliLogger\\(\\) should return Psr\\\\Log\\\\LoggerInterface but returns object\\.$#"
 			count: 1
 			path: src/Cli/Command/AbstractCommand.php
 
 		-
 			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:getRepository\\(\\) should return AcmePhp\\\\Cli\\\\Repository\\\\RepositoryInterface but returns object\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:info\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:log\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:notice\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Command\\\\AbstractCommand\\:\\:warning\\(\\) with return type void returns null but should not return anything\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:alert\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:critical\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:debug\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:emergency\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:error\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:info\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:log\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:notice\\(\\) \\(void\\) is used\\.$#"
-			count: 1
-			path: src/Cli/Command/AbstractCommand.php
-
-		-
-			message: "#^Result of method Psr\\\\Log\\\\LoggerInterface\\:\\:warning\\(\\) \\(void\\) is used\\.$#"
 			count: 1
 			path: src/Cli/Command/AbstractCommand.php
 

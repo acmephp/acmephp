@@ -12,7 +12,9 @@
 namespace AcmePhp\Cli\Monolog;
 
 use Monolog\Formatter\LineFormatter;
+use Monolog\Level;
 use Monolog\Logger;
+use Monolog\LogRecord;
 
 /**
  * Formats incoming records for console output by coloring them depending on log level.
@@ -25,37 +27,35 @@ use Monolog\Logger;
  */
 class ConsoleFormatter extends LineFormatter
 {
-    public const SIMPLE_FORMAT = "%extra.start_tag%%message% %context% %extra%%extra.end_tag%\n";
+    public const string SIMPLE_FORMAT = "%extra.start_tag%%message% %context% %extra%%extra.end_tag%\n";
 
     public function __construct($format = null, $dateFormat = null, $allowInlineLineBreaks = false, $ignoreEmptyContextAndExtra = true)
     {
         parent::__construct($format, $dateFormat, $allowInlineLineBreaks, $ignoreEmptyContextAndExtra);
     }
 
-    /**
-     * @param LogRecord|array $record
-     */
-    public function format($record): string
+    public function format(LogRecord $record): string
     {
-        if ($record['level'] >= Logger::ERROR) {
-            $extra['start_tag'] = '<error>';
-            $extra['end_tag'] = '</error>';
-        } elseif ($record['level'] >= Logger::WARNING) {
-            $extra['start_tag'] = '<comment>';
-            $extra['end_tag'] = '</comment>';
-        } elseif ($record['level'] >= Logger::NOTICE) {
-            $extra['start_tag'] = '<info>';
-            $extra['end_tag'] = '</info>';
+        if ($record->level->isHigherThan(Level::Error)) {
+            $start =  '<error>';
+            $end = '</error>';
+        } elseif ($record->level->isHigherThan(Level::Warning)) {
+            $start = '<comment>';
+            $end = '</comment>';
+        } elseif ($record->level->isHigherThan(Level::Notice)) {
+            $start = '<info>';
+            $end = '</info>';
         } else {
-            $extra['start_tag'] = '';
-            $extra['end_tag'] = '';
+            $start = '';
+            $end = '';
         }
 
-        $record['extra'] = [
-            ...$record['extra'],
-            ...$extra,
+        $record->extra = [
+            ...$record->extra,
+            'start_tag' => $start,
+            'end_tag' => $end,
         ];
 
-        return dump(parent::format($record));
+        return parent::format($record);
     }
 }
