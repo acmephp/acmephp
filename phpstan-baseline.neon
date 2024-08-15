@@ -156,11 +156,6 @@ parameters:
 			path: src/Cli/Command/RunCommand.php
 
 		-
-			message: "#^Parameter \\#2 \\$basePath of static method Webmozart\\\\PathUtil\\\\Path\\:\\:makeAbsolute\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Cli/Command/RunCommand.php
-
-		-
 			message: "#^Property AcmePhp\\\\Cli\\\\Command\\\\RunCommand\\:\\:\\$config has no type specified\\.$#"
 			count: 1
 			path: src/Cli/Command/RunCommand.php
