@@ -8,12 +8,12 @@ on:
 
 jobs:
     php-cs:
+        name: PHP-CS-Fixer
         runs-on: ubuntu-latest
         steps:
             - uses: shivammathur/setup-php@v2
               with:
-                  php-version: '8.1'
-                  coverage: none
+                  php-version: '8.3'
 
             - uses: actions/checkout@master
 
@@ -22,6 +22,23 @@ jobs:
 
             - name: Check coding style
               run: php php-cs-fixer.phar fix --dry-run --diff
+
+    phpstan:
+        name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+
+            - uses: actions/checkout@v4
+
+            - name: Install Composer dependencies
+              run: |
+                  composer update --prefer-dist --no-interaction
+
+            - name: Run PHPStan
+              run: vendor/bin/phpstan analyse
 
     ci:
         name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
