@@ -28,7 +28,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
-        - run: git tag "0.0.0"
+          with:
+            fetch-depth: 0
         - name: Setup PHP
           uses: shivammathur/setup-php@v2
           with:
