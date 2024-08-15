@@ -30,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConsoleHandler extends AbstractProcessingHandler
 {
     /**
-     * @var array<int, Level::Error|Level::Info>
+     * @var array<int, Level>
      */
     private array $verbosityLevelMap = [
         OutputInterface::VERBOSITY_QUIET => Level::Error,

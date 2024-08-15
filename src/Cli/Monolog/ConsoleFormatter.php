@@ -36,13 +36,13 @@ class ConsoleFormatter extends LineFormatter
 
     public function format(LogRecord $record): string
     {
-        if ($record->level->isHigherThan(Level::Error)) {
+        if (Level::Error->includes($record->level)) {
             $start =  '<error>';
             $end = '</error>';
-        } elseif ($record->level->isHigherThan(Level::Warning)) {
+        } elseif (Level::Warning->includes($record->level)) {
             $start = '<comment>';
             $end = '</comment>';
-        } elseif ($record->level->isHigherThan(Level::Notice)) {
+        } elseif (Level::Notice->includes($record->level)) {
             $start = '<info>';
             $end = '</info>';
         } else {
