@@ -54,7 +54,7 @@ jobs:
                     - php-version: 8.3
                       composer-flags: "--prefer-lowest"
                       name: "(prefer lowest dependencies)"
-                    - php-version: 8.1
+                    - php-version: 8.3
                       composer-flags: "--prefer-lowest"
                       name: "(prefer lowest dependencies - EAB)"
                       pebble_mode: eab

@@ -46,7 +46,7 @@
         "aws/aws-sdk-php": "^3.38",
         "consolidation/self-update": "^2.2",
         "guzzlehttp/guzzle": "^7.2",
-        "guzzlehttp/psr7": "^1.0",
+        "guzzlehttp/psr7": "^2.4.5",
         "lcobucci/jwt": "^5.3",
         "league/flysystem": "^3.10",
         "league/flysystem-memory": "^3.10",
