@@ -26,9 +26,10 @@ class Base64SafeEncoder
     public function decode(string $input): string
     {
         $result = base64_decode(strtr($input, '-_', '+/'), true);
-        if ($result === false) {
-            throw new \InvalidArgumentException("Input is not valid base64 or base64url data");
+        if (false === $result) {
+            throw new \InvalidArgumentException('Input is not valid base64 or base64url data');
         }
+
         return $result;
     }
 }

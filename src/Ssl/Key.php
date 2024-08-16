@@ -24,6 +24,7 @@ abstract class Key
      * This is a very lenient parser.
      * It will detect the BEGIN and END labels and accept any data as long as it contains base64 chars combined with
      * whitespace. After a padding character only whitespace is allowed.
+     *
      * @see https://datatracker.ietf.org/doc/html/rfc7468#section-5.1
      */
     private const string REGEX = '~^.*-----BEGIN (?P<label>.*?)-----(?P<data>[[:alnum:]/+\s]*[\s=]*)-----END (?P=label)-----$~msn';
@@ -32,9 +33,7 @@ abstract class Key
     protected $keyPEM;
 
     private readonly string $der;
-    /**
-     * @param string $keyPEM
-     */
+
     public function __construct(string $keyPEM)
     {
         // Parse the PEM into a DER to detect errors earlier.
@@ -46,10 +45,11 @@ abstract class Key
     private function extractDER(string $pem): string
     {
         preg_match(self::REGEX, $pem, $matches);
-        $result  = base64_decode($matches['data'], true);
-        if ($result === false) {
-            throw new \RuntimeException("Failed to decode PEM");
+        $result = base64_decode($matches['data'], true);
+        if (false === $result) {
+            throw new \RuntimeException('Failed to decode PEM');
         }
+
         return $result;
     }
 
