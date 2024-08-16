@@ -40,11 +40,11 @@ class DataSignerTest extends TestCase
         $this->assertEquals(512, \strlen($this->service->signData('foo', $privateRsaKey, OPENSSL_ALGO_SHA512)));
         $this->assertEquals(
             $this->service->signData('foo', $privateRsaKey),
-            $this->service->signData('foo', $privateRsaKey, OPENSSL_ALGO_SHA256)
+            $this->service->signData('foo', $privateRsaKey, OPENSSL_ALGO_SHA256),
         );
         $this->assertNotEquals(
             $this->service->signData('foo', $privateRsaKey, OPENSSL_ALGO_SHA256),
-            $this->service->signData('foo', $privateRsaKey, OPENSSL_ALGO_SHA512)
+            $this->service->signData('foo', $privateRsaKey, OPENSSL_ALGO_SHA512),
         );
     }
 

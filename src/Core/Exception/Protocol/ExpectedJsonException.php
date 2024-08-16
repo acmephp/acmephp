@@ -14,6 +14,4 @@ namespace AcmePhp\Core\Exception\Protocol;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class ExpectedJsonException extends ProtocolException
-{
-}
+class ExpectedJsonException extends ProtocolException {}

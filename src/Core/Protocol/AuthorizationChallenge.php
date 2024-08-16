@@ -66,7 +66,7 @@ class AuthorizationChallenge
             $data['type'],
             $data['url'],
             $data['token'],
-            $data['payload']
+            $data['payload'],
         );
     }
 

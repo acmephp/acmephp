@@ -48,7 +48,7 @@ class RepositoryTest extends TestCase
     {
         $this->serializer = new Serializer(
             array(new PemNormalizer(), new ObjectNormalizer()),
-            array(new PemEncoder(), new JsonEncoder())
+            array(new PemEncoder(), new JsonEncoder()),
         );
 
         $this->storage = new Filesystem(new InMemoryFilesystemAdapter());
@@ -111,7 +111,7 @@ class RepositoryTest extends TestCase
             'http-01',
             'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
             'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
-            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY'
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY',
         );
 
         $this->repository->storeDomainAuthorizationChallenge('example.com', $challenge);
@@ -136,7 +136,7 @@ class RepositoryTest extends TestCase
             'http-01',
             'https://acme-v01.api.letsencrypt.org/acme/challenge/bzHDB1T3ssGlGEfK_j-sTsCz6eayLww_Eb56wQpEtCk/124845837',
             'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA',
-            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY'
+            'wJDbK9uuuz56O6z_dhMFStHQf4JnEYU9A8WJi7lS8MA.zUny8k33uiaGcQMz8rGcWJnnbuLwTCpbNc7luaPyDgY',
         );
 
         $this->assertFalse($this->repository->hasDomainAuthorizationChallenge('example.com'));
@@ -161,7 +161,7 @@ class RepositoryTest extends TestCase
             'Acme',
             'PHP',
             'acmephp@example.org',
-            array('sub.example.org', 'sub.example.com')
+            array('sub.example.org', 'sub.example.com'),
         );
 
         $this->repository->storeDomainDistinguishedName('example.com', $dn);
@@ -191,7 +191,7 @@ class RepositoryTest extends TestCase
             'Acme',
             'PHP',
             'acmephp@example.org',
-            array('sub.example.org', 'sub.example.com')
+            array('sub.example.org', 'sub.example.com'),
         );
 
         $this->assertFalse($this->repository->hasDomainDistinguishedName('example.com'));

@@ -88,7 +88,7 @@ class HttpValidatorTest extends TestCase
         $mockHttpClient->get($checkUrl, array('verify' => false))->willThrow(new ClientException(
             'boom',
             $this->prophesize(RequestInterface::class)->reveal(),
-            $mockResponse->reveal()
+            $mockResponse->reveal(),
         ));
 
         $this->assertFalse($validator->isValid($stubChallenge->reveal(), $this->prophesize(SolverInterface::class)->reveal()));

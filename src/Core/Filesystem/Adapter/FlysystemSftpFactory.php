@@ -31,8 +31,8 @@ class FlysystemSftpFactory implements FilesystemFactoryInterface
                         port: $config['port'] ?? 22,
                     ),
                     $config['root'] ?? '/',
-                )
-            )
+                ),
+            ),
         );
     }
 }

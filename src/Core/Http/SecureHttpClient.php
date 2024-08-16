@@ -82,7 +82,7 @@ class SecureHttpClient
         Base64SafeEncoder $base64Encoder,
         KeyParser $keyParser,
         DataSigner $dataSigner,
-        ServerErrorHandler $errorHandler
+        ServerErrorHandler $errorHandler,
     ) {
         $this->accountKeyPair = $accountKeyPair;
         $this->httpClient = $httpClient;
@@ -314,7 +314,7 @@ class SecureHttpClient
         }
 
         $signature = $this->base64Encoder->encode(
-            $this->dataSigner->signData($encodedProtected . '.' . $encodedPayload, $privateKey, $algorithm, $format)
+            $this->dataSigner->signData($encodedProtected . '.' . $encodedPayload, $privateKey, $algorithm, $format),
         );
 
         return array(

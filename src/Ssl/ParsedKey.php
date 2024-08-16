@@ -43,7 +43,7 @@ class ParsedKey
         Assert::oneOf(
             $type,
             array(OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_DSA, OPENSSL_KEYTYPE_DH, OPENSSL_KEYTYPE_EC),
-            __CLASS__ . '::$type expected one of: %2$s. Got: %s'
+            __CLASS__ . '::$type expected one of: %2$s. Got: %s',
         );
 
         $this->source = $source;

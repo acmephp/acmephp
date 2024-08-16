@@ -98,7 +98,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
                         'rrset_name' => $subDomain,
                         'rrset_values' => array($recordValue),
                     ),
-                )
+                ),
             );
         }
     }
@@ -125,7 +125,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
                     'headers' => array(
                         'X-Api-Key' => $this->apiKey,
                     ),
-                )
+                ),
             );
         }
     }

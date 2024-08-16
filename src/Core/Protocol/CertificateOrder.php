@@ -52,10 +52,10 @@ class CertificateOrder
                     function ($challenge): array {
                         return $challenge->toArray();
                     },
-                    $challenges
+                    $challenges,
                 );
             },
-            $this->getAuthorizationsChallenges()
+            $this->getAuthorizationsChallenges(),
         );
 
         return array(

@@ -14,6 +14,4 @@ namespace AcmePhp\Core\Exception;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class AcmeCoreException extends \RuntimeException
-{
-}
+class AcmeCoreException extends \RuntimeException {}

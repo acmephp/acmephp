@@ -24,7 +24,7 @@ class RejectedIdentifierServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[rejectedIdentifier] The server will not issue certificates for the identifier: ' . $detail,
-            $previous
+            $previous,
         );
     }
 }

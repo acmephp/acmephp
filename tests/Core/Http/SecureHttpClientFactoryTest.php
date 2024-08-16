@@ -35,7 +35,7 @@ class SecureHttpClientFactoryTest extends TestCase
             $base64Encoder,
             $keyParser,
             $dataSigner,
-            new ServerErrorHandler()
+            new ServerErrorHandler(),
         );
 
         $client = $factory->createSecureHttpClient($keyPair);

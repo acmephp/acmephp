@@ -53,12 +53,12 @@ class CertificateParser
                 array_filter(
                     explode(
                         ',',
-                        $rawData['extensions']['subjectAltName']
+                        $rawData['extensions']['subjectAltName'],
                     ),
                     function ($item) {
                         return false !== strpos($item, ':');
-                    }
-                )
+                    },
+                ),
             );
         }
 
@@ -70,7 +70,7 @@ class CertificateParser
             new \DateTime('@' . $rawData['validFrom_time_t']),
             new \DateTime('@' . $rawData['validTo_time_t']),
             $rawData['serialNumber'],
-            $subjectAlternativeName
+            $subjectAlternativeName,
         );
     }
 }

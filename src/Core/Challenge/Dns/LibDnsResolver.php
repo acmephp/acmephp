@@ -62,7 +62,7 @@ class LibDnsResolver implements DnsResolverInterface
         ?MessageFactory $messageFactory = null,
         ?Encoder $encoder = null,
         ?Decoder $decoder = null,
-        $nameServer = '8.8.8.8'
+        $nameServer = '8.8.8.8',
     ) {
         $this->questionFactory = $questionFactory ?: new QuestionFactory();
         $this->messageFactory = $messageFactory ?: new MessageFactory();
@@ -135,7 +135,7 @@ class LibDnsResolver implements DnsResolverInterface
                 $response = $this->request(
                     $domain,
                     ResourceTypes::NS,
-                    $ipNameServer[0]
+                    $ipNameServer[0],
                 );
             } catch (\Exception $e) {
                 // ignore errors

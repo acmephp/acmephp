@@ -18,6 +18,4 @@ use AcmePhp\Core\Exception\AcmeCoreClientException;
  *
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class ProtocolException extends AcmeCoreClientException
-{
-}
+class ProtocolException extends AcmeCoreClientException {}

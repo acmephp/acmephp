@@ -65,7 +65,7 @@ class FlysystemAdapter implements FilesystemInterface
                 $path,
                 $action,
                 $e->getMessage(),
-            )
+            ),
         );
     }
 }

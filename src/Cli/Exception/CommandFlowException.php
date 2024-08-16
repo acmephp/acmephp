@@ -37,7 +37,7 @@ class CommandFlowException extends AcmeCliException
             PHP_EOL . PHP_EOL,
             $_SERVER['PHP_SELF'],
             $command,
-            implode(' ', $arguments)
+            implode(' ', $arguments),
         ));
 
         parent::__construct($message, $previous);

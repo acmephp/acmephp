@@ -65,8 +65,8 @@ EOF
                 ,
                 $recordName,
                 $recordValue,
-                $recordName
-            )
+                $recordName,
+            ),
         );
     }
 
@@ -80,8 +80,8 @@ EOF
 You can now cleanup your DNS by removing the domain <comment>_acme-challenge.%s.</comment>
 EOF
                 ,
-                $recordName
-            )
+                $recordName,
+            ),
         );
     }
 }

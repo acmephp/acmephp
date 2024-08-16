@@ -69,7 +69,7 @@ class GandiSolverTest extends TestCase
                     'rrset_name' => '_acme-challenge.sub-domain',
                     'rrset_values' => array('record_value'),
                 ),
-            )
+            ),
         )->shouldBeCalled();
 
         $solver->configure(array('api_key' => 'stub'));
@@ -99,7 +99,7 @@ class GandiSolverTest extends TestCase
                 'headers' => array(
                     'X-Api-Key' => 'stub',
                 ),
-            )
+            ),
         )->shouldBeCalled();
 
         $solver->configure(array('api_key' => 'stub'));

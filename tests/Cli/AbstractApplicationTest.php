@@ -85,7 +85,7 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
             $finder
                 ->in($this->getFixturesDirectories())
                 ->notName('.gitkeep')
-                ->getIterator()
+                ->getIterator(),
         );
     }
 }

@@ -53,7 +53,7 @@ class SecureHttpClientFactory
         Base64SafeEncoder $base64Encoder,
         KeyParser $keyParser,
         DataSigner $dataSigner,
-        ServerErrorHandler $errorHandler
+        ServerErrorHandler $errorHandler,
     ) {
         $this->httpClient = $httpClient;
         $this->base64Encoder = $base64Encoder;
@@ -73,7 +73,7 @@ class SecureHttpClientFactory
             $this->base64Encoder,
             $this->keyParser,
             $this->dataSigner,
-            $this->errorHandler
+            $this->errorHandler,
         );
     }
 }

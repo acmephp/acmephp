@@ -87,10 +87,10 @@ abstract class AbstractAwsAction extends AbstractAction
                         // Try several time to delete certificate given AWS takes time to uninstall previous one
                         function () use ($iamClient, $certificate) {
                             $iamClient->deleteServerCertificate(
-                                array('ServerCertificateName' => $certificate['ServerCertificateName'])
+                                array('ServerCertificateName' => $certificate['ServerCertificateName']),
                             );
                         },
-                        5
+                        5,
                     );
                 } catch (IamException $e) {
                     if ('DeleteConflict' !== $e->getAwsErrorCode()) {

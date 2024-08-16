@@ -32,7 +32,7 @@ class StatusCommand extends AbstractCommand
                 <<<'EOF'
 The <info>%command.name%</info> command list all the certificates stored in the Acme PHP storage.
 It also displays useful informations about these such as the certificate validity and issuer.
-EOF
+EOF,
             );
     }
 

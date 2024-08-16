@@ -28,7 +28,7 @@ class HttpDataExtractor
         return sprintf(
             'http://%s%s',
             $authorizationChallenge->getDomain(),
-            $this->getCheckPath($authorizationChallenge)
+            $this->getCheckPath($authorizationChallenge),
         );
     }
 
@@ -39,7 +39,7 @@ class HttpDataExtractor
     {
         return sprintf(
             '/.well-known/acme-challenge/%s',
-            $authorizationChallenge->getToken()
+            $authorizationChallenge->getToken(),
         );
     }
 

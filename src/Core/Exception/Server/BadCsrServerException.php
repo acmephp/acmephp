@@ -24,7 +24,7 @@ class BadCsrServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[badCSR] The CSR is unacceptable (e.g., due to a short key): ' . $detail,
-            $previous
+            $previous,
         );
     }
 }

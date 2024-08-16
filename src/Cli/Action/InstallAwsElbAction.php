@@ -28,10 +28,10 @@ class InstallAwsElbAction extends AbstractAwsAction
                         'LoadBalancerName' => $loadBalancerName,
                         'LoadBalancerPort' => $loadBalancerPort,
                         'SSLCertificateId' => $certificateArn,
-                    )
+                    ),
                 );
             },
-            30
+            30,
         );
     }
 }

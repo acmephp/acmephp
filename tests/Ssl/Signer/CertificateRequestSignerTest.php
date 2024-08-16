@@ -40,12 +40,12 @@ class CertificateRequestSignerTest extends TestCase
             'acme',
             'IT',
             'qa@acmephp.com',
-            array()
+            array(),
         );
         $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
         $result = $this->service->signCertificateRequest(
-            new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
+            new CertificateRequest($dummyDistinguishedName, $dummyKeyPair),
         );
         $this->assertIsString($result);
         $this->assertStringContainsString('-----BEGIN CERTIFICATE REQUEST-----', $result);
@@ -61,19 +61,19 @@ class CertificateRequestSignerTest extends TestCase
                 'commonName' => 'acmephp.com',
                 'emailAddress' => 'qa@acmephp.com',
             ),
-            $csrResult
+            $csrResult,
         );
     }
 
     public function testSignCertificateRequestUseDefaultValues()
     {
         $dummyDistinguishedName = new DistinguishedName(
-            'acmephp.com'
+            'acmephp.com',
         );
         $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
         $result = $this->service->signCertificateRequest(
-            new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
+            new CertificateRequest($dummyDistinguishedName, $dummyKeyPair),
         );
         $this->assertIsString($result);
         $this->assertStringContainsString('-----BEGIN CERTIFICATE REQUEST-----', $result);
@@ -82,7 +82,7 @@ class CertificateRequestSignerTest extends TestCase
             array(
                 'commonName' => 'acmephp.com',
             ),
-            $csrResult
+            $csrResult,
         );
     }
 
@@ -96,12 +96,12 @@ class CertificateRequestSignerTest extends TestCase
             'acme',
             'IT',
             'qa@acmephp.com',
-            array('www.acmephp.com')
+            array('www.acmephp.com'),
         );
         $dummyKeyPair = (new KeyPairGenerator())->generateKeyPair(new RsaKeyOption(1024));
 
         $result = $this->service->signCertificateRequest(
-            new CertificateRequest($dummyDistinguishedName, $dummyKeyPair)
+            new CertificateRequest($dummyDistinguishedName, $dummyKeyPair),
         );
         $this->assertIsString($result);
         $this->assertStringContainsString('-----BEGIN CERTIFICATE REQUEST-----', $result);
@@ -117,7 +117,7 @@ class CertificateRequestSignerTest extends TestCase
                 'commonName' => 'acmephp.com',
                 'emailAddress' => 'qa@acmephp.com',
             ),
-            $csrResult
+            $csrResult,
         );
     }
 }

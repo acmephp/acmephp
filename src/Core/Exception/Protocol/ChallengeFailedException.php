@@ -22,7 +22,7 @@ class ChallengeFailedException extends ProtocolException
     {
         parent::__construct(
             sprintf('Challenge failed (response: %s).', json_encode($response)),
-            $previous
+            $previous,
         );
 
         $this->response = $response;

@@ -91,7 +91,7 @@ class AcmeClient implements AcmeClientInterface
         if ($externalAccount) {
             $payload['externalAccountBinding'] = $client->createExternalAccountPayload(
                 $externalAccount,
-                $this->getResourceUrl(ResourcesDirectory::NEW_ACCOUNT)
+                $this->getResourceUrl(ResourcesDirectory::NEW_ACCOUNT),
             );
         }
 
@@ -113,7 +113,7 @@ class AcmeClient implements AcmeClientInterface
                         'value' => strtolower($domain),
                     );
                 },
-                array_values($domains)
+                array_values($domains),
             ),
         );
 
@@ -196,7 +196,7 @@ class AcmeClient implements AcmeClientInterface
             if (isset($matches[1])) {
                 return $this->createCertificateResponse(
                     $csr,
-                    $client->request('POST', $matches[1], $client->signKidPayload($matches[1], $this->getResourceAccount(), null), false)
+                    $client->request('POST', $matches[1], $client->signKidPayload($matches[1], $this->getResourceAccount(), null), false),
                 );
             }
         }
@@ -279,7 +279,7 @@ class AcmeClient implements AcmeClientInterface
                 'POST',
                 $endpoint,
                 $client->signKidPayload($endpoint, $this->getResourceAccount(), array('certificate' => $formattedPem, 'reason' => $revocationReason->getReasonType())),
-                false
+                false,
             );
         } catch (AcmeCoreServerException $e) {
             throw new CertificateRevocationException($e->getMessage(), $e);
@@ -295,7 +295,7 @@ class AcmeClient implements AcmeClientInterface
     {
         if (!$this->directory) {
             $this->directory = new ResourcesDirectory(
-                $this->getHttpClient()->request('GET', $this->directoryUrl)
+                $this->getHttpClient()->request('GET', $this->directoryUrl),
             );
         }
 
@@ -319,7 +319,7 @@ class AcmeClient implements AcmeClientInterface
             $method,
             $endpoint,
             $client->signJwkPayload($endpoint, $payload),
-            $returnJson
+            $returnJson,
         );
     }
 
@@ -361,7 +361,7 @@ class AcmeClient implements AcmeClientInterface
             $response['type'],
             $response['url'],
             $response['token'],
-            $response['token'] . '.' . $base64encoder->encode($this->getHttpClient()->getJWKThumbprint())
+            $response['token'] . '.' . $base64encoder->encode($this->getHttpClient()->getJWKThumbprint()),
         );
     }
 

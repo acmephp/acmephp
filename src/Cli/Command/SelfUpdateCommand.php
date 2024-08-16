@@ -53,37 +53,37 @@ class SelfUpdateCommand extends Command
                 'dev',
                 'd',
                 InputOption::VALUE_NONE,
-                'Update to most recent development build of Acme PHP.'
+                'Update to most recent development build of Acme PHP.',
             )
             ->addOption(
                 'non-dev',
                 'N',
                 InputOption::VALUE_NONE,
-                'Update to most recent non-development (alpha/beta/stable) build of Acme PHP tagged on Github.'
+                'Update to most recent non-development (alpha/beta/stable) build of Acme PHP tagged on Github.',
             )
             ->addOption(
                 'pre',
                 'p',
                 InputOption::VALUE_NONE,
-                'Update to most recent pre-release version of Acme PHP (alpha/beta/rc) tagged on Github.'
+                'Update to most recent pre-release version of Acme PHP (alpha/beta/rc) tagged on Github.',
             )
             ->addOption(
                 'stable',
                 's',
                 InputOption::VALUE_NONE,
-                'Update to most recent stable version tagged on Github.'
+                'Update to most recent stable version tagged on Github.',
             )
             ->addOption(
                 'rollback',
                 'r',
                 InputOption::VALUE_NONE,
-                'Rollback to previous version of Acme PHP if available on filesystem.'
+                'Rollback to previous version of Acme PHP if available on filesystem.',
             )
             ->addOption(
                 'check',
                 'c',
                 InputOption::VALUE_NONE,
-                'Checks what updates are available across all possible stability tracks.'
+                'Checks what updates are available across all possible stability tracks.',
             );
     }
 
@@ -238,17 +238,17 @@ class SelfUpdateCommand extends Command
                 $this->output->writeln('<fg=green>Acme PHP has been updated.</fg=green>');
                 $this->output->writeln(sprintf(
                     '<fg=green>Current version is:</fg=green> <options=bold>%s</options=bold>.',
-                    $newVersion
+                    $newVersion,
                 ));
                 $this->output->writeln(sprintf(
                     '<fg=green>Previous version was:</fg=green> <options=bold>%s</options=bold>.',
-                    $oldVersion
+                    $oldVersion,
                 ));
             } else {
                 $this->output->writeln('<fg=green>Acme PHP is currently up to date.</fg=green>');
                 $this->output->writeln(sprintf(
                     '<fg=green>Current version is:</fg=green> <options=bold>%s</options=bold>.',
-                    $oldVersion
+                    $oldVersion,
                 ));
             }
         } catch (\Exception $e) {
@@ -287,7 +287,7 @@ class SelfUpdateCommand extends Command
     {
         $this->output->writeln(sprintf(
             'Your current local build version is: <options=bold>%s</options=bold>',
-            $this->version
+            $this->version,
         ));
     }
 
@@ -321,7 +321,7 @@ class SelfUpdateCommand extends Command
                 $this->output->writeln(sprintf(
                     'The current %s build available remotely is: <options=bold>%s</options=bold>',
                     $stability,
-                    $updater->getNewVersion()
+                    $updater->getNewVersion(),
                 ));
             } elseif (false === $updater->getNewVersion()) {
                 $this->output->writeln(sprintf('There are no %s builds available.', $stability));

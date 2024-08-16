@@ -53,7 +53,7 @@ class InstallAwsElbv2Action extends AbstractAwsAction
                     'ListenerArn' => $listenerArn,
                 ));
             },
-            30
+            30,
         );
     }
 }

@@ -24,7 +24,7 @@ class ConnectionServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[connection] The server could not connect to the client for DV: ' . $detail,
-            $previous
+            $previous,
         );
     }
 }

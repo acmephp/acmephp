@@ -25,14 +25,14 @@ class ClientFactory
     public function getElbClient($region = null): ElasticLoadBalancingClient
     {
         return new ElasticLoadBalancingClient(
-            $this->getClientArgs(array('region' => $region, 'version' => '2012-06-01'))
+            $this->getClientArgs(array('region' => $region, 'version' => '2012-06-01')),
         );
     }
 
     public function getElbv2Client($region = null): ElasticLoadBalancingV2Client
     {
         return new ElasticLoadBalancingV2Client(
-            $this->getClientArgs(array('region' => $region, 'version' => '2015-12-01'))
+            $this->getClientArgs(array('region' => $region, 'version' => '2015-12-01')),
         );
     }
 

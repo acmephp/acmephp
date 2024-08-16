@@ -14,6 +14,4 @@ namespace AcmePhp\Ssl\Exception;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-class DataSigningException extends SigningException
-{
-}
+class DataSigningException extends SigningException {}

@@ -89,7 +89,7 @@ class ServerErrorHandlerTest extends TestCase
 
         $exception = $errorHandler->createAcmeExceptionForResponse(
             new Request('GET', '/foo/bar'),
-            new Response(500, array(), 'Invalid JSON')
+            new Response(500, array(), 'Invalid JSON'),
         );
 
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);
@@ -104,7 +104,7 @@ class ServerErrorHandlerTest extends TestCase
 
         $exception = $errorHandler->createAcmeExceptionForResponse(
             new Request('GET', '/foo/bar'),
-            new Response(500, array(), json_encode(array('not' => 'acme')))
+            new Response(500, array(), json_encode(array('not' => 'acme'))),
         );
 
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);

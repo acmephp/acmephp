@@ -43,9 +43,9 @@ class InstallAwsElbv2ActionTest extends TestCase
         $response = new CertificateResponse(
             new CertificateRequest(
                 new DistinguishedName($domain),
-                new KeyPair(new PublicKey('publicPem'), new PrivateKey('privatePem'))
+                new KeyPair(new PublicKey('publicPem'), new PrivateKey('privatePem')),
             ),
-            new Certificate('certPem')
+            new Certificate('certPem'),
         );
 
         $mockFactory = $this->prophesize(ClientFactory::class);

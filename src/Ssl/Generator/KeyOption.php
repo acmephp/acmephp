@@ -11,6 +11,4 @@
 
 namespace AcmePhp\Ssl\Generator;
 
-interface KeyOption
-{
-}
+interface KeyOption {}

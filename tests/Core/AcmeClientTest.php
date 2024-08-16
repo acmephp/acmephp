@@ -53,7 +53,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
             new Base64SafeEncoder(),
             new KeyParser(),
             new DataSigner(),
-            new ServerErrorHandler()
+            new ServerErrorHandler(),
         );
 
         $client = new AcmeClient($secureHttpClient, 'https://localhost:14000/dir');
@@ -143,7 +143,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
             new Base64SafeEncoder(),
             new KeyParser(),
             new DataSigner(),
-            new ServerErrorHandler()
+            new ServerErrorHandler(),
         );
 
         $client = new AcmeClient($secureHttpClient, 'https://localhost:14000/dir');

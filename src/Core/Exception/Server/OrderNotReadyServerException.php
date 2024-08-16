@@ -21,7 +21,7 @@ class OrderNotReadyServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[orderNotReady] Order could not be finalized: ' . $detail,
-            $previous
+            $previous,
         );
     }
 }

@@ -61,9 +61,9 @@ class RunCommand extends AbstractCommand
                         'd',
                         InputOption::VALUE_REQUIRED,
                         'Time to live of certificate (in days) before forcing the renewal',
-                        30
+                        30,
                     ),
-                )
+                ),
             )
             ->setDescription('Automatically challenge domains and request certificates configured in the given file')
             ->setHelp('The <info>%command.name%</info> challenge the domains, request the certificates and install them following a given configuration.');
@@ -89,9 +89,9 @@ class RunCommand extends AbstractCommand
                 $response = new CertificateResponse(
                     new CertificateRequest(
                         $repository->loadDomainDistinguishedName($domain),
-                        $repository->loadDomainKeyPair($domain)
+                        $repository->loadDomainKeyPair($domain),
                     ),
-                    $certificate
+                    $certificate,
                 );
             } else {
                 $order = $this->challengeDomains($domainConfig);
@@ -109,8 +109,8 @@ class RunCommand extends AbstractCommand
         $this->output->writeln(
             sprintf(
                 '<comment>Registering contact %s...</comment>',
-                $email
-            )
+                $email,
+            ),
         );
 
         $repository = $this->getRepository();
@@ -149,7 +149,7 @@ class RunCommand extends AbstractCommand
                     (new Client())
                         ->post('https://api.zerossl.com/acme/eab-credentials/?access_key=' . $this->config['zerossl_api_key'])
                         ->getBody()
-                        ->getContents()
+                        ->getContents(),
                 );
 
                 if (!isset($eabCredentials->success) || !$eabCredentials->success) {
@@ -166,7 +166,7 @@ class RunCommand extends AbstractCommand
                         'form_params' => array('email' => $this->config['contact_email']),
                     ))
                     ->getBody()
-                    ->getContents()
+                    ->getContents(),
             );
 
             if (!isset($eabCredentials->success) || !$eabCredentials->success) {
@@ -184,8 +184,8 @@ class RunCommand extends AbstractCommand
         $this->output->writeln(
             sprintf(
                 '<comment>Installing certificate for domain %s...</comment>',
-                $response->getCertificateRequest()->getDistinguishedName()->getCommonName()
-            )
+                $response->getCertificateRequest()->getDistinguishedName()->getCommonName(),
+            ),
         );
 
         foreach ($actions as $actionConfig) {
@@ -195,8 +195,8 @@ class RunCommand extends AbstractCommand
             $this->output->writeln(
                 sprintf(
                     '<info>Certificate installed with the action %s.</info>',
-                    $actionConfig['action']
-                )
+                    $actionConfig['action'],
+                ),
             );
         }
     }
@@ -211,12 +211,12 @@ class RunCommand extends AbstractCommand
 
         $distinguishedName = $repository->loadDomainDistinguishedName($domain);
         $wantedCertificates = array_values(
-            array_unique(array_merge(array($domain), $domainConfig['subject_alternative_names']))
+            array_unique(array_merge(array($domain), $domainConfig['subject_alternative_names'])),
         );
         $requestedCertificates = array_values(
             array_unique(
-                array_merge(array($distinguishedName->getCommonName()), $distinguishedName->getSubjectAlternativeNames())
-            )
+                array_merge(array($distinguishedName->getCommonName()), $distinguishedName->getSubjectAlternativeNames()),
+            ),
         );
         if ($wantedCertificates !== $requestedCertificates) {
             return false;
@@ -251,7 +251,7 @@ class RunCommand extends AbstractCommand
             $domainConfig['distinguished_name']['organization_name'],
             $domainConfig['distinguished_name']['organization_unit_name'],
             $domainConfig['distinguished_name']['email_address'],
-            $domainConfig['subject_alternative_names']
+            $domainConfig['subject_alternative_names'],
         );
 
         if ($repository->hasDomainKeyPair($domain)) {

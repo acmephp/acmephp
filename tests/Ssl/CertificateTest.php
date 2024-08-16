@@ -55,7 +55,7 @@ zLtghMWrqEk+UWpXnWwxzA66qXA/Q//X6QwtS39XiBkFh+GjuI5rteektrACyB35
 rfA31vVhnoPUqSbuVJfL5X0a0T0dcOwL3/Vj0gAyZQAzjk1RoQ5POFQoO6QIGOKe
 oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
 -----END CERTIFICATE-----
-'
+',
         );
 
         $publicKey = $certificate->getPublicKey();
@@ -99,7 +99,7 @@ zLtghMWrqEk+UWpXnWwxzA66qXA/Q//X6QwtS39XiBkFh+GjuI5rteektrACyB35
 rfA31vVhnoPUqSbuVJfL5X0a0T0dcOwL3/Vj0gAyZQAzjk1RoQ5POFQoO6QIGOKe
 oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
 -----END CERTIFICATE-----
-'
+',
         );
 
         $resource = $certificate->getPublicKeyResource();

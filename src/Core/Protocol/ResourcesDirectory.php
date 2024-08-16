@@ -54,7 +54,7 @@ class ResourcesDirectory
         Assert::oneOf(
             $resource,
             array_keys($this->serverResources),
-            'Resource type "%s" is not supported by the ACME server (supported: %2$s)'
+            'Resource type "%s" is not supported by the ACME server (supported: %2$s)',
         );
 
         return $this->serverResources[$resource];

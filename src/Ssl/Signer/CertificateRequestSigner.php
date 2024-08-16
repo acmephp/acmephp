@@ -58,7 +58,7 @@ EOL;
         $distinguishedName = $certificateRequest->getDistinguishedName();
         $domains = array_merge(
             array($distinguishedName->getCommonName()),
-            $distinguishedName->getSubjectAlternativeNames()
+            $distinguishedName->getSubjectAlternativeNames(),
         );
 
         foreach (array_values($domains) as $index => $domain) {
@@ -79,7 +79,7 @@ EOL;
                 array(
                     'digest_alg' => 'sha256',
                     'config' => $sslConfigFile,
-                )
+                ),
             );
 
             // PHP 8 automatically frees the key instance and deprecates the function

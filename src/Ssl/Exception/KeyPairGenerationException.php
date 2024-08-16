@@ -14,6 +14,4 @@ namespace AcmePhp\Ssl\Exception;
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
  */
-class KeyPairGenerationException extends KeyGenerationException
-{
-}
+class KeyPairGenerationException extends KeyGenerationException {}

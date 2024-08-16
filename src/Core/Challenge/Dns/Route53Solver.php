@@ -96,7 +96,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
                         'Changes' => $changes,
                     ),
                     'HostedZoneId' => $zoneId,
-                )
+                ),
             );
         }
         foreach ($records as $zoneId => $record) {
@@ -139,7 +139,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
                         'Changes' => $changes,
                     ),
                     'HostedZoneId' => $zoneId,
-                )
+                ),
             );
         }
     }
@@ -155,7 +155,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
             $previousRecordSets['ResourceRecordSets'],
             function ($recordSet) use ($recordName) {
                 return $recordSet['Name'] === $recordName && 'TXT' === $recordSet['Type'];
-            }
+            },
         );
         $recordIndex = array();
         foreach ($recordSets as $previousRecordSet) {
@@ -246,7 +246,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
             function ($index) use ($domainParts) {
                 return implode('.', \array_slice($domainParts, \count($domainParts) - $index));
             },
-            range(0, \count($domainParts))
+            range(0, \count($domainParts)),
         ));
 
         $zones = $this->getZones();

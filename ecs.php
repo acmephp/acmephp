@@ -14,4 +14,5 @@ return ECSConfig::configure()
     ->withRules([
         ListSyntaxFixer::class,
     ])
-    ->withPreparedSets(psr12: true);
+    ->withPhpCsFixerSets(perCS20: true)
+;

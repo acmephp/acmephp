@@ -71,8 +71,8 @@ zLtghMWrqEk+UWpXnWwxzA66qXA/Q//X6QwtS39XiBkFh+GjuI5rteektrACyB35
 rfA31vVhnoPUqSbuVJfL5X0a0T0dcOwL3/Vj0gAyZQAzjk1RoQ5POFQoO6QIGOKe
 oVyIb1lpwK0r0vN9y8ns80MP3HtjPYtARWJ9z9P4N+guHZdnbw==
 -----END CERTIFICATE-----
-'
-            )
+',
+            ),
         );
 
         $this->assertInstanceOf(ParsedCertificate::class, $result);
@@ -120,8 +120,8 @@ sVukLJ0Y8NynHAejoTvs2jpZbmzU5ywXCV1CQVBfbqDppZq8kqWakazxWEmYk2TY
 QhYb566EvoLnFHbYvEMAM92tx9CAlPcrVA1fqbxKOJGguNdMw826e1iI7mNp2l0z
 IVpfS/F2WV6y/Oh2mPNGqplqZpGjng==
 -----END CERTIFICATE-----
-'
-            )
+',
+            ),
         );
 
         $this->assertInstanceOf(ParsedCertificate::class, $result);

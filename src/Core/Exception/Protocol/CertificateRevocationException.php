@@ -13,6 +13,4 @@ namespace AcmePhp\Core\Exception\Protocol;
 
 use AcmePhp\Core\Exception\AcmeCoreClientException;
 
-class CertificateRevocationException extends AcmeCoreClientException
-{
-}
+class CertificateRevocationException extends AcmeCoreClientException {}

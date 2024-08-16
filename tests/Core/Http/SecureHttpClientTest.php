@@ -53,7 +53,7 @@ class SecureHttpClientTest extends TestCase
             new Base64SafeEncoder(),
             new KeyParser(),
             new DataSigner(),
-            $errorHandler
+            $errorHandler,
         );
     }
 
@@ -162,7 +162,7 @@ class SecureHttpClientTest extends TestCase
             new Base64SafeEncoder(),
             new KeyParser(),
             $dataSigner,
-            $this->getMockBuilder(ServerErrorHandler::class)->getMock()
+            $this->getMockBuilder(ServerErrorHandler::class)->getMock(),
         );
 
         $client->request('POST', '/acme/new-reg', $client->signJwkPayload('/acme/new-reg', array('contact' => 'foo@bar.com')), true);

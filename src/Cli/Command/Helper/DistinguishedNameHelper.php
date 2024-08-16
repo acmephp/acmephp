@@ -49,27 +49,27 @@ class DistinguishedNameHelper extends Helper
     {
         $countryName = $distinguishedName->getCountryName() ?: $helper->ask($input, $output, new Question(
             'What is your country two-letters code (field "C" of the distinguished name, for instance: "US")? : ',
-            'FR'
+            'FR',
         ));
 
         $stateOrProvinceName = $distinguishedName->getStateOrProvinceName() ?: $helper->ask($input, $output, new Question(
-            'What is your country province (field "ST" of the distinguished name, for instance: "California")? : '
+            'What is your country province (field "ST" of the distinguished name, for instance: "California")? : ',
         ));
 
         $localityName = $distinguishedName->getLocalityName() ?: $helper->ask($input, $output, new Question(
-            'What is your locality (field "L" of the distinguished name, for instance: "Mountain View")? : '
+            'What is your locality (field "L" of the distinguished name, for instance: "Mountain View")? : ',
         ));
 
         $organizationName = $distinguishedName->getOrganizationName() ?: $helper->ask($input, $output, new Question(
-            'What is your organization/company (field "O" of the distinguished name, for instance: "Acme PHP")? : '
+            'What is your organization/company (field "O" of the distinguished name, for instance: "Acme PHP")? : ',
         ));
 
         $organizationalUnitName = $distinguishedName->getOrganizationalUnitName() ?: $helper->ask($input, $output, new Question(
-            'What is your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")? : '
+            'What is your unit/department in your organization (field "OU" of the distinguished name, for instance: "Sales")? : ',
         ));
 
         $emailAddress = $distinguishedName->getEmailAddress() ?: $helper->ask($input, $output, new Question(
-            'What is your e-mail address (field "E" of the distinguished name)? : '
+            'What is your e-mail address (field "E" of the distinguished name)? : ',
         ));
 
         return new DistinguishedName(
@@ -80,7 +80,7 @@ class DistinguishedNameHelper extends Helper
             $organizationName,
             $organizationalUnitName,
             $emailAddress,
-            $distinguishedName->getSubjectAlternativeNames()
+            $distinguishedName->getSubjectAlternativeNames(),
         );
     }
 }

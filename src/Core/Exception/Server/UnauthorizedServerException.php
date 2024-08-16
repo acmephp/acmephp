@@ -24,7 +24,7 @@ class UnauthorizedServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[unauthorized] The client lacks sufficient authorization: ' . $detail,
-            $previous
+            $previous,
         );
     }
 }

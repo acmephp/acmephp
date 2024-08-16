@@ -34,7 +34,7 @@ class RevokeCommand extends AbstractCommand
                     null,
                     InputOption::VALUE_REQUIRED,
                     'Certificate provider to use (supported: ' . implode(', ', Application::PROVIDERS) . ')',
-                    'letsencrypt'
+                    'letsencrypt',
                 ),
             ))
             ->setDescription('Revoke a SSL certificate for a domain')

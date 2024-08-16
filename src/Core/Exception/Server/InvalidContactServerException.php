@@ -24,7 +24,7 @@ class InvalidContactServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[invalidContact] A contact URL for an account was invalid: ' . $detail,
-            $previous
+            $previous,
         );
     }
 }

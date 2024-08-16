@@ -44,7 +44,7 @@ class InstallCPanelAction extends AbstractAction
             $commonName,
             $certificate->getPEM(),
             implode("\n", $issuerChain),
-            $privateKey->getPEM()
+            $privateKey->getPEM(),
         );
     }
 
@@ -61,7 +61,7 @@ class InstallCPanelAction extends AbstractAction
             'key=' . urlencode($key) . '&' .
             'cabundle=' . urlencode($caBundle),
             array('headers' => array('Authorization' => 'cpanel ' . $config['username'] . ':' . $config['token']),
-            )
+            ),
         );
     }
 }

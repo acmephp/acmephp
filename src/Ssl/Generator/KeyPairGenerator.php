@@ -37,7 +37,7 @@ class KeyPairGenerator
                 new EcKeyGenerator(),
                 new DhKeyGenerator(),
                 new DsaKeyGenerator(),
-            )
+            ),
         );
     }
 
@@ -60,7 +60,7 @@ class KeyPairGenerator
 
         return new KeyPair(
             $privateKey->getPublicKey(),
-            $privateKey
+            $privateKey,
         );
     }
 }

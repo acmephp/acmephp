@@ -75,12 +75,12 @@ class Repository implements RepositoryInterface
         try {
             $this->save(
                 self::PATH_ACCOUNT_KEY_PUBLIC,
-                $this->serializer->serialize($keyPair->getPublicKey(), PemEncoder::FORMAT)
+                $this->serializer->serialize($keyPair->getPublicKey(), PemEncoder::FORMAT),
             );
 
             $this->save(
                 self::PATH_ACCOUNT_KEY_PRIVATE,
-                $this->serializer->serialize($keyPair->getPrivateKey(), PemEncoder::FORMAT)
+                $this->serializer->serialize($keyPair->getPrivateKey(), PemEncoder::FORMAT),
             );
         } catch (\Exception $e) {
             throw new AcmeCliException('Storing of account key pair failed', $e);
@@ -100,7 +100,7 @@ class Repository implements RepositoryInterface
 
             return new KeyPair(
                 $this->serializer->deserialize($publicKeyPem, PublicKey::class, PemEncoder::FORMAT),
-                $this->serializer->deserialize($privateKeyPem, PrivateKey::class, PemEncoder::FORMAT)
+                $this->serializer->deserialize($privateKeyPem, PrivateKey::class, PemEncoder::FORMAT),
             );
         } catch (\Exception $e) {
             throw new AcmeCliException('Loading of account key pair failed', $e);
@@ -112,12 +112,12 @@ class Repository implements RepositoryInterface
         try {
             $this->save(
                 $this->getPathForDomain(self::PATH_DOMAIN_KEY_PUBLIC, $domain),
-                $this->serializer->serialize($keyPair->getPublicKey(), PemEncoder::FORMAT)
+                $this->serializer->serialize($keyPair->getPublicKey(), PemEncoder::FORMAT),
             );
 
             $this->save(
                 $this->getPathForDomain(self::PATH_DOMAIN_KEY_PRIVATE, $domain),
-                $this->serializer->serialize($keyPair->getPrivateKey(), PemEncoder::FORMAT)
+                $this->serializer->serialize($keyPair->getPrivateKey(), PemEncoder::FORMAT),
             );
         } catch (\Exception $e) {
             throw new AcmeCliException(sprintf('Storing of domain %s key pair failed', $domain), $e);
@@ -137,7 +137,7 @@ class Repository implements RepositoryInterface
 
             return new KeyPair(
                 $this->serializer->deserialize($publicKeyPem, PublicKey::class, PemEncoder::FORMAT),
-                $this->serializer->deserialize($privateKeyPem, PrivateKey::class, PemEncoder::FORMAT)
+                $this->serializer->deserialize($privateKeyPem, PrivateKey::class, PemEncoder::FORMAT),
             );
         } catch (\Exception $e) {
             throw new AcmeCliException(sprintf('Loading of domain %s key pair failed', $domain), $e);
@@ -149,7 +149,7 @@ class Repository implements RepositoryInterface
         try {
             $this->save(
                 $this->getPathForDomain(self::PATH_CACHE_AUTHORIZATION_CHALLENGE, $domain),
-                $this->serializer->serialize($authorizationChallenge, JsonEncoder::FORMAT)
+                $this->serializer->serialize($authorizationChallenge, JsonEncoder::FORMAT),
             );
         } catch (\Exception $e) {
             throw new AcmeCliException(sprintf('Storing of domain %s authorization challenge failed', $domain), $e);
@@ -177,7 +177,7 @@ class Repository implements RepositoryInterface
         try {
             $this->save(
                 $this->getPathForDomain(self::PATH_CACHE_DISTINGUISHED_NAME, $domain),
-                $this->serializer->serialize($distinguishedName, JsonEncoder::FORMAT)
+                $this->serializer->serialize($distinguishedName, JsonEncoder::FORMAT),
             );
         } catch (\Exception $e) {
             throw new AcmeCliException(sprintf('Storing of domain %s distinguished name failed', $domain), $e);
@@ -254,7 +254,7 @@ class Repository implements RepositoryInterface
         foreach ($pems as $pem) {
             $certificate = new Certificate(
                 "-----BEGIN CERTIFICATE-----\n" . $pem . "\n-----END CERTIFICATE-----",
-                $certificate
+                $certificate,
             );
         }
 
@@ -266,7 +266,7 @@ class Repository implements RepositoryInterface
         try {
             $this->save(
                 $this->getPathForDomainList(self::PATH_CACHE_CERTIFICATE_ORDER, $domains),
-                $this->serializer->serialize($order, JsonEncoder::FORMAT)
+                $this->serializer->serialize($order, JsonEncoder::FORMAT),
             );
         } catch (\Exception $e) {
             throw new AcmeCliException(sprintf('Storing of domains %s certificate order failed', implode(', ', $domains)), $e);

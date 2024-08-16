@@ -43,7 +43,7 @@ class SimpleDnsResolverTest extends TestCase
                         'entries' => array('baz'),
                     ),
                 ),
-            )
+            ),
         );
 
         $resolver = new SimpleDnsResolver();

@@ -64,8 +64,8 @@ EOF
                 ,
                 $checkUrl,
                 $checkContent,
-                $checkContent
-            )
+                $checkContent,
+            ),
         );
     }
 
@@ -80,8 +80,8 @@ EOF
 
 EOF
                 ,
-                $checkUrl
-            )
+                $checkUrl,
+            ),
         );
     }
 }

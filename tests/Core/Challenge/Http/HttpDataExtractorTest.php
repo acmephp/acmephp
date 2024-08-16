@@ -34,7 +34,7 @@ class HttpDataExtractorTest extends TestCase
 
         $this->assertEquals(
             'http://' . $domain . '/.well-known/acme-challenge/' . $token,
-            $extractor->getCheckUrl($stubChallenge->reveal())
+            $extractor->getCheckUrl($stubChallenge->reveal()),
         );
     }
 

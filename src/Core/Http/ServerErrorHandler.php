@@ -93,7 +93,7 @@ class ServerErrorHandler
     public function createAcmeExceptionForResponse(
         RequestInterface $request,
         ResponseInterface $response,
-        ?\Exception $previous = null
+        ?\Exception $previous = null,
     ): AcmeCoreServerException {
         $body = Utils::copyToString($response->getBody());
 
@@ -120,14 +120,14 @@ class ServerErrorHandler
         return new $exceptionClass(
             $request,
             sprintf('%s (on request "%s %s")', $data['detail'], $request->getMethod(), $request->getUri()),
-            $previous
+            $previous,
         );
     }
 
     private function createDefaultExceptionForResponse(
         RequestInterface $request,
         ResponseInterface $response,
-        ?\Exception $previous = null
+        ?\Exception $previous = null,
     ): AcmeCoreServerException {
         return new AcmeCoreServerException(
             $request,
@@ -136,9 +136,9 @@ class ServerErrorHandler
                 $response->getStatusCode(),
                 $request->getMethod(),
                 $request->getUri(),
-                self::getResponseBodySummary($response)
+                self::getResponseBodySummary($response),
             ),
-            $previous
+            $previous,
         );
     }
 }

@@ -24,7 +24,7 @@ class RateLimitedServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[rateLimited] This client reached the rate limit of the server: ' . $detail,
-            $previous
+            $previous,
         );
     }
 }

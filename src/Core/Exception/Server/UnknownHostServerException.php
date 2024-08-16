@@ -24,7 +24,7 @@ class UnknownHostServerException extends AcmeCoreServerException
         parent::__construct(
             $request,
             '[unknownHost] The server could not resolve a domain name: ' . $detail,
-            $previous
+            $previous,
         );
     }
 }
