@@ -34,7 +34,7 @@ abstract class AbstractAwsAction extends AbstractAction
 
     public function handle(array $config, CertificateResponse $response)
     {
-        $this->assertConfiguration($config, array('loadbalancer', 'region'));
+        $this->assertConfiguration($config, ['loadbalancer', 'region']);
 
         $region = $config['region'];
         $loadBalancerName = $config['loadbalancer'];
@@ -55,7 +55,7 @@ abstract class AbstractAwsAction extends AbstractAction
     {
         $iamClient = $this->clientFactory->getIamClient($region);
 
-        $issuerChain = array();
+        $issuerChain = [];
         $issuerCertificate = $response->getCertificate()->getIssuerCertificate();
         while (null !== $issuerCertificate) {
             $issuerChain[] = $issuerCertificate->getPEM();
@@ -63,12 +63,12 @@ abstract class AbstractAwsAction extends AbstractAction
         }
         $chainPem = implode("\n", $issuerChain);
 
-        $response = $iamClient->uploadServerCertificate(array(
+        $response = $iamClient->uploadServerCertificate([
             'ServerCertificateName' => $certificateName,
             'CertificateBody' => $response->getCertificate()->getPEM(),
             'PrivateKey' => $response->getCertificateRequest()->getKeyPair()->getPrivateKey()->getPEM(),
             'CertificateChain' => $chainPem,
-        ));
+        ]);
 
         return $response['ServerCertificateMetadata']['Arn'];
     }
@@ -87,7 +87,7 @@ abstract class AbstractAwsAction extends AbstractAction
                         // Try several time to delete certificate given AWS takes time to uninstall previous one
                         function () use ($iamClient, $certificate) {
                             $iamClient->deleteServerCertificate(
-                                array('ServerCertificateName' => $certificate['ServerCertificateName']),
+                                ['ServerCertificateName' => $certificate['ServerCertificateName']],
                             );
                         },
                         5,

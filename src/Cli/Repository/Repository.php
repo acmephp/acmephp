@@ -206,7 +206,7 @@ class Repository implements RepositoryInterface
         $certPem = $this->serializer->serialize($certificate, PemEncoder::FORMAT);
 
         // Issuer chain
-        $issuerChain = array();
+        $issuerChain = [];
         $issuerCertificate = $certificate->getIssuerCertificate();
 
         while (null !== $issuerCertificate) {
@@ -298,12 +298,12 @@ class Repository implements RepositoryInterface
 
     private function getPathForDomain($path, $domain)
     {
-        return strtr($path, array('{domain}' => $this->normalizeDomain($domain)));
+        return strtr($path, ['{domain}' => $this->normalizeDomain($domain)]);
     }
 
     private function getPathForDomainList($path, array $domains)
     {
-        return strtr($path, array('{domains}' => $this->normalizeDomainList($domains)));
+        return strtr($path, ['{domains}' => $this->normalizeDomainList($domains)]);
     }
 
     private function normalizeDomain($domain)
@@ -313,7 +313,7 @@ class Repository implements RepositoryInterface
 
     private function normalizeDomainList(array $domains)
     {
-        $normalizedDomains = array_unique(array_map(array($this, 'normalizeDomain'), $domains));
+        $normalizedDomains = array_unique(array_map([$this, 'normalizeDomain'], $domains));
         sort($normalizedDomains);
 
         return (isset($domains[0]) ? $this->normalizeDomain($domains[0]) : '-') . '/' . sha1(json_encode($normalizedDomains));

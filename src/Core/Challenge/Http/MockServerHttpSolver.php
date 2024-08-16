@@ -30,20 +30,20 @@ class MockServerHttpSolver implements SolverInterface
 
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
-        (new Client())->post('http://localhost:8055/add-http01', array(
-            RequestOptions::JSON => array(
+        (new Client())->post('http://localhost:8055/add-http01', [
+            RequestOptions::JSON => [
                 'token' => $authorizationChallenge->getToken(),
                 'content' => $authorizationChallenge->getPayload(),
-            ),
-        ));
+            ],
+        ]);
     }
 
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
-        (new Client())->post('http://localhost:8055/del-http01', array(
-            RequestOptions::JSON => array(
+        (new Client())->post('http://localhost:8055/del-http01', [
+            RequestOptions::JSON => [
                 'token' => $authorizationChallenge->getToken(),
-            ),
-        ));
+            ],
+        ]);
     }
 }

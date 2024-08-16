@@ -40,7 +40,7 @@ class Certificate
      */
     public function getIssuerChain(): array
     {
-        $chain = array();
+        $chain = [];
         $issuerCertificate = $this->getIssuerCertificate();
 
         while (null !== $issuerCertificate) {

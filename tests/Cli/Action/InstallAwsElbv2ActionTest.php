@@ -35,11 +35,11 @@ class InstallAwsElbv2ActionTest extends TestCase
         $domain = 'foo.bar';
         $region = 'eu-west-1';
         $loadBalancer = 'myElb';
-        $config = array(
+        $config = [
             'region' => $region,
             'loadbalancer' => $loadBalancer,
             'certificate_prefix' => 'foo_',
-        );
+        ];
         $response = new CertificateResponse(
             new CertificateRequest(
                 new DistinguishedName($domain),
@@ -56,36 +56,36 @@ class InstallAwsElbv2ActionTest extends TestCase
 
         $mockFactory->getIamClient($region)->willReturn($mockIam->reveal());
         $mockFactory->getElbv2Client($region)->willReturn($mockElb->reveal());
-        $mockIam->uploadServerCertificate(Argument::any())->shouldBeCalled()->willReturn(array(
-            'ServerCertificateMetadata' => array(
+        $mockIam->uploadServerCertificate(Argument::any())->shouldBeCalled()->willReturn([
+            'ServerCertificateMetadata' => [
                 'Arn' => 'certificate_arn',
-            ),
-        ));
+            ],
+        ]);
         $mockIam->deleteServerCertificate(Argument::any())->shouldBeCalled();
-        $mockIam->listServerCertificates(Argument::any())->willReturn(array(
-            'ServerCertificateMetadataList' => array(
-                array('ServerCertificateName' => 'foo_123'),
-            ),
-        ));
-        $mockElb->describeLoadBalancers(array('Names' => array($loadBalancer)))->willReturn(array(
-            'LoadBalancers' => array(
-                array('LoadBalancerArn' => 'elb_arn'),
-            ),
-        ));
-        $mockElb->describeListeners(array('LoadBalancerArn' => 'elb_arn'))->willReturn(array(
-            'Listeners' => array(
-                array('ListenerArn' => 'listener_arn1', 'Port' => 80),
-                array('ListenerArn' => 'listener_arn2', 'Port' => 443),
-            ),
-        ));
-        $mockElb->modifyListener(array(
-            'Certificates' => array(
-                array(
+        $mockIam->listServerCertificates(Argument::any())->willReturn([
+            'ServerCertificateMetadataList' => [
+                ['ServerCertificateName' => 'foo_123'],
+            ],
+        ]);
+        $mockElb->describeLoadBalancers(['Names' => [$loadBalancer]])->willReturn([
+            'LoadBalancers' => [
+                ['LoadBalancerArn' => 'elb_arn'],
+            ],
+        ]);
+        $mockElb->describeListeners(['LoadBalancerArn' => 'elb_arn'])->willReturn([
+            'Listeners' => [
+                ['ListenerArn' => 'listener_arn1', 'Port' => 80],
+                ['ListenerArn' => 'listener_arn2', 'Port' => 443],
+            ],
+        ]);
+        $mockElb->modifyListener([
+            'Certificates' => [
+                [
                     'CertificateArn' => 'certificate_arn',
-                ),
-            ),
+                ],
+            ],
             'ListenerArn' => 'listener_arn2',
-        ))->shouldBeCalled();
+        ])->shouldBeCalled();
 
         $action->handle($config, $response);
     }

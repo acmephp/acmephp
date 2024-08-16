@@ -35,11 +35,11 @@ class AcmeClientTest extends AbstractFunctionnalTest
 {
     public function provideFullProcess()
     {
-        yield 'rsa1024' => array(new RsaKeyOption(1024), false);
-        yield 'rsa1024-alternate' => array(new RsaKeyOption(1024), true);
-        yield 'rsa4098' => array(new RsaKeyOption(4098), false);
-        yield 'ecprime256v1' => array(new EcKeyOption('prime256v1'), false);
-        yield 'ecsecp384r1' => array(new EcKeyOption('secp384r1'), false);
+        yield 'rsa1024' => [new RsaKeyOption(1024), false];
+        yield 'rsa1024-alternate' => [new RsaKeyOption(1024), true];
+        yield 'rsa4098' => [new RsaKeyOption(4098), false];
+        yield 'ecprime256v1' => [new EcKeyOption('prime256v1'), false];
+        yield 'ecsecp384r1' => [new EcKeyOption('secp384r1'), false];
     }
 
     /**
@@ -75,7 +75,7 @@ class AcmeClientTest extends AbstractFunctionnalTest
         /*
          * Ask for domain challenge
          */
-        $order = $client->requestOrder(array('acmephp.com'));
+        $order = $client->requestOrder(['acmephp.com']);
         $this->assertEquals('pending', $order->getStatus());
         $challenges = $order->getAuthorizationChallenges('acmephp.com');
         foreach ($challenges as $challenge) {

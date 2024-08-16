@@ -52,7 +52,7 @@ class DistinguishedName
         ?string $organizationName = null,
         ?string $organizationalUnitName = null,
         ?string $emailAddress = null,
-        array $subjectAlternativeNames = array(),
+        array $subjectAlternativeNames = [],
     ) {
         Assert::stringNotEmpty($commonName, __CLASS__ . '::$commonName expected a non empty string. Got: %s');
         Assert::allStringNotEmpty(
@@ -67,7 +67,7 @@ class DistinguishedName
         $this->organizationName = $organizationName;
         $this->organizationalUnitName = $organizationalUnitName;
         $this->emailAddress = $emailAddress;
-        $this->subjectAlternativeNames = array_diff(array_unique($subjectAlternativeNames), array($commonName));
+        $this->subjectAlternativeNames = array_diff(array_unique($subjectAlternativeNames), [$commonName]);
     }
 
     public function getCommonName(): string

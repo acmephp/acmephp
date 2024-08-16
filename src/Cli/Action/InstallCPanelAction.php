@@ -29,7 +29,7 @@ class InstallCPanelAction extends AbstractAction
 
     public function handle(array $config, CertificateResponse $response)
     {
-        $this->assertConfiguration($config, array('host', 'username', 'token'));
+        $this->assertConfiguration($config, ['host', 'username', 'token']);
 
         $commonName = $response->getCertificateRequest()->getDistinguishedName()->getCommonName();
         $certificate = $response->getCertificate();
@@ -60,8 +60,8 @@ class InstallCPanelAction extends AbstractAction
             'crt=' . urlencode($crt) . '&' .
             'key=' . urlencode($key) . '&' .
             'cabundle=' . urlencode($caBundle),
-            array('headers' => array('Authorization' => 'cpanel ' . $config['username'] . ':' . $config['token']),
-            ),
+            ['headers' => ['Authorization' => 'cpanel ' . $config['username'] . ':' . $config['token']],
+            ],
         );
     }
 }

@@ -58,11 +58,11 @@ class CertificateOrder
             $this->getAuthorizationsChallenges(),
         );
 
-        return array(
+        return [
             'authorizationsChallenges' => $authorizationsChallenges,
             'orderEndpoint' => $this->getOrderEndpoint(),
             'status' => $this->getStatus(),
-        );
+        ];
     }
 
     public static function fromArray(array $data): self

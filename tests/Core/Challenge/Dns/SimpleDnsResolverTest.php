@@ -22,33 +22,33 @@ class SimpleDnsResolverTest extends TestCase
     {
         DnsMock::register(DnsValidator::class);
         DnsMock::withMockedHosts(
-            array(
-                'domain.com.' => array(
-                    array(
+            [
+                'domain.com.' => [
+                    [
                         'type' => 'A',
                         'ip' => '1.2.3.4',
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'TXT',
-                        'entries' => array('foo'),
-                    ),
-                    array(
+                        'entries' => ['foo'],
+                    ],
+                    [
                         'type' => 'TXT',
-                        'entries' => array('foo', 'bar'),
-                    ),
-                ),
-                'domain2.com.' => array(
-                    array(
+                        'entries' => ['foo', 'bar'],
+                    ],
+                ],
+                'domain2.com.' => [
+                    [
                         'type' => 'TXT',
-                        'entries' => array('baz'),
-                    ),
-                ),
-            ),
+                        'entries' => ['baz'],
+                    ],
+                ],
+            ],
         );
 
         $resolver = new SimpleDnsResolver();
         $entries = $resolver->getTxtEntries('domain.com.');
 
-        $this->assertEquals(array('bar', 'foo'), $entries);
+        $this->assertEquals(['bar', 'foo'], $entries);
     }
 }

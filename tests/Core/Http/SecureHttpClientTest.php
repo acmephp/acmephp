@@ -38,7 +38,7 @@ class SecureHttpClientTest extends TestCase
     private function createMockedClient(array $responses, $willThrow = false)
     {
         $keyPairGenerator = new KeyPairGenerator();
-        $httpClient = new Client(array('handler' => HandlerStack::create(new MockHandler($responses))));
+        $httpClient = new Client(['handler' => HandlerStack::create(new MockHandler($responses))]);
 
         $errorHandler = $this->getMockBuilder(ServerErrorHandler::class)->getMock();
 
@@ -60,8 +60,8 @@ class SecureHttpClientTest extends TestCase
 
     public function testSignKidPayload()
     {
-        $client = $this->createMockedClient(array());
-        $payload = $client->signKidPayload('/foo', 'account', array('foo' => 'bar'));
+        $client = $this->createMockedClient([]);
+        $payload = $client->signKidPayload('/foo', 'account', ['foo' => 'bar']);
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('protected', $payload);
@@ -72,8 +72,8 @@ class SecureHttpClientTest extends TestCase
 
     public function testSignKidPayloadWithEmptyPayload()
     {
-        $client = $this->createMockedClient(array());
-        $payload = $client->signKidPayload('/foo', 'account', array());
+        $client = $this->createMockedClient([]);
+        $payload = $client->signKidPayload('/foo', 'account', []);
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
@@ -82,7 +82,7 @@ class SecureHttpClientTest extends TestCase
 
     public function testSignKidPayloadWithNullPayload()
     {
-        $client = $this->createMockedClient(array());
+        $client = $this->createMockedClient([]);
         $payload = $client->signKidPayload('/foo', 'account');
 
         $this->assertIsArray($payload);
@@ -92,8 +92,8 @@ class SecureHttpClientTest extends TestCase
 
     public function testSignJwkPayload()
     {
-        $client = $this->createMockedClient(array());
-        $payload = $client->signJwkPayload('/foo', array('foo' => 'bar'));
+        $client = $this->createMockedClient([]);
+        $payload = $client->signJwkPayload('/foo', ['foo' => 'bar']);
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('protected', $payload);
@@ -104,8 +104,8 @@ class SecureHttpClientTest extends TestCase
 
     public function testSignJwkPayloadWithEmptyPayload()
     {
-        $client = $this->createMockedClient(array());
-        $payload = $client->signJwkPayload('/foo', array());
+        $client = $this->createMockedClient([]);
+        $payload = $client->signJwkPayload('/foo', []);
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
@@ -114,7 +114,7 @@ class SecureHttpClientTest extends TestCase
 
     public function testSignJwkPayloadWithNullPayload()
     {
-        $client = $this->createMockedClient(array());
+        $client = $this->createMockedClient([]);
         $payload = $client->signJwkPayload('/foo');
 
         $this->assertIsArray($payload);
@@ -124,23 +124,23 @@ class SecureHttpClientTest extends TestCase
 
     public function testValidStringRequest()
     {
-        $client = $this->createMockedClient(array(new Response(200, array(), 'foo')), false);
-        $body = $client->request('GET', '/foo', array('foo' => 'bar'), false);
+        $client = $this->createMockedClient([new Response(200, [], 'foo')], false);
+        $body = $client->request('GET', '/foo', ['foo' => 'bar'], false);
         $this->assertEquals('foo', $body);
     }
 
     public function testValidJsonRequest()
     {
-        $client = $this->createMockedClient(array(new Response(200, array(), json_encode(array('test' => 'ok')))), false);
-        $data = $client->request('GET', '/foo', array('foo' => 'bar'), true);
-        $this->assertEquals(array('test' => 'ok'), $data);
+        $client = $this->createMockedClient([new Response(200, [], json_encode(['test' => 'ok']))], false);
+        $data = $client->request('GET', '/foo', ['foo' => 'bar'], true);
+        $this->assertEquals(['test' => 'ok'], $data);
     }
 
     public function testInvalidJsonRequest()
     {
         $this->expectException('AcmePhp\Core\Exception\Protocol\ExpectedJsonException');
-        $client = $this->createMockedClient(array(new Response(200, array(), 'invalid json')), false);
-        $client->request('GET', '/foo', array('foo' => 'bar'), true);
+        $client = $this->createMockedClient([new Response(200, [], 'invalid json')], false);
+        $client->request('GET', '/foo', ['foo' => 'bar'], true);
     }
 
     public function testCreateExternalAccountPayload(): void
@@ -166,9 +166,9 @@ class SecureHttpClientTest extends TestCase
 
     public function testRequestPayload()
     {
-        $container = array();
+        $container = [];
 
-        $stack = HandlerStack::create(new MockHandler(array(new Response(200, array(), json_encode(array('test' => 'ok'))))));
+        $stack = HandlerStack::create(new MockHandler([new Response(200, [], json_encode(['test' => 'ok']))]));
         $stack->push(Middleware::history($container));
 
         $keyPairGenerator = new KeyPairGenerator();
@@ -180,14 +180,14 @@ class SecureHttpClientTest extends TestCase
 
         $client = new SecureHttpClient(
             $keyPairGenerator->generateKeyPair(),
-            new Client(array('handler' => $stack)),
+            new Client(['handler' => $stack]),
             new Base64SafeEncoder(),
             new KeyParser(),
             $dataSigner,
             $this->getMockBuilder(ServerErrorHandler::class)->getMock(),
         );
 
-        $client->request('POST', '/acme/new-reg', $client->signJwkPayload('/acme/new-reg', array('contact' => 'foo@bar.com')), true);
+        $client->request('POST', '/acme/new-reg', $client->signJwkPayload('/acme/new-reg', ['contact' => 'foo@bar.com']), true);
 
         // Check request object
         $this->assertCount(1, $container);

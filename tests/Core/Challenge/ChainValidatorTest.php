@@ -29,7 +29,7 @@ class ChainValidatorTest extends TestCase
         $dummyChallenge = $this->prophesize(AuthorizationChallenge::class)->reveal();
         $solver = $this->prophesize(SolverInterface::class)->reveal();
 
-        $validator = new ChainValidator(array($mockValidator1->reveal(), $mockValidator2->reveal()));
+        $validator = new ChainValidator([$mockValidator1->reveal(), $mockValidator2->reveal()]);
 
         $mockValidator1->supports($dummyChallenge, $solver)->willReturn(false);
         $mockValidator2->supports($dummyChallenge, $solver)->willReturn(true);
@@ -47,7 +47,7 @@ class ChainValidatorTest extends TestCase
         $dummyChallenge = $this->prophesize(AuthorizationChallenge::class)->reveal();
         $solver = $this->prophesize(SolverInterface::class)->reveal();
 
-        $validator = new ChainValidator(array($mockValidator1->reveal(), $mockValidator2->reveal()));
+        $validator = new ChainValidator([$mockValidator1->reveal(), $mockValidator2->reveal()]);
 
         $mockValidator1->supports($dummyChallenge, $solver)->willReturn(false);
         $mockValidator1->isValid($dummyChallenge, $solver)->shouldNotBeCalled();

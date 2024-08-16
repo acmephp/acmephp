@@ -79,10 +79,10 @@ class AcmeClient implements AcmeClientInterface
     {
         $client = $this->getHttpClient();
 
-        $payload = array(
+        $payload = [
             'termsOfServiceAgreed' => true,
-            'contact' => array(),
-        );
+            'contact' => [],
+        ];
 
         if ($email) {
             $payload['contact'][] = 'mailto:' . $email;
@@ -105,17 +105,17 @@ class AcmeClient implements AcmeClientInterface
     {
         Assert::allStringNotEmpty($domains, 'requestOrder::$domains expected a list of strings. Got: %s');
 
-        $payload = array(
+        $payload = [
             'identifiers' => array_map(
                 static function ($domain) {
-                    return array(
+                    return [
                         'type' => 'dns',
                         'value' => strtolower($domain),
-                    );
+                    ];
                 },
                 array_values($domains),
             ),
-        );
+        ];
 
         $client = $this->getHttpClient();
         $resourceUrl = $this->getResourceUrl(ResourcesDirectory::NEW_ORDER);
@@ -124,7 +124,7 @@ class AcmeClient implements AcmeClientInterface
             throw new ChallengeNotSupportedException();
         }
 
-        $authorizationsChallenges = array();
+        $authorizationsChallenges = [];
         $orderEndpoint = $client->getLastLocation();
         foreach ($response['authorizations'] as $authorizationEndpoint) {
             $authorizationsResponse = $client->request('POST', $authorizationEndpoint, $client->signKidPayload($authorizationEndpoint, $this->getResourceAccount(), null));
@@ -147,7 +147,7 @@ class AcmeClient implements AcmeClientInterface
             throw new ChallengeNotSupportedException();
         }
 
-        $authorizationsChallenges = array();
+        $authorizationsChallenges = [];
         foreach ($response['authorizations'] as $authorizationEndpoint) {
             $authorizationsResponse = $client->request('POST', $authorizationEndpoint, $client->signKidPayload($authorizationEndpoint, $this->getResourceAccount(), null));
             $domain = (empty($authorizationsResponse['wildcard']) ? '' : '*.') . $authorizationsResponse['identifier']['value'];
@@ -165,18 +165,18 @@ class AcmeClient implements AcmeClientInterface
         $client = $this->getHttpClient();
         $orderEndpoint = $order->getOrderEndpoint();
         $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
-        if (\in_array($response['status'], array('pending', 'processing', 'ready'))) {
-            $humanText = array('-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----');
+        if (\in_array($response['status'], ['pending', 'processing', 'ready'])) {
+            $humanText = ['-----BEGIN CERTIFICATE REQUEST-----', '-----END CERTIFICATE REQUEST-----'];
 
             $csrContent = $this->csrSigner->signCertificateRequest($csr);
             $csrContent = trim(str_replace($humanText, '', $csrContent));
             $csrContent = trim($client->getBase64Encoder()->encode(base64_decode($csrContent)));
 
-            $response = $client->request('POST', $response['finalize'], $client->signKidPayload($response['finalize'], $this->getResourceAccount(), array('csr' => $csrContent)));
+            $response = $client->request('POST', $response['finalize'], $client->signKidPayload($response['finalize'], $this->getResourceAccount(), ['csr' => $csrContent]));
         }
 
         // Waiting loop
-        while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], array('pending', 'processing', 'ready')))) {
+        while (time() <= $endTime && (!isset($response['status']) || \in_array($response['status'], ['pending', 'processing', 'ready']))) {
             sleep(1);
             $response = $client->request('POST', $orderEndpoint, $client->signKidPayload($orderEndpoint, $this->getResourceAccount(), null));
         }
@@ -189,7 +189,7 @@ class AcmeClient implements AcmeClientInterface
         $responseHeaders = $response->getHeaders();
 
         if ($returnAlternateCertificateIfAvailable && isset($responseHeaders['Link'][1])) {
-            $matches = array();
+            $matches = [];
             preg_match('/<(http.*)>;rel="alternate"/', $responseHeaders['Link'][1], $matches);
 
             // If response headers include a valid alternate certificate link, return that certificate instead
@@ -206,7 +206,7 @@ class AcmeClient implements AcmeClientInterface
 
     public function requestAuthorization(string $domain): array
     {
-        $order = $this->requestOrder(array($domain));
+        $order = $this->requestOrder([$domain]);
 
         try {
             return $order->getAuthorizationChallenges($domain);
@@ -231,7 +231,7 @@ class AcmeClient implements AcmeClientInterface
         $challengeUrl = $challenge->getUrl();
         $response = (array) $client->request('POST', $challengeUrl, $client->signKidPayload($challengeUrl, $this->getResourceAccount(), null));
         if ('pending' === $response['status'] || 'processing' === $response['status']) {
-            $response = (array) $client->request('POST', $challengeUrl, $client->signKidPayload($challengeUrl, $this->getResourceAccount(), array()));
+            $response = (array) $client->request('POST', $challengeUrl, $client->signKidPayload($challengeUrl, $this->getResourceAccount(), []));
         }
 
         // Waiting loop
@@ -252,7 +252,7 @@ class AcmeClient implements AcmeClientInterface
 
     public function requestCertificate(string $domain, CertificateRequest $csr, int $timeout = 180, bool $returnAlternateCertificateIfAvailable = false): CertificateResponse
     {
-        $order = $this->requestOrder(array_unique(array_merge(array($domain), $csr->getDistinguishedName()->getSubjectAlternativeNames())));
+        $order = $this->requestOrder(array_unique(array_merge([$domain], $csr->getDistinguishedName()->getSubjectAlternativeNames())));
 
         return $this->finalizeOrder($order, $csr, $timeout, $returnAlternateCertificateIfAvailable);
     }
@@ -278,7 +278,7 @@ class AcmeClient implements AcmeClientInterface
             $client->request(
                 'POST',
                 $endpoint,
-                $client->signKidPayload($endpoint, $this->getResourceAccount(), array('certificate' => $formattedPem, 'reason' => $revocationReason->getReasonType())),
+                $client->signKidPayload($endpoint, $this->getResourceAccount(), ['certificate' => $formattedPem, 'reason' => $revocationReason->getReasonType()]),
                 false,
             );
         } catch (AcmeCoreServerException $e) {
@@ -340,9 +340,9 @@ class AcmeClient implements AcmeClientInterface
     private function getResourceAccount(): string
     {
         if (!$this->account) {
-            $payload = array(
+            $payload = [
                 'onlyReturnExisting' => true,
-            );
+            ];
 
             $this->requestResource('POST', ResourcesDirectory::NEW_ACCOUNT, $payload);
             $this->account = $this->getHttpClient()->getLastLocation();

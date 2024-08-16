@@ -40,27 +40,27 @@ class ServerErrorHandlerTest extends TestCase
 {
     public function getErrorTypes()
     {
-        return array(
-            array('badCSR', BadCsrServerException::class),
-            array('badNonce', BadNonceServerException::class),
-            array('caa', CaaServerException::class),
-            array('connection', ConnectionServerException::class),
-            array('dns', DnsServerException::class),
-            array('incorrectResponse', IncorrectResponseServerException::class),
-            array('invalidContact', InvalidContactServerException::class),
-            array('invalidEmail', InvalidEmailServerException::class),
-            array('malformed', MalformedServerException::class),
-            array('orderNotReady', OrderNotReadyServerException::class),
-            array('rateLimited', RateLimitedServerException::class),
-            array('rejectedIdentifier', RejectedIdentifierServerException::class),
-            array('serverInternal', InternalServerException::class),
-            array('tls', TlsServerException::class),
-            array('unauthorized', UnauthorizedServerException::class),
-            array('unknownHost', UnknownHostServerException::class),
-            array('unsupportedContact', UnsupportedContactServerException::class),
-            array('unsupportedIdentifier', UnsupportedIdentifierServerException::class),
-            array('userActionRequired', UserActionRequiredServerException::class),
-        );
+        return [
+            ['badCSR', BadCsrServerException::class],
+            ['badNonce', BadNonceServerException::class],
+            ['caa', CaaServerException::class],
+            ['connection', ConnectionServerException::class],
+            ['dns', DnsServerException::class],
+            ['incorrectResponse', IncorrectResponseServerException::class],
+            ['invalidContact', InvalidContactServerException::class],
+            ['invalidEmail', InvalidEmailServerException::class],
+            ['malformed', MalformedServerException::class],
+            ['orderNotReady', OrderNotReadyServerException::class],
+            ['rateLimited', RateLimitedServerException::class],
+            ['rejectedIdentifier', RejectedIdentifierServerException::class],
+            ['serverInternal', InternalServerException::class],
+            ['tls', TlsServerException::class],
+            ['unauthorized', UnauthorizedServerException::class],
+            ['unknownHost', UnknownHostServerException::class],
+            ['unsupportedContact', UnsupportedContactServerException::class],
+            ['unsupportedIdentifier', UnsupportedIdentifierServerException::class],
+            ['userActionRequired', UserActionRequiredServerException::class],
+        ];
     }
 
     /**
@@ -70,10 +70,10 @@ class ServerErrorHandlerTest extends TestCase
     {
         $errorHandler = new ServerErrorHandler();
 
-        $response = new Response(500, array(), json_encode(array(
+        $response = new Response(500, [], json_encode([
             'type' => 'urn:acme:error:' . $type,
             'detail' => $exceptionClass . 'Detail',
-        )));
+        ]));
 
         $exception = $errorHandler->createAcmeExceptionForResponse(new Request('GET', '/foo/bar'), $response);
 
@@ -89,7 +89,7 @@ class ServerErrorHandlerTest extends TestCase
 
         $exception = $errorHandler->createAcmeExceptionForResponse(
             new Request('GET', '/foo/bar'),
-            new Response(500, array(), 'Invalid JSON'),
+            new Response(500, [], 'Invalid JSON'),
         );
 
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);
@@ -104,7 +104,7 @@ class ServerErrorHandlerTest extends TestCase
 
         $exception = $errorHandler->createAcmeExceptionForResponse(
             new Request('GET', '/foo/bar'),
-            new Response(500, array(), json_encode(array('not' => 'acme'))),
+            new Response(500, [], json_encode(['not' => 'acme'])),
         );
 
         $this->assertInstanceOf(AcmeCoreServerException::class, $exception);

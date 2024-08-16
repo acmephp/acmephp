@@ -53,11 +53,11 @@ subjectAltName = @req_subject_alt_name
 [ req_subject_alt_name ]
 %s
 EOL;
-        $sslConfigDomains = array();
+        $sslConfigDomains = [];
 
         $distinguishedName = $certificateRequest->getDistinguishedName();
         $domains = array_merge(
-            array($distinguishedName->getCommonName()),
+            [$distinguishedName->getCommonName()],
             $distinguishedName->getSubjectAlternativeNames(),
         );
 
@@ -76,10 +76,10 @@ EOL;
             $csr = openssl_csr_new(
                 $this->getCSRPayload($distinguishedName),
                 $resource,
-                array(
+                [
                     'digest_alg' => 'sha256',
                     'config' => $sslConfigFile,
-                ),
+                ],
             );
 
             // PHP 8 automatically frees the key instance and deprecates the function
@@ -102,7 +102,7 @@ EOL;
      */
     private function getCSRPayload(DistinguishedName $distinguishedName): array
     {
-        $payload = array();
+        $payload = [];
         if (null !== $countryName = $distinguishedName->getCountryName()) {
             $payload['countryName'] = $countryName;
         }

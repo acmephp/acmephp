@@ -26,7 +26,7 @@ class RevokeCommand extends AbstractCommand
         $reasons = implode(PHP_EOL, RevocationReason::getFormattedReasons());
 
         $this->setName('revoke')
-            ->setDefinition(array(
+            ->setDefinition([
                 new InputArgument('domain', InputArgument::REQUIRED, 'The domain revoke a certificate for'),
                 new InputArgument('reason-code', InputOption::VALUE_OPTIONAL, 'The reason code for revocation:' . PHP_EOL . $reasons),
                 new InputOption(
@@ -36,7 +36,7 @@ class RevokeCommand extends AbstractCommand
                     'Certificate provider to use (supported: ' . implode(', ', Application::PROVIDERS) . ')',
                     'letsencrypt',
                 ),
-            ))
+            ])
             ->setDescription('Revoke a SSL certificate for a domain')
             ->setHelp('The <info>%command.name%</info> command revoke a previously obtained certificate for a given domain');
     }

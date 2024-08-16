@@ -47,7 +47,7 @@ EOF,
         $certificateParser = $this->getContainer()->get('ssl.certificate_parser');
 
         $table = new Table($output);
-        $table->setHeaders(array('Domain', 'Issuer', 'Valid from', 'Valid to', 'Needs renewal?'));
+        $table->setHeaders(['Domain', 'Issuer', 'Valid from', 'Valid to', 'Needs renewal?']);
 
         $directories = $master->listContents('certs');
 
@@ -62,7 +62,7 @@ EOF,
             }
             $domainString = $parsedCertificate->getSubject();
 
-            $alternativeNames = array_diff($parsedCertificate->getSubjectAlternativeNames(), array($parsedCertificate->getSubject()));
+            $alternativeNames = array_diff($parsedCertificate->getSubjectAlternativeNames(), [$parsedCertificate->getSubject()]);
             if (\count($alternativeNames)) {
                 sort($alternativeNames);
                 $last = array_pop($alternativeNames);
@@ -72,13 +72,13 @@ EOF,
                 $domainString .= "\n └── " . $last;
             }
 
-            $table->addRow(array(
+            $table->addRow([
                 $domainString,
                 $parsedCertificate->getIssuer(),
                 $parsedCertificate->getValidFrom()->format('Y-m-d H:i:s'),
                 $parsedCertificate->getValidTo()->format('Y-m-d H:i:s'),
                 ($parsedCertificate->getValidTo()->format('U') - time() < 604800) ? '<comment>Yes</comment>' : 'No',
-            ));
+            ]);
         }
 
         $table->render();

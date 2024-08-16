@@ -63,7 +63,7 @@ class FilesystemSolverTest extends TestCase
 
         $solver = new FilesystemSolver($mockLocator->reveal(), $mockExtractor->reveal());
 
-        $solver->configure(array('adapter' => 'stub'));
+        $solver->configure(['adapter' => 'stub']);
         $solver->solve($stubChallenge->reveal());
     }
 
@@ -88,7 +88,7 @@ class FilesystemSolverTest extends TestCase
 
         $mockFlysystem->delete($checkPath)->shouldBeCalled();
 
-        $solver->configure(array('adapter' => 'stub'));
+        $solver->configure(['adapter' => 'stub']);
         $solver->cleanup($stubChallenge->reveal());
     }
 }

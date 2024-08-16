@@ -71,7 +71,7 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
 
     public function solve(AuthorizationChallenge $authorizationChallenge)
     {
-        return $this->solveAll(array($authorizationChallenge));
+        return $this->solveAll([$authorizationChallenge]);
     }
 
     public function solveAll(array $authorizationChallenges)
@@ -88,24 +88,24 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
             $this->client->request(
                 'PUT',
                 'https://dns.api.gandi.net/api/v5/domains/' . $topLevelDomain . '/records/' . $subDomain . '/TXT',
-                array(
-                    'headers' => array(
+                [
+                    'headers' => [
                         'X-Api-Key' => $this->apiKey,
-                    ),
-                    'json' => array(
+                    ],
+                    'json' => [
                         'rrset_type' => 'TXT',
                         'rrset_ttl' => 600,
                         'rrset_name' => $subDomain,
-                        'rrset_values' => array($recordValue),
-                    ),
-                ),
+                        'rrset_values' => [$recordValue],
+                    ],
+                ],
             );
         }
     }
 
     public function cleanup(AuthorizationChallenge $authorizationChallenge)
     {
-        return $this->cleanupAll(array($authorizationChallenge));
+        return $this->cleanupAll([$authorizationChallenge]);
     }
 
     public function cleanupAll(array $authorizationChallenges)
@@ -121,11 +121,11 @@ class GandiSolver implements MultipleChallengesSolverInterface, ConfigurableServ
             $this->client->request(
                 'DELETE',
                 'https://dns.api.gandi.net/api/v5/domains/' . $topLevelDomain . '/records/' . $subDomain . '/TXT',
-                array(
-                    'headers' => array(
+                [
+                    'headers' => [
                         'X-Api-Key' => $this->apiKey,
-                    ),
-                ),
+                    ],
+                ],
             );
         }
     }

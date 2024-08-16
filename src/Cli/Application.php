@@ -25,11 +25,11 @@ use Symfony\Component\Filesystem\Path;
  */
 class Application extends BaseApplication
 {
-    public const PROVIDERS = array(
+    public const PROVIDERS = [
         'letsencrypt' => 'https://acme-v02.api.letsencrypt.org/directory',
         'zerossl' => 'https://acme.zerossl.com/v2/DV90',
         'localhost' => 'https://localhost:14000/dir',
-    );
+    ];
 
     public function __construct()
     {

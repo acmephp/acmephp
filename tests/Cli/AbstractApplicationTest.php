@@ -43,10 +43,10 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
     public function testFullProcess()
     {
         $runTester = new CommandTester($this->application->find('run'));
-        $runTester->execute(array(
+        $runTester->execute([
             'command' => 'run',
             'config' => $this->getConfigDir() . '/' . ('eab' === getenv('PEBBLE_MODE') ? 'eab' : 'default') . '.yaml',
-        ));
+        ]);
 
         $output = $runTester->getDisplay();
 

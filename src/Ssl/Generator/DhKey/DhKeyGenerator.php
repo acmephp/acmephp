@@ -30,13 +30,13 @@ class DhKeyGenerator implements PrivateKeyGeneratorInterface
     {
         Assert::isInstanceOf($keyOption, DhKeyOption::class);
 
-        return $this->generatePrivateKeyFromOpensslOptions(array(
+        return $this->generatePrivateKeyFromOpensslOptions([
             'private_key_type' => OPENSSL_KEYTYPE_DH,
-            'dh' => array(
+            'dh' => [
                 'p' => $keyOption->getPrime(),
                 'g' => $keyOption->getGenerator(),
-            ),
-        ));
+            ],
+        ]);
     }
 
     public function supportsKeyOption(KeyOption $keyOption): bool

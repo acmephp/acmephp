@@ -20,7 +20,7 @@ abstract class AbstractFunctionnalTest extends TestCase
     protected function handleChallenge($token, $payload)
     {
         $fakeServer = new Client();
-        $response = $fakeServer->post('http://localhost:8055/add-http01', array(RequestOptions::JSON => array('token' => $token, 'content' => $payload)));
+        $response = $fakeServer->post('http://localhost:8055/add-http01', [RequestOptions::JSON => ['token' => $token, 'content' => $payload]]);
 
         $this->assertSame(200, $response->getStatusCode());
     }
@@ -28,7 +28,7 @@ abstract class AbstractFunctionnalTest extends TestCase
     protected function cleanChallenge($token)
     {
         $fakeServer = new Client();
-        $response = $fakeServer->post('http://localhost:8055/del-http01', array(RequestOptions::JSON => array('token' => $token)));
+        $response = $fakeServer->post('http://localhost:8055/del-http01', [RequestOptions::JSON => ['token' => $token]]);
 
         $this->assertSame(200, $response->getStatusCode());
     }

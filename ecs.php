@@ -9,4 +9,6 @@ return ECSConfig::configure()
     ->withRootFiles()
     ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
     ->withPhpCsFixerSets(perCS20: true)
+    ->withConfiguredRule(ArraySyntaxFixer::class, ['syntax' => 'short'])
+    ->withRules([ListSyntaxFixer::class])
 ;

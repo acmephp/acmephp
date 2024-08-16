@@ -87,7 +87,7 @@ class DomainConfiguration implements ConfigurationInterface
                     ->end()
                     ->validate()
                         ->ifTrue(function ($item) {
-                            return !\in_array($item, array('RSA', 'EC'));
+                            return !\in_array($item, ['RSA', 'EC']);
                         })
                         ->thenInvalid('The keyType %s is not valid. Supported types are: RSA, EC')
                     ->end()
@@ -115,7 +115,7 @@ class DomainConfiguration implements ConfigurationInterface
                     return isset($conf['solver']) && !\is_array($conf['solver']);
                 })
                 ->then(function ($conf) {
-                    $conf['solver'] = array('name' => $conf['solver']);
+                    $conf['solver'] = ['name' => $conf['solver']];
 
                     return $conf;
                 })
@@ -240,7 +240,7 @@ class DomainConfiguration implements ConfigurationInterface
                         return isset($conf['solver']) && !\is_array($conf['solver']);
                     })
                     ->then(function ($conf) {
-                        $conf['solver'] = array('name' => $conf['solver']);
+                        $conf['solver'] = ['name' => $conf['solver']];
 
                         return $conf;
                     })

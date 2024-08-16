@@ -59,20 +59,20 @@ class GandiSolverTest extends TestCase
         $mockClient->request(
             'PUT',
             'https://dns.api.gandi.net/api/v5/domains/bar.com/records/_acme-challenge.sub-domain/TXT',
-            array(
-                'headers' => array(
+            [
+                'headers' => [
                     'X-Api-Key' => 'stub',
-                ),
-                'json' => array(
+                ],
+                'json' => [
                     'rrset_type' => 'TXT',
                     'rrset_ttl' => 600,
                     'rrset_name' => '_acme-challenge.sub-domain',
-                    'rrset_values' => array('record_value'),
-                ),
-            ),
+                    'rrset_values' => ['record_value'],
+                ],
+            ],
         )->shouldBeCalled();
 
-        $solver->configure(array('api_key' => 'stub'));
+        $solver->configure(['api_key' => 'stub']);
         $solver->solve($stubChallenge->reveal());
     }
 
@@ -95,14 +95,14 @@ class GandiSolverTest extends TestCase
         $mockClient->request(
             'DELETE',
             'https://dns.api.gandi.net/api/v5/domains/bar.com/records/_acme-challenge.sub-domain/TXT',
-            array(
-                'headers' => array(
+            [
+                'headers' => [
                     'X-Api-Key' => 'stub',
-                ),
-            ),
+                ],
+            ],
         )->shouldBeCalled();
 
-        $solver->configure(array('api_key' => 'stub'));
+        $solver->configure(['api_key' => 'stub']);
         $solver->cleanup($stubChallenge->reveal());
     }
 }

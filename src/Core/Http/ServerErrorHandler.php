@@ -44,7 +44,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ServerErrorHandler
 {
-    private static $exceptions = array(
+    private static $exceptions = [
         'badCSR' => BadCsrServerException::class,
         'badNonce' => BadNonceServerException::class,
         'caa' => CaaServerException::class,
@@ -64,7 +64,7 @@ class ServerErrorHandler
         'unsupportedContact' => UnsupportedContactServerException::class,
         'unsupportedIdentifier' => UnsupportedIdentifierServerException::class,
         'userActionRequired' => UserActionRequiredServerException::class,
-    );
+    ];
 
     /**
      * Get a response summary (useful for exceptions).

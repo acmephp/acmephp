@@ -43,7 +43,7 @@ class CertificateParser
             throw new CertificateParsingException('Missing expected key "validTo_time_t" in certificate');
         }
 
-        $subjectAlternativeName = array();
+        $subjectAlternativeName = [];
 
         if (isset($rawData['extensions']['subjectAltName'])) {
             $subjectAlternativeName = array_map(

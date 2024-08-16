@@ -19,11 +19,11 @@ class SftpNginxProxyApplicationTest extends AbstractApplicationTest
 {
     protected function getFixturesDirectories(): array
     {
-        return array(
+        return [
             __DIR__ . '/../Cli/Fixtures/local/backup',
             __DIR__ . '/../Cli/Fixtures/local/master',
             __DIR__ . '/../Cli/Fixtures/sftp',
-        );
+        ];
     }
 
     protected function getConfigDir(): string

@@ -21,12 +21,12 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class PemNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    public function normalize($object, ?string $format = null, array $context = array())
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         return $object->getPEM();
     }
 
-    public function denormalize($data, $class, ?string $format = null, array $context = array())
+    public function denormalize($data, $class, ?string $format = null, array $context = [])
     {
         return new $class($data);
     }
@@ -43,9 +43,9 @@ class PemNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function getSupportedTypes(?string $format): array
     {
-        return array(
+        return [
             Certificate::class => true,
             Key::class => true,
-        );
+        ];
     }
 }

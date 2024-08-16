@@ -38,38 +38,38 @@ class Base64SafeEncoderTest extends TestCase
      */
     public function getTestVectors()
     {
-        return array(
-            array(
+        return [
+            [
                 '000000', 'MDAwMDAw',
-            ),
-            array(
+            ],
+            [
                 "\0\0\0\0", 'AAAAAA',
-            ),
-            array(
+            ],
+            [
                 "\xff", '_w',
-            ),
-            array(
+            ],
+            [
                 "\xff\xff", '__8',
-            ),
-            array(
+            ],
+            [
                 "\xff\xff\xff", '____',
-            ),
-            array(
+            ],
+            [
                 "\xff\xff\xff\xff", '_____w',
-            ),
-            array(
+            ],
+            [
                 "\xfb", '-w',
-            ),
-            array(
+            ],
+            [
                 '', '',
-            ),
-            array(
+            ],
+            [
                 'foo', 'Zm9v',
-            ),
-            array(
+            ],
+            [
                 'foobar', 'Zm9vYmFy',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -86,19 +86,19 @@ class Base64SafeEncoderTest extends TestCase
 
     public function getTestBadVectors()
     {
-        return array(
-            array(
+        return [
+            [
                 ' AA',
-            ),
-            array(
+            ],
+            [
                 "\tAA",
-            ),
-            array(
+            ],
+            [
                 "\rAA",
-            ),
-            array(
+            ],
+            [
                 "\nAA",
-            ),
-        );
+            ],
+        ];
     }
 }

@@ -46,7 +46,7 @@ class DnsValidatorTest extends TestCase
         $recordValue = 'record_value';
 
         $mockResolver = $this->prophesize(DnsResolverInterface::class);
-        $mockResolver->getTxtEntries($recordName)->willReturn(array($recordValue));
+        $mockResolver->getTxtEntries($recordName)->willReturn([$recordValue]);
         $mockExtractor = $this->prophesize(DnsDataExtractor::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 
@@ -64,7 +64,7 @@ class DnsValidatorTest extends TestCase
         $recordValue = 'record_value';
 
         $mockResolver = $this->prophesize(DnsResolverInterface::class);
-        $mockResolver->getTxtEntries($recordName)->willReturn(array('somethingElse'));
+        $mockResolver->getTxtEntries($recordName)->willReturn(['somethingElse']);
         $mockExtractor = $this->prophesize(DnsDataExtractor::class);
         $stubChallenge = $this->prophesize(AuthorizationChallenge::class);
 

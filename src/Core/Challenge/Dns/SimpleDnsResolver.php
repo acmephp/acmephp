@@ -31,7 +31,7 @@ class SimpleDnsResolver implements DnsResolverInterface
      */
     public function getTxtEntries($domain): array
     {
-        $entries = array();
+        $entries = [];
         foreach (dns_get_record($domain, DNS_TXT) as $record) {
             $entries = array_merge($entries, $record['entries']);
         }
