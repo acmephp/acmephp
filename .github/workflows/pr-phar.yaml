@@ -20,6 +20,7 @@ jobs:
         - name: Build PHAR
           run: box compile
         - uses: actions/upload-artifact@v4
+          id: artifact-upload
           with:
             name: amcephp.phar
             path: build/acmephp.phar
@@ -28,4 +29,4 @@ jobs:
         - uses: mshick/add-pr-comment@v2
           with:
             message: |
-              We have created a phar file for testing, find it here: ${{ steps.artifact-upload-step.outputs.artifact-url }}
+              We have created a phar file for testing, find it here: ${{ steps.artifact-upload.outputs.artifact-url }}

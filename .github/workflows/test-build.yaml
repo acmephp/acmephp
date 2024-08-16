@@ -7,30 +7,6 @@ on:
             - master
 
 jobs:
-    create_phar:
-      name: Create phar
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-        - name: Setup PHP
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: '8.3'
-            tools: box
-        - uses: ramsey/composer-install@v3
-        - name: Build PHAR
-          run: box compile
-        - uses: actions/upload-artifact@v4
-          with:
-            name: amcephp.phar
-            path: build/acmephp.phar
-            if-no-files-found: error
-            overwrite: true
-        - name: Output artifact ID
-          run:  echo 'Artifact ID is ${{ steps.artifact-upload-step.outputs.artifact-id }}'
-
     php-cs:
         name: PHP-CS-Fixer
         runs-on: ubuntu-latest
