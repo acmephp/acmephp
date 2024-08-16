@@ -15,6 +15,7 @@ use AcmePhp\Core\Exception\AcmeCoreException;
 use AcmePhp\Core\Http\Base64SafeEncoder;
 use AcmePhp\Core\Http\SecureHttpClient;
 use AcmePhp\Core\Http\ServerErrorHandler;
+use AcmePhp\Core\Protocol\ExternalAccount;
 use AcmePhp\Ssl\Generator\KeyPairGenerator;
 use AcmePhp\Ssl\Parser\KeyParser;
 use AcmePhp\Ssl\Signer\DataSigner;
@@ -142,6 +143,27 @@ class SecureHttpClientTest extends TestCase
         $client->request('GET', '/foo', array('foo' => 'bar'), true);
     }
 
+    public function testCreateExternalAccountPayload(): void
+    {
+        $client = new SecureHttpClient(
+            (new KeyPairGenerator())->generateKeyPair(),
+            new Client(),
+            new Base64SafeEncoder(),
+            new KeyParser(),
+            new DataSigner(),
+            new ServerErrorHandler(),
+        );
+
+        $payload = $client->createExternalAccountPayload(new ExternalAccount('id', str_repeat('hmacKey', '100')), 'bar');
+
+        $this->assertArrayHasKey('protected', $payload);
+        $this->assertSame('eyJhbGciOiJIUzI1NiIsImtpZCI6ImlkIiwidXJsIjoiYmFyIn0', $payload['protected']);
+        $this->assertArrayHasKey('payload', $payload);
+        $this->assertStringStartsWith('ey', $payload['payload']);
+        $this->assertArrayHasKey('signature', $payload);
+        $this->assertNotEmpty($payload['signature']);
+    }
+
     public function testRequestPayload()
     {
         $container = array();
@@ -177,8 +199,7 @@ class SecureHttpClientTest extends TestCase
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals('/acme/new-reg', ($request->getUri() instanceof Uri) ? $request->getUri()->getPath() : $request->getUri());
 
-        $body = \GuzzleHttp\Psr7\copy_to_string($request->getBody());
-        $payload = @json_decode($body, true);
+        $payload = json_decode($request->getBody()->getContents(), true, JSON_THROW_ON_ERROR);
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('protected', $payload);

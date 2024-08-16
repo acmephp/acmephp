@@ -162,11 +162,11 @@ class SecureHttpClient
     {
         $signer = new Sha256();
 
-        $protected = array(
-            'alg' => method_exists($signer, 'algorithmId') ? $signer->algorithmId() : $signer->getAlgorithmId(),
+        $protected = [
+            'alg' => $signer->algorithmId(),
             'kid' => $externalAccount->getId(),
             'url' => $url,
-        );
+        ];
 
         $encodedProtected = $this->base64Encoder->encode(json_encode($protected, JSON_UNESCAPED_SLASHES));
         $encodedPayload = $this->base64Encoder->encode(json_encode($this->getJWK(), JSON_UNESCAPED_SLASHES));

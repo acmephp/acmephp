@@ -5,8 +5,26 @@
 > [!NOTE]
 > From now on, a particular attention will be given to provide a nice changelog.
 
-* Drop support for PHP <8.1
+### Features
+
+* Add support for lcobucci/jwt ^5.3
+* Add support for guzzlehttp/psr7 ^2.4
+
+### BC Break
+
+* Drop support for PHP <8.3
 * Drop support for Symfony <5.4, and 6.0, 6.1, 6.2, 6.3
+* Drop support for lcobucci/jwt < 5.3
+* Drop support for guzzlehttp/psr7 < 2
+* Upgrade from FlySystem v1 to v3
+
+### Internal
+
+* Analyse code with PHPStan
+
+### Internal
+
+* Analyse code with PHPStan
 
 ## 07/06/2022 22:41  2.1.0  Add compatibility for PHP 8.0/8.1, Symfony 6 and other improvements
 
