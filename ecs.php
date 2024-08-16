@@ -6,13 +6,7 @@ use PhpCsFixer\Fixer\ListNotation\ListSyntaxFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
 return ECSConfig::configure()
+    ->withRootFiles()
     ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
-    ->withConfiguredRule(
-        ArraySyntaxFixer::class,
-        ['syntax' => 'long']
-    )
-    ->withRules([
-        ListSyntaxFixer::class,
-    ])
     ->withPhpCsFixerSets(perCS20: true)
 ;
