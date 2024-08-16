@@ -28,6 +28,8 @@ jobs:
             path: build/acmephp.phar
             if-no-files-found: error
             overwrite: true
+        - name: Output artifact ID
+          run:  echo 'Artifact ID is ${{ steps.artifact-upload-step.outputs.artifact-id }}'
 
     php-cs:
         name: PHP-CS-Fixer
