@@ -17,10 +17,8 @@
 * Drop support for lcobucci/jwt < 5.3
 * Drop support for guzzlehttp/psr7 < 2
 * Upgrade from FlySystem v1 to v3
-
-### Internal
-
-* Analyse code with PHPStan
+* Drop support for monolog ^1
+* Drop support for psr/log ^1
 
 ### Internal
 

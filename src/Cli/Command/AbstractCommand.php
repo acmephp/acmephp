@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @author Titouan Galopin <galopintitouan@gmail.com>
  */
-abstract class AbstractCommand extends Command implements LoggerInterface
+abstract class AbstractCommand extends Command
 {
     /**
      * @var InputInterface
@@ -133,46 +133,46 @@ abstract class AbstractCommand extends Command implements LoggerInterface
 
     public function emergency($message, array $context = [])
     {
-        return $this->getCliLogger()->emergency($message, $context);
+        $this->getCliLogger()->emergency($message, $context);
     }
 
     public function alert($message, array $context = [])
     {
-        return $this->getCliLogger()->alert($message, $context);
+        $this->getCliLogger()->alert($message, $context);
     }
 
     public function critical($message, array $context = [])
     {
-        return $this->getCliLogger()->critical($message, $context);
+        $this->getCliLogger()->critical($message, $context);
     }
 
     public function error($message, array $context = [])
     {
-        return $this->getCliLogger()->error($message, $context);
+        $this->getCliLogger()->error($message, $context);
     }
 
     public function warning($message, array $context = [])
     {
-        return $this->getCliLogger()->warning($message, $context);
+        $this->getCliLogger()->warning($message, $context);
     }
 
     public function notice($message, array $context = [])
     {
-        return $this->getCliLogger()->notice($message, $context);
+        $this->getCliLogger()->notice($message, $context);
     }
 
     public function info($message, array $context = [])
     {
-        return $this->getCliLogger()->info($message, $context);
+        $this->getCliLogger()->info($message, $context);
     }
 
     public function debug($message, array $context = [])
     {
-        return $this->getCliLogger()->debug($message, $context);
+        $this->getCliLogger()->debug($message, $context);
     }
 
     public function log($level, $message, array $context = [])
     {
-        return $this->getCliLogger()->log($level, $message, $context);
+        $this->getCliLogger()->log($level, $message, $context);
     }
 }

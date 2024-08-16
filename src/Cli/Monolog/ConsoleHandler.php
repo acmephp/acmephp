@@ -13,7 +13,8 @@ namespace AcmePhp\Cli\Monolog;
 
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
+use Monolog\Level;
+use Monolog\LogRecord;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -28,19 +29,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConsoleHandler extends AbstractProcessingHandler
 {
     /**
-     * @var OutputInterface|null
+     * @var array<int, Level>
      */
-    private $output;
-
-    /**
-     * @var array
-     */
-    private $verbosityLevelMap = [
-        OutputInterface::VERBOSITY_QUIET => Logger::ERROR,
-        OutputInterface::VERBOSITY_NORMAL => Logger::INFO,
-        OutputInterface::VERBOSITY_VERBOSE => Logger::INFO,
-        OutputInterface::VERBOSITY_VERY_VERBOSE => Logger::INFO,
-        OutputInterface::VERBOSITY_DEBUG => Logger::DEBUG,
+    private array $verbosityLevelMap = [
+        OutputInterface::VERBOSITY_QUIET => Level::Error,
+        OutputInterface::VERBOSITY_NORMAL => Level::Info,
+        OutputInterface::VERBOSITY_VERBOSE => Level::Info,
+        OutputInterface::VERBOSITY_VERY_VERBOSE => Level::Info,
+        OutputInterface::VERBOSITY_DEBUG => Level::Info,
     ];
 
     /**
@@ -52,23 +48,21 @@ class ConsoleHandler extends AbstractProcessingHandler
      * @param array                $verbosityLevelMap Array that maps the OutputInterface verbosity to a minimum logging
      *                                                level (leave empty to use the default mapping)
      */
-    public function __construct(?OutputInterface $output = null, bool $bubble = true, array $verbosityLevelMap = [])
+    public function __construct(private ?OutputInterface $output = null, bool $bubble = true, array $verbosityLevelMap = [])
     {
-        parent::__construct(Logger::DEBUG, $bubble);
+        parent::__construct(Level::Debug, $bubble);
 
-        $this->output = $output;
-
-        if ($verbosityLevelMap) {
+        if ([] !== $verbosityLevelMap) {
             $this->verbosityLevelMap = $verbosityLevelMap;
         }
     }
 
-    public function isHandling(array $record): bool
+    public function isHandling(LogRecord $record): bool
     {
         return $this->updateLevel() && parent::isHandling($record);
     }
 
-    public function handle(array $record): bool
+    public function handle(LogRecord $record): bool
     {
         // we have to update the logging level each time because the verbosity of the
         // console output might have changed in the meantime (it is not immutable)
@@ -80,7 +74,7 @@ class ConsoleHandler extends AbstractProcessingHandler
      *
      * @param OutputInterface $output The console output to use
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
@@ -95,7 +89,7 @@ class ConsoleHandler extends AbstractProcessingHandler
         parent::close();
     }
 
-    protected function write(array $record): void
+    protected function write(LogRecord|array $record): void
     {
         $this->output->write((string) $record['formatted']);
     }
@@ -113,7 +107,7 @@ class ConsoleHandler extends AbstractProcessingHandler
      *
      * @return bool Whether the handler is enabled and verbosity is not set to quiet
      */
-    private function updateLevel()
+    private function updateLevel(): bool
     {
         if (null === $this->output) {
             return false;
@@ -123,7 +117,7 @@ class ConsoleHandler extends AbstractProcessingHandler
         if (isset($this->verbosityLevelMap[$verbosity])) {
             $this->setLevel($this->verbosityLevelMap[$verbosity]);
         } else {
-            $this->setLevel(Logger::DEBUG);
+            $this->setLevel(Level::Debug);
         }
 
         return true;

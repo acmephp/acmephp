@@ -43,12 +43,19 @@ abstract class AbstractApplicationTest extends AbstractFunctionnalTest
     public function testFullProcess()
     {
         $runTester = new CommandTester($this->application->find('run'));
-        $runTester->execute([
-            'command' => 'run',
-            'config' => $this->getConfigDir().'/'.('eab' === getenv('PEBBLE_MODE') ? 'eab' : 'default').'.yaml',
-        ]);
+        $runTester->execute(
+            [
+                'command' => 'run',
+                'config' => $this->getConfigDir().'/'.('eab' === getenv('PEBBLE_MODE') ? 'eab' : 'default').'.yaml',
+            ],
+            [
+                'decorated' => true,
+            ]
+        );
 
         $output = $runTester->getDisplay();
+
+        $this->assertStringContainsString("\e[32mLoading account key pair...  \e[39m", $output);
 
         // Register
         $this->assertStringContainsString('No account key pair was found, generating one', $output);
