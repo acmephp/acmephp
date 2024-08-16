@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -38,7 +40,7 @@ class DnsValidator implements ValidatorInterface
         $this->extractor = $extractor ?: new DnsDataExtractor();
 
         $this->dnsResolver = $dnsResolver;
-        if (!$this->dnsResolver) {
+        if (! $this->dnsResolver) {
             $this->dnsResolver = LibDnsResolver::isSupported() ? new LibDnsResolver() : new SimpleDnsResolver();
         }
     }

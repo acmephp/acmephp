@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -79,7 +81,7 @@ class FilesystemAction extends AbstractAction
     {
         $storageContent = $this->storage->read($path);
 
-        if (!\is_string($storageContent)) {
+        if (! \is_string($storageContent)) {
             throw new \RuntimeException(sprintf('File %s could not be read on storage storage', $path));
         }
 

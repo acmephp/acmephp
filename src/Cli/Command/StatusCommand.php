@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -57,7 +59,7 @@ EOF,
             }
 
             $parsedCertificate = $certificateParser->parse($repository->loadDomainCertificate($directory['basename']));
-            if (!$input->getOption('all') && $parsedCertificate->isExpired()) {
+            if (! $input->getOption('all') && $parsedCertificate->isExpired()) {
                 continue;
             }
             $domainString = $parsedCertificate->getSubject();

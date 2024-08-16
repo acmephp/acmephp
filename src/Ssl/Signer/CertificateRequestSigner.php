@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -29,7 +31,7 @@ class CertificateRequestSigner
     {
         $csrObject = $this->createCsrWithSANsObject($certificateRequest);
 
-        if (!$csrObject || !openssl_csr_export($csrObject, $csrExport)) {
+        if (! $csrObject || ! openssl_csr_export($csrObject, $csrExport)) {
             throw new CSRSigningException(sprintf('OpenSSL CSR signing failed with error: %s', openssl_error_string()));
         }
 
@@ -87,7 +89,7 @@ EOL;
                 openssl_free_key($resource);
             }
 
-            if (!$csr) {
+            if (! $csr) {
                 throw new CSRSigningException(sprintf('OpenSSL CSR signing failed with error: %s', openssl_error_string()));
             }
 

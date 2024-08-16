@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -21,10 +23,10 @@ trait OpensslPrivateKeyGeneratorTrait
     {
         $resource = openssl_pkey_new($opensslOptions);
 
-        if (!$resource) {
+        if (! $resource) {
             throw new KeyGenerationException(sprintf('OpenSSL key creation failed during generation with error: %s', openssl_error_string()));
         }
-        if (!openssl_pkey_export($resource, $privateKey)) {
+        if (! openssl_pkey_export($resource, $privateKey)) {
             throw new KeyPairGenerationException(sprintf('OpenSSL key export failed during generation with error: %s', openssl_error_string()));
         }
 

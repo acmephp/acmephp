@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -41,7 +43,7 @@ abstract class Key
         unset($lines[\count($lines) - 1]);
         unset($lines[0]);
         $result = implode('', $lines);
-        $result = base64_decode($result);
+        $result = base64_decode($result, true);
 
         return $result;
     }

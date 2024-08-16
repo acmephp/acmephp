@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -65,7 +67,7 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $this->debug('Creating Acme client');
         $this->notice('Loading account key pair...');
 
-        if (!$this->getRepository()->hasAccountKeyPair()) {
+        if (! $this->getRepository()->hasAccountKeyPair()) {
             throw new CommandFlowException('register in ACME servers', 'register');
         }
         $accountKeyPair = $this->getRepository()->loadAccountKeyPair();
@@ -107,14 +109,14 @@ abstract class AbstractCommand extends Command implements LoggerInterface
         $loader->load('services.xml');
 
         foreach ($this->container->findTaggedServiceIds('acmephp.service_locator') as $locatorId => $locatorTags) {
-            if (!isset($locatorTags[0]['tag'])) {
+            if (! isset($locatorTags[0]['tag'])) {
                 throw new \InvalidArgumentException(sprintf('The tagged service "%s" must define have an alias', $locatorId));
             }
             $locatorTags = $locatorTags[0]['tag'];
             $factories = [];
             foreach ($this->container->findTaggedServiceIds($locatorTags) as $serviceId => $tags) {
                 foreach ($tags as $tag) {
-                    if (!isset($tag['alias'])) {
+                    if (! isset($tag['alias'])) {
                         throw new \InvalidArgumentException(sprintf('The tagged service "%s" must define have an alias', $serviceId));
                     }
 

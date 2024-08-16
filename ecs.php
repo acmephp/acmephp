@@ -8,7 +8,8 @@ use Symplify\EasyCodingStandard\Config\ECSConfig;
 return ECSConfig::configure()
     ->withRootFiles()
     ->withPaths([__DIR__ . '/src', __DIR__ . '/tests'])
-    ->withPhpCsFixerSets(perCS20: true)
     ->withConfiguredRule(ArraySyntaxFixer::class, ['syntax' => 'short'])
+    ->withPreparedSets(psr12: true, spaces: true, strict: true)
+    ->withPhpCsFixerSets(perCS20: true)
     ->withRules([ListSyntaxFixer::class])
 ;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -38,12 +40,12 @@ class KeyParser
             openssl_free_key($resource);
         }
 
-        if (!\is_array($rawData)) {
+        if (! \is_array($rawData)) {
             throw new KeyParsingException(sprintf('Fail to parse key with error: %s', openssl_error_string()));
         }
 
         foreach (['type', 'key', 'bits'] as $requiredKey) {
-            if (!isset($rawData[$requiredKey])) {
+            if (! isset($rawData[$requiredKey])) {
                 throw new KeyParsingException(sprintf('Missing expected key "%s" in OpenSSL key', $requiredKey));
             }
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -67,7 +69,7 @@ class SecureHttpClientTest extends TestCase
         $this->assertArrayHasKey('protected', $payload);
         $this->assertArrayHasKey('payload', $payload);
         $this->assertArrayHasKey('signature', $payload);
-        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload']));
+        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload'], true));
     }
 
     public function testSignKidPayloadWithEmptyPayload()
@@ -77,7 +79,7 @@ class SecureHttpClientTest extends TestCase
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('{}', \base64_decode($payload['payload']));
+        $this->assertSame('{}', \base64_decode($payload['payload'], true));
     }
 
     public function testSignKidPayloadWithNullPayload()
@@ -87,7 +89,7 @@ class SecureHttpClientTest extends TestCase
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('', \base64_decode($payload['payload']));
+        $this->assertSame('', \base64_decode($payload['payload'], true));
     }
 
     public function testSignJwkPayload()
@@ -99,7 +101,7 @@ class SecureHttpClientTest extends TestCase
         $this->assertArrayHasKey('protected', $payload);
         $this->assertArrayHasKey('payload', $payload);
         $this->assertArrayHasKey('signature', $payload);
-        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload']));
+        $this->assertSame('{"foo":"bar"}', \base64_decode($payload['payload'], true));
     }
 
     public function testSignJwkPayloadWithEmptyPayload()
@@ -109,7 +111,7 @@ class SecureHttpClientTest extends TestCase
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('{}', \base64_decode($payload['payload']));
+        $this->assertSame('{}', \base64_decode($payload['payload'], true));
     }
 
     public function testSignJwkPayloadWithNullPayload()
@@ -119,7 +121,7 @@ class SecureHttpClientTest extends TestCase
 
         $this->assertIsArray($payload);
         $this->assertArrayHasKey('payload', $payload);
-        $this->assertSame('', \base64_decode($payload['payload']));
+        $this->assertSame('', \base64_decode($payload['payload'], true));
     }
 
     public function testValidStringRequest()

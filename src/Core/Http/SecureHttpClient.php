@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -198,7 +200,7 @@ class SecureHttpClient
         $response = $this->rawRequest($method, $endpoint, $data, $returnJson);
         $body = Utils::copyToString($response->getBody());
 
-        if (!$returnJson) {
+        if (! $returnJson) {
             return $body;
         }
 
@@ -294,7 +296,7 @@ class SecureHttpClient
      */
     private function signPayload(array $protected, ?array $payload = null): array
     {
-        if (!isset($protected['alg'])) {
+        if (! isset($protected['alg'])) {
             throw new \InvalidArgumentException('The property "alg" is required in the protected array');
         }
 
@@ -396,11 +398,11 @@ class SecureHttpClient
 
     private function extractSignOptionFromJWSAlg($alg): array
     {
-        if (!preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
+        if (! preg_match('/^([A-Z]+)(\d+)$/', $alg, $match)) {
             throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
         }
 
-        if (!\defined('OPENSSL_ALGO_SHA' . $match[2])) {
+        if (! \defined('OPENSSL_ALGO_SHA' . $match[2])) {
             throw new AcmeCoreClientException(sprintf('The given "%s" algorithm is not supported', $alg));
         }
 

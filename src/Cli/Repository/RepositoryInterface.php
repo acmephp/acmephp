@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -25,6 +27,7 @@ use AcmePhp\Ssl\KeyPair;
 interface RepositoryInterface
 {
     public const VISIBILITY_PUBLIC = 'public';
+
     public const VISIBILITY_PRIVATE = 'private';
 
     /**

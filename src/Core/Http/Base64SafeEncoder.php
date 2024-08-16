@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -32,6 +34,6 @@ class Base64SafeEncoder
             $input .= str_repeat('=', $padlen);
         }
 
-        return base64_decode(strtr($input, '-_', '+/'));
+        return base64_decode(strtr($input, '-_', '+/'), true);
     }
 }

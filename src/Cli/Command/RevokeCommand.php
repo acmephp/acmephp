@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -43,7 +45,7 @@ class RevokeCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!isset(Application::PROVIDERS[$this->input->getOption('provider')])) {
+        if (! isset(Application::PROVIDERS[$this->input->getOption('provider')])) {
             throw new \InvalidArgumentException('Invalid provider, supported: ' . implode(', ', Application::PROVIDERS));
         }
 
@@ -61,7 +63,7 @@ class RevokeCommand extends AbstractCommand
             return;
         }
 
-        if (!$repository->hasDomainCertificate($domain)) {
+        if (! $repository->hasDomainCertificate($domain)) {
             $this->error('Certificate for ' . $domain . ' not found locally');
 
             return;

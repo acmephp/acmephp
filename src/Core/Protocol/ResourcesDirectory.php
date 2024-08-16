@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -21,8 +23,11 @@ use Webmozart\Assert\Assert;
 class ResourcesDirectory
 {
     public const NEW_ACCOUNT = 'newAccount';
+
     public const NEW_ORDER = 'newOrder';
+
     public const NEW_NONCE = 'newNonce';
+
     public const REVOKE_CERT = 'revokeCert';
 
     /** @var array */

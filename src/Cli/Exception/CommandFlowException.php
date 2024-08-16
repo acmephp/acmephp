@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -17,7 +19,9 @@ namespace AcmePhp\Cli\Exception;
 class CommandFlowException extends AcmeCliException
 {
     private $missing;
+
     private $command;
+
     private $arguments;
 
     /**

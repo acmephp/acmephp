@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -40,7 +42,7 @@ abstract class AbstractAwsAction extends AbstractAction
         $loadBalancerName = $config['loadbalancer'];
         $loadBalancerPort = empty($config['listener']) ? 443 : $config['listener'];
         $certificatePrefix = empty($config['certificate_prefix']) ? 'acmephp_' : $config['certificate_prefix'];
-        $cleanup = !isset($config['cleanup_old_certificate']) ? true : (bool) $config['cleanup_old_certificate'];
+        $cleanup = ! isset($config['cleanup_old_certificate']) ? true : (bool) $config['cleanup_old_certificate'];
         $certificateName = $certificatePrefix . date('Ymd-His');
 
         $certificateArn = $this->uploadCertificate($response, $region, $certificateName);

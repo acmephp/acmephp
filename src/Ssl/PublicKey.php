@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -23,7 +25,7 @@ class PublicKey extends Key
 {
     public function getResource()
     {
-        if (!$resource = openssl_pkey_get_public($this->keyPEM)) {
+        if (! $resource = openssl_pkey_get_public($this->keyPEM)) {
             throw new KeyFormatException(sprintf('Failed to convert key into resource: %s', openssl_error_string()));
         }
 

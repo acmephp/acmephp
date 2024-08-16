@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -181,7 +183,7 @@ class LibDnsResolver implements DnsResolverInterface
 
         $r = [$socket];
         $w = $e = [];
-        if (!stream_select($r, $w, $e, 3)) {
+        if (! stream_select($r, $w, $e, 3)) {
             throw new AcmeDnsResolutionException(sprintf('Timeout reached when requesting ServerName %s', $nameServer));
         }
 

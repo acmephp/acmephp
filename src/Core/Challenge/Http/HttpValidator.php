@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -42,7 +44,7 @@ class HttpValidator implements ValidatorInterface
 
     public function supports(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool
     {
-        return 'http-01' === $authorizationChallenge->getType() && !$solver instanceof MockServerHttpSolver;
+        return 'http-01' === $authorizationChallenge->getType() && ! $solver instanceof MockServerHttpSolver;
     }
 
     public function isValid(AuthorizationChallenge $authorizationChallenge, SolverInterface $solver): bool

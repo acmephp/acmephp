@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -119,7 +121,7 @@ class RunCommand extends AbstractCommand
         );
 
         $repository = $this->getRepository();
-        if (!$repository->hasAccountKeyPair()) {
+        if (! $repository->hasAccountKeyPair()) {
             $this->output->writeln('<info>No account key pair was found, generating one...</info>');
 
             /** @var KeyPair $accountKeyPair */
@@ -157,7 +159,7 @@ class RunCommand extends AbstractCommand
                         ->getContents(),
                 );
 
-                if (!isset($eabCredentials->success) || !$eabCredentials->success) {
+                if (! isset($eabCredentials->success) || ! $eabCredentials->success) {
                     throw new AcmeCliException('ZeroSSL External account Binding failed: are you sure your API key is valid?');
                 }
 
@@ -174,7 +176,7 @@ class RunCommand extends AbstractCommand
                     ->getContents(),
             );
 
-            if (!isset($eabCredentials->success) || !$eabCredentials->success) {
+            if (! isset($eabCredentials->success) || ! $eabCredentials->success) {
                 throw new AcmeCliException('ZeroSSL External account Binding failed: registering your email failed.');
             }
 
@@ -210,7 +212,7 @@ class RunCommand extends AbstractCommand
     {
         $repository = $this->getRepository();
 
-        if (!$repository->hasDomainDistinguishedName($domain)) {
+        if (! $repository->hasDomainDistinguishedName($domain)) {
             return false;
         }
 
@@ -227,7 +229,7 @@ class RunCommand extends AbstractCommand
             return false;
         }
 
-        if (!$repository->hasDomainCertificate($domain)) {
+        if (! $repository->hasDomainCertificate($domain)) {
             return false;
         }
 
@@ -339,7 +341,7 @@ class RunCommand extends AbstractCommand
             }
 
             $this->output->writeln(sprintf('<info>Testing the challenge for domain %s...</info>', $domain));
-            if (time() - $startTestTime > 180 || !$validator->isValid($authorizationChallenge, $solver)) {
+            if (time() - $startTestTime > 180 || ! $validator->isValid($authorizationChallenge, $solver)) {
                 $this->output->writeln(sprintf('<info>Can not self validate challenge for domain %s. Maybe letsencrypt will be able to do it...</info>', $domain));
             }
 
@@ -368,11 +370,11 @@ class RunCommand extends AbstractCommand
 
     private function loadConfig($configFile)
     {
-        if (!file_exists($configFile)) {
+        if (! file_exists($configFile)) {
             throw new IOException('Configuration file ' . $configFile . ' does not exists.');
         }
 
-        if (!is_readable($configFile)) {
+        if (! is_readable($configFile)) {
             throw new IOException('Configuration file ' . $configFile . ' is not readable.');
         }
 

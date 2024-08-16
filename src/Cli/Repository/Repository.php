@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -31,17 +33,25 @@ use Symfony\Component\Serializer\SerializerInterface;
 class Repository implements RepositoryInterface
 {
     public const PATH_ACCOUNT_KEY_PRIVATE = 'account/key.private.pem';
+
     public const PATH_ACCOUNT_KEY_PUBLIC = 'account/key.public.pem';
 
     public const PATH_DOMAIN_KEY_PUBLIC = 'certs/{domain}/private/key.public.pem';
+
     public const PATH_DOMAIN_KEY_PRIVATE = 'certs/{domain}/private/key.private.pem';
+
     public const PATH_DOMAIN_CERT_CERT = 'certs/{domain}/public/cert.pem';
+
     public const PATH_DOMAIN_CERT_CHAIN = 'certs/{domain}/public/chain.pem';
+
     public const PATH_DOMAIN_CERT_FULLCHAIN = 'certs/{domain}/public/fullchain.pem';
+
     public const PATH_DOMAIN_CERT_COMBINED = 'certs/{domain}/private/combined.pem';
 
     public const PATH_CACHE_AUTHORIZATION_CHALLENGE = 'var/{domain}/authorization_challenge.json';
+
     public const PATH_CACHE_DISTINGUISHED_NAME = 'var/{domain}/distinguished_name.json';
+
     public const PATH_CACHE_CERTIFICATE_ORDER = 'var/{domains}/certificate_order.json';
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -26,20 +28,20 @@ class CertificateParser
     {
         $rawData = openssl_x509_parse($certificate->getPEM());
 
-        if (!\is_array($rawData)) {
+        if (! \is_array($rawData)) {
             throw new CertificateParsingException(sprintf('Fail to parse certificate with error: %s', openssl_error_string()));
         }
 
-        if (!isset($rawData['subject']['CN'])) {
+        if (! isset($rawData['subject']['CN'])) {
             throw new CertificateParsingException('Missing expected key "subject.cn" in certificate');
         }
-        if (!isset($rawData['serialNumber'])) {
+        if (! isset($rawData['serialNumber'])) {
             throw new CertificateParsingException('Missing expected key "serialNumber" in certificate');
         }
-        if (!isset($rawData['validFrom_time_t'])) {
+        if (! isset($rawData['validFrom_time_t'])) {
             throw new CertificateParsingException('Missing expected key "validFrom_time_t" in certificate');
         }
-        if (!isset($rawData['validTo_time_t'])) {
+        if (! isset($rawData['validTo_time_t'])) {
             throw new CertificateParsingException('Missing expected key "validTo_time_t" in certificate');
         }
 

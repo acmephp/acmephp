@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -131,7 +133,7 @@ iGK6mZDSwgi3zAKkSK5jaRqPtztIwcHLPXLIiSKI6Dc3IuGYU1lf1n9RWPi39EdV
 khMBuAxgunyQC+UcviTry1OlOI95e/bZNgVvyTyg4/TbFyn1+1QLNeMtqJE5n5GJ
 jIsyJPXjdAhzAparBWwYzxywy+8PMA==';
 
-        $privateKey = PrivateKey::fromDER(base64_decode($derb64));
+        $privateKey = PrivateKey::fromDER(base64_decode($derb64, true));
 
         $this->assertInstanceOf(PrivateKey::class, $privateKey);
         $this->assertEquals('a6dcb8eaae257961d2ee888899f087ef', md5($privateKey->getPEM()));

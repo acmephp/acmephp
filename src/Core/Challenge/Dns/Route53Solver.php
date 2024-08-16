@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -172,7 +174,7 @@ class Route53Solver implements MultipleChallengesSolverInterface
             }
             // Set default value
             foreach ($previousTxt as $recordValue) {
-                if (!isset($recordIndex[$recordValue])) {
+                if (! isset($recordIndex[$recordValue])) {
                     $recordIndex[$recordValue] = time();
                 }
             }

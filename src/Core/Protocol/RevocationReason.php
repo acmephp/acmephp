@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Acme PHP project.
  *
@@ -19,10 +21,15 @@ use Webmozart\Assert\Assert;
 class RevocationReason
 {
     public const DEFAULT_REASON = self::REASON_UNSPECIFIED;
+
     public const REASON_UNSPECIFIED = 0;
+
     public const REASON_KEY_COMPROMISE = 1;
+
     public const REASON_AFFILLIATION_CHANGED = 3;
+
     public const REASON_SUPERCEDED = 4;
+
     public const REASON_CESSATION_OF_OPERATION = 5;
 
     /** @var int|null */
