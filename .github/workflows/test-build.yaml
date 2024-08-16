@@ -1,115 +1,115 @@
 name: Test and build
 
 on:
-    pull_request: ~
-    push:
-        branches:
-            - master
+  pull_request: ~
+  push:
+    branches:
+      - master
 
 jobs:
-    cs:
-      name: Check code style
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - name: Setup PHP with PECL extension
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: '8.3'
-        - uses: ramsey/composer-install@v3
-        - name: Initialize cache
-          uses: actions/cache@v4
-          with:
-            key: ecs
-            path: .ecs-cache
-        - run: vendor/bin/ecs
-    test_docker_build:
-      name: Build container
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-        - name: Setup PHP
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: '8.3'
-            tools: box
-        - uses: ramsey/composer-install@v3
-        - name: Build PHAR
-          run: box compile
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3.3.0
-        - name: Login to GitHub Container Registry
-          uses: docker/login-action@v3
-          with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
-        - name: Build and push
-          uses: docker/build-push-action@v6.0.0
-          with:
-            context: build/
-            file: Dockerfile
-            push: false
-            load: true
-            tags: ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}
-        - name: Confirm that we can run ACME php via docker
-          run: docker run --rm ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}
-    phpstan:
-      name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
-      runs-on: ubuntu-latest
-      steps:
-        - uses: shivammathur/setup-php@v2
-          with:
-              php-version: '8.3'
+  cs:
+    name: Check code style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+      - uses: ramsey/composer-install@v3
+      - name: Initialize cache
+        uses: actions/cache@v4
+        with:
+          key: ecs
+          path: .ecs-cache
+      - run: vendor/bin/ecs
+  test_docker_build:
+    name: Build container
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: box
+      - uses: ramsey/composer-install@v3
+      - name: Build PHAR
+        run: box compile
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.3.0
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6.0.0
+        with:
+          context: build/
+          file: Dockerfile
+          push: false
+          load: true
+          tags: ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}
+      - name: Confirm that we can run ACME php via docker
+        run: docker run --rm ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}
+  phpstan:
+    name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
 
-        - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-        - name: Install Composer dependencies
-          run: |
-              composer update --prefer-dist --no-interaction
+      - name: Install Composer dependencies
+        run: |
+          composer update --prefer-dist --no-interaction
 
-        - name: Run PHPStan
-          run: vendor/bin/phpstan analyse
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse
 
-    ci:
-        name: Test PHP ${{ matrix.php-version }} ${{ matrix.pebble_mode }} ${{ matrix.name }}
-        runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                php-version: ["8.3"]
-                composer-flags: [""]
-                name: [""]
-                pebble_mode: [""]
-                include:
-                    - php-version: 8.3
-                      composer-flags: "--prefer-lowest"
-                      name: "(prefer lowest dependencies)"
-                    - php-version: 8.3
-                      composer-flags: "--prefer-lowest"
-                      name: "(prefer lowest dependencies - EAB)"
-                      pebble_mode: eab
-                    - php-version: 8.3
-                      name: "(EAB)"
-                      pebble_mode: eab
-        env:
-            PEBBLE_MODE: "${{ matrix.pebble_mode }}"
+  ci:
+    name: Test PHP ${{ matrix.php-version }} ${{ matrix.pebble_mode }} ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.3"]
+        composer-flags: [""]
+        name: [""]
+        pebble_mode: [""]
+        include:
+          - php-version: 8.3
+            composer-flags: "--prefer-lowest"
+            name: "(prefer lowest dependencies)"
+          - php-version: 8.3
+            composer-flags: "--prefer-lowest"
+            name: "(prefer lowest dependencies - EAB)"
+            pebble_mode: eab
+          - php-version: 8.3
+            name: "(EAB)"
+            pebble_mode: eab
+    env:
+      PEBBLE_MODE: "${{ matrix.pebble_mode }}"
 
-        steps:
-            - uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php-version }}
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
 
-            - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-            - name: Install Composer dependencies
-              run: |
-                  composer update --prefer-dist --no-interaction ${{ matrix.composer-flags }}
+      - name: Install Composer dependencies
+        run: |
+          composer update --prefer-dist --no-interaction ${{ matrix.composer-flags }}
 
-            - name: Preparing tests
-              run: ./tests/setup.sh
+      - name: Preparing tests
+        run: ./tests/setup.sh
 
-            - name: Running tests
-              run: ./tests/run.sh
+      - name: Running tests
+        run: ./tests/run.sh
