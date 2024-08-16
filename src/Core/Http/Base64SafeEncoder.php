@@ -25,13 +25,10 @@ class Base64SafeEncoder
 
     public function decode(string $input): string
     {
-        $remainder = \strlen($input) % 4;
-
-        if ($remainder) {
-            $padlen = 4 - $remainder;
-            $input .= str_repeat('=', $padlen);
+        $result = base64_decode(strtr($input, '-_', '+/'), true);
+        if ($result === false) {
+            throw new \InvalidArgumentException("Input is not valid base64 or base64url data");
         }
-
-        return base64_decode(strtr($input, '-_', '+/'));
+        return $result;
     }
 }
