@@ -1,7 +1,7 @@
 Acme PHP
 ========
 
-[![Build Status](https://img.shields.io/github/workflow/status/acmephp/acmephp/Test%20and%20build?style=flat-square)](https://github.com/acmephp/acmephp/actions?query=branch%3Amaster+workflow%3A%22Test+and+build%22)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/acmephp/acmephp/test-build.yaml?branch=master&style=flat-square)](https://github.com/acmephp/acmephp/actions/workflows/test-build.yaml?query=branch%3Amaster)
 [![Packagist Version](https://img.shields.io/packagist/v/acmephp/acmephp.svg?style=flat-square)](https://packagist.org/packages/acmephp/acmephp)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
