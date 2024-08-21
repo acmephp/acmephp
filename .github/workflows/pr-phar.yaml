@@ -1,6 +1,6 @@
 name: Create phar
 on:
-    pull_request:
+  pull_request_target:
 jobs:
     create_phar:
       name: Create phar
