@@ -106,11 +106,6 @@ parameters:
 			path: src/Core/AcmeClient.php
 
 		-
-			message: "#^Offset 'finalize' does not exist on array\\|string\\.$#"
-			count: 2
-			path: src/Core/AcmeClient.php
-
-		-
 			message: "#^Offset 'identifier' does not exist on array\\|string\\.$#"
 			count: 2
 			path: src/Core/AcmeClient.php

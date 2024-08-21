@@ -53,14 +53,14 @@
 
         <!-- Serializer -->
         <service id="serializer.pem_normalizer" class="AcmePhp\Cli\Serializer\PemNormalizer" public="false" />
-        <service id="serializer.get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer" public="false" />
+        <service id="serializer.object_normalizer" class="Symfony\Component\Serializer\Normalizer\ObjectNormalizer" public="false" />
         <service id="serializer.pem_encoder" class="AcmePhp\Cli\Serializer\PemEncoder" public="false" />
         <service id="serializer.json_encoder" class="Symfony\Component\Serializer\Encoder\JsonEncoder" public="false" />
 
         <service id="serializer" class="Symfony\Component\Serializer\Serializer">
             <argument type="collection">
                 <argument type="service" id="serializer.pem_normalizer" />
-                <argument type="service" id="serializer.get_set_method_normalizer" />
+                <argument type="service" id="serializer.object_normalizer" />
             </argument>
             <argument type="collection">
                 <argument type="service" id="serializer.pem_encoder" />
