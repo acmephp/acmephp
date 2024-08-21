@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * Extracted from Symfony Monolog bridge.
  *
- * @see https://github.com/symfony/monolog-bridge/edit/master/Handler/ConsoleHandler.php
+ * @see https://github.com/symfony/monolog-bridge/blob/7.1/Handler/ConsoleHandler.php
  *
  * @author Tobias Schultze <http://tobion.de>
  */
@@ -40,8 +40,6 @@ class ConsoleHandler extends AbstractProcessingHandler
     ];
 
     /**
-     * Constructor.
-     *
      * @param OutputInterface|null $output            The console output to use (the handler remains disabled when passing null
      *                                                until the output is set, e.g. by using console events)
      * @param bool                 $bubble            Whether the messages that are handled can bubble up the stack
@@ -71,8 +69,6 @@ class ConsoleHandler extends AbstractProcessingHandler
 
     /**
      * Sets the console output to use for printing logs.
-     *
-     * @param OutputInterface $output The console output to use
      */
     public function setOutput(OutputInterface $output): void
     {
@@ -89,9 +85,9 @@ class ConsoleHandler extends AbstractProcessingHandler
         parent::close();
     }
 
-    protected function write(LogRecord|array $record): void
+    protected function write(LogRecord $record): void
     {
-        $this->output->write((string) $record['formatted']);
+        $this->output->write((string) $record->formatted);
     }
 
     protected function getDefaultFormatter(): FormatterInterface
