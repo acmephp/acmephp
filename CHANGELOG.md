@@ -10,16 +10,19 @@
 * Add support for lcobucci/jwt ^5.3
 * Add support for guzzlehttp/psr7 ^2.4
 * Add support for symfony ^7.1
+* Add support for psr/http-message ^2
+* Add support for psr/container ^2
+* Add support for psr/log ^2 || ^3
 
 ### BC Break
 
-* Drop support for PHP <8.3
-* Drop support for Symfony <5.4, and 6.0, 6.1, 6.2, 6.3
+* Drop support for PHP < 8.3
+* Drop support for Symfony < 5.4, and 6.0, 6.1, 6.2, 6.3
 * Drop support for lcobucci/jwt < 5.3
 * Drop support for guzzlehttp/psr7 < 2
 * Upgrade from FlySystem v1 to v3
-* Drop support for monolog ^1
-* Drop support for psr/log ^1
+* Drop support for monolog < 3
+* Drop support for psr/log < 2
 
 ### Internal
 
