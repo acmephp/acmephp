@@ -32,12 +32,11 @@
         "ext-json": "*",
         "ext-openssl": "*",
         "acmephp/ssl": "^2.0",
-        "guzzlehttp/guzzle": "^6.0|^7.0",
-        "guzzlehttp/psr7": "^1.7|^2.1",
+        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/psr7": "^2.4.5",
         "lcobucci/jwt": "^5.3",
-        "psr/http-client": "^1.0",
-        "psr/http-message": "^1.0",
-        "psr/log": "^1.0|^2.0|^3.0",
+        "psr/http-message": "^1 || ^2",
+        "psr/log": "^2 || ^3",
         "webmozart/assert": "^1.0"
     },
     "autoload": {
