@@ -57,7 +57,7 @@ jobs:
         - name: Confirm that we can run ACME php via docker
           run: docker run --rm ghcr.io/${{ github.repository }}/acmephp:master-${{ github.sha }}
     phpstan:
-        name: Test PHP ${{ matrix.php-version }} ${{ matrix.name }}
+        name: PHPStan
         runs-on: ubuntu-latest
         steps:
             - uses: shivammathur/setup-php@v2
