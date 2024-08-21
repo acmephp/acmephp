@@ -86,11 +86,6 @@ parameters:
 			path: src/Cli/Repository/Repository.php
 
 		-
-			message: "#^Method AcmePhp\\\\Cli\\\\Serializer\\\\PemNormalizer\\:\\:normalize\\(\\) return type with generic class ArrayObject does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Cli/Serializer/PemNormalizer.php
-
-		-
 			message: "#^Method AcmePhp\\\\Core\\\\AcmeClient\\:\\:registerAccount\\(\\) should return array but returns array\\|string\\.$#"
 			count: 1
 			path: src/Core/AcmeClient.php

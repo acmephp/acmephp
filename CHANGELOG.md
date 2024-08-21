@@ -9,6 +9,7 @@
 
 * Add support for lcobucci/jwt ^5.3
 * Add support for guzzlehttp/psr7 ^2.4
+* Add support for symfony ^7.1
 
 ### BC Break
 

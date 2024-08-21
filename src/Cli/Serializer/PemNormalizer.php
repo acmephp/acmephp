@@ -21,22 +21,22 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class PemNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    public function normalize($object, ?string $format = null, array $context = [])
+    public function normalize(mixed $object, ?string $format = null, array $context = []): string
     {
         return $object->getPEM();
     }
 
-    public function denormalize($data, $class, ?string $format = null, array $context = [])
+    public function denormalize(mixed $data, string $class, ?string $format = null, array $context = []): object
     {
         return new $class($data);
     }
 
-    public function supportsNormalization($data, ?string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return \is_object($data) && ($data instanceof Certificate || $data instanceof Key);
     }
 
-    public function supportsDenormalization($data, $type, ?string $format = null)
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return \is_string($data);
     }
