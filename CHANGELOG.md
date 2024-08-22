@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 3.0.0 (not released yet)
+## 2.2.0 (not released yet)
 
 > [!NOTE]
 > From now on, a particular attention will be given to provide a nice changelog.
@@ -14,7 +14,7 @@
 * Add support for psr/container ^2
 * Add support for psr/log ^2 || ^3
 
-### BC Break
+### End of support
 
 * Drop support for PHP < 8.3
 * Drop support for Symfony < 5.4, and 6.0, 6.1, 6.2, 6.3
