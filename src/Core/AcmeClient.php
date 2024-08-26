@@ -272,7 +272,8 @@ class AcmeClient implements AcmeClientInterface
         $formattedPem = str_ireplace('-----BEGIN CERTIFICATE-----', '', $formattedPem);
         $formattedPem = str_ireplace('-----END CERTIFICATE-----', '', $formattedPem);
         $client = $this->getHttpClient();
-        $formattedPem = $client->getBase64Encoder()->encode(base64_decode(trim($formattedPem)));
+        $base64 = $client->getBase64Encoder();
+        $formattedPem = $base64->encode($base64->decode(trim($formattedPem)));
 
         try {
             $client->request(
