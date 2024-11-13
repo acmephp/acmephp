@@ -50,7 +50,7 @@ class RunCommand extends AbstractCommand
 
     private $config;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('run')
             ->setDefinition(
@@ -69,7 +69,7 @@ class RunCommand extends AbstractCommand
             ->setHelp('The <info>%command.name%</info> challenge the domains, request the certificates and install them following a given configuration.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $cwd = getcwd();
         if (false === $cwd) {

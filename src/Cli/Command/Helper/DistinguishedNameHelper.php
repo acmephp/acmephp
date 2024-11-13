@@ -23,7 +23,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class DistinguishedNameHelper extends Helper
 {
-    public function getName()
+    public function getName(): string
     {
         return 'distinguished_name';
     }

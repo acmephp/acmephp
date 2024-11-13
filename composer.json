@@ -44,7 +44,7 @@
         "alibabacloud/cdn": "^1.7",
         "alibabacloud/wafopenapi": "^1.7",
         "aws/aws-sdk-php": "^3.38",
-        "consolidation/self-update": "^2.2",
+        "consolidation/self-update": "^2.2 || ^3",
         "guzzlehttp/guzzle": "^7.2",
         "guzzlehttp/psr7": "^2.4.5",
         "lcobucci/jwt": "^5.3",

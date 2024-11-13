@@ -20,7 +20,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class DomainConfiguration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('acmephp');
         if (method_exists(TreeBuilder::class, 'getRootNode')) {
