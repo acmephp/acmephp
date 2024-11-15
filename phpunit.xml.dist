@@ -14,7 +14,7 @@
     <php>
         <env name="SYMFONY_ENV" value="test"/>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[direct]=0"/>
-        <env name="SYMFONY_PHPUNIT_REQUIRE" value="phpspec/prophecy-phpunit"/>
+        <env name="SYMFONY_PHPUNIT_REQUIRE" value="phpspec/prophecy-phpunit phpstan/phpdoc-parser:^1"/>
     </php>
 
     <testsuites>

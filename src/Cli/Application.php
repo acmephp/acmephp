@@ -16,6 +16,7 @@ use AcmePhp\Cli\Command\RevokeCommand;
 use AcmePhp\Cli\Command\RunCommand;
 use AcmePhp\Cli\Command\StatusCommand;
 use SelfUpdate\SelfUpdateCommand;
+use SelfUpdate\SelfUpdateManager;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Filesystem\Path;
@@ -41,11 +42,19 @@ class Application extends BaseApplication
     {
         $version = explode('@', $this->getVersion())[0];
 
+        if (class_exists(SelfUpdateManager::class)) {
+            $selfUpdateCommand = new SelfUpdateCommand(new SelfUpdateManager($this->getName(), '' === $version ? '0.0.0' : $version, 'acmephp/acmephp'));
+        } else {
+            // Support for older versions of the self-update package
+            // @phpstan-ignore-next-line
+            $selfUpdateCommand = new SelfUpdateCommand($this->getName(), '' === $version ? '0.0.0' : $version, 'acmephp/acmephp');
+        }
+
         return array_merge(parent::getDefaultCommands(), [
             new RunCommand(),
             new RevokeCommand(),
             new StatusCommand(),
-            new SelfUpdateCommand($this->getName(), '' === $version ? '0.0.0' : $version, 'acmephp/acmephp'),
+            $selfUpdateCommand,
         ]);
     }
 

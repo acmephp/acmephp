@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RevokeCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $reasons = implode(PHP_EOL, RevocationReason::getFormattedReasons());
 
@@ -41,7 +41,7 @@ class RevokeCommand extends AbstractCommand
             ->setHelp('The <info>%command.name%</info> command revoke a previously obtained certificate for a given domain');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!isset(Application::PROVIDERS[$this->input->getOption('provider')])) {
             throw new \InvalidArgumentException('Invalid provider, supported: '.implode(', ', Application::PROVIDERS));
@@ -58,13 +58,13 @@ class RevokeCommand extends AbstractCommand
         } catch (\InvalidArgumentException $e) {
             $this->error('Reason code must be one of: '.PHP_EOL.implode(PHP_EOL, RevocationReason::getFormattedReasons()));
 
-            return;
+            return 1;
         }
 
         if (!$repository->hasDomainCertificate($domain)) {
             $this->error('Certificate for '.$domain.' not found locally');
 
-            return;
+            return 1;
         }
 
         $certificate = $repository->loadDomainCertificate($domain);
@@ -74,7 +74,7 @@ class RevokeCommand extends AbstractCommand
         } catch (CertificateRevocationException $e) {
             $this->error($e->getMessage());
 
-            return;
+            return 1;
         }
 
         $this->notice('Certificate revoked successfully!');

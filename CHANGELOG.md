@@ -13,6 +13,7 @@
 * Add support for psr/http-message ^2
 * Add support for psr/container ^2
 * Add support for psr/log ^2 || ^3
+* Add support for consolidation/self-update ^2.2 || ^3
 
 ### End of support
 
