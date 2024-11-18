@@ -1,0 +1,22 @@
+name: gitsplit
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  release:
+    types: [published]
+
+jobs:
+  gitsplit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        run: git clone https://github.com/acmephp/acmephp /home/runner/work/acmephp/acmephp && cd /home/runner/work/acmephp/acmephp
+      - name: Split repositories
+        uses: docker://jderusse/gitsplit:latest
+        with:
+          args: gitsplit
+        env:
+          GH_TOKEN: ${{ secrets.PRIVATE_TOKEN }}
