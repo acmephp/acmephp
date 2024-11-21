@@ -15,7 +15,10 @@ able to deeply integrate the management of your certificates directly in your ap
 by these features, have a look at the [acmephp/core](https://github.com/acmephp/core) and
 [acmephp/ssl](https://github.com/acmephp/ssl) libraries.
 
->  Acme PHP is now maintained by https://zerossl.com.
+>  Acme PHP is now maintained by https://zerossl.com
+>
+> Other companies are welcome to contribute to the maintenance of the library. Thanks to:
+> - https://redirection.io/
 
 ## Why should I use Acme PHP when I have an official client?
 
