@@ -83,7 +83,11 @@ defaults:
       organization_name: MyCompany
   solver: http
 
-certificates:
+certificates:  
+  - domain: my.example.com
+    solver:
+      name: digitalocean
+      api_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   - domain: example.com
     distinguished_name:
       organization_name: MyCompany Internal
@@ -121,7 +125,13 @@ $ acmephp run path-to-config.yml
 You can also use the docker image to generate certificates.
 Certificates and keys are stored into the volume `/root/.acmephp`
 
-```
-docker run --rm -ti -v /cache/.acmephp:/root/.acmephp -v $PWD/.config.yml:/etc/acmephp.yml:ro acmephp/acmephp:latest run /etc/acmephp.yml
+```bash
+docker run \
+  --rm \
+  -it \
+  -v /cache/.acmephp:/root/.acmephp \
+  -v $PWD/.config.yml:/etc/acmephp.yml:ro \
+  acmephp/acmephp:latest \
+  run /etc/acmephp.yml
 ```
 
